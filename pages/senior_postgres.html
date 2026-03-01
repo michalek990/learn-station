@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Senior PostgreSQL — Kompletna Wiedza</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f7fa;--s1:#ffffff;--s2:#f0f2f5;--s3:#e8ebef;
+  --bd:#dde1e8;--bd2:#c8cdd7;--tx:#1a2332;--tx2:#4a6080;--mt:#7a96b0;
+  --k1:#0d9488;--k2:#0f766e;
+  --green:#16a34a;--teal:#0d9488;--violet:#7c3aed;--rose:#e11d48;
+  --amber:#d97706;--pink:#c026d3;--sky:#0284c7;--orange:#ea580c;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;line-height:1.65;overflow-x:hidden}
+.back{position:fixed;top:22px;left:22px;z-index:9999;background:rgba(255,255,255,.95);backdrop-filter:blur(14px);border:1px solid var(--bd2);border-radius:40px;padding:10px 20px;display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--tx2);font-family:'IBM Plex Mono',monospace;font-size:.72rem;font-weight:500;letter-spacing:1px;transition:all .25s;box-shadow:0 2px 12px rgba(0,0,0,.08)}
+.back:hover{color:var(--k1);border-color:var(--k1)}
+.hdr{min-height:500px;padding:110px 80px 80px;position:relative;overflow:hidden;display:flex;align-items:flex-end}
+.hdr-bg{position:absolute;inset:0;background:linear-gradient(160deg,#e8f4f8 0%,#f0f7f4 50%,#f5f0ff 100%)}
+.hdr-bg::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 55% at 3% 100%,rgba(13,148,136,.10) 0%,transparent 55%),radial-gradient(ellipse 50% 65% at 97% 5%,rgba(2,132,199,.07) 0%,transparent 50%),radial-gradient(ellipse 45% 50% at 50% 50%,rgba(124,58,237,.04) 0%,transparent 60%)}
+.hdr-grid{position:absolute;inset:0;background-image:linear-gradient(var(--bd) 1px,transparent 1px),linear-gradient(90deg,var(--bd) 1px,transparent 1px);background-size:48px 48px;opacity:.4;mask-image:radial-gradient(ellipse 85% 90% at 50% 50%,black,transparent)}
+.hdr-content{position:relative;max-width:1400px;width:100%}
+.hdr-tier{display:inline-flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:.65rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--k1);margin-bottom:28px;padding:7px 16px;border:1px solid rgba(13,148,136,.35);border-radius:4px;background:rgba(13,148,136,.08)}
+.tier-dot{width:6px;height:6px;border-radius:50%;background:var(--k1);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+h1{font-size:clamp(2.6rem,6vw,5.5rem);font-weight:800;line-height:.9;letter-spacing:-4px;margin-bottom:28px;color:var(--tx)}
+h1 em{font-style:normal;background:linear-gradient(135deg,var(--teal),var(--sky));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+h1 small{display:block;font-size:.36em;letter-spacing:-1px;color:var(--tx2);font-weight:500;margin-top:14px;-webkit-text-fill-color:var(--tx2)}
+.hdr-desc{font-size:1rem;color:var(--tx2);max-width:680px;line-height:1.9}
+.hdr-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.chip{font-family:'IBM Plex Mono',monospace;font-size:.63rem;font-weight:600;letter-spacing:.5px;padding:5px 12px;border-radius:3px;border:1px solid}
+.ck{color:var(--k1);border-color:rgba(13,148,136,.4);background:rgba(13,148,136,.08)}
+.cg{color:var(--green);border-color:rgba(22,163,74,.35);background:rgba(22,163,74,.06)}
+.ct{color:var(--teal);border-color:rgba(13,148,136,.35);background:rgba(13,148,136,.06)}
+.cv{color:var(--violet);border-color:rgba(124,58,237,.35);background:rgba(124,58,237,.06)}
+.cr{color:var(--rose);border-color:rgba(225,29,72,.35);background:rgba(225,29,72,.06)}
+.ca{color:var(--amber);border-color:rgba(217,119,6,.35);background:rgba(217,119,6,.06)}
+.co{color:var(--orange);border-color:rgba(234,88,12,.35);background:rgba(234,88,12,.06)}
+.cs{color:var(--sky);border-color:rgba(2,132,199,.35);background:rgba(2,132,199,.06)}
+.nav{position:sticky;top:0;z-index:300;background:rgba(255,255,255,.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--bd);display:flex;overflow-x:auto;scrollbar-width:none;padding:0 80px;box-shadow:0 1px 8px rgba(0,0,0,.06)}
+.nav::-webkit-scrollbar{display:none}
+.nav-a{color:var(--mt);text-decoration:none;font-family:'IBM Plex Mono',monospace;font-size:.63rem;font-weight:600;letter-spacing:.5px;padding:14px 12px;white-space:nowrap;border-bottom:2px solid transparent;transition:all .18s}
+.nav-a:hover{color:var(--k1);border-bottom-color:var(--k1)}
+.main{max-width:1400px;margin:0 auto;padding:80px 24px 160px}
+.chapter{margin-bottom:100px;animation:fadeUp .5s ease backwards}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.chapter:nth-child(1){animation-delay:.04s}.chapter:nth-child(2){animation-delay:.08s}
+.chapter:nth-child(3){animation-delay:.12s}.chapter:nth-child(4){animation-delay:.16s}
+.chapter:nth-child(5){animation-delay:.20s}.chapter:nth-child(6){animation-delay:.24s}
+.chapter:nth-child(7){animation-delay:.28s}.chapter:nth-child(8){animation-delay:.32s}
+.chapter:nth-child(9){animation-delay:.36s}
+.ch-head{display:flex;align-items:flex-start;gap:22px;margin-bottom:36px;padding-bottom:28px;border-bottom:1px solid var(--bd)}
+.ch-num{font-family:'IBM Plex Mono',monospace;font-size:.62rem;font-weight:700;letter-spacing:3px;color:var(--mt);padding-top:6px;white-space:nowrap}
+.ch-info{flex:1}
+.ch-cat{font-family:'IBM Plex Mono',monospace;font-size:.58rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:6px}
+.ch-title{font-size:1.9rem;font-weight:800;letter-spacing:-1px;line-height:1.1;margin-bottom:10px;color:var(--tx)}
+.ch-desc{font-size:.9rem;color:var(--tx2);max-width:840px;line-height:1.9}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:1100px){.g4{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:900px){.g2,.g3,.g4{grid-template-columns:1fr}.hdr{padding:80px 24px 56px}.nav{padding:0 16px}h1{font-size:2.6rem;letter-spacing:-2px}}
+.card{background:var(--s1);border:1px solid var(--bd);border-radius:8px;overflow:hidden;transition:border-color .2s,box-shadow .2s}
+.card:hover{border-color:var(--bd2);box-shadow:0 6px 28px rgba(0,0,0,.10)}
+.card-h{padding:11px 18px;font-family:'IBM Plex Mono',monospace;font-size:.66rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:8px;background:var(--s2)}
+.card-b{padding:18px}
+.code{background:#f8f9fb;border:1px solid var(--bd);border-radius:8px;overflow:hidden}
+.cbar{background:var(--s2);border-bottom:1px solid var(--bd);padding:9px 16px;font-family:'IBM Plex Mono',monospace;font-size:.64rem;color:var(--mt);display:flex;align-items:center;gap:7px}
+.fdot{width:7px;height:7px;border-radius:50%}
+pre{padding:20px;font-family:'IBM Plex Mono',monospace;font-size:.77rem;line-height:1.75;overflow-x:auto;color:#3a5068}
+.kw{color:#7c3aed}.cls{color:#b45309}.fn{color:#0369a1}.str{color:#15803d}
+.cm{color:#94a3b8;font-style:italic}.num{color:#c2410c}.ann{color:#be185d}
+.prop{color:#0f766e}
+.alert{padding:16px 20px;border-radius:6px;border-left:3px solid;font-size:.87rem;line-height:1.85;color:var(--tx2)}
+.alert strong{color:var(--tx)}
+.alert-label{font-family:'IBM Plex Mono',monospace;font-size:.58rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;display:block;margin-bottom:6px}
+.al-k{background:rgba(13,148,136,.06);border-color:var(--k1)}.al-k .alert-label{color:var(--k1)}
+.al-green{background:rgba(22,163,74,.06);border-color:var(--green)}.al-green .alert-label{color:var(--green)}
+.al-rose{background:rgba(225,29,72,.06);border-color:var(--rose)}.al-rose .alert-label{color:var(--rose)}
+.al-violet{background:rgba(124,58,237,.06);border-color:var(--violet)}.al-violet .alert-label{color:var(--violet)}
+.al-teal{background:rgba(13,148,136,.06);border-color:var(--teal)}.al-teal .alert-label{color:var(--teal)}
+.al-amber{background:rgba(217,119,6,.06);border-color:var(--amber)}.al-amber .alert-label{color:var(--amber)}
+.al-orange{background:rgba(234,88,12,.06);border-color:var(--orange)}.al-orange .alert-label{color:var(--orange)}
+.al-sky{background:rgba(2,132,199,.06);border-color:var(--sky)}.al-sky .alert-label{color:var(--sky)}
+.tbl{width:100%;border-collapse:collapse;font-size:.84rem}
+.tbl th{background:var(--s2);color:var(--tx2);font-family:'IBM Plex Mono',monospace;font-size:.63rem;letter-spacing:2px;text-transform:uppercase;font-weight:700;padding:11px 16px;text-align:left;border-bottom:1px solid var(--bd)}
+.tbl td{padding:11px 16px;border-bottom:1px solid var(--bd);color:var(--tx2);vertical-align:top;line-height:1.75}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:var(--s2);color:var(--tx)}
+.tbl code{font-family:'IBM Plex Mono',monospace;font-size:.76rem;color:var(--k2);background:rgba(13,148,136,.10);padding:2px 7px;border-radius:3px}
+.ritem{display:flex;gap:16px;padding:12px 0;border-bottom:1px solid var(--bd);align-items:flex-start}
+.ritem:last-child{border-bottom:none}
+.ritem-key{font-family:'IBM Plex Mono',monospace;font-size:.76rem;white-space:nowrap;padding-top:2px;min-width:180px;flex-shrink:0}
+.ritem-val{font-size:.85rem;color:var(--tx2);line-height:1.75}
+.ritem-val code{font-family:'IBM Plex Mono',monospace;font-size:.76rem;color:var(--k2);background:rgba(13,148,136,.10);padding:1px 6px;border-radius:3px}
+.ritem-val strong{color:var(--tx)}
+.strip{border:1px solid var(--bd);border-radius:8px;padding:18px 22px;font-size:.87rem;color:var(--tx2);line-height:1.85;display:flex;gap:16px;align-items:flex-start;background:var(--s1)}
+.strip-icon{font-size:1.3rem;flex-shrink:0;padding-top:2px}
+.strip strong{color:var(--tx)}
+.gap8{margin-top:8px}.gap12{margin-top:12px}.gap16{margin-top:16px}.gap24{margin-top:24px}
+.footer{border-top:1px solid var(--bd);background:var(--s1);padding:36px 80px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;font-family:'IBM Plex Mono',monospace;font-size:.68rem;color:var(--mt)}
+.footer-title{color:var(--k1);font-weight:700}
+.badge{display:inline-flex;align-items:center;gap:4px;font-family:'IBM Plex Mono',monospace;font-size:.62rem;font-weight:700;padding:2px 9px;border-radius:3px}
+.badge-green{background:rgba(22,163,74,.12);color:var(--green);border:1px solid rgba(22,163,74,.3)}
+.badge-rose{background:rgba(225,29,72,.10);color:var(--rose);border:1px solid rgba(225,29,72,.3)}
+.badge-amber{background:rgba(217,119,6,.10);color:var(--amber);border:1px solid rgba(217,119,6,.3)}
+.badge-sky{background:rgba(2,132,199,.10);color:var(--sky);border:1px solid rgba(2,132,199,.3)}
+.badge-violet{background:rgba(124,58,237,.10);color:var(--violet);border:1px solid rgba(124,58,237,.3)}
+</style>
+</head>
+<body>
+<a class="back" href="#">← MENU</a>
+<header class="hdr">
+  <div class="hdr-bg"></div><div class="hdr-grid"></div>
+  <div class="hdr-content">
+    <div class="hdr-tier"><div class="tier-dot"></div> Senior PostgreSQL · Database Engineering</div>
+    <h1><em>Senior PostgreSQL</em><small>Indeksy · MVCC · Query Planner · Partycjonowanie · Replikacja · Performance</small></h1>
+    <p class="hdr-desc">Wszystko co senior engineer musi wiedzieć o PostgreSQL — nie jako użytkownik SQL, ale jako ktoś kto rozumie jak baza działa od środka, umie diagnozować problemy, projektować schematy na skalę i utrzymywać bazę w produkcji.</p>
+    <div class="hdr-chips">
+      <span class="chip ck">● Indeksy</span>
+      <span class="chip cs">Query Planner</span>
+      <span class="chip cv">MVCC</span>
+      <span class="chip ca">Transactions</span>
+      <span class="chip cg">Partycjonowanie</span>
+      <span class="chip cr">Replikacja</span>
+      <span class="chip co">Performance</span>
+      <span class="chip ct">Vacuum</span>
+    </div>
+  </div>
+</header>
+<nav class="nav">
+  <a class="nav-a" href="#arch">Architektura</a>
+  <a class="nav-a" href="#indexes">Indeksy</a>
+  <a class="nav-a" href="#query-planner">Query Planner</a>
+  <a class="nav-a" href="#mvcc">MVCC & Transactions</a>
+  <a class="nav-a" href="#vacuum">Vacuum & Bloat</a>
+  <a class="nav-a" href="#partitioning">Partycjonowanie</a>
+  <a class="nav-a" href="#replication">Replikacja</a>
+  <a class="nav-a" href="#performance">Performance Tuning</a>
+  <a class="nav-a" href="#locking">Locking</a>
+</nav>
+<main class="main">
+
+<!-- ══ 01 ARCHITEKTURA ══ -->
+<section class="chapter" id="arch">
+  <div class="ch-head">
+    <div class="ch-num">01 / 09</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--k1)">Architektura</div>
+      <div class="ch-title">Jak PostgreSQL działa od środka</div>
+      <div class="ch-desc">Senior musi rozumieć architekturę żeby diagnozować problemy i podejmować decyzje projektowe. PostgreSQL to proces-based database server — każde połączenie to osobny proces OS. Shared memory (shared_buffers) to wspólna pamięć dla wszystkich procesów.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-h" style="color:var(--k1)">🏗️ Kluczowe procesy i komponenty</div>
+      <div class="card-b">
+        <div class="ritem"><div class="ritem-key" style="color:var(--k1)">postmaster</div><div class="ritem-val"><strong>Główny demon.</strong> Nasłuchuje na połączenia, fork'uje backend processes. Zarządza shared memory i background workers.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--k1)">backend process</div><div class="ritem-val">Jeden per połączenie. Wykonuje zapytania, ma dostęp do shared_buffers. Koszt fork = ~10ms — dlatego używamy <strong>connection pooler</strong> (PgBouncer).</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--k1)">WAL writer</div><div class="ritem-val">Write-Ahead Log — <strong>każda zmiana trafia do WAL PRZED zapisem na dysk</strong>. Gwarancja durability. Podstawa replikacji i point-in-time recovery.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--k1)">checkpointer</div><div class="ritem-val">Regularnie flush'uje dirty pages z shared_buffers na dysk. <code>checkpoint_completion_target</code> rozkłada I/O w czasie.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--k1)">autovacuum</div><div class="ritem-val"><strong>Krytyczny background worker.</strong> Usuwa martwe krotki (dead tuples), aktualizuje statystyki, zapobiega wraparound XID. Nigdy go nie wyłączaj.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--k1)">bgwriter</div><div class="ritem-val">Proaktywnie zapisuje dirty pages — zmniejsza spike I/O podczas checkpoint. Konfiguruj <code>bgwriter_lru_maxpages</code>.</div></div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-h" style="color:var(--k1)">💾 Ścieżka zapisu danych</div>
+        <div class="card-b" style="font-size:.84rem;color:var(--tx2);line-height:1.9">
+          <div style="background:var(--s2);border:1px solid var(--bd);border-radius:6px;padding:14px 16px;font-family:'IBM Plex Mono',monospace;font-size:.75rem;line-height:2.1">
+            <div style="color:var(--k1)">INSERT/UPDATE/DELETE</div>
+            <div style="color:var(--mt);margin-left:16px">↓</div>
+            <div style="color:var(--amber)">WAL buffer (wal_buffers)</div>
+            <div style="color:var(--mt);margin-left:16px">↓ synchronous_commit=on → fsync</div>
+            <div style="color:var(--orange)">WAL segment file (pg_wal/)</div>
+            <div style="color:var(--mt);margin-left:16px">↓ równolegle</div>
+            <div style="color:var(--violet)">shared_buffers (dirty pages)</div>
+            <div style="color:var(--mt);margin-left:16px">↓ checkpoint</div>
+            <div style="color:var(--green)">Data files (base/)</div>
+          </div>
+          <div class="gap12"></div>
+          <p><strong style="color:var(--tx)">Kluczowy insight:</strong> Commit potwierdza zapisanie do WAL — nie do heap! Dane są bezpieczne bo WAL = source of truth. Heap update = eventual.</p>
+        </div>
+      </div>
+      <div class="gap12"></div>
+      <div class="alert al-k">
+        <span class="alert-label">Storage Layout</span>
+        Każda tabela = plik w <code>base/&lt;db_oid&gt;/&lt;table_oid&gt;</code>. Plik podzielony na <strong>8KB pages</strong>. Każda page zawiera tuple header + dane. TOAST (The Oversized-Attribute Storage Technique) — wartości &gt;2KB idą do osobnej tabeli TOAST. <code>SELECT pg_relation_filepath('table_name')</code> — znajdź plik tabeli.
+      </div>
+    </div>
+  </div>
+  <div class="gap16"></div>
+  <div class="code">
+    <div class="cbar"><div class="fdot" style="background:var(--k1)"></div> Diagnostyka architektury — kluczowe widoki systemowe</div>
+    <pre><span class="cm">-- Aktywne połączenia i ich stany</span>
+<span class="kw">SELECT</span> pid, usename, application_name, state, wait_event_type, wait_event,
+       <span class="fn">now</span>() - query_start <span class="kw">AS</span> duration, left(query, <span class="num">80</span>) <span class="kw">AS</span> query
+<span class="kw">FROM</span> pg_stat_activity
+<span class="kw">WHERE</span> state != <span class="str">'idle'</span>
+<span class="kw">ORDER BY</span> duration <span class="kw">DESC</span>;
+
+<span class="cm">-- Rozmiar bazy, tabel i indeksów</span>
+<span class="kw">SELECT</span>
+  schemaname,
+  tablename,
+  <span class="fn">pg_size_pretty</span>(<span class="fn">pg_total_relation_size</span>(schemaname||<span class="str">'.'</span>||tablename)) <span class="kw">AS</span> total,
+  <span class="fn">pg_size_pretty</span>(<span class="fn">pg_relation_size</span>(schemaname||<span class="str">'.'</span>||tablename)) <span class="kw">AS</span> table_size,
+  <span class="fn">pg_size_pretty</span>(<span class="fn">pg_indexes_size</span>(schemaname||<span class="str">'.'</span>||tablename)) <span class="kw">AS</span> indexes_size
+<span class="kw">FROM</span> pg_tables
+<span class="kw">WHERE</span> schemaname = <span class="str">'public'</span>
+<span class="kw">ORDER BY</span> <span class="fn">pg_total_relation_size</span>(schemaname||<span class="str">'.'</span>||tablename) <span class="kw">DESC</span>;
+
+<span class="cm">-- Statystyki tabel — hit ratio (powinno być > 99%)</span>
+<span class="kw">SELECT</span>
+  relname,
+  heap_blks_read, heap_blks_hit,
+  <span class="fn">round</span>(heap_blks_hit::numeric / <span class="fn">nullif</span>(heap_blks_hit + heap_blks_read, <span class="num">0</span>) * <span class="num">100</span>, <span class="num">2</span>) <span class="kw">AS</span> cache_hit_ratio
+<span class="kw">FROM</span> pg_statio_user_tables
+<span class="kw">ORDER BY</span> heap_blks_read <span class="kw">DESC</span>;</pre>
+  </div>
+</section>
+
+<!-- ══ 02 INDEKSY ══ -->
+<section class="chapter" id="indexes">
+  <div class="ch-head">
+    <div class="ch-num">02 / 09</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--sky)">Indeksy</div>
+      <div class="ch-title">Indeksy — typy, strategie, kiedy pomagają a kiedy szkodzą</div>
+      <div class="ch-desc">Indeks nie jest zawsze dobry. Każdy indeks spowalnia INSERT/UPDATE/DELETE i zajmuje miejsce. Senior wie kiedy tworzyć indeks, jakiego typu użyć i jak weryfikować że jest używany. Reguła: <strong>najpierw EXPLAIN ANALYZE, potem decyzja o indeksie</strong>.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-h" style="color:var(--sky)">📚 Typy indeksów — kiedy używać</div>
+      <div class="card-b">
+        <div class="ritem"><div class="ritem-key" style="color:var(--sky)">B-Tree <span class="badge badge-green">DEFAULT</span></div><div class="ritem-val"><strong>Domyślny, najczęściej używany.</strong> Obsługuje: =, &lt;, &gt;, &lt;=, &gt;=, BETWEEN, LIKE 'prefix%', ORDER BY. <strong>Nie obsługuje:</strong> LIKE '%suffix', regex, full-text. Dobry dla kolumn o wysokiej selektywności (wiele unikalnych wartości).</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--sky)">Hash</div><div class="ritem-val">Tylko dla <code>=</code>. Szybszy niż B-Tree dla equality lookups, ale nie obsługuje range queries, ORDER BY, UNIQUE. Od PG 10 w pełni WAL-logged. Rzadko używany.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--sky)">GiST</div><div class="ritem-val">Geometria, PostGIS, full-text search, network types (inet/cidr), zakres. Generalized Search Tree — rozszerzalny framework. Obsługuje operatory @>, &lt;&amp;, itp.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--sky)">GIN</div><div class="ritem-val"><strong>Full-text search, jsonb, arrays.</strong> Jeden klucz indeksu → wiele wierszy (odwrócony indeks). Wolniejsze INSERT, szybsze lookup. Idealny dla <code>jsonb @></code>, <code>tsvector @@</code>, <code>array @></code>.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--sky)">BRIN</div><div class="ritem-val"><strong>Block Range INdex.</strong> Ogromne tabele z naturalnym porządkiem (logi, time-series, append-only). Bardzo mały rozmiar. Nie nadaje się do tabel z losowymi inserts. Sprawdź <code>correlation</code> w <code>pg_stats</code>.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--sky)">Partial index</div><div class="ritem-val"><code>WHERE</code> w definicji. <strong>Mniejszy, szybszy.</strong> Np. <code>CREATE INDEX ON orders(user_id) WHERE status='pending'</code> — indeksuje tylko podzbiór wierszy. Konieczne żeby planner go użył: zapytanie musi zawierać ten sam WHERE.</div></div>
+      </div>
+    </div>
+    <div>
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--sky)"></div> Zaawansowane techniki indeksowania</div>
+        <pre><span class="cm">-- Covering index (INCLUDE) — index-only scan bez heap access</span>
+<span class="cm">-- Planner może odpowiedzieć na zapytanie z samego indeksu</span>
+<span class="kw">CREATE INDEX</span> idx_orders_user_covering
+<span class="kw">ON</span> orders(user_id)
+<span class="kw">INCLUDE</span> (status, created_at, total_amount);
+
+<span class="cm">-- Indeks na wyrażeniu — normalizacja w indeksie</span>
+<span class="kw">CREATE INDEX</span> idx_users_email_lower
+<span class="kw">ON</span> users(<span class="fn">lower</span>(email));
+<span class="cm">-- Zapytanie MUSI używać tego samego wyrażenia:</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> users <span class="kw">WHERE</span> <span class="fn">lower</span>(email) = <span class="str">'<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="e18b808fa18499808c918d84cf828e8c">[email&#160;protected]</a>'</span>;
+
+<span class="cm">-- Partial index — tylko aktywne zamówienia</span>
+<span class="kw">CREATE INDEX</span> idx_orders_pending
+<span class="kw">ON</span> orders(created_at)
+<span class="kw">WHERE</span> status = <span class="str">'pending'</span>;
+
+<span class="cm">-- Multicolumn index — kolejność kolumn MA znaczenie</span>
+<span class="cm">-- (a, b) indeks → działa dla: WHERE a=X, WHERE a=X AND b=Y</span>
+<span class="cm">-- NIE działa dla: WHERE b=Y (bez a)</span>
+<span class="kw">CREATE INDEX</span> idx_orders_user_status
+<span class="kw">ON</span> orders(user_id, status);
+
+<span class="cm">-- CONCURRENTLY — tworzenie indeksu bez blokowania tabeli</span>
+<span class="kw">CREATE INDEX CONCURRENTLY</span> idx_new ON orders(customer_id);
+<span class="cm">-- Wolniejsze, nie blokuje DML, wymaga unikalnej transakcji</span>
+
+<span class="cm">-- GIN dla JSONB</span>
+<span class="kw">CREATE INDEX</span> idx_metadata_gin <span class="kw">ON</span> events <span class="kw">USING</span> GIN (metadata);
+<span class="cm">-- SELECT * FROM events WHERE metadata @> '{"type":"click"}'</span>
+
+<span class="cm">-- Znajdź nieużywane indeksy (kandydaci do usunięcia)</span>
+<span class="kw">SELECT</span> schemaname, tablename, indexname, idx_scan,
+       <span class="fn">pg_size_pretty</span>(<span class="fn">pg_relation_size</span>(indexrelid)) <span class="kw">AS</span> index_size
+<span class="kw">FROM</span> pg_stat_user_indexes
+<span class="kw">WHERE</span> idx_scan = <span class="num">0</span>
+  <span class="kw">AND</span> indexrelname <span class="kw">NOT LIKE</span> <span class="str">'%pkey%'</span>
+<span class="kw">ORDER BY</span> <span class="fn">pg_relation_size</span>(indexrelid) <span class="kw">DESC</span>;</pre>
+      </div>
+      <div class="gap12"></div>
+      <div class="alert al-rose">
+        <span class="alert-label">Pułapki indeksów</span>
+        <strong>NULL wartości</strong> — B-Tree indeksuje NULL, ale <code>IS NULL</code> nie używa indeksu (od PG 8.3 używa, ale planner może zrezygnować). <strong>Niski cardinality</strong> — kolumna boolean z 50/50 rozkładem nie skorzysta na indeksie B-Tree. <strong>Casting</strong> — <code>WHERE id = '123'</code> gdzie id=int może nie użyć indeksu (implicit cast). Zawsze matchuj typy.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 03 QUERY PLANNER ══ -->
+<section class="chapter" id="query-planner">
+  <div class="ch-head">
+    <div class="ch-num">03 / 09</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--teal)">Query Planner</div>
+      <div class="ch-title">EXPLAIN ANALYZE — czytanie planów wykonania jak senior</div>
+      <div class="ch-desc">Query planner decyduje jak wykonać zapytanie. Opiera się na statystykach (pg_statistics). Senior musi umieć czytać EXPLAIN output, rozumieć koszty, identyfikować problemy i wiedzieć jak na nie wpłynąć — bez hint'ów (PostgreSQL ich nie ma).</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-h" style="color:var(--teal)">📊 Węzły planu — co oznaczają</div>
+      <div class="card-b">
+        <div class="ritem"><div class="ritem-key" style="color:var(--green)">Seq Scan</div><div class="ritem-val">Pełny skan tabeli. <strong>Nie zawsze zły</strong> — dla małych tabel lub gdy zwracasz &gt;10-15% wierszy planner celowo wybiera Seq Scan. Problem gdy koszt jest wysoki a selektywność duża.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--green)">Index Scan</div><div class="ritem-val">Skan indeksu + dostęp do heap dla każdego wiersza. Dobre dla wysoce selektywnych zapytań. Każdy heap access to random I/O — kosztowne przy dużej liczbie wyników.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--teal)">Index Only Scan</div><div class="ritem-val"><strong>Najszybszy.</strong> Dane pobierane z samego indeksu (covering index). Wymaga że kolumny w SELECT/WHERE są w indeksie (INCLUDE). Sprawdź Heap Fetches — powinno być 0.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--amber)">Bitmap Index Scan</div><div class="ritem-val">Najpierw zbiera tid'y z indeksu do bitmapy, potem batch read z heap. Kompromis między Seq Scan a Index Scan. Działa dla wielu indeksów jednocześnie (BitmapAnd/BitmapOr).</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--violet)">Hash Join</div><div class="ritem-val">Build hash table z małej tabeli, probe z dużej. Dobry dla równości JOIN bez indeksu. Wymaga pamięci — jeśli spills to dysk. Sprawdź <code>Batches</code> w output.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--violet)">Nested Loop</div><div class="ritem-val">Dla każdego wiersza z zewnętrznej tabeli — lookup w wewnętrznej (przez indeks). Idealny gdy zewnętrzna jest mała. Fatalny przy dużych tabelach bez indeksu.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--violet)">Merge Join</div><div class="ritem-val">Obie strony posortowane — merge w jednym przejściu. Efektywny gdy dane posortowane lub Sort jest tani. Dobry dla ORDER BY JOIN.</div></div>
+      </div>
+    </div>
+    <div>
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--teal)"></div> EXPLAIN ANALYZE — workflow diagnostyki</div>
+        <pre><span class="cm">-- ZAWSZE używaj ANALYZE + BUFFERS + FORMAT TEXT</span>
+<span class="kw">EXPLAIN</span> (<span class="prop">ANALYZE</span>, <span class="prop">BUFFERS</span>, <span class="prop">FORMAT</span> <span class="str">TEXT</span>)
+<span class="kw">SELECT</span> o.id, o.total, u.email
+<span class="kw">FROM</span> orders o
+<span class="kw">JOIN</span> users u <span class="kw">ON</span> u.id = o.user_id
+<span class="kw">WHERE</span> o.status = <span class="str">'pending'</span>
+  <span class="kw">AND</span> o.created_at > <span class="fn">now</span>() - <span class="kw">INTERVAL</span> <span class="str">'7 days'</span>;
+
+<span class="cm">/*
+EXPLAIN output do analizy:
+  - rows= (estimated) vs actual rows= — duża różnica = stale statistics
+  - cost= pierwszy to startup cost, drugi to total
+  - Buffers: shared hit= (cache) vs read= (disk)
+  - actual time= czas węzła w ms
+*/</span>
+
+<span class="cm">-- Kiedy planner się myli — wymuszenie przez konfigurację sesji</span>
+<span class="kw">SET</span> enable_seqscan = <span class="prop">off</span>;   <span class="cm">-- wymusz indeks (diagnostic only!)</span>
+<span class="kw">SET</span> enable_hashjoin = <span class="prop">off</span>;  <span class="cm">-- wymusz merge/nested loop</span>
+<span class="kw">SET</span> work_mem = <span class="str">'256MB'</span>;      <span class="cm">-- więcej RAM dla sort/hash w tej sesji</span>
+
+<span class="cm">-- Aktualizuj statystyki gdy planner ma złe szacunki</span>
+<span class="kw">ANALYZE</span> orders;
+<span class="kw">ANALYZE</span> orders(status, created_at);  <span class="cm">-- tylko wybrane kolumny</span>
+
+<span class="cm">-- Extended statistics — korelacje między kolumnami</span>
+<span class="kw">CREATE STATISTICS</span> stat_orders_status_user
+  (dependencies, ndistinct, mcv)
+  <span class="kw">ON</span> status, user_id <span class="kw">FROM</span> orders;
+<span class="kw">ANALYZE</span> orders;
+
+<span class="cm">-- pg_stat_statements — najwolniejsze zapytania</span>
+<span class="kw">SELECT</span> <span class="fn">round</span>(total_exec_time::numeric, <span class="num">2</span>) <span class="kw">AS</span> total_ms,
+       calls,
+       <span class="fn">round</span>(mean_exec_time::numeric, <span class="num">2</span>) <span class="kw">AS</span> mean_ms,
+       <span class="fn">round</span>(stddev_exec_time::numeric, <span class="num">2</span>) <span class="kw">AS</span> stddev_ms,
+       left(query, <span class="num">100</span>) <span class="kw">AS</span> query
+<span class="kw">FROM</span> pg_stat_statements
+<span class="kw">ORDER BY</span> mean_exec_time <span class="kw">DESC</span>
+<span class="kw">LIMIT</span> <span class="num">20</span>;</pre>
+      </div>
+      <div class="gap12"></div>
+      <div class="alert al-teal">
+        <span class="alert-label">Złe szacunki planera — diagnoza</span>
+        Gdy <code>rows=500 actual rows=50000</code> — planner ma złe statystyki. Rozwiązania: <strong>1)</strong> <code>ANALYZE</code> na tabeli. <strong>2)</strong> Zwiększ <code>default_statistics_target</code> (domyślnie 100, ustaw 500+ dla ważnych kolumn). <strong>3)</strong> Użyj <code>CREATE STATISTICS</code> dla korelacji kolumn. <strong>4)</strong> Sprawdź czy autovacuum działa — nie analizuje tabel z &lt;50 zmianami od ostatniego analyze.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 04 MVCC & TRANSACTIONS ══ -->
+<section class="chapter" id="mvcc">
+  <div class="ch-head">
+    <div class="ch-num">04 / 09</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--violet)">MVCC & Transactions</div>
+      <div class="ch-title">MVCC, izolacja transakcji i anomalie — jak to naprawdę działa</div>
+      <div class="ch-desc">Multi-Version Concurrency Control — PostgreSQL nigdy nie nadpisuje danych in-place. UPDATE = nowa wersja krotki (tuple). Stare wersje zostają jako "dead tuples" aż vacuum je usunie. To jest cena MVCC — bloat i potrzeba vacuum.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-h" style="color:var(--violet)">🔒 Poziomy izolacji — anomalie i zachowanie</div>
+      <div class="card-b">
+        <table class="tbl">
+          <tr><th>Poziom</th><th>Dirty Read</th><th>Non-Repeatable Read</th><th>Phantom Read</th><th>Serialization Anomaly</th></tr>
+          <tr>
+            <td><code style="color:var(--amber)">READ COMMITTED</code><br><span style="color:var(--mt);font-size:.75rem">Default PG</span></td>
+            <td><span class="badge badge-green">Nie</span></td>
+            <td><span class="badge badge-rose">Możliwe</span></td>
+            <td><span class="badge badge-rose">Możliwe</span></td>
+            <td><span class="badge badge-rose">Możliwe</span></td>
+          </tr>
+          <tr>
+            <td><code style="color:var(--sky)">REPEATABLE READ</code></td>
+            <td><span class="badge badge-green">Nie</span></td>
+            <td><span class="badge badge-green">Nie</span></td>
+            <td><span class="badge badge-green">Nie (PG)</span></td>
+            <td><span class="badge badge-rose">Możliwe</span></td>
+          </tr>
+          <tr>
+            <td><code style="color:var(--green)">SERIALIZABLE</code></td>
+            <td><span class="badge badge-green">Nie</span></td>
+            <td><span class="badge badge-green">Nie</span></td>
+            <td><span class="badge badge-green">Nie</span></td>
+            <td><span class="badge badge-green">Nie</span></td>
+          </tr>
+        </table>
+        <div class="gap12"></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--violet)">Dirty Read</div><div class="ritem-val">Czytasz dane niezatwierdzonej transakcji. PG nigdy — każda wersja ma XID commitu.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--violet)">Non-Repeatable</div><div class="ritem-val">Dwa identyczne SELECT w tej samej transakcji dają różne wyniki. W READ COMMITTED każdy SELECT widzi nowy snapshot.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--violet)">Phantom Read</div><div class="ritem-val">Nowe wiersze pasujące do WHERE pojawiają się między zapytaniami. REPEATABLE READ w PG chroni przed tym (snapshot całej transakcji).</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--violet)">Serialization</div><div class="ritem-val">Write Skew — dwie transakcje czytają te same dane i piszą na podstawie ich wartości. Wymaga SERIALIZABLE lub pessimistic locking.</div></div>
+      </div>
+    </div>
+    <div>
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--violet)"></div> Transakcje, locking, advisory locks</div>
+        <pre><span class="cm">-- Optymistyczny vs pesymistyczny locking</span>
+
+<span class="cm">-- PESYMISTYCZNY: SELECT FOR UPDATE (row-level lock)</span>
+<span class="kw">BEGIN</span>;
+<span class="kw">SELECT</span> balance <span class="kw">FROM</span> accounts
+<span class="kw">WHERE</span> id = <span class="num">42</span>
+<span class="kw">FOR UPDATE</span>;  <span class="cm">-- Lock wiersza - inni czekają</span>
+<span class="kw">UPDATE</span> accounts <span class="kw">SET</span> balance = balance - <span class="num">100</span> <span class="kw">WHERE</span> id = <span class="num">42</span>;
+<span class="kw">COMMIT</span>;
+
+<span class="cm">-- FOR UPDATE SKIP LOCKED — job queue pattern (nie blokuj, pomiń)</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> job_queue
+<span class="kw">WHERE</span> status = <span class="str">'pending'</span>
+<span class="kw">LIMIT</span> <span class="num">1</span>
+<span class="kw">FOR UPDATE SKIP LOCKED</span>;
+
+<span class="cm">-- OPTIMISTYCZNY: version column (CAS pattern)</span>
+<span class="kw">UPDATE</span> orders
+<span class="kw">SET</span> status = <span class="str">'shipped'</span>, version = version + <span class="num">1</span>
+<span class="kw">WHERE</span> id = <span class="num">1</span> <span class="kw">AND</span> version = <span class="num">5</span>;  <span class="cm">-- 0 rows = concurrent update!</span>
+
+<span class="cm">-- Advisory Locks — application-level distributed locks</span>
+<span class="kw">SELECT</span> <span class="fn">pg_try_advisory_lock</span>(<span class="num">12345</span>);  <span class="cm">-- non-blocking, true/false</span>
+<span class="kw">SELECT</span> <span class="fn">pg_advisory_lock</span>(<span class="num">12345</span>);     <span class="cm">-- blocking, session-level</span>
+<span class="kw">SELECT</span> <span class="fn">pg_advisory_unlock</span>(<span class="num">12345</span>);
+<span class="cm">-- Zwalniany automatycznie po zakończeniu sesji/transakcji</span>
+
+<span class="cm">-- Savepoints — partial rollback w transakcji</span>
+<span class="kw">BEGIN</span>;
+  <span class="kw">INSERT INTO</span> orders(...) <span class="kw">VALUES</span>(...);
+  <span class="kw">SAVEPOINT</span> after_order;
+  <span class="kw">INSERT INTO</span> payments(...) <span class="kw">VALUES</span>(...);
+  <span class="cm">-- jeśli payment fails:</span>
+  <span class="kw">ROLLBACK TO SAVEPOINT</span> after_order;
+  <span class="cm">-- order jest wciąż w transakcji</span>
+<span class="kw">COMMIT</span>;</pre>
+      </div>
+      <div class="gap12"></div>
+      <div class="alert al-rose">
+        <span class="alert-label">Write Skew — klasyczny przykład</span>
+        Dwóch lekarzy jednocześnie sprawdza "czy jest min. 1 lekarz na dyżurze?" (obaj widzą: tak), obaj biorą urlop. Wynik: 0 lekarzy. REPEATABLE READ nie chroni — obaj czytają i piszą różne wiersze. Rozwiązanie: <strong>SERIALIZABLE</strong> (PG wykryje i rzuci serialization failure) lub <strong>explicit lock</strong> na wierszu "shift".
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 05 VACUUM & BLOAT ══ -->
+<section class="chapter" id="vacuum">
+  <div class="ch-head">
+    <div class="ch-num">05 / 09</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--teal)">Vacuum & Bloat</div>
+      <div class="ch-title">VACUUM, autovacuum, table bloat — zarządzanie martwymi krotkami</div>
+      <div class="ch-desc">VACUUM to cena MVCC. Bez vacuum: martwe krotki rosną (bloat), visibility map jest nieaktualna (brak index-only scans), XID wraparound grozi utratą danych. Autovacuum jest domyślnie włączony i należy go <strong>tuningować, nie wyłączać</strong>.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-h" style="color:var(--teal)">🧹 Jak działa VACUUM i co robi</div>
+      <div class="card-b">
+        <div class="ritem"><div class="ritem-key" style="color:var(--teal)">Dead tuples</div><div class="ritem-val">UPDATE/DELETE nie usuwa fizycznie — oznacza krotki jako "dead". VACUUM usuwa martwe krotki, ale <strong>nie zwraca miejsca do OS</strong> — oznacza pages jako "free" do reuse.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--teal)">VACUUM FULL</div><div class="ritem-val"><strong>Zwraca miejsce do OS.</strong> Przepisuje całą tabelę. <strong>Wymaga ACCESS EXCLUSIVE LOCK</strong> — blokuje wszystkie operacje. Używaj tylko gdy bloat jest krytyczny i możesz sobie pozwolić na downtime (lub pg_repack).</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--teal)">pg_repack</div><div class="ritem-val"><strong>Alternatywa dla VACUUM FULL bez locka.</strong> Tworzy nową tabelę w tle, synchronizuje zmiany, swap. Tylko krótki lock na koniec. Produkcyjny standard.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--teal)">XID Wraparound</div><div class="ritem-val"><strong>Krytyczne!</strong> XID to 32-bit licznik (2 mld transakcji). Gdy prawie pełny — PG <strong>automatycznie stopuje</strong> żeby uniknąć utraty danych. Vacuum musi regularnie freezeować stare XID. Monitoruj <code>age(datfrozenxid)</code>.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--teal)">Visibility Map</div><div class="ritem-val">Bitmapa — czy strona zawiera tylko "all-visible" tuple. Umożliwia Index-Only Scan (planner wie że nie musi sprawdzać heap). VACUUM aktualizuje visibility map.</div></div>
+      </div>
+    </div>
+    <div>
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--teal)"></div> Monitoring bloat i autovacuum</div>
+        <pre><span class="cm">-- Monitoruj dead tuples i kiedy był ostatni vacuum</span>
+<span class="kw">SELECT</span>
+  relname,
+  n_live_tup,
+  n_dead_tup,
+  <span class="fn">round</span>(n_dead_tup::numeric / <span class="fn">nullif</span>(n_live_tup + n_dead_tup, <span class="num">0</span>) * <span class="num">100</span>, <span class="num">1</span>) <span class="kw">AS</span> dead_pct,
+  last_vacuum,
+  last_autovacuum,
+  last_analyze,
+  last_autoanalyze
+<span class="kw">FROM</span> pg_stat_user_tables
+<span class="kw">ORDER BY</span> n_dead_tup <span class="kw">DESC</span>;
+
+<span class="cm">-- XID Wraparound risk — ALARMUJ gdy > 1.5 mld</span>
+<span class="kw">SELECT</span>
+  datname,
+  <span class="fn">age</span>(datfrozenxid) <span class="kw">AS</span> xid_age,
+  <span class="fn">pg_size_pretty</span>(<span class="fn">pg_database_size</span>(datname)) <span class="kw">AS</span> db_size
+<span class="kw">FROM</span> pg_database
+<span class="kw">ORDER BY</span> <span class="fn">age</span>(datfrozenxid) <span class="kw">DESC</span>;
+
+<span class="cm">-- Bloat estimate (z pgstattuple lub przybliżenie)</span>
+<span class="kw">SELECT</span>
+  tablename,
+  <span class="fn">pg_size_pretty</span>(<span class="fn">pg_total_relation_size</span>(<span class="str">'public.'</span>||tablename)) <span class="kw">AS</span> total,
+  <span class="fn">pg_size_pretty</span>(n_dead_tup * <span class="num">8192</span>) <span class="kw">AS</span> approx_dead_bytes
+<span class="kw">FROM</span> pg_stat_user_tables
+<span class="kw">WHERE</span> n_dead_tup > <span class="num">100000</span>
+<span class="kw">ORDER BY</span> n_dead_tup <span class="kw">DESC</span>;
+
+<span class="cm">-- Autovacuum tuning dla tabeli z dużym write volume</span>
+<span class="kw">ALTER TABLE</span> high_write_table <span class="kw">SET</span> (
+  autovacuum_vacuum_scale_factor = <span class="num">0.01</span>,   <span class="cm">-- default 0.2 (20%)</span>
+  autovacuum_vacuum_threshold = <span class="num">500</span>,        <span class="cm">-- default 50</span>
+  autovacuum_analyze_scale_factor = <span class="num">0.005</span>,
+  autovacuum_vacuum_cost_delay = <span class="num">2</span>          <span class="cm">-- ms, default 20 - agresywniejszy</span>
+);</pre>
+      </div>
+      <div class="gap12"></div>
+      <div class="alert al-amber">
+        <span class="alert-label">Autovacuum nie nadąża — kiedy i co zrobić</span>
+        Symptomy: rosnące <code>n_dead_tup</code>, bloat, slow queries. Przyczyny: zbyt częste UPDATE/DELETE (e.g. session table, queue), autovacuum throttling przez <code>autovacuum_vacuum_cost_delay</code>. Rozwiązania: zmniejsz <code>autovacuum_vacuum_cost_delay</code> per-table, zwiększ <code>autovacuum_max_workers</code> globalnie, rozważ partycjonowanie tabeli (mniejsze partycje → szybszy vacuum).
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 06 PARTYCJONOWANIE ══ -->
+<section class="chapter" id="partitioning">
+  <div class="ch-head">
+    <div class="ch-num">06 / 09</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--green)">Partycjonowanie</div>
+      <div class="ch-title">Table Partitioning — kiedy, jak i jakie strategie</div>
+      <div class="ch-desc">Partycjonowanie rozwiązuje problemy z bardzo dużymi tabelami: wolne queries (pruning), vacuum bloat, drop starych danych (DROP PARTITION = instant, DELETE = wolny). PostgreSQL ma natywny declarative partitioning od PG 10+. Używaj od ~100GB lub gdy vacuum nie nadąża.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div>
+      <div class="card">
+        <div class="card-h" style="color:var(--green)">🗂️ Strategie partycjonowania</div>
+        <div class="card-b">
+          <div class="ritem"><div class="ritem-key" style="color:var(--green)">RANGE</div><div class="ritem-val"><strong>Najczęstszy.</strong> Czas (created_at miesięcznie/rocznie), sekwencyjne ID. Partition pruning działa dla zapytań z <code>WHERE created_at BETWEEN ...</code>. Idealne dla time-series, logów, archiwów.</div></div>
+          <div class="ritem"><div class="ritem-key" style="color:var(--green)">LIST</div><div class="ritem-val">Dyskretne wartości — status ('active','inactive'), region ('EU','US','ASIA'). Partition pruning gdy <code>WHERE region = 'EU'</code>. Dobry dla tenant isolation.</div></div>
+          <div class="ritem"><div class="ritem-key" style="color:var(--green)">HASH</div><div class="ritem-val">Równomierny rozkład danych. <code>PARTITION BY HASH(tenant_id)</code> z N partycjami. Brak partition pruning dla zakresów — tylko dla <code>=</code>. Używaj gdy nie masz naturalnego klucza partycji.</div></div>
+        </div>
+      </div>
+      <div class="gap12"></div>
+      <div class="alert al-green">
+        <span class="alert-label">Partition Pruning — weryfikacja</span>
+        Zawsze sprawdź w EXPLAIN że planner usuwa partycje. Szukaj <code>Partitions removed: N</code>. Warunek: kolumna partycji musi być w WHERE z literałem lub bind parameter — <strong>nie z funkcją</strong> (np. <code>date_trunc('month', created_at)</code> uniemożliwia pruning na partycji po <code>created_at</code>).
+      </div>
+    </div>
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--green)"></div> Declarative partitioning — przykład events table</div>
+      <pre><span class="cm">-- Tabela partycjonowana po miesiącach</span>
+<span class="kw">CREATE TABLE</span> events (
+  id          <span class="cls">BIGINT</span> <span class="kw">GENERATED ALWAYS AS IDENTITY</span>,
+  event_type  <span class="cls">TEXT</span> <span class="kw">NOT NULL</span>,
+  user_id     <span class="cls">BIGINT</span> <span class="kw">NOT NULL</span>,
+  payload     <span class="cls">JSONB</span>,
+  created_at  <span class="cls">TIMESTAMPTZ</span> <span class="kw">NOT NULL DEFAULT</span> <span class="fn">now</span>()
+) <span class="kw">PARTITION BY RANGE</span> (created_at);
+
+<span class="cm">-- Tworzenie partycji (ręcznie lub automatycznie przez pg_partman)</span>
+<span class="kw">CREATE TABLE</span> events_2025_01 <span class="kw">PARTITION OF</span> events
+  <span class="kw">FOR VALUES FROM</span> (<span class="str">'2025-01-01'</span>) <span class="kw">TO</span> (<span class="str">'2025-02-01'</span>);
+
+<span class="kw">CREATE TABLE</span> events_2025_02 <span class="kw">PARTITION OF</span> events
+  <span class="kw">FOR VALUES FROM</span> (<span class="str">'2025-02-01'</span>) <span class="kw">TO</span> (<span class="str">'2025-03-01'</span>);
+
+<span class="cm">-- DEFAULT partition — złapie wiersze bez pasującej partycji</span>
+<span class="kw">CREATE TABLE</span> events_default <span class="kw">PARTITION OF</span> events <span class="kw">DEFAULT</span>;
+
+<span class="cm">-- Indeksy tworzy się na parent — propagują do partycji</span>
+<span class="kw">CREATE INDEX</span> ON events(user_id, created_at);
+<span class="kw">CREATE INDEX</span> ON events <span class="kw">USING</span> GIN (payload);
+
+<span class="cm">-- Usuwanie starych danych — INSTANT! (vs DELETE = pełny scan)</span>
+<span class="kw">DROP TABLE</span> events_2023_01;  <span class="cm">-- lub DETACH PARTITION</span>
+
+<span class="cm">-- pg_partman — automatyczne tworzenie i usuwanie partycji</span>
+<span class="cm">-- SELECT partman.create_parent(</span>
+<span class="cm">--   'public.events', 'created_at',</span>
+<span class="cm">--   'native', 'monthly',</span>
+<span class="cm">--   premake := 3</span>
+<span class="cm">-- );</span>
+
+<span class="cm">-- Lista partycji i ich rozmiary</span>
+<span class="kw">SELECT</span>
+  child.relname,
+  <span class="fn">pg_size_pretty</span>(<span class="fn">pg_relation_size</span>(child.oid)) <span class="kw">AS</span> size,
+  <span class="fn">pg_get_expr</span>(child.relpartbound, child.oid) <span class="kw">AS</span> bounds
+<span class="kw">FROM</span> pg_inherits
+<span class="kw">JOIN</span> pg_class child <span class="kw">ON</span> inhrelid = child.oid
+<span class="kw">WHERE</span> inhparent = <span class="str">'events'</span>::<span class="cls">regclass</span>
+<span class="kw">ORDER BY</span> child.relname;</pre>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 07 REPLIKACJA ══ -->
+<section class="chapter" id="replication">
+  <div class="ch-head">
+    <div class="ch-num">07 / 09</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--rose)">Replikacja</div>
+      <div class="ch-title">Replikacja strumieniowa, logical replication, HA — architektura produkcyjna</div>
+      <div class="ch-desc">PostgreSQL oferuje kilka mechanizmów replikacji. Senior musi rozumieć różnice, trade-offy i jak skonfigurować HA. Replikacja strumieniowa (WAL-based) to standard produkcyjny. Logical replication to narzędzie dla migracji i CDC.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-h" style="color:var(--rose)">📡 Typy replikacji — porównanie</div>
+      <div class="card-b">
+        <table class="tbl">
+          <tr><th>Typ</th><th>Mechanizm</th><th>Zastosowanie</th><th>Ograniczenia</th></tr>
+          <tr>
+            <td><code style="color:var(--rose)">Streaming</code></td>
+            <td>WAL stream, byte-for-byte</td>
+            <td>HA, read replicas, failover</td>
+            <td>Ta sama wersja PG, cała baza</td>
+          </tr>
+          <tr>
+            <td><code style="color:var(--amber)">Logical</code></td>
+            <td>Decoded changes (DML)</td>
+            <td>Migracje, CDC, subskrypcja wybranych tabel</td>
+            <td>Nie replika DDL, wymaga PK lub replica identity</td>
+          </tr>
+          <tr>
+            <td><code style="color:var(--violet)">Synchronous</code></td>
+            <td>Streaming + confirm before commit</td>
+            <td>Zero data loss (RPO=0)</td>
+            <td>Wyższe latency (czeka na standby)</td>
+          </tr>
+        </table>
+        <div class="gap12"></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--rose)">WAL level</div><div class="ritem-val"><code>wal_level = replica</code> dla streaming. <code>wal_level = logical</code> dla logical replication. Logical = więcej danych w WAL = większy I/O.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--rose)">Replication slot</div><div class="ritem-val"><strong>Uwaga!</strong> Slot zatrzymuje usuwanie WAL segments do czasu potwierdzenia przez replica. Jeśli replica zginie — WAL nakumuluje się bez limitu. Monitoruj <code>pg_replication_slots</code>. Ustaw <code>max_slot_wal_keep_size</code>.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--rose)">Replication lag</div><div class="ritem-val">Różnica między primary a standby. Monitoruj <code>pg_stat_replication</code>. Przy synchronous: <code>synchronous_standby_names = 'FIRST 1 (standby1)'</code>.</div></div>
+      </div>
+    </div>
+    <div>
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--rose)"></div> Konfiguracja replikacji i monitoring</div>
+        <pre><span class="cm">-- postgresql.conf — primary</span>
+wal_level = replica
+max_wal_senders = <span class="num">10</span>
+wal_keep_size = <span class="str">'1GB'</span>
+synchronous_commit = <span class="prop">on</span>  <span class="cm">-- local / remote_write / remote_apply / on</span>
+<span class="cm">-- synchronous_standby_names = 'ANY 1 (standby1, standby2)'</span>
+
+<span class="cm">-- pg_hba.conf — pozwól replication connections</span>
+<span class="cm">-- host replication replicator 10.0.0.0/8 scram-sha-256</span>
+
+<span class="cm">-- Monitoring replikacji (na primary)</span>
+<span class="kw">SELECT</span>
+  application_name,
+  state,
+  sync_state,
+  sent_lsn,
+  write_lsn,
+  flush_lsn,
+  replay_lsn,
+  (sent_lsn - replay_lsn) <span class="kw">AS</span> replication_lag_bytes,
+  write_lag, flush_lag, replay_lag
+<span class="kw">FROM</span> pg_stat_replication;
+
+<span class="cm">-- Logical replication — publication / subscription</span>
+<span class="cm">-- Na source (publisher):</span>
+<span class="kw">CREATE PUBLICATION</span> my_pub
+  <span class="kw">FOR TABLE</span> orders, users
+  <span class="kw">WITH</span> (publish = <span class="str">'insert, update, delete'</span>);
+
+<span class="cm">-- Na target (subscriber):</span>
+<span class="kw">CREATE SUBSCRIPTION</span> my_sub
+  CONNECTION <span class="str">'host=source_host dbname=mydb user=replicator'</span>
+  PUBLICATION my_pub;
+
+<span class="cm">-- Monitor slotów — KRYTYCZNE</span>
+<span class="kw">SELECT</span>
+  slot_name, plugin, active,
+  pg_size_pretty(<span class="fn">pg_wal_lsn_diff</span>(pg_current_wal_lsn(), restart_lsn)) <span class="kw">AS</span> retained_wal
+<span class="kw">FROM</span> pg_replication_slots;</pre>
+      </div>
+      <div class="gap12"></div>
+      <div class="alert al-rose">
+        <span class="alert-label">Patroni / Patroni + etcd — HA standard</span>
+        Dla produkcyjnego HA używaj <strong>Patroni</strong> (Python, open source) — automatyczny failover, DCS (etcd/Consul/ZooKeeper) jako distributed lock. Patroni zarządza <code>pg_hba.conf</code>, replikacją i promowaniem standby. Alternatywy: repmgr (prostszy, mniej funkcji), Stolon, managed cloud (RDS, Cloud SQL, Azure Flexible Server).
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 08 PERFORMANCE TUNING ══ -->
+<section class="chapter" id="performance">
+  <div class="ch-head">
+    <div class="ch-num">08 / 09</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--orange)">Performance Tuning</div>
+      <div class="ch-title">Konfiguracja i tuning produkcyjny — kluczowe parametry</div>
+      <div class="ch-desc">Domyślna konfiguracja PostgreSQL jest konserwatywna (działa na 256MB RAM). Produkcja wymaga tuningu. Reguła: zacznij od pgTune (pgtune.leopard.in.ua), zrozum każdy parametr zanim go zmienisz, monitoruj efekty.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-h" style="color:var(--orange)">⚙️ Kluczowe parametry konfiguracji</div>
+      <div class="card-b">
+        <div class="ritem"><div class="ritem-key" style="color:var(--orange)">shared_buffers</div><div class="ritem-val"><strong>25% RAM</strong> jako punkt startowy. Cache page'ów tabel i indeksów. Postgres też używa OS page cache — nie dawaj &gt;40% RAM.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--orange)">effective_cache_size</div><div class="ritem-val"><strong>75% RAM.</strong> Tylko hint dla planera — ile RAM jest dostępne (shared_buffers + OS cache). Nie alokuje pamięci. Wyższe = planer preferuje indeksy.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--orange)">work_mem</div><div class="ritem-val">RAM per sort/hash operation. <strong>Ostrożnie</strong> — jeden query może mieć wiele operacji, jeden connection = wiele queries. Formuła: <code>(RAM * 0.25) / (max_connections * 2)</code>. Ustaw niski globalnie, podnoś per-session.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--orange)">maintenance_work_mem</div><div class="ritem-val">RAM dla VACUUM, CREATE INDEX, ALTER TABLE. Ustaw wysoko (1GB+) — używane rzadko, duży impact na szybkość vacuum i budowania indeksów.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--orange)">wal_buffers</div><div class="ritem-val"><code>-1</code> = 1/32 shared_buffers (auto). Rzadko wymaga zmiany. Przy &gt;1000 connections — rozważ 64MB.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--orange)">random_page_cost</div><div class="ritem-val">Koszt random I/O. Domyślnie 4.0 (HDD). SSD: ustaw <strong>1.1-1.5</strong>. Wpływa na decyzję planer: niższe = bardziej skłonny do Index Scan.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--orange)">max_connections</div><div class="ritem-val"><strong>Nie ustawiaj wysoko.</strong> 100-200 + PgBouncer. Każde połączenie = ~10MB RAM. Wysoki max_connections = mniejszy work_mem per query.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--orange)">checkpoint_completion<br>_target</div><div class="ritem-val"><code>0.9</code> — rozkłada I/O checkpointu na 90% czasu między checkpointami. Zmniejsza spikes I/O.</div></div>
+      </div>
+    </div>
+    <div>
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--orange)"></div> Connection pooling — PgBouncer (produkcyjny standard)</div>
+        <pre><span class="cm">; pgbouncer.ini — konfiguracja produkcyjna</span>
+[databases]
+mydb = host=localhost port=<span class="num">5432</span> dbname=mydb
+
+[pgbouncer]
+listen_port = <span class="num">6432</span>
+listen_addr = <span class="str">*</span>
+
+<span class="cm">; transaction pooling — połączenie zwracane do pool po COMMIT</span>
+<span class="cm">; UWAGA: nie kompatybilny z SET, advisory locks, LISTEN/NOTIFY</span>
+pool_mode = transaction
+
+max_client_conn = <span class="num">1000</span>   <span class="cm">; ile klientów może się podłączyć</span>
+default_pool_size = <span class="num">25</span>   <span class="cm">; ile backend connections per baza</span>
+max_db_connections = <span class="num">50</span>  <span class="cm">; max backend connections total</span>
+
+server_idle_timeout = <span class="num">600</span>
+client_idle_timeout = <span class="num">0</span>
+auth_type = scram-sha-256</pre>
+        <div class="cbar" style="margin-top:1px"><div class="fdot" style="background:var(--orange)"></div> Monitoring performance — top queries i zasoby</div>
+        <pre><span class="cm">-- Wolne zapytania aktualnie wykonywane</span>
+<span class="kw">SELECT</span> pid, <span class="fn">now</span>() - pg_stat_activity.query_start <span class="kw">AS</span> duration,
+       query, state
+<span class="kw">FROM</span> pg_stat_activity
+<span class="kw">WHERE</span> (<span class="fn">now</span>() - pg_stat_activity.query_start) > <span class="kw">INTERVAL</span> <span class="str">'5 seconds'</span>
+  <span class="kw">AND</span> state = <span class="str">'active'</span>;
+
+<span class="cm">-- Cache hit ratio — powinno być > 99%</span>
+<span class="kw">SELECT</span>
+  <span class="fn">sum</span>(blks_hit)::float / (<span class="fn">sum</span>(blks_hit) + <span class="fn">sum</span>(blks_read)) * <span class="num">100</span> <span class="kw">AS</span> cache_hit_ratio
+<span class="kw">FROM</span> pg_stat_database
+<span class="kw">WHERE</span> datname = <span class="fn">current_database</span>();
+
+<span class="cm">-- Zabij długo-trwające zapytania</span>
+<span class="kw">SELECT</span> <span class="fn">pg_terminate_backend</span>(pid)
+<span class="kw">FROM</span> pg_stat_activity
+<span class="kw">WHERE</span> query_start < <span class="fn">now</span>() - <span class="kw">INTERVAL</span> <span class="str">'30 minutes'</span>
+  <span class="kw">AND</span> state = <span class="str">'active'</span>
+  <span class="kw">AND</span> pid != <span class="fn">pg_backend_pid</span>();</pre>
+      </div>
+      <div class="gap12"></div>
+      <div class="alert al-orange">
+        <span class="alert-label">Reguła nr 1: mierz przed optymalizacją</span>
+        Włącz <code>pg_stat_statements</code>. Zawsze. To jedno rozszerzenie daje więcej wartości niż cokolwiek innego — widać total_time, calls, mean_time, stddev per query pattern. Resetuj po deployach: <code>SELECT pg_stat_statements_reset()</code>. Monitoruj trendy, nie tylko snapshots.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 09 LOCKING ══ -->
+<section class="chapter" id="locking">
+  <div class="ch-head">
+    <div class="ch-num">09 / 09</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--amber)">Locking</div>
+      <div class="ch-title">Lock levels, deadlocks, bezpieczne migracje schema — produkcyjne wzorce</div>
+      <div class="ch-desc">Locking w PostgreSQL to hierarchia. Najgroźniejszy: <strong>ACCESS EXCLUSIVE</strong> — blokuje wszystko (ALTER TABLE, DROP). Senior musi wiedzieć jak przeprowadzać migracje bez downtime i jak diagnozować deadlocki.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-h" style="color:var(--amber)">🔐 Hierarchia locków — co z czym konfliktuje</div>
+      <div class="card-b">
+        <table class="tbl">
+          <tr><th>Lock Mode</th><th>Kto to ustawia</th><th>Blokuje</th></tr>
+          <tr><td><code style="color:var(--green)">ACCESS SHARE</code></td><td>SELECT</td><td>Tylko ACCESS EXCLUSIVE</td></tr>
+          <tr><td><code style="color:var(--green)">ROW SHARE</code></td><td>SELECT FOR UPDATE/SHARE</td><td>EXCLUSIVE, ACCESS EXCLUSIVE</td></tr>
+          <tr><td><code style="color:var(--amber)">ROW EXCLUSIVE</code></td><td>INSERT, UPDATE, DELETE</td><td>SHARE, SHARE ROW EXCLUSIVE, EXCLUSIVE, ACCESS EX.</td></tr>
+          <tr><td><code style="color:var(--amber)">SHARE UPDATE EXCLUSIVE</code></td><td>VACUUM, ANALYZE, CREATE INDEX CONCURRENTLY</td><td>Siebie + mocniejsze</td></tr>
+          <tr><td><code style="color:var(--rose)">ACCESS EXCLUSIVE</code></td><td>ALTER TABLE, DROP, TRUNCATE, VACUUM FULL</td><td><strong>Wszystko!</strong> Łącznie z SELECT.</td></tr>
+        </table>
+        <div class="gap12"></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--amber)">Deadlock</div><div class="ritem-val">PG automatycznie wykrywa i rollback'uje jedną transakcję (<code>ERROR: deadlock detected</code>). Zapobieganie: <strong>zawsze lockuj w tej samej kolejności</strong>. Np. zawsze update user przed account, nigdy odwrotnie.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--amber)">lock_timeout</div><div class="ritem-val"><strong>Ustaw zawsze przy DDL na produkcji!</strong> <code>SET lock_timeout = '2s'</code> — jeśli nie dostaniesz locka w 2s, rzuć error zamiast czekać i blokować inne queries w kolejce za tobą.</div></div>
+      </div>
+    </div>
+    <div>
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--amber)"></div> Bezpieczne migracje schema — zero downtime</div>
+        <pre><span class="cm">-- ❌ NIEBEZPIECZNE: blokuje całą tabelę na czas migracji</span>
+<span class="kw">ALTER TABLE</span> orders <span class="kw">ADD COLUMN</span> metadata <span class="cls">JSONB</span> <span class="kw">DEFAULT</span> <span class="str">'{}'</span>;
+<span class="cm">-- Problem: NOT NULL DEFAULT = table rewrite na PG < 11</span>
+<span class="cm">-- PG 11+: ADD COLUMN z DEFAULT bez NOT NULL = metadata only, instant</span>
+
+<span class="cm">-- ✅ BEZPIECZNE: ADD COLUMN nullable (instant)</span>
+<span class="kw">ALTER TABLE</span> orders <span class="kw">ADD COLUMN</span> metadata <span class="cls">JSONB</span>;
+<span class="cm">-- backfill w batchach:</span>
+<span class="kw">UPDATE</span> orders <span class="kw">SET</span> metadata = <span class="str">'{}'</span>
+<span class="kw">WHERE</span> id <span class="kw">BETWEEN</span> <span class="num">1</span> <span class="kw">AND</span> <span class="num">10000</span>;  <span class="cm">-- repeat in batches</span>
+<span class="kw">ALTER TABLE</span> orders <span class="kw">ALTER COLUMN</span> metadata <span class="kw">SET DEFAULT</span> <span class="str">'{}'</span>;
+<span class="kw">ALTER TABLE</span> orders <span class="kw">ALTER COLUMN</span> metadata <span class="kw">SET NOT NULL</span>;
+
+<span class="cm">-- ✅ Bezpieczne dodawanie NOT NULL z CHECK CONSTRAINT (PG 12+)</span>
+<span class="kw">ALTER TABLE</span> orders
+  <span class="kw">ADD CONSTRAINT</span> orders_meta_not_null
+  <span class="kw">CHECK</span> (metadata <span class="kw">IS NOT NULL</span>) <span class="kw">NOT VALID</span>;
+<span class="cm">-- NOT VALID = nie sprawdza istniejących wierszy, instant lock</span>
+<span class="kw">ALTER TABLE</span> orders <span class="kw">VALIDATE CONSTRAINT</span> orders_meta_not_null;
+<span class="cm">-- VALIDATE = SHARE UPDATE EXCLUSIVE (nie blokuje DML!)</span>
+
+<span class="cm">-- ✅ Bezpieczne usunięcie kolumny — najpierw "hide"</span>
+<span class="cm">-- 1. Zatrzymaj zapis do kolumny w kodzie (deploy)</span>
+<span class="cm">-- 2. Poczekaj aż replikacja złapie</span>
+<span class="cm">-- 3. ALTER TABLE ... DROP COLUMN (ACCESS EXCLUSIVE, ale szybki)</span>
+
+<span class="cm">-- Monitoring locków i kto kogo blokuje</span>
+<span class="kw">SELECT</span>
+  blocked.pid,
+  blocked.query <span class="kw">AS</span> blocked_query,
+  blocking.pid <span class="kw">AS</span> blocking_pid,
+  blocking.query <span class="kw">AS</span> blocking_query
+<span class="kw">FROM</span> pg_stat_activity <span class="kw">AS</span> blocked
+<span class="kw">JOIN</span> pg_stat_activity <span class="kw">AS</span> blocking
+  <span class="kw">ON</span> blocking.pid = <span class="kw">ANY</span>(<span class="fn">pg_blocking_pids</span>(blocked.pid))
+<span class="kw">WHERE</span> <span class="fn">cardinality</span>(<span class="fn">pg_blocking_pids</span>(blocked.pid)) > <span class="num">0</span>;</pre>
+      </div>
+    </div>
+  </div>
+  <div class="gap16"></div>
+  <div class="strip" style="border-color:var(--k1);background:rgba(45,212,191,.04)">
+    <div class="strip-icon">🏆</div>
+    <div><strong>Senior PostgreSQL — pełen obraz:</strong> Senior rozumie że PostgreSQL nie jest "tylko bazą SQL" — to złożony system z MVCC, WAL, planerem, autovacuum. Każda decyzja ma konsekwencje: indeks przyspiesza SELECTs ale spowalnia writes i wymaga vacuum, partycjonowanie rozwiązuje bloat ale komplikuje queries i migracje, synchronous commit daje durability ale zwiększa latency. Senior monitoruje <code>pg_stat_statements</code>, <code>pg_stat_activity</code>, <code>pg_stat_user_tables</code> regularnie — nie tylko gdy jest problem. <strong>Dobra baza to nie ta która działa, ale ta którą rozumiesz</strong>.</div>
+  </div>
+</section>
+
+</main>
+<footer class="footer">
+  <div><span class="footer-title">Senior PostgreSQL</span> — Kompendium</div>
+  <div>Indeksy · MVCC 

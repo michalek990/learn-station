@@ -1,0 +1,1899 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spring — Senior Knowledge Map</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #06080f;
+  --s1: #0d1117;
+  --s2: #161b27;
+  --s3: #1d2535;
+  --bd: #253046;
+  --bd2: #2e3d5a;
+  --tx: #dde6f5;
+  --tx2: #8899bb;
+  --mt: #4a5878;
+  --gold: #f0c040;
+  --spring: #5cb82e;
+  --spring2: #7dd44e;
+  --teal: #2dd4bf;
+  --sky: #38bdf8;
+  --violet: #8b5cf6;
+  --rose: #fb7185;
+  --amber: #fbbf24;
+  --emerald: #34d399;
+  --slate: #94a3b8;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--tx);
+  font-family: 'DM Sans', sans-serif;
+  line-height: 1.65;
+  overflow-x: hidden;
+}
+
+/* ── BACK ── */
+.back{position:fixed;top:22px;left:22px;z-index:9999;background:rgba(255,255,255,.95);backdrop-filter:blur(14px);border:1px solid var(--bd2);border-radius:40px;padding:10px 20px;display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--tx2);font-family:'IBM Plex Mono',monospace;font-size:0.72rem;font-weight:500;letter-spacing:1px;transition:all .25s}
+.back:hover{color:var(--gold);border-color:var(--gold)}
+
+/* ── HEADER ── */
+.hdr {
+  min-height: 480px;
+  padding: 100px 80px 72px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+}
+
+.hdr-bg {
+  position: absolute;
+  inset: 0;
+  background: var(--s1);
+}
+
+.hdr-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 10% 100%, rgba(92,184,46,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 80% at 90% 0%, rgba(240,192,64,0.07) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 50% at 50% 50%, rgba(56,189,248,0.04) 0%, transparent 60%);
+}
+
+.hdr-grid-bg {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--bd) 1px, transparent 1px),
+    linear-gradient(90deg, var(--bd) 1px, transparent 1px);
+  background-size: 48px 48px;
+  opacity: 0.18;
+  mask-image: radial-gradient(ellipse 70% 80% at 50% 50%, black, transparent);
+}
+
+.hdr-content { position: relative; max-width: 1360px; width: 100%; }
+
+.hdr-tier {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 28px;
+  padding: 7px 16px;
+  border: 1px solid rgba(240,192,64,0.3);
+  border-radius: 4px;
+  background: rgba(240,192,64,0.05);
+}
+
+.hdr-tier-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); animation: pulse 2s infinite; }
+
+@keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
+
+h1 {
+  font-size: clamp(3rem, 7vw, 6.5rem);
+  font-weight: 800;
+  line-height: 0.92;
+  letter-spacing: -4px;
+  margin-bottom: 28px;
+  color: var(--tx);
+}
+
+h1 em { font-style: normal; color: var(--spring2); }
+h1 small { display: block; font-size: 0.38em; letter-spacing: -1px; color: var(--tx2); font-weight: 500; margin-top: 12px; }
+
+.hdr-meta {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+
+.hdr-desc {
+  font-size: 1rem;
+  color: var(--tx2);
+  max-width: 600px;
+  line-height: 1.85;
+  font-weight: 400;
+}
+
+.hdr-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+
+.chip {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  padding: 5px 12px;
+  border-radius: 3px;
+  border: 1px solid;
+}
+
+.chip-gold { color: var(--gold); border-color: rgba(240,192,64,0.35); background: rgba(240,192,64,0.06); }
+.chip-green { color: var(--spring2); border-color: rgba(125,212,78,0.3); background: rgba(125,212,78,0.05); }
+.chip-sky { color: var(--sky); border-color: rgba(56,189,248,0.3); background: rgba(56,189,248,0.05); }
+.chip-violet { color: var(--violet); border-color: rgba(139,92,246,0.3); background: rgba(139,92,246,0.07); }
+.chip-teal { color: var(--teal); border-color: rgba(45,212,191,0.3); background: rgba(45,212,191,0.05); }
+.chip-rose { color: var(--rose); border-color: rgba(251,113,133,0.3); background: rgba(251,113,133,0.06); }
+.chip-amber { color: var(--amber); border-color: rgba(251,191,36,0.3); background: rgba(251,191,36,0.05); }
+
+/* ── NAV ── */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 300;
+  background: rgba(6,8,15,0.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--bd);
+  display: flex;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 0 80px;
+}
+
+.nav::-webkit-scrollbar { display: none; }
+
+.nav-a {
+  color: var(--mt);
+  text-decoration: none;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  padding: 14px 14px;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  transition: all 0.18s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nav-a:hover { color: var(--gold); border-bottom-color: var(--gold); }
+
+/* ── LAYOUT ── */
+.main {
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 80px 24px 160px;
+}
+
+.chapter {
+  margin-bottom: 104px;
+  animation: fadeUp 0.5s ease backwards;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.chapter:nth-child(1){animation-delay:.04s} .chapter:nth-child(2){animation-delay:.07s}
+.chapter:nth-child(3){animation-delay:.10s} .chapter:nth-child(4){animation-delay:.13s}
+.chapter:nth-child(5){animation-delay:.16s} .chapter:nth-child(6){animation-delay:.19s}
+.chapter:nth-child(7){animation-delay:.22s} .chapter:nth-child(8){animation-delay:.25s}
+.chapter:nth-child(9){animation-delay:.28s} .chapter:nth-child(10){animation-delay:.31s}
+.chapter:nth-child(11){animation-delay:.34s} .chapter:nth-child(12){animation-delay:.37s}
+
+.ch-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 22px;
+  margin-bottom: 36px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--bd);
+}
+
+.ch-num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: var(--mt);
+  padding-top: 6px;
+  white-space: nowrap;
+}
+
+.ch-info { flex: 1; }
+
+.ch-category {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.ch-title {
+  font-size: 1.9rem;
+  font-weight: 800;
+  letter-spacing: -1px;
+  line-height: 1.1;
+  margin-bottom: 10px;
+}
+
+.ch-desc {
+  font-size: 0.9rem;
+  color: var(--tx2);
+  max-width: 760px;
+  line-height: 1.9;
+}
+
+/* ── GRIDS ── */
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.g3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.g4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.g13 { display: grid; grid-template-columns: 1fr 3fr; gap: 14px; }
+.g31 { display: grid; grid-template-columns: 3fr 1fr; gap: 14px; }
+
+@media (max-width: 1100px) { .g4 { grid-template-columns: repeat(2,1fr); } }
+@media (max-width: 900px) {
+  .g2,.g3,.g4,.g13,.g31 { grid-template-columns: 1fr; }
+  .hdr { padding: 80px 24px 56px; }
+  .nav { padding: 0 16px; }
+  h1 { font-size: 3rem; letter-spacing: -2px; }
+}
+
+/* ── CARD ── */
+.card {
+  background: var(--s1);
+  border: 1px solid var(--bd);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.card:hover { border-color: var(--bd2); box-shadow: 0 6px 24px rgba(0,0,0,0.35); }
+
+.card-h {
+  padding: 11px 18px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--bd);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-b { padding: 18px; }
+
+/* ── CODE ── */
+.code {
+  background: #030508;
+  border: 1px solid var(--bd);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.cbar {
+  background: var(--s1);
+  border-bottom: 1px solid var(--bd);
+  padding: 9px 16px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.64rem;
+  color: var(--mt);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cbar-l { display: flex; align-items: center; gap: 7px; }
+.fdot { width: 7px; height: 7px; border-radius: 50%; }
+
+pre {
+  padding: 20px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.77rem;
+  line-height: 1.72;
+  overflow-x: auto;
+  color: #9ab;
+}
+
+/* Syntax */
+.kw { color: #c792ea; }
+.an { color: #ffcb6b; }
+.st { color: #c3e88d; }
+.cm { color: #3d5068; font-style: italic; }
+.ty { color: #82aaff; }
+.nu { color: #f78c6c; }
+.fn { color: #80cbc4; }
+.nm { color: #89ddff; }
+.op { color: #89ddff; }
+.rx { color: #2dd4bf; }   /* reactive */
+.go { color: #f0c040; }   /* golden highlight */
+
+/* ── ALERT BOXES ── */
+.alert {
+  padding: 16px 20px;
+  border-radius: 6px;
+  border-left: 3px solid;
+  font-size: 0.87rem;
+  line-height: 1.85;
+  color: var(--tx2);
+}
+
+.alert strong { color: var(--tx); }
+.alert-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.alert-gold { background: rgba(240,192,64,0.05); border-color: var(--gold); }
+.alert-gold .alert-label { color: var(--gold); }
+.alert-rose { background: rgba(251,113,133,0.05); border-color: var(--rose); }
+.alert-rose .alert-label { color: var(--rose); }
+.alert-teal { background: rgba(45,212,191,0.05); border-color: var(--teal); }
+.alert-teal .alert-label { color: var(--teal); }
+.alert-violet { background: rgba(139,92,246,0.05); border-color: var(--violet); }
+.alert-violet .alert-label { color: var(--violet); }
+.alert-sky { background: rgba(56,189,248,0.05); border-color: var(--sky); }
+.alert-sky .alert-label { color: var(--sky); }
+
+/* ── TABLE ── */
+.tbl { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+.tbl th {
+  background: var(--s2);
+  color: var(--tx2);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.63rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-weight: 700;
+  padding: 11px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--bd);
+  white-space: nowrap;
+}
+.tbl td {
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--bd);
+  color: var(--tx2);
+  vertical-align: top;
+  line-height: 1.75;
+}
+.tbl tr:last-child td { border-bottom: none; }
+.tbl tr:hover td { background: var(--s2); color: var(--tx); }
+.tbl code {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.76rem;
+  color: var(--spring2);
+  background: rgba(93,184,46,0.08);
+  padding: 2px 7px;
+  border-radius: 3px;
+}
+
+/* ── ROW LIST ── */
+.rlist { }
+.ritem {
+  display: flex;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--bd);
+  align-items: flex-start;
+}
+.ritem:last-child { border-bottom: none; }
+.ritem-key {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.76rem;
+  white-space: nowrap;
+  padding-top: 2px;
+  min-width: 200px;
+  flex-shrink: 0;
+}
+.ritem-val { font-size: 0.85rem; color: var(--tx2); line-height: 1.75; }
+.ritem-val code {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.76rem;
+  color: var(--spring2);
+  background: rgba(93,184,46,0.08);
+  padding: 1px 6px;
+  border-radius: 3px;
+}
+
+/* ── FLOW ── */
+.flow { display: flex; align-items: center; flex-wrap: wrap; gap: 4px; padding: 18px; }
+.flow-box {
+  background: var(--s2);
+  border: 1px solid var(--bd2);
+  border-radius: 5px;
+  padding: 9px 14px;
+  font-size: 0.78rem;
+  font-family: 'IBM Plex Mono', monospace;
+  text-align: center;
+  line-height: 1.4;
+}
+.flow-arr { color: var(--mt); padding: 0 3px; font-size: 1rem; }
+
+/* ── PILL ── */
+.pills { display: flex; flex-wrap: wrap; gap: 7px; padding: 14px; }
+.pill {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.67rem;
+  padding: 4px 11px;
+  border-radius: 20px;
+  border: 1px solid;
+  font-weight: 600;
+}
+.p-gold { color: var(--gold); border-color: rgba(240,192,64,0.4); background: rgba(240,192,64,0.06); }
+.p-green { color: var(--spring2); border-color: rgba(125,212,78,0.35); background: rgba(125,212,78,0.05); }
+.p-sky { color: var(--sky); border-color: rgba(56,189,248,0.35); background: rgba(56,189,248,0.05); }
+.p-violet { color: var(--violet); border-color: rgba(139,92,246,0.35); background: rgba(139,92,246,0.07); }
+.p-rose { color: var(--rose); border-color: rgba(251,113,133,0.35); background: rgba(251,113,133,0.05); }
+.p-teal { color: var(--teal); border-color: rgba(45,212,191,0.35); background: rgba(45,212,191,0.05); }
+.p-amber { color: var(--amber); border-color: rgba(251,191,36,0.35); background: rgba(251,191,36,0.05); }
+.p-slate { color: var(--slate); border-color: rgba(148,163,184,0.35); background: rgba(148,163,184,0.05); }
+
+/* ── COMPARE ── */
+.compare { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--bd); border-radius: 8px; overflow: hidden; }
+.compare-col:first-child { border-right: 1px solid var(--bd); }
+.compare-head { padding: 11px 18px; font-family: 'IBM Plex Mono', monospace; font-size: 0.66rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; border-bottom: 1px solid var(--bd); }
+.compare-body { padding: 16px 18px; font-size: 0.84rem; color: var(--tx2); line-height: 1.8; }
+
+/* ── CALLOUT STRIP ── */
+.strip {
+  border: 1px solid var(--bd);
+  border-radius: 8px;
+  padding: 18px 22px;
+  font-size: 0.87rem;
+  color: var(--tx2);
+  line-height: 1.85;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+.strip-icon { font-size: 1.3rem; flex-shrink: 0; padding-top: 2px; }
+.strip strong { color: var(--tx); }
+
+/* ── BADGE COUNTER ── */
+.badge-row { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 0; }
+.badge-stat { text-align: center; }
+.badge-stat-num { font-size: 2rem; font-weight: 800; font-family: 'IBM Plex Mono', monospace; line-height: 1; }
+.badge-stat-lbl { font-size: 0.62rem; color: var(--mt); letter-spacing: 2px; text-transform: uppercase; font-family: 'IBM Plex Mono', monospace; margin-top: 4px; }
+
+/* ── SPACER ── */
+.gap12 { margin-top: 12px; }
+.gap16 { margin-top: 16px; }
+.gap24 { margin-top: 24px; }
+
+/* ── FOOTER ── */
+.footer {
+  border-top: 1px solid var(--bd);
+  background: var(--s1);
+  padding: 36px 80px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--mt);
+}
+
+.footer-title { color: var(--gold); font-weight: 700; }
+</style>
+</head>
+<body>
+
+<a class="back" href="#">← MENU</a>
+
+<!-- ══════════════════════════════════ HEADER -->
+<header class="hdr">
+  <div class="hdr-bg"></div>
+  <div class="hdr-grid-bg"></div>
+  <div class="hdr-content">
+    <div class="hdr-tier">
+      <div class="hdr-tier-dot"></div>
+      SENIOR ENGINEER · SPRING ECOSYSTEM
+    </div>
+    <h1>Spring<br><em>Senior</em><small>Wszystko co musisz wiedzieć</small></h1>
+    <div class="hdr-desc">
+      Głęboka mapa wiedzy dla senior developerów — wzorce, pułapki, architektura, performance,
+      transakcje, DDD, CQRS/Event Sourcing, konfiguracja zaawansowana i internals JVM.
+      Bez podstaw, bez oczywistości.
+    </div>
+    <div class="hdr-chips">
+      <span class="chip chip-gold">● Senior / Expert</span>
+      <span class="chip chip-green">Spring Boot 3.x</span>
+      <span class="chip chip-sky">Java 21 · Virtual Threads</span>
+      <span class="chip chip-violet">DDD · CQRS · Event Sourcing</span>
+      <span class="chip chip-teal">Microservices Patterns</span>
+      <span class="chip chip-rose">Performance & GC Tuning</span>
+      <span class="chip chip-amber">Transaction Deep-Dive</span>
+    </div>
+  </div>
+</header>
+
+<!-- ══════════════════════════════════ NAV -->
+<nav class="nav">
+  <a class="nav-a" href="#ioc-internals">IoC Internals</a>
+  <a class="nav-a" href="#transactions">Transakcje</a>
+  <a class="nav-a" href="#virtual-threads">Virtual Threads</a>
+  <a class="nav-a" href="#ddd">DDD</a>
+  <a class="nav-a" href="#cqrs">CQRS/ES</a>
+  <a class="nav-a" href="#microservices">Mikroserwisy</a>
+  <a class="nav-a" href="#performance">Performance JPA</a>
+  <a class="nav-a" href="#config">Konfiguracja</a>
+  <a class="nav-a" href="#patterns">Wzorce GoF</a>
+  <a class="nav-a" href="#pitfalls">Pułapki</a>
+  <a class="nav-a" href="#jvm">JVM & GC</a>
+  <a class="nav-a" href="#checklist">Checklist</a>
+</nav>
+
+<!-- ══════════════════════════════════ MAIN -->
+<main class="main">
+
+  <!-- ═══ 01 IOC INTERNALS -->
+  <section class="chapter" id="ioc-internals">
+    <div class="ch-head">
+      <div class="ch-num">01 / 12</div>
+      <div class="ch-info">
+        <div class="ch-category" style="color:var(--spring2)">Spring Core — internals</div>
+        <div class="ch-title">IoC Container — jak działa pod spodem</div>
+        <div class="ch-desc">Senior musi rozumieć cykl życia beana, BeanPostProcessor, BeanFactoryPostProcessor i hierarchię kontekstów — bez tego ciężko debugować dziwne zachowania i pisać własne rozszerzenia frameworka.</div>
+      </div>
+    </div>
+
+    <div class="g2 gap24">
+      <div class="code">
+        <div class="cbar">
+          <div class="cbar-l"><div class="fdot" style="background:var(--spring2)"></div> Cykl życia Beana</div>
+        </div>
+        <pre><span class="cm">// Pełna kolejność inicjalizacji beana:</span>
+
+<span class="cm">1. Instantiation</span>        <span class="cm">// new Bean()</span>
+<span class="cm">2. Dependency injection</span> <span class="cm">// @Autowired, konstruktor</span>
+<span class="cm">3. BeanNameAware</span>        <span class="cm">// setBeanName()</span>
+<span class="cm">4. BeanFactoryAware</span>     <span class="cm">// setBeanFactory()</span>
+<span class="cm">5. ApplicationContextAware // setApplicationContext()</span>
+<span class="cm">6. BeanPostProcessor.before // @PostConstruct tutaj</span>
+<span class="cm">7. InitializingBean.afterPropertiesSet()</span>
+<span class="cm">8. @Bean(initMethod)</span>
+<span class="cm">9. BeanPostProcessor.after  // AOP proxy tutaj!</span>
+<span class="cm">─────────────────────────────────────────</span>
+<span class="cm">Bean gotowy do użycia</span>
+<span class="cm">─────────────────────────────────────────</span>
+<span class="cm">10. @PreDestroy</span>
+<span class="cm">11. DisposableBean.destroy()</span>
+<span class="cm">12. @Bean(destroyMethod)</span></pre>
+      </div>
+
+      <div class="code">
+        <div class="cbar">
+          <div class="cbar-l"><div class="fdot" style="background:var(--spring2)"></div> Własny BeanPostProcessor</div>
+        </div>
+        <pre><span class="cm">// Przykład: auto-rejestracja adnotacji</span>
+<span class="an">@Component</span>
+<span class="kw">public class</span> <span class="ty">AuditBeanPostProcessor</span>
+        <span class="kw">implements</span> <span class="ty">BeanPostProcessor</span> {
+
+    <span class="an">@Override</span>
+    <span class="kw">public</span> <span class="ty">Object</span> <span class="fn">postProcessAfterInitialization</span>(
+            <span class="ty">Object</span> bean, <span class="ty">String</span> name) {
+
+        <span class="cm">// Wywołany po @PostConstruct, przed oddaniem beana</span>
+        <span class="kw">if</span> (bean.getClass().isAnnotationPresent(<span class="ty">Auditable</span>.class)) {
+            auditRegistry.register(name, bean);
+        }
+        <span class="kw">return</span> bean; <span class="cm">// możesz zwrócić proxy!</span>
+    }
+}
+
+<span class="cm">// BeanFactoryPostProcessor — modyfikuje DEFINICJE beanów</span>
+<span class="cm">// (przed instantiation), np. PropertySourcesPlaceholder</span>
+<span class="an">@Component</span>
+<span class="kw">public class</span> <span class="ty">MyBFPP</span> <span class="kw">implements</span> <span class="ty">BeanFactoryPostProcessor</span> {
+    <span class="an">@Override</span>
+    <span class="kw">public void</span> <span class="fn">postProcessBeanFactory</span>(<span class="ty">ConfigurableListableBeanFactory</span> bf) {
+        <span class="ty">BeanDefinition</span> def = bf.getBeanDefinition(<span class="st">"myBean"</span>);
+        def.setScope(<span class="ty">BeanDefinition</span>.SCOPE_PROTOTYPE);
+    }
+}</pre>
+      </div>
+    </div>
+
+    <div class="gap16"></div>
+    <div class="g3">
+      <div class="card">
+        <div class="card-h" style="color:var(--spring2)">⚙️ Scopy Beanów</div>
+        <div class="card-b">
+          <div class="rlist">
+            <div class="ritem">
+              <div class="ritem-key" style="color:var(--spring2)">singleton</div>
+              <div class="ritem-val">Jedna instancja na kontekst. Domyślny. Nie wstrzykuj stanowych obiektów!</div>
+            </div>
+            <div class="ritem">
+              <div class="ritem-key" style="color:var(--sky)">prototype</div>
+              <div class="ritem-val">Nowa instancja przy każdym <code>getBean()</code>. Zniszczenie — Twoja odpowiedzialność</div>
+            </div>
+            <div class="ritem">
+              <div class="ritem-key" style="color:var(--violet)">request</div>
+              <div class="ritem-val">Jeden per HTTP request. Tylko w web context</div>
+            </div>
+            <div class="ritem">
+              <div class="ritem-key" style="color:var(--amber)">session</div>
+              <div class="ritem-val">Jeden per HTTP session. Uwaga na klasterowanie</div>
+            </div>
+            <div class="ritem">
+              <div class="ritem-key" style="color:var(--teal)">application</div>
+              <div class="ritem-val">Jeden per ServletContext. Podobny do singleton</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h" style="color:var(--spring2)">🌳 Hierarchia kontekstów</div>
+        <div class="card-b" style="font-size:0.84rem;color:var(--tx2);line-height:1.85">
+          <p style="margin-bottom:12px">W tradycyjnym Spring MVC istniały <strong style="color:var(--tx)">dwa konteksty</strong>:</p>
+          <div style="background:var(--s2);border:1px solid var(--bd);border-radius:6px;padding:14px;font-family:'IBM Plex Mono',monospace;font-size:0.73rem;line-height:1.8;margin-bottom:12px">
+            Root Context (ContextLoaderListener)<br>
+            └── Service, Repository, Config<br><br>
+            Web Context (DispatcherServlet)<br>
+            └── Controller, ViewResolver<br>
+            └── <span style="color:var(--spring2)">dziedziczy z Root Context</span>
+          </div>
+          <p>Spring Boot scala to w <strong style="color:var(--tx)">jeden kontekst</strong>. Ważne przy testowaniu — <code>@WebMvcTest</code> ładuje tylko web slice.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h" style="color:var(--spring2)">🔄 Circular Dependencies</div>
+        <div class="card-b" style="font-size:0.84rem;color:var(--tx2);line-height:1.85">
+          <p style="margin-bottom:10px">Spring 6 <strong style="color:var(--rose)">domyślnie zabrania</strong> circular dependencies. Jak je eliminować:</p>
+          <div class="rlist">
+            <div class="ritem" style="padding:8px 0">
+              <div class="ritem-val"><strong style="color:var(--tx)">1. Refaktoryzacja</strong> — najlepsza. Wydziel wspólną logikę do nowego beana (SRP)</div>
+            </div>
+            <div class="ritem" style="padding:8px 0">
+              <div class="ritem-val"><strong style="color:var(--tx)">2. @Lazy</strong> — opóźniona inicjalizacja jednej zależności. Tymczasowe rozwiązanie</div>
+            </div>
+            <div class="ritem" style="padding:8px 0">
+              <div class="ritem-val"><strong style="color:var(--tx)">3. Setter injection</strong> — Spring może rozwiązać przez 3-phase init</div>
+            </div>
+            <div class="ritem" style="padding:8px 0">
+              <div class="ritem-val"><strong style="color:var(--tx)">4. ApplicationEventPublisher</strong> — komunikacja przez eventy zamiast bezpośredniej zależności</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ 02 TRANSACTIONS -->
+  <section class="chapter" id="transactions">
+    <div class="ch-head">
+      <div class="ch-num">02 / 12</div>
+      <div class="ch-info">
+        <div class="ch-category" style="color:var(--amber)">Transakcje — głęboka analiza</div>
+        <div class="ch-title">@Transactional — wszystko co musisz wiedzieć</div>
+        <div class="ch-desc">Transakcje to jeden z najczęstszych obszarów błędów senior developerów. Propagacja, izolacja, rollback rules, self-invocation problem — każdy z nich może zepsuć spójność danych.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="card">
+        <div class="card-h" style="color:var(--amber)">📋 Propagacja transakcji</div>
+        <div class="card-b" style="overflow-x:auto">
+          <table class="tbl">
+            <thead><tr><th>Propagacja</th><th>Zachowanie</th><th>Kiedy używać</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><code>REQUIRED</code></td>
+                <td>Używa istniejącej lub tworzy nową. <strong>Domyślna</strong></td>
+                <td>Operacje wymagające transakcji — standardowy wybór</td>
+              </tr>
+              <tr>
+                <td><code>REQUIRES_NEW</code></td>
+                <td>Zawsze nowa transakcja, zawiesza poprzednią</td>
+                <td>Audyt, logi — muszą być zapisane nawet przy rollbacku głównej</td>
+              </tr>
+              <tr>
+                <td><code>NESTED</code></td>
+                <td>Savepoint wewnątrz istniejącej transakcji</td>
+                <td>Partial rollback — cofnij tylko część operacji</td>
+              </tr>
+              <tr>
+                <td><code>SUPPORTS</code></td>
+                <td>Używa jeśli istnieje, działa bez jeśli nie</td>
+                <td>Operacje read-only, które mogą działać poza transakcją</td>
+              </tr>
+              <tr>
+                <td><code>NOT_SUPPORTED</code></td>
+                <td>Zawiesza aktywną transakcję, działa poza</td>
+                <td>Operacje które psują transakcje (np. DDL)</td>
+              </tr>
+              <tr>
+                <td><code>MANDATORY</code></td>
+                <td>Wymaga aktywnej transakcji, rzuca wyjątek jeśli brak</td>
+                <td>Metody które zawsze muszą być wywoływane w transakcji</td>
+              </tr>
+              <tr>
+                <td><code>NEVER</code></td>
+                <td>Rzuca wyjątek jeśli transakcja istnieje</td>
+                <td>Metody niezgodne z transakcjami</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div>
+        <div class="code" style="margin-bottom:14px">
+          <div class="cbar">
+            <div class="cbar-l"><div class="fdot" style="background:var(--amber)"></div> Poziomy izolacji + problemy</div>
+          </div>
+          <pre style="font-size:0.74rem"><span class="cm">// Problem 1: Dirty Read — odczyt niezatwierdzonego</span>
+<span class="cm">// Problem 2: Non-repeatable Read — 2x odczyt, różny wynik</span>
+<span class="cm">// Problem 3: Phantom Read — nowe wiersze między odczytami</span>
+
+<span class="cm">// READ_UNCOMMITTED — wszystkie problemy możliwe (nie używaj)</span>
+<span class="an">@Transactional</span>(isolation = <span class="ty">Isolation</span>.READ_UNCOMMITTED)
+
+<span class="cm">// READ_COMMITTED — eliminuje Dirty Read (domyślny w Postgres)</span>
+<span class="an">@Transactional</span>(isolation = <span class="ty">Isolation</span>.READ_COMMITTED)
+
+<span class="cm">// REPEATABLE_READ — eliminuje + Non-repeatable Read</span>
+<span class="an">@Transactional</span>(isolation = <span class="ty">Isolation</span>.REPEATABLE_READ)
+
+<span class="cm">// SERIALIZABLE — eliminuje wszystko. Najwolniejszy</span>
+<span class="an">@Transactional</span>(isolation = <span class="ty">Isolation</span>.SERIALIZABLE)
+
+<span class="cm">// Optymistyczne locking — zamiast SERIALIZABLE</span>
+<span class="an">@Version</span>
+<span class="kw">private</span> <span class="ty">Long</span> version;  <span class="cm">// JPA sprawdzi przy UPDATE</span></pre>
+        </div>
+        <div class="alert alert-rose gap12">
+          <span class="alert-label">⚠️ Self-Invocation Problem</span>
+          <strong>@Transactional nie działa przy wywołaniu wewnątrz tej samej klasy!</strong> Spring AOP używa proxy — wywołanie <code>this.method()</code> omija proxy i tym samym transakcję. Rozwiązania: wydziel metodę do innego beana, użyj <code>@Inject</code> samego siebie (anty-pattern!), lub użyj AspectJ compile-time weaving.
+        </div>
+      </div>
+    </div>
+
+    <div class="gap16"></div>
+    <div class="g2">
+      <div class="code">
+        <div class="cbar">
+          <div class="cbar-l"><div class="fdot" style="background:var(--amber)"></div> Rollback Rules</div>
+        </div>
+        <pre><span class="cm">// Domyślnie: rollback tylko dla RuntimeException i Error</span>
+<span class="cm">// CheckedException NIE robi rollbacku!</span>
+
+<span class="an">@Transactional</span>(rollbackFor = <span class="ty">Exception</span>.class) <span class="cm">// wszystkie</span>
+<span class="an">@Transactional</span>(noRollbackFor = <span class="ty">OptimisticLockException</span>.class)
+
+<span class="cm">// PUŁAPKA: catch + throw nie zawsze działa jak myślisz</span>
+<span class="an">@Transactional</span>
+<span class="kw">public void</span> <span class="fn">badExample</span>() {
+    <span class="kw">try</span> {
+        repo.save(entity);
+    } <span class="kw">catch</span> (<span class="ty">DataIntegrityViolationException</span> e) {
+        <span class="cm">// ❌ Za późno — transakcja już oznaczona do rollbacku</span>
+        <span class="cm">// (rollbackOnly = true)</span>
+        log.error(<span class="st">"Error"</span>);
+        <span class="cm">// Możesz łapać tylko jeśli używasz NESTED lub REQUIRES_NEW</span>
+    }
+}
+
+<span class="cm">// Sprawdź status transakcji programowo:</span>
+<span class="ty">TransactionSynchronizationManager</span>.isActualTransactionActive();
+<span class="ty">TransactionSynchronizationManager</span>.isCurrentTransactionReadOnly();</pre>
+      </div>
+
+      <div class="code">
+        <div class="cbar">
+          <div class="cbar-l"><div class="fdot" style="background:var(--amber)"></div> Pessimistic vs Optimistic Lock</div>
+        </div>
+        <pre><span class="cm">// ─── Optimistic Locking (wersja) ───────────────────────</span>
+<span class="an">@Entity</span>
+<span class="kw">public class</span> <span class="ty">Account</span> {
+    <span class="an">@Version</span>
+    <span class="kw">private</span> <span class="ty">Long</span> version;  <span class="cm">// auto-increment przy UPDATE</span>
+}
+
+<span class="cm">// Rzuci OptimisticLockException gdy ktoś inny zaktualizował</span>
+<span class="cm">// Dobry dla: rzadkich konfliktów, odczyty > zapisy</span>
+
+<span class="cm">// ─── Pessimistic Locking (DB lock) ─────────────────────</span>
+<span class="an">@Lock</span>(<span class="ty">LockModeType</span>.PESSIMISTIC_WRITE)
+<span class="an">@Query</span>(<span class="st">"SELECT a FROM Account a WHERE a.id = :id"</span>)
+<span class="ty">Optional</span>&lt;<span class="ty">Account</span>&gt; <span class="fn">findByIdForUpdate</span>(<span class="ty">Long</span> id);
+
+<span class="cm">// Generuje: SELECT ... FOR UPDATE (blokuje wiersz w DB)</span>
+<span class="cm">// Dobry dla: częste konflikty, operacje finansowe, krytyczne sekcje</span>
+<span class="cm">// UWAGA: ryzyko deadlockow! Zawsze acquire locki w tej samej kolejności</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ 03 VIRTUAL THREADS -->
+  <section class="chapter" id="virtual-threads">
+    <div class="ch-head">
+      <div class="ch-num">03 / 12</div>
+      <div class="ch-info">
+        <div class="ch-category" style="color:var(--sky)">Java 21 · Project Loom</div>
+        <div class="ch-title">Virtual Threads w Spring Boot</div>
+        <div class="ch-desc">Virtual Threads (Project Loom) to rewolucja w modelu współbieżności Javy. Spring Boot 3.2+ obsługuje je out-of-the-box — jeden parametr konfiguracji zastępuje skomplikowany kod reaktywny dla wielu przypadków użycia.</div>
+      </div>
+    </div>
+
+    <div class="alert alert-sky" style="margin-bottom:20px">
+      <span class="alert-label">💡 Kiedy Virtual Threads vs WebFlux</span>
+      <strong>Virtual Threads (Loom):</strong> Idealny gdy masz istniejący kod blokujący i chcesz skalowalności bez przepisywania. Kod wygląda jak tradycyjny synchroniczny — łatwiejszy do debugowania i zrozumienia.<br>
+      <strong>WebFlux/Reactive:</strong> Lepszy gdy budujesz od zera i cały stack jest reaktywny. Daje fine-grained control nad backpressure i pipeline'ami danych. Wygrywa przy złożonej kompozycji asynchronicznej.
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar">
+          <div class="cbar-l"><div class="fdot" style="background:var(--sky)"></div> Włączanie Virtual Threads</div>
+        </div>
+        <pre><span class="cm"># application.yml — jednolinijkowa zmiana!</span>
+spring:
+  threads:
+    virtual:
+      enabled: <span class="kw">true</span>
+
+<span class="cm">// Spring Boot 3.2+ automatycznie konfiguruje:</span>
+<span class="cm">// - Tomcat: używa VirtualThreads dla requestów</span>
+<span class="cm">// - @Async: executor oparty na VT</span>
+<span class="cm">// - @Scheduled: scheduler oparty na VT</span>
+
+<span class="cm">// Manualna konfiguracja (jeśli potrzebujesz):</span>
+<span class="an">@Bean</span>
+<span class="kw">public</span> <span class="ty">Executor</span> <span class="fn">virtualThreadExecutor</span>() {
+    <span class="kw">return</span> <span class="ty">Executors</span>.newVirtualThreadPerTaskExecutor();
+}
+
+<span class="cm">// Tworzenie ręczne:</span>
+<span class="ty">Thread</span>.ofVirtual().start(() -> {
+    <span class="ty">Thread</span>.sleep(<span class="nu">1000</span>);  <span class="cm">// blokuje VT, nie OS thread!</span>
+    processRequest();
+});</pre>
+      </div>
+
+      <div class="code">
+        <div class="cbar">
+          <div class="cbar-l"><div class="fdot" style="background:var(--sky)"></div> Pułapki Virtual Threads</div>
+        </div>
+        <pre><span class="cm">// ❌ PUŁAPKA 1: Pinning — synchronized blokuje carrier thread!</span>
+<span class="kw">synchronized</span> (<span class="kw">this</span>) {
+    jdbcTemplate.query(<span class="st">"..."</span>);  <span class="cm">// pinned! Zablokuje OS thread</span>
+}
+<span class="cm">// ✅ Zamień na ReentrantLock:</span>
+<span class="kw">private final</span> <span class="ty">ReentrantLock</span> lock = <span class="kw">new</span> <span class="ty">ReentrantLock</span>();
+lock.lock();
+<span class="kw">try</span> { jdbcTemplate.query(<span class="st">"..."</span>); } <span class="kw">finally</span> { lock.unlock(); }
+
+<span class="cm">// ❌ PUŁAPKA 2: Thread-Local staje się kosztowny przy milionach VT</span>
+<span class="cm">// Użyj ScopedValue (Java 21 preview):</span>
+<span class="kw">final static</span> <span class="ty">ScopedValue</span>&lt;<span class="ty">User</span>&gt; CURRENT_USER = <span class="ty">ScopedValue</span>.newInstance();
+<span class="ty">ScopedValue</span>.where(<span class="ty">CURRENT_USER</span>, user).run(() -> processRequest());
+
+<span class="cm">// ❌ PUŁAPKA 3: Connection Pool</span>
+<span class="cm">// HikariCP z 10 conn + miliony VT = contention</span>
+<span class="cm">// Ustaw pool size rozsądnie lub użyj R2DBC</span>
+spring.datasource.hikari.maximum-pool-size: <span class="nu">20</span></pre>
+      </div>
+    </div>
+
+    <div class="gap16"></div>
+    <div class="compare">
+      <div class="compare-col">
+        <div class="compare-head" style="color:var(--amber)">⚡ Platform Threads (stare)</div>
+        <div class="compare-body">
+          <div class="rlist">
+            <div class="ritem" style="padding:8px 0"><div class="ritem-val">~1MB stack per thread</div></div>
+            <div class="ritem" style="padding:8px 0"><div class="ritem-val">Typowo 200-500 wątków per JVM</div></div>
+            <div class="ritem" style="padding:8px 0"><div class="ritem-val">Blokowanie = marnowanie OS thread</div></div>
+            <div class="ritem" style="padding:8px 0"><div class="ritem-val">ThreadPoolExecutor, konfiguracja rozmiaru puli</div></div>
+            <div class="ritem" style="padding:8px 0"><div class="ritem-val">Context switch przez OS — drogi</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="compare-col">
+        <div class="compare-head" style="color:var(--sky)">🚀 Virtual Threads (Loom)</div>
+        <div class="compare-body">
+          <div class="rlist">
+            <div class="ritem" style="padding:8px 0"><div class="ritem-val">Kilka KB stack per thread</div></div>
+            <div class="ritem" style="padding:8px 0"><div class="ritem-val">Miliony jednocześnie w jednym JVM</div></div>
+            <div class="ritem" style="padding:8px 0"><div class="ritem-val">Blokowanie = zawieszenie VT, carrier wolny</div></div>
+            <div class="ritem" style="padding:8px 0"><div class="ritem-val">newVirtualThreadPerTaskExecutor — bez rozmiaru</div></div>
+            <div class="ritem" style="padding:8px 0"><div class="ritem-val">Context switch przez JVM — tani</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ 04 DDD -->
+  <section class="chapter" id="ddd">
+    <div class="ch-head">
+      <div class="ch-num">04 / 12</div>
+      <div class="ch-info">
+        <div class="ch-category" style="color:var(--violet)">Domain-Driven Design</div>
+        <div class="ch-title">DDD w Spring — praktyczna implementacja</div>
+        <div class="ch-desc">DDD nie jest o adnotacjach — to o organizacji kodu wokół domeny biznesowej. Aggregate, ValueObject, DomainEvent, Repository — każdy z tych wzorców ma konkretne implikacje na strukturę Spring aplikacji.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar">
+          <div class="cbar-l"><div class="fdot" style="background:var(--violet)"></div> Aggregate + Domain Events</div>
+        </div>
+        <pre><span class="cm">// Aggregate Root — jedyna klasa z @Entity i publicznymi metodami</span>
+<span class="an">@Entity</span>
+<span class="kw">public class</span> <span class="ty">Order</span> <span class="kw">extends</span> <span class="ty">AbstractAggregateRoot</span>&lt;<span class="ty">Order</span>&gt; {
+
+    <span class="an">@Id</span> <span class="an">@GeneratedValue</span>
+    <span class="kw">private</span> <span class="ty">Long</span> id;
+
+    <span class="an">@Embedded</span>
+    <span class="kw">private</span> <span class="ty">Money</span> totalAmount;    <span class="cm">// Value Object</span>
+
+    <span class="an">@OneToMany</span>(cascade = <span class="ty">CascadeType</span>.ALL, orphanRemoval = <span class="kw">true</span>)
+    <span class="kw">private</span> <span class="ty">List</span>&lt;<span class="ty">OrderLine</span>&gt; lines = <span class="kw">new</span> <span class="ty">ArrayList</span>&lt;&gt;();
+
+    <span class="kw">private</span> <span class="ty">OrderStatus</span> status = <span class="ty">OrderStatus</span>.PENDING;
+
+    <span class="cm">// Logika biznesowa TYLKO tu — nie w Service!</span>
+    <span class="kw">public void</span> <span class="fn">confirm</span>() {
+        <span class="kw">if</span> (status != <span class="ty">OrderStatus</span>.PENDING)
+            <span class="kw">throw new</span> <span class="ty">IllegalStateException</span>(<span class="st">"Cannot confirm non-pending order"</span>);
+        <span class="kw">this</span>.status = <span class="ty">OrderStatus</span>.CONFIRMED;
+        <span class="cm">// Rejestruje event — Spring Data publikuje przy save()</span>
+        registerEvent(<span class="kw">new</span> <span class="ty">OrderConfirmedEvent</span>(<span class="kw">this</span>));
+    }
+}
+
+<span class="cm">// Value Object — immutable, równość przez wartość</span>
+<span class="an">@Embeddable</span>
+<span class="kw">public record</span> <span class="ty">Money</span>(<span class="ty">BigDecimal</span> amount, <span class="ty">String</span> currency) {
+    <span class="kw">public</span> <span class="ty">Money</span> add(<span class="ty">Money</span> other) {
+        <span class="kw">if</span> (!currency.equals(other.currency))
+            <span class="kw">throw new</span> <span class="ty">IllegalArgumentException</span>(<span class="st">"Currency mismatch"</span>);
+        <span class="kw">return new</span> <span class="ty">Money</span>(amount.add(other.amount), currency);
+    }
+}</pre>
+      </div>
+
+      <div class="code">
+        <div class="cbar">
+          <div class="cbar-l"><div class="fdot" style="background:var(--violet)"></div> Struktura pakietów — package by feature</div>
+        </div>
+        <pre><span class="cm">// ✅ Package by Feature (DDD-friendly)</span>
+com.app
+├── order/
+│   ├── domain/
+│   │   ├── Order.java         <span class="cm">// Aggregate</span>
+│   │   ├── OrderLine.java     <span class="cm">// Entity</span>
+│   │   ├── Money.java         <span class="cm">// Value Object</span>
+│   │   ├── OrderStatus.java   <span class="cm">// Enum</span>
+│   │   └── OrderRepository.java <span class="cm">// Port (interfejs)</span>
+│   ├── application/
+│   │   ├── OrderService.java  <span class="cm">// Use case</span>
+│   │   ├── OrderCommand.java  <span class="cm">// DTO in</span>
+│   │   └── OrderDto.java      <span class="cm">// DTO out</span>
+│   └── infrastructure/
+│       ├── JpaOrderRepository.java  <span class="cm">// Adapter</span>
+│       └── OrderController.java     <span class="cm">// HTTP adapter</span>
+├── inventory/
+│   └── ...
+└── shared/
+    └── domain/
+        └── DomainEvent.java
+
+<span class="cm">// ❌ Package by Layer (anty-pattern dla DDD)</span>
+com.app
+├── controller/  <span class="cm">// wszystkie kontrolery razem</span>
+├── service/     <span class="cm">// wszystkie serwisy razem</span>
+└── repository/  <span class="cm">// wszystkie repository razem</span></pre>
+      </div>
+    </div>
+
+    <div class="gap16"></div>
+    <div class="g3">
+      <div class="card">
+        <div class="card-h" style="color:var(--violet)">📦 Bounded Context</div>
+        <div class="card-b" style="font-size:0.85rem;color:var(--tx2);line-height:1.8">
+          <p style="margin-bottom:10px">Granica spójności modelu domenowego. "Produkt" w kontekście zamówień ≠ "Produkt" w kontekście magazynu.</p>
+          <p style="margin-bottom:10px"><strong style="color:var(--tx)">W mikroserwisach</strong>: jeden serwis = jeden bounded context (idealnie)</p>
+          <p><strong style="color:var(--tx)">Context Map patterns:</strong> Shared Kernel, Customer/Supplier, Conformist, Anti-Corruption Layer, Open Host Service, Published Language</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h" style="color:var(--violet)">🎯 Domain Events</div>
+        <div class="card-b">
+          <div class="code" style="border:none;border-radius:0;background:transparent">
+            <pre style="padding:0;font-size:0.74rem"><span class="cm">// Event — immutable, co się stało</span>
+<span class="kw">public record</span> <span class="ty">OrderConfirmedEvent</span>(
+    <span class="ty">Long</span> orderId,
+    <span class="ty">Instant</span> occurredAt
+) <span class="kw">implements</span> <span class="ty">DomainEvent</span> {}
+
+<span class="cm">// Handler — @TransactionalEventListener</span>
+<span class="an">@Component</span>
+<span class="kw">class</span> <span class="ty">OrderConfirmedHandler</span> {
+
+    <span class="an">@TransactionalEventListener</span>(
+        phase = <span class="ty">TransactionPhase</span>.AFTER_COMMIT)
+    <span class="kw">void</span> <span class="fn">on</span>(<span class="ty">OrderConfirmedEvent</span> e) {
+        <span class="cm">// wywołane PO commicie transakcji</span>
+        inventoryService.reserve(e.orderId());
+    }
+}</span></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h" style="color:var(--violet)">🧱 Hexagonal Architecture</div>
+        <div class="card-b" style="font-size:0.85rem;color:var(--tx2);line-height:1.8">
+          <p style="margin-bottom:10px">Aka Ports & Adapters. Domena nie zna infrastruktury — zależy tylko od abstrakcji (portów).</p>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:0.72rem;background:var(--s2);padding:12px;border-radius:6px;line-height:1.8">
+            [HTTP] ──→ Controller<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↓ Port (interfejs)<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OrderService (domena)<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↓ Port<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;JpaRepository (adapter)<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↓<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[PostgreSQL]
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ 05 CQRS/ES -->
+  <section class="chapter" id="cqrs">
+    <div class="ch-head">
+      <div class="ch-num">05 / 12</div>
+      <div class="ch-info">
+        <div class="ch-category" style="color:var(--teal)">CQRS · Event Sourcing</div>
+        <div class="ch-title">CQRS i Event Sourcing w Spring</div>
+        <div class="ch-desc">CQRS (Command Query Responsibility Segregation) rozdziela modele odczytu i zapisu. Event Sourcing przechowuje historię zmian zamiast aktualnego stanu. Razem rozwiązują problemy skalowalności i audytu w złożonych domenach.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar">
+          <div class="cbar-l"><div class="fdot" style="background:var(--teal)"></div> CQRS — rozdzielenie odczytu/zapisu</div>
+        </div>
+        <pre><span class="cm">// ─── COMMAND SIDE ────────────────────────────────────────</span>
+<span class="cm">// Command — intencja zmiany stanu</span>
+<span class="kw">public record</span> <span class="ty">PlaceOrderCommand</span>(<span class="ty">String</span> userId, <span class="ty">List</span>&lt;<span class="ty">Item</span>&gt; items) {}
+
+<span class="an">@Service</span>
+<span class="kw">public class</span> <span class="ty">OrderCommandService</span> {
+    <span class="an">@Transactional</span>
+    <span class="kw">public</span> <span class="ty">UUID</span> <span class="fn">handle</span>(<span class="ty">PlaceOrderCommand</span> cmd) {
+        <span class="ty">Order</span> order = <span class="ty">Order</span>.create(cmd.userId(), cmd.items());
+        orderRepo.save(order);  <span class="cm">// Write DB (PostgreSQL)</span>
+        <span class="kw">return</span> order.getId();
+    }
+}
+
+<span class="cm">// ─── QUERY SIDE ──────────────────────────────────────────</span>
+<span class="cm">// Read Model — zdenormalizowany, zoptymalizowany pod odczyty</span>
+<span class="an">@Document</span>  <span class="cm">// MongoDB lub ElasticSearch</span>
+<span class="kw">public class</span> <span class="ty">OrderSummaryView</span> {
+    <span class="kw">private</span> <span class="ty">String</span> orderId;
+    <span class="kw">private</span> <span class="ty">String</span> customerName;  <span class="cm">// zdenormalizowane!</span>
+    <span class="kw">private</span> <span class="ty">BigDecimal</span> total;
+    <span class="kw">private</span> <span class="ty">String</span> status;
+}
+
+<span class="an">@Service</span>
+<span class="kw">public class</span> <span class="ty">OrderQueryService</span> {
+    <span class="kw">public</span> <span class="ty">List</span>&lt;<span class="ty">OrderSummaryView</span>&gt; <span class="fn">findByCustomer</span>(<span class="ty">String</span> userId) {
+        <span class="kw">return</span> orderViewRepo.findByUserId(userId);  <span class="cm">// Read DB</span>
+    }
+}
+
+<span class="cm">// Synchronizacja przez Domain Events / Kafka</span></pre>
+      </div>
+
+      <div class="code">
+        <div class="cbar">
+          <div class="cbar-l"><div class="fdot" style="background:var(--teal)"></div> Event Sourcing — uproszczony wzorzec</div>
+        </div>
+        <pre><span class="cm">// Store events, not state</span>
+<span class="an">@Entity</span>
+<span class="kw">public class</span> <span class="ty">EventStore</span> {
+    <span class="an">@Id</span> <span class="kw">private</span> <span class="ty">UUID</span> eventId;
+    <span class="kw">private</span> <span class="ty">String</span> aggregateId;
+    <span class="kw">private</span> <span class="ty">String</span> aggregateType;
+    <span class="kw">private</span> <span class="ty">String</span> eventType;
+    <span class="an">@Column</span>(columnDefinition = <span class="st">"jsonb"</span>)
+    <span class="kw">private</span> <span class="ty">String</span> payload;       <span class="cm">// JSON eventu</span>
+    <span class="kw">private</span> <span class="ty">Long</span> sequenceNumber;  <span class="cm">// wersja agregatu</span>
+    <span class="kw">private</span> <span class="ty">Instant</span> occurredAt;
+}
+
+<span class="cm">// Odtwarzanie stanu z eventów:</span>
+<span class="kw">public</span> <span class="ty">Order</span> <span class="fn">load</span>(<span class="ty">String</span> orderId) {
+    <span class="ty">List</span>&lt;<span class="ty">DomainEvent</span>&gt; events = eventStore
+        .findByAggregateId(orderId);   <span class="cm">// historyczne eventy</span>
+    <span class="ty">Order</span> order = <span class="kw">new</span> <span class="ty">Order</span>();
+    events.forEach(order::apply);      <span class="cm">// replay!</span>
+    <span class="kw">return</span> order;
+}
+
+<span class="cm">// Snapshot — co N eventów zapisz aktualny stan</span>
+<span class="cm">// żeby nie replayować od początku historii</span>
+<span class="kw">if</span> (events.size() > <span class="nu">100</span>) snapshotStore.save(order);</pre>
+      </div>
+    </div>
+
+    <div class="gap16"></div>
+    <div class="g3">
+      <div class="card">
+        <div class="card-h" style="color:var(--teal)">✅ Kiedy CQRS</div>
+        <div class="card-b" style="font-size:0.85rem;color:var(--tx2);line-height:1.85">
+          <p style="margin-bottom:8px;color:var(--emerald)">✓ Różne wymagania wydajności odczytu vs zapisu</p>
+          <p style="margin-bottom:8px;color:var(--emerald)">✓ Złożone raporty wymagające denormalizacji</p>
+          <p style="margin-bottom:8px;color:var(--emerald)">✓ Różne modele danych dla różnych klientów (mobile vs web)</p>
+          <p style="margin-bottom:8px;color:var(--rose)">✗ Prosta CRUD aplikacja — niepotrzebna złożoność</p>
+          <p style="color:var(--rose)">✗ Mały zespół bez doświadczenia w eventech</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h" style="color:var(--teal)">⚡ Eventual Consistency</div>
+        <div class="card-b" style="font-size:0.85rem;color:var(--tx2);line-height:1.85">
+          <p style="margin-bottom:10px">Po zapisie na write side, read model jest <strong style="color:var(--tx)">eventually consistent</strong> — aktualizuje się asynchronicznie przez eventy.</p>
+          <p style="margin-bottom:10px">Musisz projektować UI który akceptuje opóźnienie (optimistic UI, polling, WebSocket).</p>
+          <p>Dla operacji wymagających silnej spójności — <strong style="color:var(--tx)">nie używaj CQRS</strong> lub czytaj z write side.</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h" style="color:var(--teal)">📚 Frameworki ES</div>
+        <div class="card-b" style="font-size:0.85rem;color:var(--tx2);line-height:1.85">
+          <p style="margin-bottom:10px"><strong style="color:var(--tx)">Axon Framework</strong> — najpopularniejszy w Spring. DDD + CQRS + ES out of the box. Axon Server jako event store.</p>
+          <p style="margin-bottom:10px"><strong style="color:var(--tx)">EventStoreDB</strong> — dedykowany event store. Doskonały dla append-only event logów.</p>
+          <p><strong style="color:var(--tx)">Kafka + własna implementacja</strong> — elastyczność kosztem złożoności. Kafka jako append-only log eventów.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ 06 MICROSERVICES -->
+  <section class="chapter" id="microservices">
+    <div class="ch-head">
+      <div class="ch-num">06 / 12</div>
+      <div class="ch-info">
+        <div class="ch-category" style="color:var(--rose)">Architektura mikroserwisów</div>
+        <div class="ch-title">Wzorce mikroserwisów — implementacja</div>
+        <div class="ch-desc">Mikroserwisy to nie tylko "małe aplikacje Spring Boot". Senior musi znać wzorce komunikacji, discovery, load balancing, Saga, Outbox Pattern i rozumieć kiedy mikroserwisy to zły pomysł.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar">
+          <div class="cbar-l"><div class="fdot" style="background:var(--rose)"></div> Outbox Pattern — gwarancja dostarczenia</div>
+        </div>
+        <pre><span class="cm">// Problem: save() + kafka.send() — co jeśli Kafka padnie?</span>
+<span class="cm">// Outbox Pattern: zapisz event do DB w tej samej transakcji</span>
+
+<span class="an">@Entity</span>
+<span class="kw">public class</span> <span class="ty">OutboxEvent</span> {
+    <span class="an">@Id</span> <span class="kw">private</span> <span class="ty">UUID</span> id;
+    <span class="kw">private</span> <span class="ty">String</span> aggregateType;
+    <span class="kw">private</span> <span class="ty">String</span> eventType;
+    <span class="kw">private</span> <span class="ty">String</span> payload;         <span class="cm">// JSON</span>
+    <span class="kw">private</span> <span class="ty">Instant</span> createdAt;
+    <span class="kw">private</span> <span class="ty">Boolean</span> published = <span class="kw">false</span>;
+}
+
+<span class="an">@Transactional</span>
+<span class="kw">public void</span> <span class="fn">placeOrder</span>(<span class="ty">OrderRequest</span> req) {
+    <span class="ty">Order</span> order = orderRepo.save(<span class="kw">new</span> <span class="ty">Order</span>(req));
+    <span class="cm">// Atomowo — ten sam commit!</span>
+    outboxRepo.save(<span class="kw">new</span> <span class="ty">OutboxEvent</span>(<span class="st">"OrderPlaced"</span>,
+        toJson(order)));
+}
+
+<span class="cm">// Relay — osobny wątek/serwis publikuje do Kafka</span>
+<span class="an">@Scheduled</span>(fixedDelay = <span class="nu">1000</span>)
+<span class="kw">public void</span> <span class="fn">publishOutbox</span>() {
+    outboxRepo.findByPublishedFalse(<span class="ty">PageRequest</span>.of(<span class="nu">0</span>, <span class="nu">100</span>))
+        .forEach(event -> {
+            kafkaTemplate.send(event.getEventType(), event.getPayload());
+            event.setPublished(<span class="kw">true</span>);
+        });
+}
+<span class="cm">// Lub użyj Debezium CDC — czyta z transaction log DB</span></pre>
+      </div>
+
+      <div class="code">
+        <div class="cbar">
+          <div class="cbar-l"><div class="fdot" style="background:var(--rose)"></div> Saga Pattern — transakcje rozproszone</div>
+        </div>
+        <pre><span class="cm">// Distributed transaction bez 2PC</span>
+<span class="cm">// Choreography Saga — przez eventy</span>
+
+<span class="cm">Order Service        Inventory Service    Payment Service</span>
+<span class="cm">────────────────────────────────────────────────────────</span>
+<span class="cm">OrderPlaced ─────→ reserveStock()</span>
+                  StockReserved ──────→ processPayment()</span>
+                                        PaymentCompleted ──→ confirmOrder()</span>
+
+<span class="cm">// Kompensacja przy błędzie:</span>
+                                        PaymentFailed ─────→</span>
+                  ←──── releaseStock()  ←── cancelOrder()</span>
+
+<span class="cm">// Orchestration Saga — centralny koordynator</span>
+<span class="an">@Component</span>
+<span class="kw">public class</span> <span class="ty">PlaceOrderSaga</span> {
+
+    <span class="kw">public void</span> <span class="fn">execute</span>(<span class="ty">PlaceOrderCommand</span> cmd) {
+        <span class="ty">UUID</span> orderId = orderService.create(cmd);
+        <span class="kw">try</span> {
+            inventoryService.reserve(orderId, cmd.items());
+            paymentService.charge(orderId, cmd.amount());
+            orderService.confirm(orderId);
+        } <span class="kw">catch</span> (<span class="ty">Exception</span> e) {
+            <span class="cm">// Kompensacja — cofnij co się udało</span>
+            compensate(orderId, e);
+        }
+    }
+}</pre>
+      </div>
+    </div>
+
+    <div class="gap16"></div>
+    <div class="g4">
+      <div class="card">
+        <div class="card-h" style="color:var(--rose)">Service Discovery</div>
+        <div class="card-b" style="font-size:0.83rem;color:var(--tx2);line-height:1.8">
+          <p style="margin-bottom:8px"><strong style="color:var(--tx)">Kubernetes</strong> — najczęściej. DNS-based discovery. Service + ClusterIP. Ingress dla zewnętrznych.</p>
+          <p style="margin-bottom:8px"><strong style="color:var(--tx)">Consul</strong> — service mesh + health checks. Spring Cloud Consul.</p>
+          <p><strong style="color:var(--tx)">Eureka</strong> — Netflix OSS. Spring Cloud Netflix. Starzeje się, słabszy niż K8s/Consul.</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h" style="color:var(--rose)">API Gateway</div>
+        <div class="card-b" style="font-size:0.83rem;color:var(--tx2);line-height:1.8">
+          <p style="margin-bottom:8px"><strong style="color:var(--tx)">Spring Cloud Gateway</strong> — reaktywny, filters, rate limiting, auth. Zastąpił Zuul.</p>
+          <p style="margin-bottom:8px"><strong style="color:var(--tx)">Kong / NGINX</strong> — sidecar pattern, zero-code config.</p>
+          <p>Gateway = auth, rate limit, routing. NIE = logika biznesowa!</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h" style="color:var(--rose)">Service Mesh</div>
+        <div class="card-b" style="font-size:0.83rem;color:var(--tx2);line-height:1.8">
+          <p style="margin-bottom:8px"><strong style="color:var(--tx)">Istio / Linkerd</strong> — mTLS, traffic management, observability przez sidecar proxy (Envoy).</p>
+          <p style="margin-bottom:8px">Aplikacja nie musi wiedzieć o retry, circuit breaking, TLS — robi to mesh.</p>
+          <p>Złożoność operacyjna jest wysoka — używaj z rozsądkiem.</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h" style="color:var(--rose)">Komunikacja</div>
+        <div class="card-b" style="font-size:0.83rem;color:var(--tx2);line-height:1.8">
+          <p style="margin-bottom:6px"><strong style="color:var(--tx)">Sync:</strong> REST (WebClient), gRPC (protobuf, streaming), GraphQL Federation</p>
+          <p style="margin-bottom:6px"><strong style="color:var(--tx)">Async:</strong> Kafka, RabbitMQ, AWS SQS/SNS</p>
+          <p>Preferuj async — mniejsze coupling, lepsza odporność na awarie</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ 07 PERFORMANCE JPA -->
+  <section class="chapter" id="performance">
+    <div class="ch-head">
+      <div class="ch-num">07 / 12</div>
+      <div class="ch-info">
+        <div class="ch-category" style="color:var(--amber)">Performance — JPA & Database</div>
+        <div class="ch-title">Problemy wydajności JPA — diagnoza i naprawa</div>
+        <div class="ch-desc">N+1, kartezjański produkt, brak indeksów, za duże fetch — to najczęstsze przyczyny powolnych aplikacji Spring. Senior musi umieć diagnostykować i naprawiać bez ślepego "dodaj cache".</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar">
+          <div class="cbar-l"><div class="fdot" style="background:var(--amber)"></div> N+1 Problem — diagnoza i naprawa</div>
+        </div>
+        <pre><span class="cm">// ❌ N+1: 1 zapytanie na listę + N zapytań per element</span>
+<span class="ty">List</span>&lt;<span class="ty">Order</span>&gt; orders = orderRepo.findAll();
+orders.forEach(o -> log.info(o.getCustomer().getName())); <span class="cm">// N queries!</span>
+
+<span class="cm">// ✅ FETCH JOIN — jedno zapytanie z JOIN</span>
+<span class="an">@Query</span>(<span class="st">"SELECT o FROM Order o JOIN FETCH o.customer"</span>)
+<span class="ty">List</span>&lt;<span class="ty">Order</span>&gt; <span class="fn">findAllWithCustomer</span>();
+
+<span class="cm">// ✅ @EntityGraph — deklaratywnie</span>
+<span class="an">@EntityGraph</span>(attributePaths = {<span class="st">"customer"</span>, <span class="st">"lines"</span>})
+<span class="ty">List</span>&lt;<span class="ty">Order</span>&gt; <span class="fn">findAll</span>();
+
+<span class="cm">// ❌ Kartezjański produkt: JOIN FETCH dwóch kolekcji</span>
+<span class="cm">// Order → List&lt;Lines&gt; + List&lt;Tags&gt; → O*L*T wierszy!</span>
+<span class="cm">// ✅ Rozwiązanie: dwa osobne zapytania</span>
+<span class="an">@Query</span>(<span class="st">"SELECT o FROM Order o JOIN FETCH o.lines WHERE o.id IN :ids"</span>)
+<span class="an">@Query</span>(<span class="st">"SELECT o FROM Order o JOIN FETCH o.tags WHERE o.id IN :ids"</span>)
+
+<span class="cm">// ✅ Lub hibernate.default_batch_fetch_size</span>
+spring.jpa.properties.hibernate.default_batch_fetch_size: 25
+<span class="cm">// Zamieni N zapytań na ceil(N/25) zapytań z IN clause</span></pre>
+      </div>
+
+      <div class="code">
+        <div class="cbar">
+          <div class="cbar-l"><div class="fdot" style="background:var(--amber)"></div> Projekcje — nie ładuj tego czego nie potrzebujesz</div>
+        </div>
+        <pre><span class="cm">// ❌ Ładuje cały entity ze wszystkimi relacjami</span>
+<span class="ty">List</span>&lt;<span class="ty">Order</span>&gt; orders = orderRepo.findAll();
+<span class="ty">List</span>&lt;<span class="ty">OrderDto</span>&gt; dtos = orders.stream()
+    .map(mapper::toDto).toList();
+
+<span class="cm">// ✅ Interface Projection — Spring Data generuje zapytanie</span>
+<span class="kw">public interface</span> <span class="ty">OrderSummary</span> {
+    <span class="ty">Long</span> <span class="fn">getId</span>();
+    <span class="ty">String</span> <span class="fn">getStatus</span>();
+    <span class="ty">BigDecimal</span> <span class="fn">getTotalAmount</span>();
+}
+<span class="ty">List</span>&lt;<span class="ty">OrderSummary</span>&gt; <span class="fn">findByStatus</span>(<span class="ty">OrderStatus</span> status);
+
+<span class="cm">// ✅ DTO Projection — JPQL konstruktor</span>
+<span class="an">@Query</span>(<span class="st">"SELECT new com.app.dto.OrderDto(o.id, o.status, o.total) FROM Order o"</span>)
+<span class="ty">List</span>&lt;<span class="ty">OrderDto</span>&gt; <span class="fn">findOrderSummaries</span>();
+
+<span class="cm">// ✅ Native Query + @SqlResultSetMapping dla złożonych raportów</span>
+<span class="an">@Query</span>(value = <span class="st">"""
+    SELECT o.id, o.status, SUM(ol.price) as total,
+           COUNT(ol.id) as item_count
+    FROM orders o JOIN order_lines ol ON ol.order_id = o.id
+    GROUP BY o.id, o.status
+    """</span>, nativeQuery = <span class="kw">true</span>)
+<span class="ty">List</span>&lt;<span class="ty">OrderReportRow</span>&gt; <span class="fn">generateReport</span>();</pre>
+      </div>
+    </div>
+
+    <div class="gap16"></div>
+    <div class="g3">
+      <div class="card">
+        <div class="card-h" style="color:var(--amber)">🔍 Diagnoza — SQL Logging</div>
+        <div class="card-b">
+          <div class="code" style="border:none;border-radius:0;background:transparent">
+            <pre style="padding:0;font-size:0.74rem"><span class="cm"># Zobaczysz każde zapytanie:</span>
+spring.jpa.show-sql: true
+spring.jpa.properties.hibernate.format_sql: true
+
+<span class="cm"># Z parametrami (Hibernate 6+):</span>
+logging.level.org.hibernate.orm.jdbc.bind: TRACE
+
+<span class="cm"># DataSource Proxy — statystyki:</span>
+<span class="cm"># Użyj datasource-proxy lub p6spy</span>
+<span class="cm"># Pokaże: ile zapytań, czas, N+1 pattern</span>
+
+<span class="cm"># Spring Boot DevTools — SQL w konsoli</span>
+<span class="cm"># Hibernate Statistics:</span>
+spring.jpa.properties.
+  hibernate.generate_statistics: true</pre>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h" style="color:var(--amber)">⚡ Paginacja</div>
+        <div class="card-b">
+          <div class="code" style="border:none;border-radius:0;background:transparent">
+            <pre style="padding:0;font-size:0.74rem"><span class="cm">// ❌ OFFSET pagination — wolna przy dużych danych</span>
+<span class="cm">// SELECT ... OFFSET 10000 LIMIT 20</span>
+<span class="cm">// DB skanuje 10020 wierszy!</span>
+
+<span class="cm">// ✅ Keyset pagination (cursor-based)</span>
+<span class="an">@Query</span>(<span class="st">"""
+    SELECT o FROM Order o
+    WHERE o.createdAt < :cursor
+    ORDER BY o.createdAt DESC
+    LIMIT :size
+    """</span>)
+<span class="ty">List</span>&lt;<span class="ty">Order</span>&gt; findPage(
+    <span class="ty">Instant</span> cursor, <span class="kw">int</span> size);
+
+<span class="cm">// ✅ Count query oddzielnie (Spring Data)</span>
+<span class="an">@Query</span>(value = <span class="st">"SELECT o FROM Order o JOIN o.lines l ..."</span>,
+       countQuery = <span class="st">"SELECT count(o) FROM Order o ..."</span>)
+<span class="ty">Page</span>&lt;<span class="ty">Order</span>&gt; <span class="fn">findAll</span>(<span class="ty">Pageable</span> p);</pre>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h" style="color:var(--amber)">🗄️ Indeksy — strategia</div>
+        <div class="card-b" style="font-size:0.83rem;color:var(--tx2);line-height:1.8">
+          <p style="margin-bottom:10px"><strong style="color:var(--tx)">Composite index</strong>: kolejność kolumn ma znaczenie. WHERE a=? AND b=? → index(a,b). Query na samo b nie użyje indeksu!</p>
+          <p style="margin-bottom:10px"><strong style="color:var(--tx)">Partial index</strong>: <code>WHERE status='ACTIVE'</code> w definicji — mały i szybki</p>
+          <p style="margin-bottom:10px"><strong style="color:var(--tx)">Covering index</strong>: INCLUDE dodatkowych kolumn — query tylko z indeksu bez heap scan</p>
+          <p><code>EXPLAIN ANALYZE</code> — zawsze przed i po dodaniu indeksu</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ 08 CONFIGURATION -->
+  <section class="chapter" id="config">
+    <div class="ch-head">
+      <div class="ch-num">08 / 12</div>
+      <div class="ch-info">
+        <div class="ch-category" style="color:var(--sky)">Konfiguracja zaawansowana</div>
+        <div class="ch-title">Auto-configuration, Conditional Beans, Properties</div>
+        <div class="ch-desc">Spring Boot Auto-configuration to magia która działa przez @Conditional. Senior musi rozumieć jak pisać własną auto-konfigurację, jak debugować dlaczego bean NIE jest tworzony i jak zarządzać konfiguracją w różnych środowiskach.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar">
+          <div class="cbar-l"><div class="fdot" style="background:var(--sky)"></div> Własna Auto-konfiguracja</div>
+        </div>
+        <pre><span class="cm">// 1. Klasa konfiguracyjna z warunkami</span>
+<span class="an">@AutoConfiguration</span>
+<span class="an">@ConditionalOnClass</span>(<span class="ty">RedissonClient</span>.class)
+<span class="an">@ConditionalOnMissingBean</span>(<span class="ty">RedissonClient</span>.class)
+<span class="an">@EnableConfigurationProperties</span>(<span class="ty">RedissonProperties</span>.class)
+<span class="kw">public class</span> <span class="ty">RedissonAutoConfiguration</span> {
+
+    <span class="an">@Bean</span>
+    <span class="an">@ConditionalOnProperty</span>(name = <span class="st">"redisson.enabled"</span>, havingValue = <span class="st">"true"</span>)
+    <span class="kw">public</span> <span class="ty">RedissonClient</span> <span class="fn">redissonClient</span>(<span class="ty">RedissonProperties</span> props) {
+        <span class="ty">Config</span> config = <span class="kw">new</span> <span class="ty">Config</span>();
+        config.useSingleServer().setAddress(props.getAddress());
+        <span class="kw">return</span> <span class="ty">Redisson</span>.create(config);
+    }
+}
+
+<span class="cm">// 2. Zarejestruj w META-INF/spring/org.springframework.boot</span>
+<span class="cm">//    .autoconfigure.AutoConfiguration.imports</span>
+com.mylib.RedissonAutoConfiguration
+
+<span class="cm">// 3. Debugowanie — co jest/nie jest tworzone:</span>
+<span class="cm">// Uruchom z --debug lub:</span>
+logging.level.org.springframework.boot.autoconfigure: DEBUG
+<span class="cm">// Raport: ConditionEvaluationReport</span></pre>
+      </div>
+
+      <div class="code">
+        <div class="cbar">
+          <div class="cbar-l"><div class="fdot" style="background:var(--sky)"></div> @ConfigurationProperties — type-safe config</div>
+        </div>
+        <pre><span class="cm">// ✅ Zamiast @Value("${...}") — strukturalna konfiguracja</span>
+<span class="an">@ConfigurationProperties</span>(prefix = <span class="st">"app.payment"</span>)
+<span class="an">@Validated</span>
+<span class="kw">public class</span> <span class="ty">PaymentProperties</span> {
+
+    <span class="an">@NotBlank</span>
+    <span class="kw">private</span> <span class="ty">String</span> apiKey;
+
+    <span class="an">@Min</span>(<span class="nu">1</span>) <span class="an">@Max</span>(<span class="nu">30</span>)
+    <span class="kw">private</span> <span class="ty">int</span> timeoutSeconds = <span class="nu">5</span>;
+
+    <span class="kw">private</span> <span class="ty">List</span>&lt;<span class="ty">String</span>&gt; allowedCurrencies = <span class="ty">List</span>.of(<span class="st">"PLN"</span>, <span class="st">"EUR"</span>);
+
+    <span class="kw">private</span> <span class="ty">Map</span>&lt;<span class="ty">String</span>, <span class="ty">String</span>&gt; endpoints = <span class="kw">new</span> <span class="ty">HashMap</span>&lt;&gt;();
+}
+
+<span class="cm"># application.yml</span>
+app:
+  payment:
+    api-key: ${PAYMENT_API_KEY}  <span class="cm"># z env var</span>
+    timeout-seconds: 10
+    allowed-currencies: [PLN, EUR, USD]
+    endpoints:
+      prod: https://api.payment.com
+      sandbox: https://sandbox.payment.com
+
+<span class="cm">// ✅ Conditional config per environment</span>
+<span class="an">@Profile</span>(<span class="st">"!test"</span>)  <span class="cm">// wszędzie oprócz test</span>
+<span class="an">@ConditionalOnProperty</span>(name = <span class="st">"feature.new-checkout"</span>, havingValue = <span class="st">"true"</span>)</pre>
+      </div>
+    </div>
+
+    <div class="gap16"></div>
+    <div class="alert alert-sky">
+      <span class="alert-label">🔒 Secrets Management — produkcja</span>
+      <strong>Nigdy nie commituj sekretów!</strong> W produkcji używaj: <strong>HashiCorp Vault</strong> (Spring Cloud Vault — automatyczne pobieranie i rotacja), <strong>AWS Secrets Manager / SSM Parameter Store</strong> (Spring Cloud AWS), <strong>Kubernetes Secrets</strong> (ExternalSecrets Operator + Vault/AWS). Env vars są bezpieczniejsze niż application.properties, ale nie idealne (logi procesu mogą je ujawnić).
+    </div>
+  </section>
+
+  <!-- ═══ 09 DESIGN PATTERNS -->
+  <section class="chapter" id="patterns">
+    <div class="ch-head">
+      <div class="ch-num">09 / 12</div>
+      <div class="ch-info">
+        <div class="ch-category" style="color:var(--violet)">Wzorce projektowe w Spring</div>
+        <div class="ch-title">GoF Patterns — gdzie Spring ich używa</div>
+        <div class="ch-desc">Spring jest skarbnicą wzorców projektowych. Senior rozumie nie tylko "jak używać" ale "dlaczego tak" i jak implementować własne rozszerzenia frameworka korzystając z tych wzorców.</div>
+      </div>
+    </div>
+
+    <div class="g2 gap24">
+      <div class="card">
+        <div class="card-h" style="color:var(--violet)">Wzorce używane przez Spring</div>
+        <div class="card-b">
+          <table class="tbl">
+            <thead><tr><th>Wzorzec</th><th>Gdzie w Spring</th></tr></thead>
+            <tbody>
+              <tr><td>Singleton</td><td>Domyślny scope beana. @Bean w @Configuration</td></tr>
+              <tr><td>Factory Method</td><td>BeanFactory, @Bean methods, FactoryBean</td></tr>
+              <tr><td>Proxy</td><td>AOP proxy, @Transactional, @Cacheable, @Lazy</td></tr>
+              <tr><td>Template Method</td><td>JdbcTemplate, RestTemplate, KafkaTemplate — <code>execute()</code></td></tr>
+              <tr><td>Observer</td><td>ApplicationEventPublisher / @EventListener</td></tr>
+              <tr><td>Strategy</td><td>ResourceLoader, HandlerMapping, MessageConverter</td></tr>
+              <tr><td>Decorator</td><td>BeanPostProcessor opakowujący beany w proxy</td></tr>
+              <tr><td>Adapter</td><td>HandlerAdapter, MessageListenerAdapter</td></tr>
+              <tr><td>Chain of Responsibility</td><td>Filter chain, Interceptor chain, SecurityFilterChain</td></tr>
+              <tr><td>Composite</td><td>CompositeHealthIndicator, CompoundTrigger</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div>
+        <div class="code">
+          <div class="cbar">
+            <div class="cbar-l"><div class="fdot" style="background:var(--violet)"></div> Strategy Pattern — dynamiczny wybór</div>
+          </div>
+          <pre style="font-size:0.76rem"><span class="cm">// Interfejs strategii</span>
+<span class="kw">public interface</span> <span class="ty">PaymentStrategy</span> {
+    <span class="ty">String</span> <span class="fn">supports</span>();
+    <span class="ty">PaymentResult</span> <span class="fn">pay</span>(<span class="ty">PaymentRequest</span> req);
+}
+
+<span class="cm">// Implementacje jako Spring Beany</span>
+<span class="an">@Service</span> <span class="kw">class</span> <span class="ty">CardPayment</span> <span class="kw">implements</span> <span class="ty">PaymentStrategy</span> {
+    <span class="kw">public</span> <span class="ty">String</span> <span class="fn">supports</span>() { <span class="kw">return</span> <span class="st">"CARD"</span>; }
+}
+<span class="an">@Service</span> <span class="kw">class</span> <span class="ty">BlikPayment</span> <span class="kw">implements</span> <span class="ty">PaymentStrategy</span> {
+    <span class="kw">public</span> <span class="ty">String</span> <span class="fn">supports</span>() { <span class="kw">return</span> <span class="st">"BLIK"</span>; }
+}
+
+<span class="cm">// Auto-kolekcja wszystkich strategii</span>
+<span class="an">@Service</span>
+<span class="kw">public class</span> <span class="ty">PaymentRouter</span> {
+    <span class="kw">private final</span> <span class="ty">Map</span>&lt;<span class="ty">String</span>, <span class="ty">PaymentStrategy</span>&gt; strategies;
+
+    <span class="kw">public</span> <span class="ty">PaymentRouter</span>(<span class="ty">List</span>&lt;<span class="ty">PaymentStrategy</span>&gt; strategies) {
+        <span class="cm">// Spring wstrzykuje WSZYSTKIE implementacje</span>
+        <span class="kw">this</span>.strategies = strategies.stream()
+            .collect(toMap(<span class="ty">PaymentStrategy</span>::supports, <span class="fn">identity</span>()));
+    }
+
+    <span class="kw">public</span> <span class="ty">PaymentResult</span> <span class="fn">route</span>(<span class="ty">PaymentRequest</span> req) {
+        <span class="kw">return</span> strategies.get(req.getMethod()).pay(req);
+    }
+}</pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ 10 PITFALLS -->
+  <section class="chapter" id="pitfalls">
+    <div class="ch-head">
+      <div class="ch-num">10 / 12</div>
+      <div class="ch-info">
+        <div class="ch-category" style="color:var(--rose)">Pułapki i anty-wzorce</div>
+        <div class="ch-title">Co często psuje produkcyjne aplikacje</div>
+        <div class="ch-desc">Lista najczęstszych błędów których unikanie odróżnia seniora od juniora. Każdy z nich był prawdziwym incydentem produkcyjnym.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="card">
+        <div class="card-h" style="color:var(--rose)">💥 Najgroźniejsze pułapki</div>
+        <div class="card-b">
+          <div class="rlist">
+            <div class="ritem">
+              <div class="ritem-key" style="color:var(--rose)">Lazy init prod</div>
+              <div class="ritem-val"><strong style="color:var(--tx)">spring.main.lazy-initialization=true</strong> w produkcji → pierwszy request obsługuje inicjalizację → timeouty. Używaj tylko w dev do szybszego startu.</div>
+            </div>
+            <div class="ritem">
+              <div class="ritem-key" style="color:var(--rose)">Singleton mutable state</div>
+              <div class="ritem-val">Pole instancji w @Service/@Controller jest dzielone między requestami. Race condition, wycieki danych między sesjami użytkowników.</div>
+            </div>
+            <div class="ritem">
+              <div class="ritem-key" style="color:var(--rose)">OpenSessionInView</div>
+              <div class="ritem-val"><strong style="color:var(--tx)">spring.jpa.open-in-view=true</strong> (domyślnie!) trzyma sesję Hibernate przez cały HTTP request → lazy loading w widoku → N+1. Wyłącz!</div>
+            </div>
+            <div class="ritem">
+              <div class="ritem-key" style="color:var(--rose)">@Async bez executor</div>
+              <div class="ritem-val">@Async bez własnego ThreadPoolTaskExecutor używa SimpleAsyncTaskExecutor — tworzy nowy wątek per wywołanie, bez limitu. Może zabić serwer.</div>
+            </div>
+            <div class="ritem">
+              <div class="ritem-key" style="color:var(--rose)">Tx boundary błąd</div>
+              <div class="ritem-val">@Transactional na prywatnej metodzie lub przy wywołaniu this.method() — proxy nie działa, brak transakcji, brak rollbacku. Cicho gubisz dane.</div>
+            </div>
+            <div class="ritem">
+              <div class="ritem-key" style="color:var(--rose)">Cascade ALL wszędzie</div>
+              <div class="ritem-val">CascadeType.ALL + orphanRemoval na relacji @ManyToMany → DELETE rodzica usuwa wszystkie dzieci, nawet te powiązane z innymi obiektami.</div>
+            </div>
+            <div class="ritem">
+              <div class="ritem-key" style="color:var(--rose)">fetchType EAGER</div>
+              <div class="ritem-val">@ManyToOne EAGER (domyślnie!) ładuje powiązany obiekt zawsze — nawet gdy go nie potrzebujesz. Użyj LAZY wszędzie i fetch join gdy potrzeba.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="code" style="margin-bottom:14px">
+          <div class="cbar">
+            <div class="cbar-l"><div class="fdot" style="background:var(--rose)"></div> @Async — poprawna konfiguracja</div>
+          </div>
+          <pre style="font-size:0.76rem"><span class="cm">// ❌ SimpleAsyncTaskExecutor — unbounded threads</span>
+<span class="an">@Async</span>
+<span class="kw">public void</span> <span class="fn">processEmail</span>(<span class="ty">Email</span> e) { ... }
+
+<span class="cm">// ✅ Bounded pool z queue i rejection policy</span>
+<span class="an">@Configuration</span>
+<span class="an">@EnableAsync</span>
+<span class="kw">public class</span> <span class="ty">AsyncConfig</span> <span class="kw">implements</span> <span class="ty">AsyncConfigurer</span> {
+
+    <span class="an">@Override</span>
+    <span class="kw">public</span> <span class="ty">Executor</span> <span class="fn">getAsyncExecutor</span>() {
+        <span class="ty">ThreadPoolTaskExecutor</span> exec = <span class="kw">new</span> <span class="ty">ThreadPoolTaskExecutor</span>();
+        exec.setCorePoolSize(<span class="nu">4</span>);
+        exec.setMaxPoolSize(<span class="nu">8</span>);
+        exec.setQueueCapacity(<span class="nu">100</span>);
+        exec.setRejectedExecutionHandler(<span class="kw">new</span> <span class="ty">CallerRunsPolicy</span>());
+        exec.setThreadNamePrefix(<span class="st">"async-email-"</span>);
+        exec.initialize();
+        <span class="kw">return</span> exec;
+    }
+
+    <span class="an">@Override</span>
+    <span class="kw">public</span> <span class="ty">AsyncUncaughtExceptionHandler</span> <span class="fn">getAsyncUncaughtExceptionHandler</span>() {
+        <span class="kw">return</span> (ex, method, args) ->
+            log.error(<span class="st">"Async error in {}: {}"</span>, method.getName(), ex.getMessage());
+    }
+}</pre>
+        </div>
+        <div class="alert alert-rose">
+          <span class="alert-label">🚨 Memory Leaks — co sprawdzać</span>
+          <strong>Static mutable collections:</strong> cache bez eviction, listeners bez deregistracji. <strong>ThreadLocal bez remove():</strong> szczególnie w thread poolach — dane z poprzedniego requestu wyciekają. <strong>Hibernate session cache:</strong> długa transakcja processująca tysiące obiektów → EntityManager rośnie w pamięci → call <code>em.flush(); em.clear();</code> co N iteracji.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ 11 JVM & GC -->
+  <section class="chapter" id="jvm">
+    <div class="ch-head">
+      <div class="ch-num">11 / 12</div>
+      <div class="ch-info">
+        <div class="ch-category" style="color:var(--teal)">JVM internals · GC Tuning</div>
+        <div class="ch-title">JVM, GC i optymalizacja pamięci</div>
+        <div class="ch-desc">Senior musi rozumieć model pamięci JVM, różnice między GC algorytmami i jak czytać heap dumps. Bez tej wiedzy nie diagnozujesz OOM, nie rozumiesz latency spikes i nie konfiguracji produkcyjnej JVM.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="card">
+        <div class="card-h" style="color:var(--teal)">🧠 Model pamięci JVM</div>
+        <div class="card-b">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:0.73rem;line-height:1.9;background:var(--s2);padding:14px;border-radius:6px;margin-bottom:14px">
+            <span style="color:var(--teal)">HEAP</span><br>
+            ├── Young Generation<br>
+            │   ├── Eden Space &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--mt)">← nowe obiekty</span><br>
+            │   ├── Survivor S0 &nbsp;&nbsp;&nbsp;<span style="color:var(--mt)">← po Minor GC</span><br>
+            │   └── Survivor S1 &nbsp;&nbsp;&nbsp;<span style="color:var(--mt)">← po Minor GC</span><br>
+            └── Old Generation &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--mt)">← długożyjące obiekty</span><br>
+            <br>
+            <span style="color:var(--violet)">NON-HEAP (Metaspace)</span> &nbsp;&nbsp;<span style="color:var(--mt)">← klasy, metody</span><br>
+            <span style="color:var(--amber)">Stack</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--mt)">← per thread, call frames</span><br>
+            <span style="color:var(--rose)">Direct Memory</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--mt)">← NIO, off-heap</span>
+          </div>
+          <div class="rlist">
+            <div class="ritem" style="padding:7px 0">
+              <div class="ritem-key" style="color:var(--teal);min-width:120px">Minor GC</div>
+              <div class="ritem-val">Czyści Young Generation. Szybki (&lt;50ms). Częsty.</div>
+            </div>
+            <div class="ritem" style="padding:7px 0">
+              <div class="ritem-key" style="color:var(--amber);min-width:120px">Major/Full GC</div>
+              <div class="ritem-val">Czyści Old Gen. Wolny, STW (Stop-The-World). Symptom problemu.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h" style="color:var(--teal)">⚙️ Wybór GC — kiedy co</div>
+        <div class="card-b">
+          <div class="rlist">
+            <div class="ritem">
+              <div class="ritem-key" style="color:var(--emerald);font-size:0.78rem">G1GC (domyślny)</div>
+              <div class="ritem-val">Dobry balans throughput/latency. Heap 4GB–32GB. Domyślny od Java 9. Większość aplikacji.</div>
+            </div>
+            <div class="ritem">
+              <div class="ritem-key" style="color:var(--sky);font-size:0.78rem">ZGC</div>
+              <div class="ritem-val">Ultra-niskie pauzy (&lt;1ms). Heap do terabajtów. Najlepszy dla aplikacji latency-sensitive (API, trading).</div>
+            </div>
+            <div class="ritem">
+              <div class="ritem-key" style="color:var(--violet);font-size:0.78rem">Shenandoah</div>
+              <div class="ritem-val">Podobny do ZGC. Lepszy na mniejszych heapach. RedHat/OpenJDK.</div>
+            </div>
+            <div class="ritem">
+              <div class="ritem-key" style="color:var(--amber);font-size:0.78rem">SerialGC</div>
+              <div class="ritem-val">Microservices z małą pamięcią (&lt;256MB). Spring Boot w kontenerach.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="gap16"></div>
+    <div class="code">
+      <div class="cbar">
+        <div class="cbar-l"><div class="fdot" style="background:var(--teal)"></div> JVM Flags — produkcja</div>
+      </div>
+      <pre style="font-size:0.76rem"><span class="cm"># Kontener Docker — fundamentalne</span>
+-XX:+UseContainerSupport              <span class="cm"># czytaj limity cgroups (Java 10+)</span>
+-XX:MaxRAMPercentage=75.0             <span class="cm"># 75% RAM kontenera na heap</span>
+-XX:InitialRAMPercentage=50.0         <span class="cm"># zacznij od 50% — szybszy start</span>
+
+<span class="cm"># GC — wybierz jedno</span>
+-XX:+UseZGC                           <span class="cm"># niskie latency</span>
+-XX:+UseG1GC                          <span class="cm"># dobry balans (domyślny)</span>
+
+<span class="cm"># Logi GC — do analizy</span>
+-Xlog:gc*:file=/logs/gc.log:time,uptime:filecount=5,filesize=20m
+
+<span class="cm"># Heap dump przy OOM (K8s: plik pojawi się na PVC)</span>
+-XX:+HeapDumpOnOutOfMemoryError
+-XX:HeapDumpPath=/dumps/heap.hprof
+
+<span class="cm"># Exit przy OOM zamiast degradacji</span>
+-XX:+ExitOnOutOfMemoryError
+
+<span class="cm"># Metaspace — ogranicz jeśli ładujesz dużo klas dynamicznie</span>
+-XX:MaxMetaspaceSize=256m
+
+<span class="cm"># JFR — low-overhead profiling (zawsze włącz w prod)</span>
+-XX:StartFlightRecording=duration=0,filename=/jfr/recording.jfr,maxsize=100m</pre>
+    </div>
+  </section>
+
+  <!-- ═══ 12 CHECKLIST -->
+  <section class="chapter" id="checklist">
+    <div class="ch-head">
+      <div class="ch-num">12 / 12</div>
+      <div class="ch-info">
+        <div class="ch-category" style="color:var(--gold)">Senior Checklist</div>
+        <div class="ch-title">Code Review — o co pytać na każdym PR</div>
+        <div class="ch-desc">Lista pytań które senior powinien zadać przy review każdego nowego kodu Spring — od architektury po bezpieczeństwo i wydajność. Jeśli odpowiedź na większość to "tak" — kod jest produkcyjny.</div>
+      </div>
+    </div>
+
+    <div class="g3">
+      <div class="card">
+        <div class="card-h" style="color:var(--gold)">🏗️ Architektura</div>
+        <div class="card-b" style="font-size:0.85rem;color:var(--tx2);line-height:1.9">
+          <p>□ Czy logika biznesowa jest w domenie, nie w kontrolerze lub repozytorium?</p>
+          <p>□ Czy serwisy mają jedną odpowiedzialność (SRP)?</p>
+          <p>□ Czy zależności idą w jednym kierunku (UI → Application → Domain → Infrastructure)?</p>
+          <p>□ Czy entity nie wychodzą poza warstwę serwisową (używamy DTO)?</p>
+          <p>□ Czy nowe feature można przetestować bez uruchamiania całego Spring kontekstu?</p>
+          <p>□ Czy moduły mogą być wymienione bez zmian w reszcie kodu?</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h" style="color:var(--gold)">⚡ Performance</div>
+        <div class="card-b" style="font-size:0.85rem;color:var(--tx2);line-height:1.9">
+          <p>□ Czy nie ma N+1 (sprawdź z show-sql=true)?</p>
+          <p>□ Czy używamy projekcji zamiast pełnych entity tam gdzie można?</p>
+          <p>□ Czy paginacja jest cursor-based dla dużych zbiorów?</p>
+          <p>□ Czy zapytania w pętlach nie robią dodatkowych zapytań do DB?</p>
+          <p>□ Czy metody @Transactional są możliwie krótkie?</p>
+          <p>□ Czy cache ma TTL i eviction policy?</p>
+          <p>□ Czy @Async ma bounded thread pool?</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h" style="color:var(--gold)">🔐 Bezpieczeństwo</div>
+        <div class="card-b" style="font-size:0.85rem;color:var(--tx2);line-height:1.9">
+          <p>□ Czy brak sekretów w kodzie i w konfiguracji w repozytorium?</p>
+          <p>□ Czy validation jest na DTO wejściowym (@Valid)?</p>
+          <p>□ Czy autoryzacja jest sprawdzana na poziomie metody (@PreAuthorize)?</p>
+          <p>□ Czy SQL jest paramteryzowany (brak string concatenation)?</p>
+          <p>□ Czy zewnętrzne ID są walidowane pod kątem dostępu (IDOR)?</p>
+          <p>□ Czy wrażliwe dane nie trafiają do logów?</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h" style="color:var(--gold)">🧪 Testy</div>
+        <div class="card-b" style="font-size:0.85rem;color:var(--tx2);line-height:1.9">
+          <p>□ Czy logika biznesowa jest pokryta unit testami (bez Spring)?</p>
+          <p>□ Czy jest test integracyjny z prawdziwą bazą (Testcontainers)?</p>
+          <p>□ Czy edge cases są przetestowane (null, puste kolekcje, graniczne wartości)?</p>
+          <p>□ Czy testy są deterministyczne (nie zależą od kolejności, czasu, losowości)?</p>
+          <p>□ Czy zewnętrzne serwisy są mockowane (WireMock)?</p>
+          <p>□ Czy testy mają czytelne nazwy opisujące scenariusz?</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h" style="color:var(--gold)">📊 Observability</div>
+        <div class="card-b" style="font-size:0.85rem;color:var(--tx2);line-height:1.9">
+          <p>□ Czy są strukturowane logi (JSON) z correlation ID?</p>
+          <p>□ Czy krytyczne operacje mają metryki (counter, timer)?</p>
+          <p>□ Czy błędy są logowane z pełnym kontekstem (user id, request id)?</p>
+          <p>□ Czy health endpoint pokazuje status zależności?</p>
+          <p>□ Czy tracing jest włączony i działa przez serwisy?</p>
+          <p>□ Czy są alerty na kluczowe metryki (error rate, latency p99)?</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h" style="color:var(--gold)">🚀 Produkcja</div>
+        <div class="card-b" style="font-size:0.85rem;color:var(--tx2);line-height:1.9">
+          <p>□ Czy graceful shutdown jest skonfigurowany?</p>
+          <p>□ Czy timeout na wszystkich zewnętrznych wywołaniach?</p>
+          <p>□ Czy circuit breaker chroni zewnętrzne zależności?</p>
+          <p>□ Czy migracje DB są backwards-compatible (nie blokujące)?</p>
+          <p>□ Czy feature flagi pozwalają rollback bez deploymentu?</p>
+          <p>□ Czy jest runbook co zrobić gdy serwis padnie?</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="gap24"></div>
+    <div class="strip" style="border-color:var(--gold);background:rgba(240,192,64,0.04)">
+      <div class="strip-icon">🏆</div>
+      <div>
+        <strong>Senior mindset:</strong> Kod działa dla happy path — to junior robi. Senior myśli o tym co się stanie gdy DB jest wolna, gdy Kafka nie odpowiada, gdy deploy failuje w połowie, gdy użytkownik wysyła unexpected input, gdy ruch wzrośnie 10x. Każda decyzja architektoniczna to trade-off — senior umie go nazwać i obronić.
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div><span class="footer-title">Spring Senior Knowledge Map</span> · Java 21 · Spring Boot 3.x · 2026</div>
+  <div>12 rozdziałów · Senior / Expert Level</div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spring Data JPA — Persistence Layer</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f1419;
+  --s1: #1a1f2e;
+  --s2: #242b3d;
+  --s3: #2e3648;
+  --bd: #3d4760;
+  --bd2: #4a5374;
+  --tx: #e6edf3;
+  --tx2: #adbac7;
+  --mt: #768390;
+  --jpa: #FF6B35;
+  --hibernate: #59666C;
+  --data: #4A90E2;
+  --success: #2ea043;
+  --warn: #d29922;
+  --danger: #f85149;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--tx);
+  font-family: 'Nunito', sans-serif;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+.back-to-menu{position:fixed;top:20px;left:20px;z-index:9999;background:rgba(0,0,0,0.8);backdrop-filter:blur(10px);border:2px solid rgba(255,255,255,0.2);border-radius:50px;padding:12px 24px;display:flex;align-items:center;gap:10px;text-decoration:none;color:#fff;font-family:inherit;font-size:0.85rem;font-weight:600;letter-spacing:1px;transition:all .3s ease;box-shadow:0 4px 20px rgba(0,0,0,0.3)}
+.back-to-menu:hover{background:rgba(255,255,255,0.15);border-color:rgba(255,255,255,0.4);transform:translateX(-3px);box-shadow:0 6px 30px rgba(0,0,0,0.5)}
+.back-arrow{font-size:1.2rem;transition:transform .3s ease}
+.back-to-menu:hover .back-arrow{transform:translateX(-3px)}
+
+.hdr {
+  background: linear-gradient(135deg, #1a1f2e 0%, #242b3d 100%);
+  border-bottom: 3px solid var(--jpa);
+  padding: 80px 64px 60px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hdr::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(255, 107, 53, 0.1), transparent);
+  border-radius: 50%;
+}
+
+.hdr-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: rgba(255, 107, 53, 0.15);
+  border: 1px solid var(--jpa);
+  border-radius: 20px;
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: var(--jpa);
+  margin-bottom: 24px;
+}
+
+h1 {
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -2px;
+  margin-bottom: 16px;
+}
+
+.hdr-subtitle {
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.9rem;
+  color: var(--tx2);
+  letter-spacing: 1px;
+  margin-bottom: 24px;
+}
+
+.hdr-desc {
+  font-size: 1.05rem;
+  color: var(--tx2);
+  max-width: 720px;
+  line-height: 1.8;
+}
+
+.tech-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.tech-badge {
+  padding: 8px 16px;
+  background: var(--s2);
+  border: 1px solid var(--bd);
+  border-radius: 8px;
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.75rem;
+  color: var(--tx2);
+}
+
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  background: rgba(15, 20, 25, 0.98);
+  backdrop-filter: blur(12px);
+  border-bottom: 2px solid var(--bd);
+  padding: 0 64px;
+  display: flex;
+  overflow-x: auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.nav a {
+  color: var(--tx2);
+  text-decoration: none;
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  padding: 16px 18px;
+  white-space: nowrap;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+}
+
+.nav a:hover {
+  color: var(--jpa);
+  border-bottom-color: var(--jpa);
+}
+
+.main {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 64px 24px 120px;
+}
+
+.sec {
+  margin-bottom: 88px;
+  animation: rise 0.5s ease backwards;
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.sec:nth-child(1){animation-delay:.04s}.sec:nth-child(2){animation-delay:.07s}
+.sec:nth-child(3){animation-delay:.10s}.sec:nth-child(4){animation-delay:.13s}
+.sec:nth-child(5){animation-delay:.16s}.sec:nth-child(6){animation-delay:.19s}
+.sec:nth-child(7){animation-delay:.22s}.sec:nth-child(8){animation-delay:.25s}
+
+.sec-ey {
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--jpa);
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+
+.sec-title {
+  font-size: 2.2rem;
+  font-weight: 900;
+  letter-spacing: -1px;
+  line-height: 1.1;
+  margin-bottom: 12px;
+}
+
+.sec-desc {
+  font-size: 0.95rem;
+  color: var(--tx2);
+  max-width: 720px;
+  line-height: 1.8;
+  margin-bottom: 32px;
+}
+
+.sec-rule {
+  height: 2px;
+  background: linear-gradient(90deg, var(--jpa), transparent);
+  margin-bottom: 32px;
+}
+
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.g3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+
+@media (max-width: 900px) {
+  .g2, .g3 { grid-template-columns: 1fr; }
+  .hdr { padding: 60px 24px 40px; }
+  .nav { padding: 0 20px; }
+  h1 { font-size: 2.5rem; }
+}
+
+.card {
+  background: var(--s1);
+  border: 2px solid var(--bd);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s;
+}
+
+.card:hover {
+  border-color: var(--jpa);
+  box-shadow: 0 4px 16px rgba(255, 107, 53, 0.2);
+}
+
+.cl {
+  padding: 14px 20px;
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border-bottom: 2px solid var(--bd);
+}
+
+.cl-jpa { background: var(--jpa); color: #000; }
+.cl-data { background: var(--data); color: #000; }
+.cl-info { background: var(--s2); color: var(--data); }
+
+.code {
+  background: #0d1117;
+  border: 1px solid var(--bd);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.cbar {
+  background: #010409;
+  padding: 12px 18px;
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.7rem;
+  color: var(--mt);
+  border-bottom: 1px solid var(--bd);
+}
+
+pre {
+  padding: 24px;
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.8rem;
+  line-height: 1.8;
+  overflow-x: auto;
+  color: #c9d1d9;
+}
+
+.kw { color: #ff7b72; font-weight: 600; }
+.fn { color: #d2a8ff; }
+.str { color: #a5d6ff; }
+.num { color: #79c0ff; }
+.cmt { color: #8b949e; font-style: italic; }
+.cls { color: #ffa657; }
+.ann { color: #ffa657; }
+.at { color: #7ee787; }
+
+.t { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+.t th {
+  background: var(--s2);
+  color: var(--tx);
+  padding: 14px 18px;
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-bottom: 2px solid var(--bd);
+  font-family: 'Source Code Pro', monospace;
+}
+.t td {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--bd);
+  color: var(--tx2);
+  vertical-align: top;
+  line-height: 1.6;
+}
+.t tr:last-child td { border-bottom: none; }
+.t tr:hover { background: var(--s2); }
+.t td:first-child {
+  color: var(--tx);
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.alert {
+  border-left: 4px solid;
+  padding: 18px 22px;
+  border-radius: 0 12px 12px 0;
+  font-size: 0.9rem;
+  line-height: 1.8;
+  margin: 16px 0;
+}
+
+.alert strong {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+
+.alert.jpa { border-color: var(--jpa); background: rgba(255, 107, 53, 0.1); }
+.alert.jpa strong { color: var(--jpa); }
+.alert.success { border-color: var(--success); background: rgba(46, 160, 67, 0.1); }
+.alert.success strong { color: var(--success); }
+.alert.warn { border-color: var(--warn); background: rgba(210, 153, 34, 0.1); }
+.alert.warn strong { color: var(--warn); }
+
+code {
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.85em;
+  background: var(--s2);
+  border: 1px solid var(--bd);
+  border-radius: 4px;
+  padding: 2px 6px;
+  color: var(--jpa);
+  font-weight: 600;
+}
+</style>
+</head>
+<body>
+
+<a href="index.html" class="back-to-menu"><span class="back-arrow">←</span><span>MENU</span></a>
+
+<header class="hdr">
+  <div class="hdr-badge">
+    <span>🗄️ PERSISTENCE LAYER</span>
+  </div>
+  
+  <h1>Spring Data JPA</h1>
+  
+  <div class="hdr-subtitle">// hibernate · entities · repositories · queries · relationships · transactions</div>
+  
+  <p class="hdr-desc">
+    Spring Data JPA to abstrakcja nad Hibernate/JPA. Zero SQL — definiujesz encje i relacje adnotacjami, 
+    Spring generuje implementację repository. JPQL, Criteria API, native queries, paginacja, sortowanie — wszystko out of the box.
+  </p>
+
+  <div class="tech-stack">
+    <div class="tech-badge">JPA 3.1</div>
+    <div class="tech-badge">Hibernate 6.4</div>
+    <div class="tech-badge">Spring Data JPA</div>
+    <div class="tech-badge">JPQL</div>
+    <div class="tech-badge">Criteria API</div>
+  </div>
+</header>
+
+<nav class="nav">
+  <a href="#entities">Entities</a>
+  <a href="#repositories">Repositories</a>
+  <a href="#relationships">Relationships</a>
+  <a href="#queries">Custom Queries</a>
+  <a href="#specifications">Specifications</a>
+  <a href="#transactions">Transactions</a>
+  <a href="#performance">Performance</a>
+</nav>
+
+<main class="main">
+
+<!-- ENTITIES -->
+<section class="sec" id="entities">
+  <div class="sec-ey">01 — mapowanie obiektów</div>
+  <div class="sec-title">JPA Entities — @Entity</div>
+  <p class="sec-desc">Entity to POJO mapowany na tabelę w bazie. @Entity + @Table + @Id i masz object-relational mapping. Hibernate generuje DDL i zapytania SQL automatycznie.</p>
+  <div class="sec-rule"></div>
+
+  <div class="code">
+    <div class="cbar"><span>User.java — podstawowa entity</span></div>
+    <pre><span class="kw">import</span> jakarta.persistence.*;
+<span class="kw">import</span> java.time.LocalDateTime;
+
+<span class="ann">@Entity</span>
+<span class="ann">@Table</span>(name = <span class="str">"users"</span>)
+<span class="kw">public class</span> <span class="cls">User</span> {
+  
+  <span class="ann">@Id</span>
+  <span class="ann">@GeneratedValue</span>(strategy = <span class="cls">GenerationType</span>.IDENTITY)
+  <span class="kw">private</span> <span class="cls">Long</span> id;
+  
+  <span class="ann">@Column</span>(nullable = <span class="kw">false</span>, unique = <span class="kw">true</span>, length = <span class="num">100</span>)
+  <span class="kw">private</span> <span class="cls">String</span> email;
+  
+  <span class="ann">@Column</span>(name = <span class="str">"full_name"</span>, length = <span class="num">255</span>)
+  <span class="kw">private</span> <span class="cls">String</span> fullName;
+  
+  <span class="ann">@Column</span>(nullable = <span class="kw">false</span>)
+  <span class="kw">private</span> <span class="cls">String</span> password;
+  
+  <span class="ann">@Enumerated</span>(<span class="cls">EnumType</span>.STRING)
+  <span class="kw">private</span> <span class="cls">UserRole</span> role;
+  
+  <span class="ann">@Column</span>(name = <span class="str">"created_at"</span>, updatable = <span class="kw">false</span>)
+  <span class="kw">private</span> <span class="cls">LocalDateTime</span> createdAt;
+  
+  <span class="ann">@Column</span>(name = <span class="str">"updated_at"</span>)
+  <span class="kw">private</span> <span class="cls">LocalDateTime</span> updatedAt;
+  
+  <span class="cmt">// Automatyczne timestampy</span>
+  <span class="ann">@PrePersist</span>
+  <span class="kw">protected void</span> <span class="fn">onCreate</span>() {
+    createdAt = <span class="cls">LocalDateTime</span>.<span class="fn">now</span>();
+    updatedAt = <span class="cls">LocalDateTime</span>.<span class="fn">now</span>();
+  }
+  
+  <span class="ann">@PreUpdate</span>
+  <span class="kw">protected void</span> <span class="fn">onUpdate</span>() {
+    updatedAt = <span class="cls">LocalDateTime</span>.<span class="fn">now</span>();
+  }
+  
+  <span class="cmt">// getters, setters, constructors...</span>
+}</pre>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <div class="cl cl-jpa">📋 Najważniejsze adnotacje Entity</div>
+    <table class="t">
+      <tr><th>Adnotacja</th><th>Zastosowanie</th></tr>
+      <tr><td>@Entity</td><td>Oznacza klasę jako JPA entity (mapowana na tabelę)</td></tr>
+      <tr><td>@Table(name="...")</td><td>Nazwa tabeli w bazie (jeśli inna niż nazwa klasy)</td></tr>
+      <tr><td>@Id</td><td>Primary key</td></tr>
+      <tr><td>@GeneratedValue</td><td>Auto-generowanie ID: IDENTITY (auto_increment), SEQUENCE, UUID</td></tr>
+      <tr><td>@Column</td><td>Konfiguracja kolumny: name, nullable, unique, length</td></tr>
+      <tr><td>@Enumerated</td><td>Mapuj enum: STRING (nazwa) lub ORDINAL (liczba, BAD)</td></tr>
+      <tr><td>@Temporal</td><td>Mapuj Date/Calendar: DATE, TIME, TIMESTAMP (deprecated w Javie 8+)</td></tr>
+      <tr><td>@Lob</td><td>Large Object — TEXT/BLOB w bazie</td></tr>
+      <tr><td>@Transient</td><td>Pole NIE mapowane do bazy (tylko w pamięci)</td></tr>
+      <tr><td>@PrePersist/@PreUpdate</td><td>Callback przed save/update (np. timestamp)</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- REPOSITORIES -->
+<section class="sec" id="repositories">
+  <div class="sec-ey">02 — data access layer</div>
+  <div class="sec-title">Spring Data Repositories</div>
+  <p class="sec-desc">Zero implementacji DAO! Definiujesz interface extends JpaRepository — Spring generuje implementację w runtime. CRUD + paginacja + sortowanie za darmo.</p>
+  <div class="sec-rule"></div>
+
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><span>UserRepository.java</span></div>
+      <pre><span class="kw">import</span> org.springframework.data.jpa.repository.*;
+<span class="kw">import</span> java.util.*;
+
+<span class="kw">public interface</span> <span class="cls">UserRepository</span> 
+    <span class="kw">extends</span> <span class="cls">JpaRepository</span>&lt;<span class="cls">User</span>, <span class="cls">Long</span>&gt; {
+  
+  <span class="cmt">// Derived query methods — Spring generuje SQL!</span>
+  <span class="cls">Optional</span>&lt;<span class="cls">User</span>&gt; <span class="fn">findByEmail</span>(<span class="cls">String</span> email);
+  
+  <span class="cls">List</span>&lt;<span class="cls">User</span>&gt; <span class="fn">findByRole</span>(<span class="cls">UserRole</span> role);
+  
+  <span class="cls">List</span>&lt;<span class="cls">User</span>&gt; <span class="fn">findByFullNameContainingIgnoreCase</span>(
+    <span class="cls">String</span> name
+  );
+  
+  <span class="kw">boolean</span> <span class="fn">existsByEmail</span>(<span class="cls">String</span> email);
+  
+  <span class="kw">long</span> <span class="fn">countByRole</span>(<span class="cls">UserRole</span> role);
+  
+  <span class="kw">void</span> <span class="fn">deleteByEmail</span>(<span class="cls">String</span> email);
+}</pre>
+    </div>
+
+    <div class="card">
+      <div class="cl cl-data">🔍 Derived Query Keywords</div>
+      <table class="t" style="font-size:0.75rem">
+        <tr><th>Keyword</th><th>SQL</th></tr>
+        <tr><td>findBy...</td><td>SELECT WHERE</td></tr>
+        <tr><td>...And...</td><td>AND</td></tr>
+        <tr><td>...Or...</td><td>OR</td></tr>
+        <tr><td>...Containing</td><td>LIKE %x%</td></tr>
+        <tr><td>...StartingWith</td><td>LIKE x%</td></tr>
+        <tr><td>...EndingWith</td><td>LIKE %x</td></tr>
+        <tr><td>...IgnoreCase</td><td>UPPER(...)</td></tr>
+        <tr><td>...OrderBy...Asc</td><td>ORDER BY ASC</td></tr>
+        <tr><td>existsBy...</td><td>SELECT EXISTS</td></tr>
+        <tr><td>countBy...</td><td>SELECT COUNT</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="code" style="margin-top:20px">
+    <div class="cbar"><span>Użycie repository w Service</span></div>
+    <pre><span class="ann">@Service</span>
+<span class="kw">public class</span> <span class="cls">UserService</span> {
+  
+  <span class="kw">private final</span> <span class="cls">UserRepository</span> userRepository;
+  
+  <span class="kw">public</span> <span class="fn">UserService</span>(<span class="cls">UserRepository</span> repo) {
+    <span class="kw">this</span>.userRepository = repo;
+  }
+  
+  <span class="cmt">// CRUD za darmo!</span>
+  <span class="kw">public</span> <span class="cls">User</span> <span class="fn">save</span>(<span class="cls">User</span> user) {
+    <span class="kw">return</span> userRepository.<span class="fn">save</span>(user);
+  }
+  
+  <span class="kw">public</span> <span class="cls">Optional</span>&lt;<span class="cls">User</span>&gt; <span class="fn">findById</span>(<span class="cls">Long</span> id) {
+    <span class="kw">return</span> userRepository.<span class="fn">findById</span>(id);
+  }
+  
+  <span class="kw">public</span> <span class="cls">List</span>&lt;<span class="cls">User</span>&gt; <span class="fn">findAll</span>() {
+    <span class="kw">return</span> userRepository.<span class="fn">findAll</span>();
+  }
+  
+  <span class="kw">public void</span> <span class="fn">deleteById</span>(<span class="cls">Long</span> id) {
+    userRepository.<span class="fn">deleteById</span>(id);
+  }
+  
+  <span class="cmt">// Paginacja + sortowanie</span>
+  <span class="kw">public</span> <span class="cls">Page</span>&lt;<span class="cls">User</span>&gt; <span class="fn">findAll</span>(<span class="kw">int</span> page, <span class="kw">int</span> size) {
+    <span class="cls">Pageable</span> pageable = <span class="cls">PageRequest</span>.<span class="fn">of</span>(
+      page, 
+      size, 
+      <span class="cls">Sort</span>.<span class="fn">by</span>(<span class="str">"createdAt"</span>).<span class="fn">descending</span>()
+    );
+    <span class="kw">return</span> userRepository.<span class="fn">findAll</span>(pageable);
+  }
+}</pre>
+  </div>
+
+  <div class="alert success" style="margin-top:16px">
+    <strong>✓ JpaRepository daje za darmo:</strong>
+    save(), saveAll(), findById(), findAll(), findAllById(), count(), deleteById(), delete(), deleteAll(), existsById(), flush(). Plus wsparcie dla Page&lt;T&gt;, Sort, Pageable. Zero SQL!
+  </div>
+</section>
+
+<!-- RELATIONSHIPS -->
+<section class="sec" id="relationships">
+  <div class="sec-ey">03 — relacje między encjami</div>
+  <div class="sec-title">JPA Relationships</div>
+  <p class="sec-desc">@OneToMany, @ManyToOne, @ManyToMany, @OneToOne — mapowanie relacji bazodanowych. Cascade, fetch type (LAZY/EAGER), orphan removal — kontroluj zachowanie.</p>
+  <div class="sec-rule"></div>
+
+  <div class="code">
+    <div class="cbar"><span>@OneToMany / @ManyToOne — User ma wiele Orders</span></div>
+    <pre><span class="cmt">// User.java</span>
+<span class="ann">@Entity</span>
+<span class="kw">public class</span> <span class="cls">User</span> {
+  <span class="ann">@Id</span> <span class="ann">@GeneratedValue</span>
+  <span class="kw">private</span> <span class="cls">Long</span> id;
+  
+  <span class="cmt">// Jeden user ma wiele zamówień</span>
+  <span class="ann">@OneToMany</span>(
+    mappedBy = <span class="str">"user"</span>,           <span class="cmt">// pole w Order.java</span>
+    cascade = <span class="cls">CascadeType</span>.ALL,
+    orphanRemoval = <span class="kw">true</span>,
+    fetch = <span class="cls">FetchType</span>.LAZY      <span class="cmt">// DEFAULT, dobre!</span>
+  )
+  <span class="kw">private</span> <span class="cls">List</span>&lt;<span class="cls">Order</span>&gt; orders = <span class="kw">new</span> <span class="cls">ArrayList</span>&lt;&gt;();
+}
+
+<span class="cmt">// Order.java</span>
+<span class="ann">@Entity</span>
+<span class="ann">@Table</span>(name = <span class="str">"orders"</span>)
+<span class="kw">public class</span> <span class="cls">Order</span> {
+  <span class="ann">@Id</span> <span class="ann">@GeneratedValue</span>
+  <span class="kw">private</span> <span class="cls">Long</span> id;
+  
+  <span class="cmt">// Wiele zamówień należy do jednego usera</span>
+  <span class="ann">@ManyToOne</span>(fetch = <span class="cls">FetchType</span>.LAZY)
+  <span class="ann">@JoinColumn</span>(name = <span class="str">"user_id"</span>)  <span class="cmt">// FK w tabeli orders</span>
+  <span class="kw">private</span> <span class="cls">User</span> user;
+}</pre>
+  </div>
+
+  <div class="code" style="margin-top:20px">
+    <div class="cbar"><span>@ManyToMany — Student ↔ Course (join table)</span></div>
+    <pre><span class="cmt">// Student.java</span>
+<span class="ann">@Entity</span>
+<span class="kw">public class</span> <span class="cls">Student</span> {
+  <span class="ann">@Id</span> <span class="ann">@GeneratedValue</span>
+  <span class="kw">private</span> <span class="cls">Long</span> id;
+  
+  <span class="ann">@ManyToMany</span>
+  <span class="ann">@JoinTable</span>(
+    name = <span class="str">"student_course"</span>,              <span class="cmt">// join table</span>
+    joinColumns = <span class="ann">@JoinColumn</span>(name = <span class="str">"student_id"</span>),
+    inverseJoinColumns = <span class="ann">@JoinColumn</span>(name = <span class="str">"course_id"</span>)
+  )
+  <span class="kw">private</span> <span class="cls">Set</span>&lt;<span class="cls">Course</span>&gt; courses = <span class="kw">new</span> <span class="cls">HashSet</span>&lt;&gt;();
+}
+
+<span class="cmt">// Course.java</span>
+<span class="ann">@Entity</span>
+<span class="kw">public class</span> <span class="cls">Course</span> {
+  <span class="ann">@Id</span> <span class="ann">@GeneratedValue</span>
+  <span class="kw">private</span> <span class="cls">Long</span> id;
+  
+  <span class="ann">@ManyToMany</span>(mappedBy = <span class="str">"courses"</span>)
+  <span class="kw">private</span> <span class="cls">Set</span>&lt;<span class="cls">Student</span>&gt; students = <span class="kw">new</span> <span class="cls">HashSet</span>&lt;&gt;();
+}</pre>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <div class="cl cl-jpa">⚙️ Cascade Types & Fetch Strategies</div>
+    <table class="t">
+      <tr><th>Opcja</th><th>Co robi</th></tr>
+      <tr><td>CascadeType.PERSIST</td><td>save() parent → save() children automatycznie</td></tr>
+      <tr><td>CascadeType.MERGE</td><td>merge() parent → merge() children</td></tr>
+      <tr><td>CascadeType.REMOVE</td><td>delete() parent → delete() children</td></tr>
+      <tr><td>CascadeType.ALL</td><td>Wszystkie cascade operations</td></tr>
+      <tr><td>orphanRemoval=true</td><td>Usuń child jeśli usunięty z kolekcji parent</td></tr>
+      <tr><td>FetchType.LAZY</td><td>Załaduj tylko gdy dostęp (domyślne dla @OneToMany/@ManyToMany)</td></tr>
+      <tr><td>FetchType.EAGER</td><td>Załaduj od razu JOIN (domyślne dla @ManyToOne/@OneToOne)</td></tr>
+    </table>
+  </div>
+
+  <div class="alert warn" style="margin-top:16px">
+    <strong>⚠️ N+1 Problem!</strong>
+    LAZY loading może powodować N+1 queries: pobierz 100 orders → dla każdego order osobne query po user (101 zapytań!). Rozwiązanie: @EntityGraph, JOIN FETCH w JPQL, lub projection DTO. Zawsze sprawdzaj logi SQL w development!
+  </div>
+</section>
+
+<!-- CUSTOM QUERIES -->
+<section class="sec" id="queries">
+  <div class="sec-ey">04 — własne zapytania</div>
+  <div class="sec-title">Custom Queries — @Query</div>
+  <p class="sec-desc">Derived queries mają limit złożoności. Dla skomplikowanych zapytań używaj @Query z JPQL (Java Persistence Query Language) lub native SQL.</p>
+  <div class="sec-rule"></div>
+
+  <div class="code">
+    <div class="cbar"><span>JPQL — object-oriented SQL</span></div>
+    <pre><span class="kw">public interface</span> <span class="cls">UserRepository</span> <span class="kw">extends</span> <span class="cls">JpaRepository</span>&lt;<span class="cls">User</span>, <span class="cls">Long</span>&gt; {
+  
+  <span class="cmt">// JPQL — query po encjach (nie tabelach!)</span>
+  <span class="ann">@Query</span>(<span class="str">"SELECT u FROM User u WHERE u.email = :email"</span>)
+  <span class="cls">Optional</span>&lt;<span class="cls">User</span>&gt; <span class="fn">findByEmailJpql</span>(<span class="ann">@Param</span>(<span class="str">"email"</span>) <span class="cls">String</span> email);
+  
+  <span class="cmt">// JOIN FETCH — rozwiązuje N+1 problem</span>
+  <span class="ann">@Query</span>(<span class="str">"SELECT u FROM User u LEFT JOIN FETCH u.orders WHERE u.id = :id"</span>)
+  <span class="cls">Optional</span>&lt;<span class="cls">User</span>&gt; <span class="fn">findByIdWithOrders</span>(<span class="ann">@Param</span>(<span class="str">"id"</span>) <span class="cls">Long</span> id);
+  
+  <span class="cmt">// Projekcja — zwróć tylko wybrane pola (DTO)</span>
+  <span class="ann">@Query</span>(<span class="str">"""
+    SELECT new com.example.dto.UserSummary(u.id, u.email, u.fullName)
+    FROM User u
+    WHERE u.role = :role
+    """</span>)
+  <span class="cls">List</span>&lt;<span class="cls">UserSummary</span>&gt; <span class="fn">findSummaryByRole</span>(<span class="ann">@Param</span>(<span class="str">"role"</span>) <span class="cls">UserRole</span> role);
+  
+  <span class="cmt">// Modifying query — UPDATE/DELETE</span>
+  <span class="ann">@Modifying</span>
+  <span class="ann">@Query</span>(<span class="str">"UPDATE User u SET u.role = :newRole WHERE u.email = :email"</span>)
+  <span class="kw">int</span> <span class="fn">updateRoleByEmail</span>(
+    <span class="ann">@Param</span>(<span class="str">"email"</span>) <span class="cls">String</span> email,
+    <span class="ann">@Param</span>(<span class="str">"newRole"</span>) <span class="cls">UserRole</span> newRole
+  );
+}</pre>
+  </div>
+
+  <div class="code" style="margin-top:20px">
+    <div class="cbar"><span>Native SQL — surowy SQL gdy JPQL nie wystarcza</span></div>
+    <pre><span class="ann">@Query</span>(
+  value = <span class="str">"SELECT * FROM users WHERE email LIKE :pattern"</span>,
+  nativeQuery = <span class="kw">true</span>  <span class="cmt">// native SQL!</span>
+)
+<span class="cls">List</span>&lt;<span class="cls">User</span>&gt; <span class="fn">findByEmailPattern</span>(<span class="ann">@Param</span>(<span class="str">"pattern"</span>) <span class="cls">String</span> pattern);
+
+<span class="cmt">// Native query z pagination</span>
+<span class="ann">@Query</span>(
+  value = <span class="str">"SELECT u.* FROM users u JOIN orders o ON u.id = o.user_id GROUP BY u.id HAVING COUNT(o.id) > :minOrders"</span>,
+  countQuery = <span class="str">"SELECT COUNT(DISTINCT u.id) FROM users u JOIN orders o ON u.id = o.user_id HAVING COUNT(o.id) > :minOrders"</span>,
+  nativeQuery = <span class="kw">true</span>
+)
+<span class="cls">Page</span>&lt;<span class="cls">User</span>&gt; <span class="fn">findUsersWithMinOrders</span>(
+  <span class="ann">@Param</span>(<span class="str">"minOrders"</span>) <span class="kw">int</span> minOrders,
+  <span class="cls">Pageable</span> pageable
+);</pre>
+  </div>
+
+  <div class="alert jpa" style="margin-top:16px">
+    <strong>💡 JPQL vs Native SQL</strong>
+    <strong>JPQL:</strong> Database-agnostic (działa na PostgreSQL, MySQL, H2), type-safe, refactoring-friendly (zmiana nazwy entity → IDE podpowie). <strong>Native SQL:</strong> Database-specific features (window functions, JSONB operators w Postgres), performance tuning, legacy databases. Preferuj JPQL, używaj native tylko gdy musisz.
+  </div>
+</section>
+
+<!-- SPECIFICATIONS -->
+<section class="sec" id="specifications">
+  <div class="sec-ey">05 — dynamiczne zapytania</div>
+  <div class="sec-title">JPA Specifications — Criteria API</div>
+  <p class="sec-desc">Dynamiczne budowanie zapytań w runtime. Filtry przekazane z UI → Specification → SQL. Type-safe alternative dla string concatenation w WHERE.</p>
+  <div class="sec-rule"></div>
+
+  <div class="code">
+    <div class="cbar"><span>UserSpecifications.java — criteria builders</span></div>
+    <pre><span class="kw">import</span> org.springframework.data.jpa.domain.Specification;
+
+<span class="kw">public class</span> <span class="cls">UserSpecifications</span> {
+  
+  <span class="kw">public static</span> <span class="cls">Specification</span>&lt;<span class="cls">User</span>&gt; <span class="fn">hasEmail</span>(<span class="cls">String</span> email) {
+    <span class="kw">return</span> (root, query, cb) -> 
+      email == <span class="kw">null</span> ? <span class="kw">null</span> : cb.<span class="fn">equal</span>(root.<span class="fn">get</span>(<span class="str">"email"</span>), email);
+  }
+  
+  <span class="kw">public static</span> <span class="cls">Specification</span>&lt;<span class="cls">User</span>&gt; <span class="fn">hasRole</span>(<span class="cls">UserRole</span> role) {
+    <span class="kw">return</span> (root, query, cb) ->
+      role == <span class="kw">null</span> ? <span class="kw">null</span> : cb.<span class="fn">equal</span>(root.<span class="fn">get</span>(<span class="str">"role"</span>), role);
+  }
+  
+  <span class="kw">public static</span> <span class="cls">Specification</span>&lt;<span class="cls">User</span>&gt; <span class="fn">fullNameContains</span>(<span class="cls">String</span> name) {
+    <span class="kw">return</span> (root, query, cb) ->
+      name == <span class="kw">null</span> ? <span class="kw">null</span> : 
+        cb.<span class="fn">like</span>(cb.<span class="fn">lower</span>(root.<span class="fn">get</span>(<span class="str">"fullName"</span>)), <span class="str">"%"</span> + name.<span class="fn">toLowerCase</span>() + <span class="str">"%"</span>);
+  }
+  
+  <span class="kw">public static</span> <span class="cls">Specification</span>&lt;<span class="cls">User</span>&gt; <span class="fn">createdAfter</span>(<span class="cls">LocalDateTime</span> date) {
+    <span class="kw">return</span> (root, query, cb) ->
+      date == <span class="kw">null</span> ? <span class="kw">null</span> : cb.<span class="fn">greaterThan</span>(root.<span class="fn">get</span>(<span class="str">"createdAt"</span>), date);
+  }
+}</pre>
+  </div>
+
+  <div class="g2" style="margin-top:20px">
+    <div class="code">
+      <div class="cbar"><span>Repository z Specification support</span></div>
+      <pre><span class="kw">public interface</span> <span class="cls">UserRepository</span> 
+    <span class="kw">extends</span> <span class="cls">JpaRepository</span>&lt;<span class="cls">User</span>, <span class="cls">Long</span>&gt;,
+            <span class="cls">JpaSpecificationExecutor</span>&lt;<span class="cls">User</span>&gt; {
+  <span class="cmt">// JpaSpecificationExecutor dodaje:</span>
+  <span class="cmt">// findAll(Specification&lt;User&gt; spec)</span>
+  <span class="cmt">// findOne(Specification&lt;User&gt; spec)</span>
+  <span class="cmt">// count(Specification&lt;User&gt; spec)</span>
+}</pre>
+    </div>
+
+    <div class="code">
+      <div class="cbar"><span>Użycie — łączenie Specifications</span></div>
+      <pre><span class="ann">@Service</span>
+<span class="kw">public class</span> <span class="cls">UserService</span> {
+  
+  <span class="kw">public</span> <span class="cls">List</span>&lt;<span class="cls">User</span>&gt; <span class="fn">search</span>(
+      <span class="cls">String</span> email,
+      <span class="cls">UserRole</span> role,
+      <span class="cls">String</span> name
+  ) {
+    <span class="cls">Specification</span>&lt;<span class="cls">User</span>&gt; spec = <span class="cls">Specification</span>
+      .<span class="fn">where</span>(<span class="cls">UserSpecifications</span>.<span class="fn">hasEmail</span>(email))
+      .<span class="fn">and</span>(<span class="cls">UserSpecifications</span>.<span class="fn">hasRole</span>(role))
+      .<span class="fn">and</span>(<span class="cls">UserSpecifications</span>.<span class="fn">fullNameContains</span>(name));
+    
+    <span class="kw">return</span> userRepository.<span class="fn">findAll</span>(spec);
+  }
+}</pre>
+    </div>
+  </div>
+
+  <div class="alert success" style="margin-top:16px">
+    <strong>✓ Kiedy używać Specifications?</strong>
+    Dynamiczne filtry z UI (użytkownik wybiera które pola filtrować), search endpoints z wieloma opcjonalnymi parametrami, reusable query fragments (np. "active users" używane w wielu miejscach). Specifications są type-safe i można je łączyć (and/or/not).
+  </div>
+</section>
+
+<!-- TRANSACTIONS -->
+<section class="sec" id="transactions">
+  <div class="sec-ey">06 — ACID properties</div>
+  <div class="sec-title">@Transactional</div>
+  <p class="sec-desc">Transakcje zapewniają ACID: Atomicity (wszystko albo nic), Consistency, Isolation, Durability. @Transactional na service layer — metoda w transakcji, rollback przy exception.</p>
+  <div class="sec-rule"></div>
+
+  <div class="code">
+    <div class="cbar"><span>Transactional service methods</span></div>
+    <pre><span class="ann">@Service</span>
+<span class="kw">public class</span> <span class="cls">OrderService</span> {
+  
+  <span class="kw">private final</span> <span class="cls">OrderRepository</span> orderRepo;
+  <span class="kw">private final</span> <span class="cls">InventoryService</span> inventoryService;
+  <span class="kw">private final</span> <span class="cls">PaymentService</span> paymentService;
+  
+  <span class="cmt">// @Transactional — rollback przy exception</span>
+  <span class="ann">@Transactional</span>
+  <span class="kw">public</span> <span class="cls">Order</span> <span class="fn">createOrder</span>(<span class="cls">CreateOrderRequest</span> request) {
+    <span class="cmt">// 1. Utwórz zamówienie</span>
+    <span class="cls">Order</span> order = <span class="kw">new</span> <span class="cls">Order</span>(request);
+    order = orderRepo.<span class="fn">save</span>(order);
+    
+    <span class="cmt">// 2. Zmniejsz inventory</span>
+    inventoryService.<span class="fn">decreaseStock</span>(
+      request.<span class="fn">getProductId</span>(), 
+      request.<span class="fn">getQuantity</span>()
+    );
+    
+    <span class="cmt">// 3. Przetwórz payment</span>
+    paymentService.<span class="fn">charge</span>(
+      request.<span class="fn">getPaymentMethod</span>(),
+      order.<span class="fn">getTotalPrice</span>()
+    );
+    
+    <span class="cmt">// Jeśli cokolwiek rzuci exception → ROLLBACK!</span>
+    <span class="kw">return</span> order;
+  }
+  
+  <span class="cmt">// readOnly=true — optymalizacja (bez dirty checking)</span>
+  <span class="ann">@Transactional</span>(readOnly = <span class="kw">true</span>)
+  <span class="kw">public</span> <span class="cls">List</span>&lt;<span class="cls">Order</span>&gt; <span class="fn">findAll</span>() {
+    <span class="kw">return</span> orderRepo.<span class="fn">findAll</span>();
+  }
+  
+  <span class="cmt">// Rollback tylko przy konkretnym exception</span>
+  <span class="ann">@Transactional</span>(rollbackFor = <span class="cls">PaymentException</span>.<span class="kw">class</span>)
+  <span class="kw">public void</span> <span class="fn">processPayment</span>(<span class="cls">Long</span> orderId) {
+    <span class="cmt">// ...</span>
+  }
+  
+  <span class="cmt">// Nie rollback przy biznesowym exception</span>
+  <span class="ann">@Transactional</span>(noRollbackFor = <span class="cls">OutOfStockException</span>.<span class="kw">class</span>)
+  <span class="kw">public void</span> <span class="fn">tryFulfillOrder</span>(<span class="cls">Long</span> orderId) {
+    <span class="cmt">// ...</span>
+  }
+}</pre>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <div class="cl cl-jpa">⚙️ @Transactional opcje</div>
+    <table class="t">
+      <tr><th>Opcja</th><th>Co robi</th></tr>
+      <tr><td>readOnly=true</td><td>Optymalizacja dla read-only operations (brak dirty checking)</td></tr>
+      <tr><td>timeout=30</td><td>Timeout transakcji w sekundach</td></tr>
+      <tr><td>propagation=...</td><td>REQUIRED (default), REQUIRES_NEW, NESTED, SUPPORTS...</td></tr>
+      <tr><td>isolation=...</td><td>READ_COMMITTED (default), REPEATABLE_READ, SERIALIZABLE</td></tr>
+      <tr><td>rollbackFor=...</td><td>Rollback przy określonych exceptions</td></tr>
+      <tr><td>noRollbackFor=...</td><td>Nie rollback przy określonych exceptions</td></tr>
+    </table>
+  </div>
+
+  <div class="alert warn" style="margin-top:16px">
+    <strong>⚠️ @Transactional działa tylko na public methods i tylko przez proxy!</strong>
+    Jeśli wywołasz @Transactional method z tej samej klasy (this.method()) — transakcja NIE zadziała (self-invocation problem). Rozwiązanie: wyciągnij metodę do osobnego @Service lub użyj AspectJ proxy mode.
+  </div>
+</section>
+
+<!-- PERFORMANCE -->
+<section class="sec" id="performance">
+  <div class="sec-ey">07 — optymalizacja</div>
+  <div class="sec-title">JPA Performance Tips</div>
+  <p class="sec-desc">Hibernate jest potężny ale łatwo popełnić błędy performance. N+1 queries, brak indeksów, EAGER loading — każdy z tych problemów może położyć produkcję.</p>
+  <div class="sec-rule"></div>
+
+  <div class="g2">
+    <div class="alert warn">
+      <strong>🐌 Problem: N+1 Queries</strong>
+      Pobierasz 100 orders → Hibernate robi 1 query SELECT orders + 100 queries SELECT user dla każdego order = 101 queries!<br><br>
+      <strong>Fix:</strong> JOIN FETCH w JPQL lub @EntityGraph
+    </div>
+
+    <div class="code">
+      <div class="cbar"><span>JOIN FETCH solution</span></div>
+      <pre><span class="ann">@Query</span>(<span class="str">"""
+  SELECT o FROM Order o
+  LEFT JOIN FETCH o.user
+  LEFT JOIN FETCH o.items
+  """</span>)
+<span class="cls">List</span>&lt;<span class="cls">Order</span>&gt; <span class="fn">findAllWithUserAndItems</span>();
+
+<span class="cmt">// Alternatywnie: @EntityGraph</span>
+<span class="ann">@EntityGraph</span>(
+  attributePaths = {<span class="str">"user"</span>, <span class="str">"items"</span>}
+)
+<span class="cls">List</span>&lt;<span class="cls">Order</span>&gt; <span class="fn">findAll</span>();</pre>
+    </div>
+  </div>
+
+  <div class="g3" style="margin-top:20px">
+    <div class="alert success">
+      <strong>✓ LAZY loading (default)</strong>
+      @OneToMany/@ManyToMany domyślnie LAZY. Ładuj relacje tylko gdy potrzeba → mniejszy memory footprint, szybsze queries.
+    </div>
+
+    <div class="alert warn">
+      <strong>⚠️ Unikaj EAGER</strong>
+      EAGER loading ładuje wszystko od razu (JOIN). Dla głębokich grafów obiektów → ogromne queries, performance hell.
+    </div>
+
+    <div class="alert jpa">
+      <strong>💡 Projekcje DTO</strong>
+      Zamiast pełnej entity → zwracaj tylko potrzebne pola w DTO. Mniejszy transfer, szybsza serializacja JSON.
+    </div>
+  </div>
+
+  <div class="code" style="margin-top:20px">
+    <div class="cbar"><span>Performance best practices checklist</span></div>
+    <pre><span class="cmt">// ✅ 1. Indeksy na frequently queried columns</span>
+<span class="ann">@Table</span>(indexes = {
+  <span class="ann">@Index</span>(name = <span class="str">"idx_user_email"</span>, columnList = <span class="str">"email"</span>),
+  <span class="ann">@Index</span>(name = <span class="str">"idx_order_user"</span>, columnList = <span class="str">"user_id"</span>)
+})
+
+<span class="cmt">// ✅ 2. Batch operations — save() 1000 razy = 1000 INSERTs</span>
+<span class="cmt">// Lepiej: saveAll() z batch size</span>
+spring.jpa.properties.hibernate.jdbc.batch_size=<span class="num">50</span>
+
+<span class="cmt">// ✅ 3. Pagination dla dużych list</span>
+<span class="cls">Page</span>&lt;<span class="cls">User</span>&gt; page = userRepo.<span class="fn">findAll</span>(<span class="cls">PageRequest</span>.<span class="fn">of</span>(<span class="num">0</span>, <span class="num">20</span>));
+
+<span class="cmt">// ✅ 4. ReadOnly transactions dla queries</span>
+<span class="ann">@Transactional</span>(readOnly = <span class="kw">true</span>)
+
+<span class="cmt">// ✅ 5. Loguj SQL w development</span>
+spring.jpa.show-sql=<span class="kw">true</span>
+spring.jpa.properties.hibernate.format_sql=<span class="kw">true</span>
+
+<span class="cmt">// ✅ 6. @BatchSize dla kolekcji — ładuj po N elementów</span>
+<span class="ann">@BatchSize</span>(size = <span class="num">10</span>)
+<span class="ann">@OneToMany</span>(mappedBy = <span class="str">"user"</span>)
+<span class="kw">private</span> <span class="cls">List</span>&lt;<span class="cls">Order</span>&gt; orders;</pre>
+  </div>
+</section>
+
+</main>
+
+</body>
+</html>

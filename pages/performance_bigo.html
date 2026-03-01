@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Performance & Big O — Przewodnik</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0b0c0f;
+  --s1: #13141a;
+  --s2: #1a1c24;
+  --s3: #22242e;
+  --bd: #2a2d3a;
+  --bd2: #363a4a;
+  --tx: #eef0f6;
+  --tx2: #9da3b8;
+  --mt: #5a607a;
+  --on:  #00e5a0;  /* green — good */
+  --oa:  #ffd85a;  /* amber — ok */
+  --or:  #ff5566;  /* red — bad */
+  --ob:  #5b9eff;  /* blue — info */
+  --op:  #c084fc;  /* purple */
+  --ot:  #22d3ee;  /* teal */
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--tx);
+  font-family: 'Barlow', sans-serif;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ─── HEADER ─────────────────────────────── */
+.hdr {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 80px 64px;
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid var(--bd);
+}
+
+.hdr-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(var(--bd) 1px, transparent 1px),
+    linear-gradient(90deg, var(--bd) 1px, transparent 1px);
+  background-size: 48px 48px;
+  opacity: 0.18;
+  pointer-events: none;
+}
+
+.hdr-glow {
+  position: absolute;
+  width: 600px; height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0,229,160,0.07) 0%, transparent 70%);
+  left: -200px; top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.hdr-content { position: relative; z-index: 1; max-width: 900px; }
+
+.hdr-kicker {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 4px;
+  color: var(--on);
+  text-transform: uppercase;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.hdr-kicker::before {
+  content: '';
+  width: 32px; height: 2px;
+  background: var(--on);
+}
+
+h1 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: clamp(4rem, 9vw, 8.5rem);
+  font-weight: 900;
+  line-height: 0.9;
+  letter-spacing: -2px;
+  text-transform: uppercase;
+  margin-bottom: 32px;
+}
+
+h1 .line1 { color: var(--tx); display: block; }
+h1 .line2 { color: var(--on); display: block; }
+h1 .line3 { color: var(--mt); display: block; font-weight: 400; font-size: 0.5em; letter-spacing: 0; text-transform: none; }
+
+.hdr-desc {
+  font-size: 1rem;
+  color: var(--tx2);
+  max-width: 520px;
+  line-height: 1.8;
+  margin-bottom: 40px;
+}
+
+.hdr-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.htag {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.65rem;
+  padding: 5px 12px;
+  border-radius: 2px;
+  border: 1px solid;
+  letter-spacing: 1px;
+}
+.htag.g { color: var(--on); border-color: rgba(0,229,160,0.3); background: rgba(0,229,160,0.05); }
+.htag.a { color: var(--oa); border-color: rgba(255,216,90,0.3); background: rgba(255,216,90,0.05); }
+.htag.r { color: var(--or); border-color: rgba(255,85,102,0.3); background: rgba(255,85,102,0.05); }
+.htag.b { color: var(--ob); border-color: rgba(91,158,255,0.3); background: rgba(91,158,255,0.05); }
+.htag.p { color: var(--op); border-color: rgba(192,132,252,0.3); background: rgba(192,132,252,0.05); }
+
+/* ─── NAV ─────────────────────────────────── */
+.nav {
+  position: sticky; top: 0; z-index: 200;
+  background: rgba(11,12,15,0.96);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--bd);
+  padding: 0 64px;
+  display: flex; gap: 0;
+  overflow-x: auto;
+}
+.nav a {
+  color: var(--mt);
+  text-decoration: none;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 1px;
+  padding: 14px 14px;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  transition: all .2s;
+}
+.nav a:hover { color: var(--on); border-bottom-color: var(--on); }
+
+/* ─── MAIN ────────────────────────────────── */
+.main { max-width: 1280px; margin: 0 auto; padding: 64px 24px 120px; }
+
+/* ─── SECTION ─────────────────────────────── */
+.sec {
+  margin-bottom: 88px;
+  animation: rise .5s ease backwards;
+}
+@keyframes rise { from { opacity:0; transform:translateY(28px); } to { opacity:1; transform:translateY(0); } }
+.sec:nth-child(1){animation-delay:.05s} .sec:nth-child(2){animation-delay:.08s}
+.sec:nth-child(3){animation-delay:.11s} .sec:nth-child(4){animation-delay:.14s}
+.sec:nth-child(5){animation-delay:.17s} .sec:nth-child(6){animation-delay:.20s}
+.sec:nth-child(7){animation-delay:.23s}
+
+.sec-eyebrow {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--mt);
+  margin-bottom: 6px;
+}
+
+.sec-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 2.6rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -1px;
+  line-height: 1;
+  margin-bottom: 10px;
+}
+
+.sec-desc {
+  font-size: 0.88rem;
+  color: var(--tx2);
+  max-width: 620px;
+  line-height: 1.8;
+  margin-bottom: 32px;
+}
+
+.sec-rule { height: 1px; background: linear-gradient(90deg, var(--bd2), transparent); margin-bottom: 32px; }
+
+/* ─── GRID ────────────────────────────────── */
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.g3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+.g4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; }
+
+@media (max-width: 900px) {
+  .g2, .g3, .g4 { grid-template-columns: 1fr; }
+  .hdr { padding: 60px 24px; min-height: auto; }
+  .nav { padding: 0 20px; }
+  h1 { font-size: clamp(3rem, 12vw, 5rem); }
+}
+
+/* ─── CARD ────────────────────────────────── */
+.card {
+  background: var(--s1);
+  border: 1px solid var(--bd);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: border-color .2s, transform .2s;
+}
+.card:hover { border-color: var(--bd2); transform: translateY(-2px); }
+
+.cl {
+  padding: 11px 16px;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--bd);
+}
+.cg { color: var(--on); background: rgba(0,229,160,0.05); }
+.ca { color: var(--oa); background: rgba(255,216,90,0.05); }
+.cr { color: var(--or); background: rgba(255,85,102,0.05); }
+.cb { color: var(--ob); background: rgba(91,158,255,0.05); }
+.cp { color: var(--op); background: rgba(192,132,252,0.05); }
+.ct { color: var(--ot); background: rgba(34,211,238,0.05); }
+
+/* ─── CODE ────────────────────────────────── */
+.code { background: #070809; border-radius: 8px; overflow: hidden; }
+.cbar {
+  background: #0e1015;
+  padding: 8px 14px;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.6rem;
+  color: var(--mt);
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--bd);
+}
+.dots { display: flex; gap: 5px; }
+.dot { width: 8px; height: 8px; border-radius: 50%; }
+
+pre {
+  padding: 18px;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.76rem;
+  line-height: 1.8;
+  overflow-x: auto;
+  color: #8892a4;
+}
+
+/* syntax */
+.kw  { color: var(--ob); font-weight: 600; }
+.fn  { color: var(--op); }
+.str { color: var(--on); }
+.num { color: var(--oa); }
+.cmt { color: #3a404f; font-style: italic; }
+.hl  { color: var(--tx); }
+.good{ color: var(--on); font-weight: 700; }
+.bad { color: var(--or); font-weight: 700; }
+.warn{ color: var(--oa); font-weight: 700; }
+
+/* ─── BIG O TABLE ─────────────────────────── */
+.bigo-table { width: 100%; border-collapse: collapse; }
+.bigo-row {
+  display: grid;
+  grid-template-columns: 110px 1fr 100px 200px;
+  align-items: center;
+  border-bottom: 1px solid var(--bd);
+  padding: 14px 0;
+  gap: 16px;
+  transition: background .15s;
+}
+.bigo-row:hover { background: var(--s2); border-radius: 6px; }
+.bigo-row:last-child { border-bottom: none; }
+.bigo-row.header { opacity: .5; font-size: 0.65rem; letter-spacing: 2px; font-family: 'Fira Code', monospace; padding-bottom: 8px; }
+
+.bigo-notation {
+  font-family: 'Barlow Condensed', monospace;
+  font-size: 1.3rem;
+  font-weight: 800;
+  text-align: center;
+}
+.bigo-bar-wrap { position: relative; height: 8px; background: var(--s3); border-radius: 4px; overflow: hidden; }
+.bigo-bar { height: 100%; border-radius: 4px; }
+.bigo-ops { font-family: 'Fira Code', monospace; font-size: 0.68rem; color: var(--mt); text-align: right; }
+.bigo-name { font-size: 0.8rem; color: var(--tx2); }
+
+/* ─── RULE CARDS ──────────────────────────── */
+.rule-card {
+  background: var(--s1);
+  border: 1px solid var(--bd);
+  border-radius: 8px;
+  padding: 18px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  transition: border-color .2s, transform .2s;
+}
+.rule-card:hover { border-color: var(--bd2); transform: translateY(-2px); }
+
+.rule-icon {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 2rem;
+  font-weight: 900;
+  line-height: 1;
+  flex-shrink: 0;
+  width: 44px;
+  text-align: center;
+}
+.rule-title { font-weight: 700; font-size: 0.9rem; margin-bottom: 4px; }
+.rule-body  { font-size: 0.78rem; color: var(--tx2); line-height: 1.7; }
+.rule-code  { font-family: 'Fira Code', monospace; font-size: 0.7rem; margin-top: 8px; padding: 6px 10px; background: var(--s3); border-radius: 4px; color: var(--on); }
+
+/* ─── INTERACTIVE CHART ───────────────────── */
+#chart-wrap {
+  background: var(--s1);
+  border: 1px solid var(--bd);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.chart-controls {
+  padding: 14px 18px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  border-bottom: 1px solid var(--bd);
+  align-items: center;
+}
+.chart-controls-label {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.62rem;
+  color: var(--mt);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-right: 4px;
+}
+.cb-toggle {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.65rem;
+  padding: 4px 12px;
+  border-radius: 4px;
+  border: 1px solid;
+  cursor: pointer;
+  transition: all .15s;
+  background: transparent;
+}
+.cb-toggle.active { opacity: 1; }
+.cb-toggle:not(.active) { opacity: 0.3; filter: grayscale(1); }
+
+#bigo-canvas { display: block; width: 100%; height: 320px; }
+
+.chart-legend {
+  padding: 12px 18px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  border-top: 1px solid var(--bd);
+}
+.legend-item {
+  display: flex; align-items: center; gap: 6px;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.65rem;
+  color: var(--tx2);
+}
+.legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+/* ─── ALERT ───────────────────────────────── */
+.alert {
+  border-left: 3px solid;
+  padding: 12px 16px;
+  border-radius: 0 6px 6px 0;
+  font-size: 0.82rem;
+  line-height: 1.75;
+  color: var(--tx2);
+  margin: 12px 0;
+}
+.alert strong { display: block; margin-bottom: 3px; }
+.alert.g { border-color: var(--on); background: rgba(0,229,160,0.04); }
+.alert.g strong { color: var(--on); }
+.alert.a { border-color: var(--oa); background: rgba(255,216,90,0.04); }
+.alert.a strong { color: var(--oa); }
+.alert.r { border-color: var(--or); background: rgba(255,85,102,0.04); }
+.alert.r strong { color: var(--or); }
+.alert.b { border-color: var(--ob); background: rgba(91,158,255,0.04); }
+.alert.b strong { color: var(--ob); }
+
+/* ─── TABLE ───────────────────────────────── */
+.t { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+.t th { background: var(--s2); color: var(--mt); padding: 9px 14px; text-align: left; font-size: 0.6rem; letter-spacing: 2px; text-transform: uppercase; border-bottom: 1px solid var(--bd); font-family: 'Fira Code', monospace; }
+.t td { padding: 9px 14px; border-bottom: 1px solid var(--bd); color: var(--tx2); vertical-align: top; line-height: 1.6; }
+.t tr:last-child td { border-bottom: none; }
+.t tr:hover td { background: var(--s2); }
+.t td:first-child { color: var(--ob); font-family: 'Fira Code', monospace; font-size: 0.73rem; }
+
+code {
+  font-family: 'Fira Code', monospace;
+  font-size: .82em;
+  background: var(--s3);
+  border: 1px solid var(--bd2);
+  border-radius: 3px;
+  padding: 1px 5px;
+  color: var(--ob);
+}
+
+/* ─── PERF METER ──────────────────────────── */
+.perf-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--bd);
+  font-size: 0.8rem;
+}
+.perf-row:last-child { border-bottom: none; }
+.perf-label { width: 180px; flex-shrink: 0; color: var(--tx2); }
+.perf-bar-wrap { flex: 1; height: 6px; background: var(--s3); border-radius: 3px; overflow: hidden; }
+.perf-bar { height: 100%; border-radius: 3px; }
+.perf-val { width: 80px; flex-shrink: 0; font-family: 'Fira Code', monospace; font-size: 0.65rem; text-align: right; }
+
+/* ─── SOLID ───────────────────────────────── */
+.solid-cards {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+}
+@media (max-width: 900px) { .solid-cards { grid-template-columns: 1fr 1fr; } }
+
+.solid-card {
+  background: var(--s1);
+  border: 1px solid var(--bd);
+  border-radius: 8px;
+  padding: 20px 16px;
+  text-align: center;
+  transition: border-color .2s, transform .2s;
+}
+.solid-card:hover { transform: translateY(-3px); }
+.solid-letter {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 3.5rem;
+  font-weight: 900;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.solid-name { font-weight: 700; font-size: 0.78rem; margin-bottom: 6px; }
+.solid-desc { font-size: 0.7rem; color: var(--mt); line-height: 1.6; }
+
+/* ─── DRY/KISS/YAGNI ──────────────────────── */
+.principle-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+@media (max-width: 700px) { .principle-grid { grid-template-columns: 1fr; } }
+
+.principle-card {
+  background: var(--s1);
+  border: 1px solid var(--bd);
+  border-radius: 10px;
+  padding: 24px 20px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color .2s;
+}
+.principle-card:hover { border-color: var(--bd2); }
+.principle-bg {
+  position: absolute;
+  right: -10px; bottom: -20px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 6rem;
+  font-weight: 900;
+  opacity: 0.04;
+  line-height: 1;
+  pointer-events: none;
+}
+.principle-abbr {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 2.5rem;
+  font-weight: 900;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.principle-full { font-size: 0.72rem; color: var(--mt); font-family: 'Fira Code', monospace; margin-bottom: 12px; letter-spacing: 1px; }
+.principle-desc { font-size: 0.82rem; color: var(--tx2); line-height: 1.75; }
+.principle-ex { margin-top: 12px; font-family: 'Fira Code', monospace; font-size: 0.68rem; color: var(--on); background: rgba(0,229,160,0.05); border: 1px solid rgba(0,229,160,0.15); border-radius: 4px; padding: 6px 10px; }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════ HEADER -->
+<header class="hdr">
+  <div class="hdr-grid"></div>
+  <div class="hdr-glow"></div>
+  <div class="hdr-content">
+    <div class="hdr-kicker">przewodnik programisty</div>
+    <h1>
+      <span class="line1">Performance</span>
+      <span class="line2">& Big O</span>
+      <span class="line3">złożoność obliczeniowa · dobre praktyki · zasady</span>
+    </h1>
+    <p class="hdr-desc">
+      Jak rozpoznać złożoność kodu na pierwszy rzut oka, dlaczego ma to znaczenie przy milionach rekordów, i jak pisać kod który nie sprawia problemów w przyszłości.
+    </p>
+    <div class="hdr-tags">
+      <span class="htag g">Big O</span>
+      <span class="htag a">Zasady rozpoznawania</span>
+      <span class="htag b">SOLID</span>
+      <span class="htag p">DRY / KISS / YAGNI</span>
+      <span class="htag r">Optymalizacja</span>
+      <span class="htag g">Dobre praktyki</span>
+    </div>
+  </div>
+</header>
+
+<!-- ════════════════════════════════ NAV -->
+<nav class="nav">
+  <a href="#bigo">Big O</a>
+  <a href="#chart">Wykres</a>
+  <a href="#rules">Zasady rozpoznawania</a>
+  <a href="#optimize">Optymalizacja</a>
+  <a href="#solid">SOLID</a>
+  <a href="#principles">DRY / KISS / YAGNI</a>
+  <a href="#naming">Nazewnictwo</a>
+  <a href="#functions">Funkcje</a>
+  <a href="#checklist">Checklist</a>
+</nav>
+
+<!-- ════════════════════════════════ MAIN -->
+<main class="main">
+
+<!-- ─── BIG O ──────────────────────────────── -->
+<section class="sec" id="bigo">
+  <div class="sec-eyebrow">01 — złożoność obliczeniowa</div>
+  <div class="sec-title">Notacja Big O</div>
+  <p class="sec-desc">Big O opisuje jak rośnie czas wykonania gdy rozmiar danych n rośnie. Nie mówi ile sekund — mówi jak szybko rośnie. Dla n=1000 różnica między O(n) a O(n²) to 1000 vs 1 000 000 operacji.</p>
+  <div class="sec-rule"></div>
+
+  <div class="card" style="margin-bottom:20px">
+    <div class="cl cb">📊 Wszystkie notacje — od najlepszej do najgorszej</div>
+    <div style="padding: 20px">
+      <!-- header -->
+      <div class="bigo-row header">
+        <div style="text-align:center">notacja</div>
+        <div>wzrost dla n=1000</div>
+        <div style="text-align:right">operacje</div>
+        <div>nazwa</div>
+      </div>
+
+      <div class="bigo-row">
+        <div class="bigo-notation" style="color:var(--on)">O(1)</div>
+        <div><div class="bigo-bar-wrap"><div class="bigo-bar" style="width:0.5%;background:var(--on)"></div></div></div>
+        <div class="bigo-ops" style="color:var(--on)">1 op</div>
+        <div class="bigo-name">Stały czas</div>
+      </div>
+
+      <div class="bigo-row">
+        <div class="bigo-notation" style="color:#40d9a0">O(log n)</div>
+        <div><div class="bigo-bar-wrap"><div class="bigo-bar" style="width:1%;background:#40d9a0"></div></div></div>
+        <div class="bigo-ops" style="color:#40d9a0">~10 ops</div>
+        <div class="bigo-name">Logarytmiczny</div>
+      </div>
+
+      <div class="bigo-row">
+        <div class="bigo-notation" style="color:#8ecf4d">O(n)</div>
+        <div><div class="bigo-bar-wrap"><div class="bigo-bar" style="width:8%;background:#8ecf4d"></div></div></div>
+        <div class="bigo-ops" style="color:#8ecf4d">1 000 ops</div>
+        <div class="bigo-name">Liniowy</div>
+      </div>
+
+      <div class="bigo-row">
+        <div class="bigo-notation" style="color:var(--oa)">O(n log n)</div>
+        <div><div class="bigo-bar-wrap"><div class="bigo-bar" style="width:18%;background:var(--oa)"></div></div></div>
+        <div class="bigo-ops" style="color:var(--oa)">~10K ops</div>
+        <div class="bigo-name">Linearytmiczny</div>
+      </div>
+
+      <div class="bigo-row">
+        <div class="bigo-notation" style="color:#ff9a3c">O(n²)</div>
+        <div><div class="bigo-bar-wrap"><div class="bigo-bar" style="width:52%;background:#ff9a3c"></div></div></div>
+        <div class="bigo-ops" style="color:#ff9a3c">1 000 000</div>
+        <div class="bigo-name">Kwadratowy</div>
+      </div>
+
+      <div class="bigo-row">
+        <div class="bigo-notation" style="color:#ff6655">O(n³)</div>
+        <div><div class="bigo-bar-wrap"><div class="bigo-bar" style="width:78%;background:#ff6655"></div></div></div>
+        <div class="bigo-ops" style="color:#ff6655">1 miliard</div>
+        <div class="bigo-name">Sześcienny</div>
+      </div>
+
+      <div class="bigo-row">
+        <div class="bigo-notation" style="color:var(--or)">O(2ⁿ)</div>
+        <div><div class="bigo-bar-wrap"><div class="bigo-bar" style="width:100%;background:var(--or)"></div></div></div>
+        <div class="bigo-ops" style="color:var(--or)">∞ (katastrofa)</div>
+        <div class="bigo-name">Wykładniczy</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="dots"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div></div><span>przykłady — każda notacja</span></div>
+      <pre><span class="good">// O(1) — stały czas</span>
+<span class="hl">int</span> x = array[<span class="num">0</span>];           <span class="cmt">// indeks tablicy</span>
+map.get(<span class="str">"klucz"</span>);           <span class="cmt">// HashMap get</span>
+stack.push(<span class="num">5</span>);             <span class="cmt">// push na stos</span>
+
+<span class="good">// O(log n) — logarytmiczny</span>
+<span class="kw">int</span> mid = (left + right) / <span class="num">2</span>; <span class="cmt">// binary search</span>
+<span class="cmt">// Każdy krok DZIELI problem na pół</span>
+
+<span class="warn">// O(n) — jedna pętla</span>
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; n; i++) {
+    sum += arr[i];
+}
+
+<span class="warn">// O(n log n) — sortowanie</span>
+Arrays.sort(arr);           <span class="cmt">// Timsort</span>
+Collections.sort(list);
+
+<span class="bad">// O(n²) — pętla w pętli</span>
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; n; i++) {
+    <span class="kw">for</span> (<span class="kw">int</span> j = <span class="num">0</span>; j &lt; n; j++) {
+        <span class="cmt">// każda para elementów</span>
+    }
+}
+
+<span class="bad">// O(2ⁿ) — naiwna rekurencja</span>
+<span class="kw">int</span> <span class="fn">fib</span>(<span class="kw">int</span> n) {
+    <span class="kw">if</span> (n &lt;= <span class="num">1</span>) <span class="kw">return</span> n;
+    <span class="kw">return</span> <span class="fn">fib</span>(n-<span class="num">1</span>) + <span class="fn">fib</span>(n-<span class="num">2</span>); <span class="bad">// 2 wywołania!</span>
+}</pre>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="code">
+        <div class="cbar"><div class="dots"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div></div><span>upraszczanie Big O</span></div>
+        <pre><span class="cmt">// ZASADA 1: stałe mnożniki ignoruj</span>
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; n; i++) {   <span class="cmt">// 3n</span>
+    x = a[i];
+    y = b[i];
+    z = c[i];
+}
+<span class="good">// O(3n) = O(n)</span>
+
+<span class="cmt">// ZASADA 2: bierz największy składnik</span>
+<span class="kw">for</span> (i = <span class="num">0</span>; i &lt; n; i++) { ... }     <span class="cmt">// n</span>
+<span class="kw">for</span> (i = <span class="num">0</span>; i &lt; n; i++) {
+    <span class="kw">for</span> (j = <span class="num">0</span>; j &lt; n; j++) { ... } <span class="cmt">// n²</span>
+}
+<span class="good">// O(n + n²) = O(n²)</span>
+
+<span class="cmt">// ZASADA 3: pętle PO SOBIE, nie zagnieżdżone</span>
+<span class="kw">for</span> (i = <span class="num">0</span>; i &lt; n; i++) { ... }  <span class="cmt">// n</span>
+<span class="kw">for</span> (j = <span class="num">0</span>; j &lt; n; j++) { ... }  <span class="cmt">// n</span>
+<span class="good">// O(n + n) = O(2n) = O(n) ← NIE n²!</span>
+
+<span class="cmt">// RÓŻNE zmienne = RÓŻNE litery!</span>
+<span class="kw">for</span> (i = <span class="num">0</span>; i &lt; a.length; i++) {
+    <span class="kw">for</span> (j = <span class="num">0</span>; j &lt; b.length; j++) { }
+}
+<span class="warn">// O(a * b) — NIE O(n²) jeśli a ≠ b!</span></pre>
+      </div>
+
+      <div class="alert g">
+        <strong>Najważniejsza zasada praktyczna:</strong>
+        Szukasz czy kod jest akceptowalny dla produkcji? O(1), O(log n), O(n), O(n log n) — tak. O(n²) — tylko dla małych n (&lt;1000). O(2ⁿ) i O(n!) — nigdy na produkcji bez memoizacji.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── INTERAKTYWNY WYKRES ────────────────── -->
+<section class="sec" id="chart">
+  <div class="sec-eyebrow">02 — wizualizacja</div>
+  <div class="sec-title">Interaktywny wykres Big O</div>
+  <p class="sec-desc">Kliknij żeby włączyć/wyłączyć poszczególne krzywe. Oś X = rozmiar danych (n), oś Y = liczba operacji.</p>
+  <div class="sec-rule"></div>
+
+  <div id="chart-wrap">
+    <div class="chart-controls">
+      <span class="chart-controls-label">pokaż:</span>
+      <button class="cb-toggle active" data-fn="o1" style="color:#00e5a0;border-color:rgba(0,229,160,0.4)">O(1)</button>
+      <button class="cb-toggle active" data-fn="logn" style="color:#40d9a0;border-color:rgba(64,217,160,0.4)">O(log n)</button>
+      <button class="cb-toggle active" data-fn="n" style="color:#8ecf4d;border-color:rgba(142,207,77,0.4)">O(n)</button>
+      <button class="cb-toggle active" data-fn="nlogn" style="color:#ffd85a;border-color:rgba(255,216,90,0.4)">O(n log n)</button>
+      <button class="cb-toggle active" data-fn="n2" style="color:#ff9a3c;border-color:rgba(255,154,60,0.4)">O(n²)</button>
+      <button class="cb-toggle" data-fn="n3" style="color:#ff6655;border-color:rgba(255,102,85,0.4)">O(n³)</button>
+      <button class="cb-toggle" data-fn="exp" style="color:#ff5566;border-color:rgba(255,85,102,0.4)">O(2ⁿ)</button>
+    </div>
+    <canvas id="bigo-canvas"></canvas>
+    <div class="chart-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#00e5a0"></div>O(1) — stały</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#40d9a0"></div>O(log n) — logarytmiczny</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#8ecf4d"></div>O(n) — liniowy</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#ffd85a"></div>O(n log n) — sortowanie</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#ff9a3c"></div>O(n²) — kwadratowy</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#ff6655"></div>O(n³) — sześcienny</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#ff5566"></div>O(2ⁿ) — wykładniczy</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── ZASADY ROZPOZNAWANIA ───────────────── -->
+<section class="sec" id="rules">
+  <div class="sec-eyebrow">03 — jak czytać kod</div>
+  <div class="sec-title">8 zasad rozpoznawania Big O</div>
+  <p class="sec-desc">Patrzysz na kod i w 10 sekund wiesz jaka złożoność. Zapamiętaj te 8 reguł.</p>
+  <div class="sec-rule"></div>
+
+  <div class="g2">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="rule-card">
+        <div class="rule-icon" style="color:var(--on)">1</div>
+        <div>
+          <div class="rule-title">Jedna pętla przez n → O(n)</div>
+          <div class="rule-body">Iterujesz raz przez wszystkie elementy. Prosto.</div>
+          <div class="rule-code">for (i=0; i&lt;n; i++) → O(n)</div>
+        </div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-icon" style="color:var(--or)">2</div>
+        <div>
+          <div class="rule-title">Dwie pętle zagnieżdżone → O(n²)</div>
+          <div class="rule-body">Każdy element z każdym. Bubble sort, brute force.</div>
+          <div class="rule-code">for(i) { for(j) { } } → O(n²)</div>
+        </div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-icon" style="color:var(--or)">3</div>
+        <div>
+          <div class="rule-title">Trzy pętle zagnieżdżone → O(n³)</div>
+          <div class="rule-body">Każda w każdej. Bardzo rzadko uzasadnione na produkcji.</div>
+          <div class="rule-code">for(i) { for(j) { for(k) { } } } → O(n³)</div>
+        </div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-icon" style="color:var(--on)">4</div>
+        <div>
+          <div class="rule-title">Dzielisz na pół w każdym kroku → O(log n)</div>
+          <div class="rule-body">Binary search, BST wyszukiwanie. Za każdym krokiem odrzucasz połowę.</div>
+          <div class="rule-code">mid = (l+r)/2; → O(log n)</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="rule-card">
+        <div class="rule-icon" style="color:var(--oa)">5</div>
+        <div>
+          <div class="rule-title">Pętla + dzielenie na pół → O(n log n)</div>
+          <div class="rule-body">Przetwarzasz wszystko (n) ale na każdym poziomie podziału (log n). Merge sort, heap sort.</div>
+          <div class="rule-code">Arrays.sort() → O(n log n)</div>
+        </div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-icon" style="color:var(--or)">6</div>
+        <div>
+          <div class="rule-title">Dwa rekurencyjne wywołania → O(2ⁿ)</div>
+          <div class="rule-body">Drzewo wywołań podwaja się z każdym poziomem rekurencji. Naiwna Fibonacci.</div>
+          <div class="rule-code">return f(n-1) + f(n-2) → O(2ⁿ)</div>
+        </div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-icon" style="color:var(--on)">7</div>
+        <div>
+          <div class="rule-title">Stałe mnożniki ignoruj → 3n = O(n)</div>
+          <div class="rule-body">O(5n) = O(n). Big O pyta o "jak rośnie", nie "ile dokładnie".</div>
+          <div class="rule-code">5n + 100 = O(n)</div>
+        </div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-icon" style="color:var(--ob)">8</div>
+        <div>
+          <div class="rule-title">Bierz największy składnik → n²+n = O(n²)</div>
+          <div class="rule-body">Przy dużym n mniejsze składniki nie mają znaczenia. n² dominuje nad n, n nad log n.</div>
+          <div class="rule-code">n³ + n² + n + 1 = O(n³)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── OPTYMALIZACJA ─────────────────────── -->
+<section class="sec" id="optimize">
+  <div class="sec-eyebrow">04 — praktyka</div>
+  <div class="sec-title">Optymalizacja — zanim zaczniesz</div>
+  <p class="sec-desc">Premature optimization is the root of all evil — Donald Knuth. Najpierw profiluj, potem optymalizuj tam gdzie boli.</p>
+  <div class="sec-rule"></div>
+
+  <div class="g2">
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="code">
+        <div class="cbar"><div class="dots"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div></div><span>HashMap — zamień O(n²) na O(n)</span></div>
+        <pre><span class="bad">// ❌ O(n²) — szukanie w pętli</span>
+<span class="kw">for</span> (String a : listaA) {
+  <span class="kw">for</span> (String b : listaB) {   <span class="cmt">// zagnieżdżona!</span>
+    <span class="kw">if</span> (a.equals(b)) { ... }
+  }
+}
+<span class="cmt">// 1000 × 1000 = 1 000 000 porównań</span>
+
+<span class="good">// ✅ O(n) — używaj HashSet/HashMap</span>
+Set&lt;String&gt; zbiorB = <span class="kw">new</span> HashSet&lt;&gt;(listaB);
+<span class="kw">for</span> (String a : listaA) {
+  <span class="kw">if</span> (zbiorB.contains(a)) { ... } <span class="cmt">// O(1)!</span>
+}
+<span class="cmt">// 1000 + 1000 = 2000 operacji</span></pre>
+      </div>
+
+      <div class="code">
+        <div class="cbar"><div class="dots"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div></div><span>memoizacja — O(2ⁿ) na O(n)</span></div>
+        <pre><span class="bad">// ❌ O(2ⁿ) — liczy to samo wielokrotnie</span>
+<span class="kw">int</span> <span class="fn">fib</span>(<span class="kw">int</span> n) {
+  <span class="kw">if</span> (n &lt;= <span class="num">1</span>) <span class="kw">return</span> n;
+  <span class="kw">return</span> <span class="fn">fib</span>(n-<span class="num">1</span>) + <span class="fn">fib</span>(n-<span class="num">2</span>);
+}
+
+<span class="good">// ✅ O(n) — memoizacja</span>
+Map&lt;Integer, Long&gt; cache = <span class="kw">new</span> HashMap&lt;&gt;();
+<span class="kw">long</span> <span class="fn">fib</span>(<span class="kw">int</span> n) {
+  <span class="kw">if</span> (n &lt;= <span class="num">1</span>) <span class="kw">return</span> n;
+  <span class="kw">if</span> (cache.containsKey(n)) <span class="kw">return</span> cache.get(n);
+  <span class="kw">long</span> wynik = <span class="fn">fib</span>(n-<span class="num">1</span>) + <span class="fn">fib</span>(n-<span class="num">2</span>);
+  cache.put(n, wynik);
+  <span class="kw">return</span> wynik;
+}
+<span class="cmt">// Każda wartość liczona tylko raz!</span></pre>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="code">
+        <div class="cbar"><div class="dots"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div></div><span>wyjdź wcześniej — early return</span></div>
+        <pre><span class="bad">// ❌ Sprawdza wszystko nawet po znalezieniu</span>
+<span class="kw">boolean</span> found = <span class="kw">false</span>;
+<span class="kw">for</span> (User u : users) {
+  <span class="kw">if</span> (u.getAge() > <span class="num">18</span>) {
+    found = <span class="kw">true</span>;    <span class="cmt">// ale pętla idzie dalej!</span>
+  }
+}
+
+<span class="good">// ✅ break / early return</span>
+<span class="kw">for</span> (User u : users) {
+  <span class="kw">if</span> (u.getAge() > <span class="num">18</span>) <span class="kw">return true</span>; <span class="cmt">// stop!</span>
+}
+<span class="kw">return false</span>;
+
+<span class="cmt">// Lub Stream z findFirst()</span>
+<span class="kw">boolean</span> found = users.stream()
+  .anyMatch(u -> u.getAge() > <span class="num">18</span>);</pre>
+      </div>
+
+      <div class="card">
+        <div class="cl ca">⚠️ Najczęstsze pułapki wydajnościowe</div>
+        <table class="t">
+          <tr><th>Problem</th><th>Złożoność</th><th>Rozwiązanie</th></tr>
+          <tr><td>Szukanie w liście w pętli</td><td style="color:var(--or)">O(n²)</td><td>Zamień na HashSet/HashMap → O(n)</td></tr>
+          <tr><td>String + w pętli</td><td style="color:var(--or)">O(n²)</td><td>StringBuilder → O(n)</td></tr>
+          <tr><td>Naiwna rekurencja</td><td style="color:var(--or)">O(2ⁿ)</td><td>Memoizacja/DP → O(n)</td></tr>
+          <tr><td>Sortowanie w pętli</td><td style="color:var(--or)">O(n² log n)</td><td>Sortuj raz przed pętlą</td></tr>
+          <tr><td>N+1 query problem</td><td style="color:var(--or)">O(n) zapytań</td><td>JOIN lub batch fetch → O(1)</td></tr>
+          <tr><td>Brak indeksu SQL</td><td style="color:var(--or)">O(n) full scan</td><td>Dodaj indeks → O(log n)</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SOLID ──────────────────────────────── -->
+<section class="sec" id="solid">
+  <div class="sec-eyebrow">05 — architektura</div>
+  <div class="sec-title">Zasady SOLID</div>
+  <p class="sec-desc">5 zasad dobrego projektowania obiektowego. Kod który je stosuje jest łatwiejszy do testowania, rozszerzania i zrozumienia.</p>
+  <div class="sec-rule"></div>
+
+  <div class="solid-cards">
+    <div class="solid-card" style="border-color:rgba(0,229,160,0.3)">
+      <div class="solid-letter" style="color:var(--on)">S</div>
+      <div class="solid-name">Single Responsibility</div>
+      <div class="solid-desc">Klasa ma jeden powód do zmiany. Nie mieszaj: logika biznesowa ≠ zapis do bazy ≠ wysyłka emaila.</div>
+    </div>
+    <div class="solid-card" style="border-color:rgba(91,158,255,0.3)">
+      <div class="solid-letter" style="color:var(--ob)">O</div>
+      <div class="solid-name">Open/Closed</div>
+      <div class="solid-desc">Otwarte na rozszerzenie, zamknięte na modyfikację. Dodajesz nowe zachowanie bez zmiany istniejącego kodu.</div>
+    </div>
+    <div class="solid-card" style="border-color:rgba(255,216,90,0.3)">
+      <div class="solid-letter" style="color:var(--oa)">L</div>
+      <div class="solid-name">Liskov Substitution</div>
+      <div class="solid-desc">Podklasa musi działać wszędzie gdzie działa klasa bazowa. Nie psuj kontraktu przy dziedziczeniu.</div>
+    </div>
+    <div class="solid-card" style="border-color:rgba(192,132,252,0.3)">
+      <div class="solid-letter" style="color:var(--op)">I</div>
+      <div class="solid-name">Interface Segregation</div>
+      <div class="solid-desc">Wiele małych interfejsów > jeden duży. Klient nie powinien zależeć od metod których nie używa.</div>
+    </div>
+    <div class="solid-card" style="border-color:rgba(34,211,238,0.3)">
+      <div class="solid-letter" style="color:var(--ot)">D</div>
+      <div class="solid-name">Dependency Inversion</div>
+      <div class="solid-desc">Zależność od abstrakcji, nie implementacji. Wstrzykuj zależności (DI) zamiast tworzyć je w środku.</div>
+    </div>
+  </div>
+
+  <div class="g2" style="margin-top:20px">
+    <div class="code">
+      <div class="cbar"><div class="dots"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div></div><span>SRP — jeden powód do zmiany</span></div>
+      <pre><span class="bad">// ❌ Naruszenie SRP — klasa robi za dużo</span>
+<span class="kw">class</span> <span class="hl">UserService</span> {
+  <span class="fn">saveUser</span>(user)   { <span class="cmt">/* SQL INSERT */</span> }
+  <span class="fn">sendEmail</span>(user)  { <span class="cmt">/* SMTP send */</span> }
+  <span class="fn">generatePDF</span>(user){ <span class="cmt">/* PDF library */</span> }
+  <span class="fn">validateAge</span>(user){ <span class="cmt">/* business rule */</span> }
+}
+
+<span class="good">// ✅ SRP — każda klasa robi jedno</span>
+<span class="kw">class</span> <span class="hl">UserRepository</span> { <span class="fn">save</span>(user)    { ... } }
+<span class="kw">class</span> <span class="hl">EmailService</span>    { <span class="fn">send</span>(user)    { ... } }
+<span class="kw">class</span> <span class="hl">PdfGenerator</span>    { <span class="fn">generate</span>(user){ ... } }
+<span class="kw">class</span> <span class="hl">UserValidator</span>   { <span class="fn">validate</span>(user){ ... } }</pre>
+    </div>
+    <div class="code">
+      <div class="cbar"><div class="dots"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div></div><span>DIP — dependency injection</span></div>
+      <pre><span class="bad">// ❌ Naruszenie DIP — tworzy zależność sam</span>
+<span class="kw">class</span> <span class="hl">OrderService</span> {
+  <span class="kw">private</span> EmailService email = <span class="kw">new</span> EmailService();
+  <span class="cmt">// przywiązany do konkretnej implementacji!</span>
+}
+
+<span class="good">// ✅ DIP — wstrzyknięta abstrakcja</span>
+<span class="kw">interface</span> <span class="hl">Notifier</span> {
+  <span class="kw">void</span> <span class="fn">notify</span>(String msg);
+}
+
+<span class="kw">class</span> <span class="hl">OrderService</span> {
+  <span class="kw">private final</span> Notifier notifier;
+
+  <span class="hl">OrderService</span>(Notifier notifier) {
+    <span class="kw">this</span>.notifier = notifier; <span class="cmt">// wstrzykiwanie!</span>
+  }
+}
+<span class="cmt">// Możesz wstrzyknąć Email, SMS, Slack...</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ─── DRY / KISS / YAGNI ───────────────── -->
+<section class="sec" id="principles">
+  <div class="sec-eyebrow">06 — filozofia kodowania</div>
+  <div class="sec-title">DRY · KISS · YAGNI</div>
+  <p class="sec-desc">Trzy zasady które każdy programista powinien mieć wytatuowane na wewnętrznej stronie powiek.</p>
+  <div class="sec-rule"></div>
+
+  <div class="principle-grid">
+    <div class="principle-card">
+      <div class="principle-bg">DRY</div>
+      <div class="principle-abbr" style="color:var(--on)">DRY</div>
+      <div class="principle-full">Don't Repeat Yourself</div>
+      <div class="principle-desc">
+        Każda logika powinna istnieć w jednym miejscu. Jak widzisz ten sam kod w dwóch miejscach — wyciągnij do funkcji/metody. Jak zmienisz logikę zmieniasz w <em>jednym</em> miejscu, nie szukasz wszystkich kopii.
+      </div>
+      <div class="principle-ex">❌ kopiuj-wklej × 5 miejsc<br>✅ jedna metoda, 5 wywołań</div>
+    </div>
+
+    <div class="principle-card">
+      <div class="principle-bg">KISS</div>
+      <div class="principle-abbr" style="color:var(--ob)">KISS</div>
+      <div class="principle-full">Keep It Simple, Stupid</div>
+      <div class="principle-desc">
+        Najprostsze rozwiązanie które działa jest najlepsze. Nie twórz abstrakcji na zapas. Nie używaj wzorca projektowego jeśli <code>if</code> wystarczy. Kod czytany jest 10× częściej niż pisany — czytający podziękuje.
+      </div>
+      <div class="principle-ex">❌ 3 warstwy abstrakcji dla prostej logiki<br>✅ jeden if, który każdy rozumie</div>
+    </div>
+
+    <div class="principle-card">
+      <div class="principle-bg">YAGNI</div>
+      <div class="principle-abbr" style="color:var(--oa)">YAGNI</div>
+      <div class="principle-full">You Aren't Gonna Need It</div>
+      <div class="principle-desc">
+        Nie koduj funkcji "na przyszłość" której nikt nie zamówił. Kod nieużywany to dług techniczny — trzeba go utrzymywać, testować i rozumieć. Implementuj gdy potrzebujesz, nie gdy "może kiedyś".
+      </div>
+      <div class="principle-ex">❌ "przyda się kiedyś" → kod leży 2 lata<br>✅ implementujesz gdy naprawdę potrzeba</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── NAZEWNICTWO ───────────────────────── -->
+<section class="sec" id="naming">
+  <div class="sec-eyebrow">07 — czytelność</div>
+  <div class="sec-title">Nazewnictwo — kod który sam się tłumaczy</div>
+  <p class="sec-desc">Dobra nazwa jest lepsza niż komentarz. Komentarz może się zdezaktualizować — nazwa jest zawsze przy kodzie.</p>
+  <div class="sec-rule"></div>
+
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="dots"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div></div><span>złe vs dobre nazwy</span></div>
+      <pre><span class="bad">// ❌ Co to znaczy?</span>
+<span class="kw">int</span> d;
+<span class="kw">int</span>[] lst;
+<span class="kw">void</span> <span class="fn">proc</span>(<span class="kw">int</span> x, <span class="kw">int</span> y) { ... }
+<span class="kw">boolean</span> flag = <span class="kw">true</span>;
+<span class="kw">if</span> (u.getT() > <span class="num">30</span>) { ... }
+
+<span class="good">// ✅ Kod który sam się tłumaczy</span>
+<span class="kw">int</span> daysSinceCreation;
+<span class="kw">int</span>[] activeUserIds;
+<span class="kw">void</span> <span class="fn">calculateDiscount</span>(<span class="kw">int</span> price, <span class="kw">int</span> percentage) { ... }
+<span class="kw">boolean</span> isEmailVerified = <span class="kw">true</span>;
+<span class="kw">if</span> (user.getAgeInYears() > <span class="num">30</span>) { ... }
+
+<span class="cmt">// Booleany — zawsze z is/has/can/should</span>
+<span class="good">boolean</span> isActive, hasPermission, canEdit, shouldSend;
+
+<span class="cmt">// Kolekcje — liczba mnoga</span>
+<span class="good">List</span>&lt;User&gt; users; <span class="cmt">// nie: user, userList, userArr</span>
+
+<span class="cmt">// Metody — czasownik + rzeczownik</span>
+<span class="good">getUserById(), sendConfirmationEmail()</span>
+<span class="good">calculateTotalPrice(), validateInput()</span></pre>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="card">
+        <div class="cl cb">📏 Konwencje nazewnictwa w Java</div>
+        <table class="t">
+          <tr><th>Co</th><th>Styl</th><th>Przykład</th></tr>
+          <tr><td>Klasy</td><td>PascalCase</td><td><code>UserService</code>, <code>OrderRepository</code></td></tr>
+          <tr><td>Metody</td><td>camelCase</td><td><code>getUserById()</code>, <code>sendEmail()</code></td></tr>
+          <tr><td>Zmienne</td><td>camelCase</td><td><code>firstName</code>, <code>totalPrice</code></td></tr>
+          <tr><td>Stałe</td><td>SCREAMING_SNAKE</td><td><code>MAX_RETRY_COUNT</code>, <code>API_BASE_URL</code></td></tr>
+          <tr><td>Pakiety</td><td>lowercase</td><td><code>com.example.service</code></td></tr>
+          <tr><td>Interfejsy</td><td>PascalCase</td><td><code>Runnable</code>, <code>Comparable</code></td></tr>
+          <tr><td>Enum</td><td>SCREAMING_SNAKE</td><td><code>OrderStatus.PENDING</code></td></tr>
+        </table>
+      </div>
+
+      <div class="alert a">
+        <strong>Magia liczby 7±2</strong>
+        Ludzki mózg ogarnia 5–9 elementów naraz. Funkcja z 7+ parametrami, klasa z 20+ metodami, metoda z 50+ liniami — to sygnał że trzeba podzielić. Limit długości metody: ~20 linii, klasy: ~200 linii.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FUNKCJE ───────────────────────────── -->
+<section class="sec" id="functions">
+  <div class="sec-eyebrow">08 — design funkcji</div>
+  <div class="sec-title">Jak pisać dobre funkcje</div>
+  <p class="sec-desc">Funkcja to podstawowy budulec kodu. Kilka zasad które oddzielają dobry kod od złego.</p>
+  <div class="sec-rule"></div>
+
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="dots"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div></div><span>zasady pisania dobrych funkcji</span></div>
+      <pre><span class="bad">// ❌ Robi za dużo — brak SRP</span>
+<span class="kw">void</span> <span class="fn">processOrder</span>(Order order) {
+  <span class="cmt">// walidacja</span>
+  <span class="kw">if</span> (order.items.isEmpty()) <span class="kw">throw</span> ...;
+  <span class="kw">if</span> (order.price &lt; <span class="num">0</span>) <span class="kw">throw</span> ...;
+  <span class="cmt">// zapis do bazy</span>
+  db.save(order);
+  <span class="cmt">// wysyłka emaila</span>
+  emailClient.send(order.user.email, ...);
+  <span class="cmt">// logowanie</span>
+  logger.info(<span class="str">"Order processed: "</span> + order.id);
+  <span class="cmt">// aktualizacja stock</span>
+  inventory.decrease(order.items);
+}
+
+<span class="good">// ✅ Każda funkcja robi jedno</span>
+<span class="kw">void</span> <span class="fn">processOrder</span>(Order order) {
+  <span class="fn">validateOrder</span>(order);          <span class="cmt">// jasne!</span>
+  <span class="fn">saveOrder</span>(order);
+  <span class="fn">notifyCustomer</span>(order);
+  <span class="fn">updateInventory</span>(order);
+}
+
+<span class="good">// ✅ Early return zamiast if zagnieżdżone</span>
+<span class="kw">void</span> <span class="fn">validateOrder</span>(Order order) {
+  <span class="kw">if</span> (order == <span class="kw">null</span>)        <span class="kw">throw new</span> <span class="hl">NullPointerException</span>();
+  <span class="kw">if</span> (order.items.isEmpty()) <span class="kw">throw new</span> <span class="hl">ValidationException</span>(...);
+  <span class="kw">if</span> (order.price &lt; <span class="num">0</span>)      <span class="kw">throw new</span> <span class="hl">ValidationException</span>(...);
+  <span class="cmt">// happy path na końcu, bez zagnieżdżeń</span>
+}</pre>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="card">
+        <div class="cl cg">✅ Cechy dobrej funkcji</div>
+        <table class="t">
+          <tr><th>Cecha</th><th>Dlaczego ważna</th></tr>
+          <tr><td>Robi jedną rzecz</td><td>Łatwiej testować, rozumieć, zmieniać</td></tr>
+          <tr><td>Nazwa = dokumentacja</td><td>Czytający rozumie bez zagłębiania się</td></tr>
+          <tr><td>Max 3 parametry</td><td>Więcej = trudniejsze wywołanie i test</td></tr>
+          <tr><td>Brak efektów ubocznych</td><td>Funkcja czysta (pure) jest przewidywalna</td></tr>
+          <tr><td>Early return</td><td>Unika głębokiego zagnieżdżenia if/else</td></tr>
+          <tr><td>Wyjątki zamiast null</td><td>Nie zwracaj null — rzucaj wyjątek lub użyj Optional</td></tr>
+          <tr><td>Max ~20 linii</td><td>Powyżej — podziel na mniejsze funkcje</td></tr>
+        </table>
+      </div>
+
+      <div class="code">
+        <div class="cbar"><div class="dots"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div></div><span>unikaj null — Optional</span></div>
+        <pre><span class="bad">// ❌ Zwracasz null → NPE w przyszłości</span>
+<span class="kw">User</span> <span class="fn">findUser</span>(<span class="kw">int</span> id) {
+  <span class="kw">return</span> db.findById(id); <span class="cmt">// może null!</span>
+}
+User u = <span class="fn">findUser</span>(<span class="num">5</span>);
+u.getEmail(); <span class="bad">// NullPointerException!</span>
+
+<span class="good">// ✅ Optional — jawna informacja o braku</span>
+Optional&lt;User&gt; <span class="fn">findUser</span>(<span class="kw">int</span> id) {
+  <span class="kw">return</span> Optional.ofNullable(db.findById(id));
+}
+<span class="fn">findUser</span>(<span class="num">5</span>)
+  .map(User::getEmail)
+  .orElse(<span class="str">"brak emaila"</span>); <span class="cmt">// bezpieczne</span></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CHECKLIST ─────────────────────────── -->
+<section class="sec" id="checklist">
+  <div class="sec-eyebrow">09 — przed commitem</div>
+  <div class="sec-title">Checklist code review</div>
+  <p class="sec-desc">Zanim wyślesz pull requesta — sprawdź te punkty. Lepiej złapać samemu niż dostać uwagę od kolegi.</p>
+  <div class="sec-rule"></div>
+
+  <div class="g3">
+    <div class="card">
+      <div class="cl cg">⚡ Wydajność</div>
+      <div style="padding:16px;display:flex;flex-direction:column;gap:8px;font-size:0.8rem;color:var(--tx2)">
+        <div>☐ Brak pętli w pętli przy dużych danych</div>
+        <div>☐ Używam HashMap/HashSet zamiast listy do szukania</div>
+        <div>☐ Brak N+1 query (sprawdź logi SQL)</div>
+        <div>☐ StringBuilder zamiast + w pętli</div>
+        <div>☐ Sortowanie poza pętlą</div>
+        <div>☐ Lazy loading gdzie to możliwe</div>
+        <div>☐ Indeksy na kolumnach w WHERE i JOIN</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="cl cb">📖 Czytelność</div>
+      <div style="padding:16px;display:flex;flex-direction:column;gap:8px;font-size:0.8rem;color:var(--tx2)">
+        <div>☐ Nazwy zmiennych mówią co trzymają</div>
+        <div>☐ Booleany zaczynają się od is/has/can</div>
+        <div>☐ Metody mają nazwy czasownikowe</div>
+        <div>☐ Brak magic numbers (użyj stałych)</div>
+        <div>☐ Metoda robi jedną rzecz (&lt;20 linii)</div>
+        <div>☐ Brak komentarzy które wyjaśniają <em>co</em> (to ma robić kod), komentarze wyjaśniają <em>dlaczego</em></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="cl cr">🛡️ Bezpieczeństwo i solidność</div>
+      <div style="padding:16px;display:flex;flex-direction:column;gap:8px;font-size:0.8rem;color:var(--tx2)">
+        <div>☐ Obsługa null (Optional lub early check)</div>
+        <div>☐ Walidacja danych wejściowych</div>
+        <div>☐ Proper exception handling (nie połykaj wyjątków)</div>
+        <div>☐ Brak haseł/kluczy w kodzie (env variables)</div>
+        <div>☐ Testy jednostkowe dla logiki biznesowej</div>
+        <div>☐ DRY — brak duplikacji logiki</div>
+        <div>☐ Transakcje tam gdzie potrzeba (atomowość)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert b" style="margin-top:20px">
+    <strong>Złota zasada code review: czy za 6 miesięcy zrozumiesz ten kod?</strong>
+    Piszesz raz, czytasz dziesiątki razy. Twój przyszły kolega (albo Ty za pół roku) nie będzie pamiętał kontekstu. Kod który jest oczywisty nie wymaga komentarza. Kod który wymaga komentarza — przepisz żeby był oczywisty.
+  </div>
+</section>
+
+</main>
+
+<!-- ════════════════════════════════ INTERACTIVE CHART JS -->
+<script>
+const canvas = document.getElementById('bigo-canvas');
+const ctx = canvas.getContext('2d');
+
+const fns = {
+  o1:    { active: true,  color: '#00e5a0', label: 'O(1)',       f: n => 1 },
+  logn:  { active: true,  color: '#40d9a0', label: 'O(log n)',   f: n => Math.log2(n) },
+  n:     { active: true,  color: '#8ecf4d', label: 'O(n)',       f: n => n },
+  nlogn: { active: true,  color: '#ffd85a', label: 'O(n log n)', f: n => n * Math.log2(n) },
+  n2:    { active: true,  color: '#ff9a3c', label: 'O(n²)',      f: n => n * n },
+  n3:    { active: false, color: '#ff6655', label: 'O(n³)',      f: n => n * n * n },
+  exp:   { active: false, color: '#ff5566', label: 'O(2ⁿ)',      f: n => Math.pow(2, n) },
+};
+
+function resize() {
+  const rect = canvas.parentElement.getBoundingClientRect();
+  canvas.width  = rect.width;
+  canvas.height = 320;
+}
+
+function draw() {
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+
+  const pad = { top: 20, right: 20, bottom: 40, left: 56 };
+  const plotW = W - pad.left - pad.right;
+  const plotH = H - pad.top - pad.bottom;
+
+  // background
+  ctx.fillStyle = '#070809';
+  ctx.fillRect(0, 0, W, H);
+
+  // Grid lines
+  ctx.strokeStyle = '#1a1c24';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 5; i++) {
+    const y = pad.top + (i / 5) * plotH;
+    ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(pad.left + plotW, y); ctx.stroke();
+  }
+  for (let i = 0; i <= 4; i++) {
+    const x = pad.left + (i / 4) * plotW;
+    ctx.beginPath(); ctx.moveTo(x, pad.top); ctx.lineTo(x, pad.top + plotH); ctx.stroke();
+  }
+
+  // Axes
+  ctx.strokeStyle = '#363a4a';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(pad.left, pad.top);
+  ctx.lineTo(pad.left, pad.top + plotH);
+  ctx.lineTo(pad.left + plotW, pad.top + plotH);
+  ctx.stroke();
+
+  // Axis labels
+  ctx.fillStyle = '#5a607a';
+  ctx.font = '11px Fira Code, monospace';
+  ctx.textAlign = 'center';
+  const nVals = [1, 5, 10, 15, 20];
+  nVals.forEach((v, i) => {
+    const x = pad.left + (i / (nVals.length - 1)) * plotW;
+    ctx.fillText('n=' + v, x, pad.top + plotH + 20);
+  });
+
+  ctx.textAlign = 'right';
+  ctx.fillStyle = '#5a607a';
+  ctx.fillText('ops', pad.left - 6, pad.top + 4);
+
+  // Cap for display — based on active functions
+  const nMax = 20;
+  const pts = 200;
+
+  // compute max Y across active functions
+  let maxY = 1;
+  Object.values(fns).forEach(fn => {
+    if (!fn.active) return;
+    for (let i = 1; i <= nMax; i++) {
+      const v = fn.f(i);
+      if (isFinite(v) && v > maxY) maxY = v;
+    }
+  });
+  // clamp to something reasonable for viz
+  const cap = Math.min(maxY, 500);
+
+  // Draw curves
+  Object.values(fns).forEach(fn => {
+    if (!fn.active) return;
+    ctx.beginPath();
+    ctx.strokeStyle = fn.color;
+    ctx.lineWidth = 2;
+    ctx.shadowColor = fn.color;
+    ctx.shadowBlur = 6;
+
+    let first = true;
+    for (let i = 0; i <= pts; i++) {
+      const n = 1 + (i / pts) * (nMax - 1);
+      const raw = fn.f(n);
+      const v = Math.min(raw, cap * 1.05);
+      const x = pad.left + ((n - 1) / (nMax - 1)) * plotW;
+      const y = pad.top + plotH - (v / cap) * plotH;
+
+      if (first) { ctx.moveTo(x, y); first = false; }
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // label at end
+    const lastN = nMax;
+    const lastRaw = fn.f(lastN);
+    const lastV = Math.min(lastRaw, cap * 1.05);
+    const lastX = pad.left + plotW;
+    const lastY = pad.top + plotH - (lastV / cap) * plotH;
+    if (lastY > pad.top + 12 && lastY < pad.top + plotH - 4) {
+      ctx.fillStyle = fn.color;
+      ctx.font = '10px Fira Code, monospace';
+      ctx.textAlign = 'left';
+      ctx.fillText(fn.label, lastX + 4, lastY + 4);
+    }
+  });
+}
+
+// Toggle buttons
+document.querySelectorAll('.cb-toggle').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const key = btn.dataset.fn;
+    fns[key].active = !fns[key].active;
+    btn.classList.toggle('active', fns[key].active);
+    draw();
+  });
+});
+
+window.addEventListener('resize', () => { resize(); draw(); });
+resize();
+draw();
+</script>
+
+</body>
+</html>

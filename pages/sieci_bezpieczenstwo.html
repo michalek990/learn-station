@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sieci — Bezpieczeństwo i Praktyki</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Clash+Display:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ffffff;--s1:#f8f9fa;--s2:#f1f3f5;--s3:#e9ecef;
+  --bd:#dee2e6;--bd2:#ced4da;--tx:#1a1a2e;--tx2:#495057;--mt:#6c757d;
+  --k1:#f97316;--k2:#ea6c0a;
+  --green:#16a34a;--teal:#0d9488;--violet:#7c3aed;--rose:#e11d48;
+  --amber:#d97706;--pink:#c026d3;--sky:#0284c7;--orange:#ea580c;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--tx);font-family:'Outfit',sans-serif;line-height:1.6}
+
+/* HEADER — brutalist style */
+.hdr{background:var(--tx);overflow:hidden;position:relative}
+.hdr-inner{padding:60px 48px 48px;position:relative;z-index:1}
+.hdr::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent,transparent 10px,rgba(255,255,255,0.01) 10px,rgba(255,255,255,0.01) 20px)}
+.hdr-num{font-family:'Fira Code',monospace;font-size:0.65rem;color:rgba(255,255,255,0.2);letter-spacing:3px;margin-bottom:20px}
+h1{font-family:'Outfit',sans-serif;font-size:clamp(2.8rem,7vw,5.5rem);font-weight:800;line-height:0.95;letter-spacing:-3px;color:#fff;margin-bottom:20px}
+h1 .slash{color:#f87171}
+h1 .sub{display:block;font-size:0.45em;letter-spacing:0;color:rgba(255,255,255,0.4);font-weight:400;margin-top:4px}
+.hdr-desc{font-size:0.82rem;color:rgba(255,255,255,0.4);max-width:540px;line-height:1.8;margin-bottom:28px}
+.hdr-pills{display:flex;flex-wrap:wrap;gap:6px}
+.pill{font-family:'Fira Code',monospace;font-size:0.6rem;padding:4px 10px;border-radius:2px;font-weight:600;letter-spacing:1px}
+.pr{background:#f87171;color:#450a0a}.pg{background:#4ade80;color:#052e16}
+.pb{background:#60a5fa;color:#1e3a8a}.pp{background:#c084fc;color:#3b0764}
+.po{background:#fb923c;color:#431407}.pt{background:#22d3ee;color:#083344}
+
+.nav{background:#fff;border-bottom:2px solid var(--tx);padding:0 48px;display:flex;gap:0;overflow-x:auto;position:sticky;top:0;z-index:100}
+.nav a{color:var(--mt);text-decoration:none;font-family:'Fira Code',monospace;font-size:0.65rem;letter-spacing:1px;padding:13px 12px;white-space:nowrap;border-bottom:3px solid transparent;transition:all .2s}
+.nav a:hover{color:var(--tx);border-bottom-color:var(--tx)}
+
+.main{max-width:1240px;margin:0 auto;padding:48px 24px 100px}
+
+.sec{margin-bottom:72px;animation:up .5s ease backwards}
+@keyframes up{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.sec:nth-child(1){animation-delay:.05s}.sec:nth-child(2){animation-delay:.1s}
+.sec:nth-child(3){animation-delay:.15s}.sec:nth-child(4){animation-delay:.2s}
+
+.sec-label{font-family:'Fira Code',monospace;font-size:0.62rem;letter-spacing:3px;text-transform:uppercase;color:var(--mt);margin-bottom:6px}
+.sec-title{font-family:'Outfit',sans-serif;font-size:1.9rem;font-weight:800;color:var(--tx);letter-spacing:-1px;margin-bottom:8px}
+.sec-desc{font-size:0.83rem;color:var(--mt);margin-bottom:24px;max-width:640px;line-height:1.8}
+.sec-hr{height:2px;background:var(--tx);width:40px;margin-bottom:24px}
+
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:900px){.g2,.g3{grid-template-columns:1fr}.hdr-inner,.nav{padding-left:20px;padding-right:20px}.main{padding:28px 16px 80px}}
+
+.card{background:var(--s1);border:2px solid var(--bd);border-radius:8px;overflow:hidden}
+.card:hover{border-color:var(--bd2)}
+.cl{padding:11px 16px;font-family:'Fira Code',monospace;font-size:0.62rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;border-bottom:2px solid;display:flex;align-items:center;gap:6px}
+.cb{color:var(--b);background:var(--bg-b);border-bottom-color:var(--bb)}
+.cg{color:var(--g);background:var(--bg-g);border-bottom-color:var(--gb)}
+.co{color:var(--o);background:var(--bg-o);border-bottom-color:var(--ob)}
+.cr{color:var(--r);background:var(--rg);border-bottom-color:var(--rb)}
+.cp{color:var(--p);background:var(--bg-p);border-bottom-color:var(--pb)}
+.ct{color:var(--t);background:var(--bg-t);border-bottom-color:var(--tb)}
+.cy{color:var(--y);background:var(--bg-y);border-bottom-color:var(--yb)}
+
+.code{background:var(--tx);border-radius:8px;overflow:hidden}
+.cbar{background:#1e293b;padding:8px 14px;font-family:'Fira Code',monospace;font-size:0.6rem;color:var(--dm);display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #334155}
+.dots{display:flex;gap:5px}.dot{width:7px;height:7px;border-radius:50%}
+pre{padding:18px;font-family:'Fira Code',monospace;font-size:0.76rem;line-height:1.8;overflow-x:auto;color:#374151}
+.kw{color:#60a5fa;font-weight:600}.val{color:#fb923c}.str{color:#4ade80}
+.cmt{color:#334155;font-style:italic}.h1{color:#60a5fa}.h2{color:#4ade80}
+.h3{color:#fb923c}.h4{color:#c084fc}.h5{color:#fbbf24}.dim{color:#334155}
+.good{color:#4ade80;font-weight:700}.bad{color:#f87171;font-weight:700}
+
+.t{width:100%;border-collapse:collapse;font-size:0.78rem}
+.t th{background:var(--s2);color:var(--mt);padding:9px 14px;text-align:left;font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;border-bottom:1px solid var(--bd);font-family:'Fira Code',monospace}
+.t td{padding:9px 14px;border-bottom:1px solid var(--bd);color:var(--tx2);vertical-align:top;line-height:1.6}
+.t tr:last-child td{border-bottom:none}.t tr:hover td{background:var(--s2)}
+.t td:first-child{color:var(--b);font-family:'Fira Code',monospace;font-size:0.75rem;font-weight:600}
+
+.alert{border-left:4px solid;padding:12px 16px;border-radius:0 6px 6px 0;font-size:0.8rem;line-height:1.75;margin:12px 0}
+.alert strong{display:block;margin-bottom:3px}
+.alert.b{border-color:var(--b);background:var(--bg-b);color:var(--tx2)}.alert.b strong{color:var(--b)}
+.alert.g{border-color:var(--g);background:var(--bg-g);color:var(--tx2)}.alert.g strong{color:var(--g)}
+.alert.o{border-color:var(--o);background:var(--bg-o);color:var(--tx2)}.alert.o strong{color:var(--o)}
+.alert.r{border-color:var(--r);background:var(--rg);color:var(--tx2)}.alert.r strong{color:var(--r)}
+.alert.p{border-color:var(--p);background:var(--bg-p);color:var(--tx2)}.alert.p strong{color:var(--p)}
+
+.diag{background:var(--tx);border-radius:8px;padding:20px;font-family:'Fira Code',monospace;font-size:0.73rem;line-height:2;color:#334155;overflow-x:auto}
+.diag .h1{color:#60a5fa;font-weight:700}.diag .h2{color:#4ade80}.diag .h3{color:#fb923c}
+.diag .h4{color:#c084fc}.diag .h5{color:#fbbf24}.diag .hw{color:#e2e8f0}
+.diag .good{color:#4ade80}.diag .bad{color:#f87171}
+
+code{font-family:'Fira Code',monospace;font-size:.82em;background:var(--s2);border:1px solid var(--bd);border-radius:3px;padding:1px 5px;color:var(--b)}
+
+/* CORS FLOW */
+.cors-flow{display:flex;flex-direction:column;gap:0}
+.cf-row{display:flex;align-items:stretch;gap:0;border-bottom:1px solid var(--bd);font-size:0.76rem}
+.cf-row:last-child{border-bottom:none}
+.cf-who{width:90px;flex-shrink:0;padding:10px 12px;font-family:'Fira Code',monospace;font-size:0.65rem;font-weight:600;display:flex;align-items:center;justify-content:center;text-align:center;border-right:1px solid var(--bd)}
+.cf-msg{flex:1;padding:10px 14px;display:flex;align-items:center}
+.cf-status{width:80px;flex-shrink:0;padding:10px 12px;font-family:'Fira Code',monospace;font-size:0.65rem;display:flex;align-items:center;justify-content:center}
+
+/* AUTH CARDS */
+.auth-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.auth-card{background:var(--s1);border:2px solid var(--bd);border-radius:8px;padding:16px}
+.auth-name{font-family:'Fira Code',monospace;font-weight:600;font-size:0.78rem;margin-bottom:8px}
+.auth-desc{font-size:0.74rem;color:var(--mt);line-height:1.7}
+
+/* PROXY DIAGRAM */
+.proxy-row{display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--bd);font-size:0.76rem}
+.proxy-row:last-child{border-bottom:none}
+.proxy-node{background:var(--s2);border:1px solid var(--bd2);border-radius:4px;padding:4px 8px;font-family:'Fira Code',monospace;font-size:0.65rem;white-space:nowrap;flex-shrink:0}
+.proxy-arrow{color:var(--mt);flex-shrink:0}
+.proxy-note{color:var(--mt);font-size:0.7rem;flex:1}
+
+/* SECURITY OWASP */
+.owasp-list{display:flex;flex-direction:column;gap:0}
+.owasp-item{display:flex;align-items:flex-start;gap:12px;padding:12px 16px;border-bottom:1px solid var(--bd)}
+.owasp-item:last-child{border-bottom:none}
+.owasp-n{width:28px;height:28px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:'Fira Code',monospace;font-weight:700;font-size:0.7rem;flex-shrink:0;margin-top:2px}
+.owasp-title{font-weight:700;font-size:0.8rem;color:var(--tx);margin-bottom:2px}
+.owasp-desc{font-size:0.72rem;color:var(--mt);line-height:1.6}
+.owasp-fix{font-family:'Fira Code',monospace;font-size:0.65rem;margin-top:4px;padding:3px 7px;border-radius:3px;display:inline-block}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-inner">
+    <div class="hdr-num">// 03 / 03 — sieci komputerowe</div>
+    <h1>Bezpieczeństwo<span class="slash">/</span>Praktyki<span class="sub">CORS · Auth · Proxy · CDN · Security</span></h1>
+    <p class="hdr-desc">Wszystko co programista musi wiedzieć o bezpiecznej komunikacji — od CORS przez JWT po ochronę przed atakami sieciowymi.</p>
+    <div class="hdr-pills">
+      <span class="pill pr">CORS</span>
+      <span class="pill pb">JWT / OAuth</span>
+      <span class="pill pg">Cookies</span>
+      <span class="pill po">Proxy / CDN</span>
+      <span class="pill pp">Load Balancer</span>
+      <span class="pill pt">OWASP</span>
+    </div>
+  </div>
+</div>
+
+<nav class="nav">
+  <a href="#cors">CORS</a>
+  <a href="#cookies">Cookies</a>
+  <a href="#auth">Auth (JWT/OAuth)</a>
+  <a href="#proxy">Proxy i Reverse Proxy</a>
+  <a href="#cdn">CDN</a>
+  <a href="#lb">Load Balancer</a>
+  <a href="#sec">Bezpieczeństwo</a>
+</nav>
+
+<main class="main">
+
+<!-- CORS -->
+<section class="sec" id="cors">
+  <div class="sec-label">01 — przeglądarka</div>
+  <div class="sec-title">CORS — Cross-Origin Resource Sharing</div>
+  <p class="sec-desc">Przeglądarka blokuje żądania JavaScript do innych originów (Same-Origin Policy). CORS pozwala serwerowi powiedzieć "ten inny origin może do mnie pisać".</p>
+  <div class="sec-hr"></div>
+
+  <div class="alert b">
+    <strong>Origin = protokół + host + port.</strong>
+    <code>https://app.com</code> i <code>https://api.app.com</code> to różne originy! CORS chroni użytkownika, nie serwer. Curl i Postman CORS ignorują — tylko przeglądarka go egzekwuje.
+  </div>
+
+  <div class="g2" style="margin-top:16px">
+    <div>
+      <div class="card">
+        <div class="cl cb">🔄 Simple request vs Preflight</div>
+        <div class="cors-flow">
+          <div class="cf-row" style="background:var(--bg-g)">
+            <div class="cf-who" style="color:var(--g)">Simple Request</div>
+            <div class="cf-msg" style="font-size:0.74rem;color:var(--tx2)">GET / POST z prostymi nagłówkami i <code>text/plain</code> lub <code>application/x-www-form-urlencoded</code>. Przeglądarka wysyła bezpośrednio.</div>
+            <div class="cf-status" style="color:var(--g)">1 req</div>
+          </div>
+          <div class="cf-row" style="background:var(--bg-o)">
+            <div class="cf-who" style="color:var(--o)">Preflight</div>
+            <div class="cf-msg" style="font-size:0.74rem;color:var(--tx2)">PUT/DELETE/PATCH, <code>Content-Type: application/json</code>, własne nagłówki. Przeglądarka NAJPIERW wysyła <code>OPTIONS</code> z pytaniem "czy mogę?"</div>
+            <div class="cf-status" style="color:var(--o)">2 req</div>
+          </div>
+        </div>
+        <div style="padding:16px">
+          <div class="diag" style="font-size:0.71rem">
+<span class="dim">── Preflight ──────────────────────────────</span>
+Przeglądarka <span class="h3">OPTIONS</span> /api/users HTTP/1.1
+<span class="h2">Origin:</span> https://frontend.com
+<span class="h2">Access-Control-Request-Method:</span> PUT
+<span class="h2">Access-Control-Request-Headers:</span> Authorization
+
+Serwer odpowiada:
+<span class="h1">Access-Control-Allow-Origin:</span> https://frontend.com
+<span class="h1">Access-Control-Allow-Methods:</span> GET,POST,PUT,DELETE
+<span class="h1">Access-Control-Allow-Headers:</span> Authorization,Content-Type
+<span class="h1">Access-Control-Max-Age:</span> 86400
+
+<span class="dim">── Teraz wysyłane właściwe żądanie ────────</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="code">
+        <div class="cbar"><div class="dots"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div></div><span>konfiguracja CORS — backend</span></div>
+        <pre><span class="cmt">// Spring Boot</span>
+<span class="kw">@CrossOrigin</span>(origins = <span class="str">"https://app.com"</span>)
+<span class="kw">@RestController</span>
+<span class="kw">public class</span> ApiController { ... }
+
+<span class="cmt">// Lub globalnie:</span>
+<span class="kw">@Bean</span>
+<span class="kw">public</span> CorsFilter corsFilter() {
+  CorsConfiguration config = <span class="kw">new</span> CorsConfiguration();
+  config.addAllowedOrigin(<span class="str">"https://app.com"</span>);
+  config.addAllowedMethod(<span class="str">"*"</span>);
+  config.addAllowedHeader(<span class="str">"*"</span>);
+  config.setAllowCredentials(<span class="val">true</span>);
+  <span class="kw">return new</span> CorsFilter(...);
+}
+
+<span class="cmt">// Nginx — ręczne nagłówki</span>
+<span class="kw">add_header</span> Access-Control-Allow-Origin
+           <span class="str">"https://app.com"</span> always;
+<span class="kw">add_header</span> Access-Control-Allow-Methods
+           <span class="str">"GET,POST,PUT,DELETE,OPTIONS"</span>;
+<span class="kw">add_header</span> Access-Control-Allow-Headers
+           <span class="str">"Authorization,Content-Type"</span>;</pre>
+      </div>
+
+      <div class="alert r" style="margin-top:12px">
+        <strong>⚠️ NIE używaj <code>Access-Control-Allow-Origin: *</code> z credentials!</strong>
+        Jak używasz <code>withCredentials: true</code> (cookies/auth), musisz podać konkretną domenę. Wildcard <code>*</code> z credentials = błąd przeglądarki.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COOKIES -->
+<section class="sec" id="cookies">
+  <div class="sec-label">02 — stan sesji</div>
+  <div class="sec-title">Cookies — zarządzanie stanem</div>
+  <p class="sec-desc">Małe kawałki danych które serwer ustawia w przeglądarce. Wysyłane automatycznie z każdym żądaniem do danej domeny. HTTP jest bezstanowy — cookies dają nam stan.</p>
+  <div class="sec-hr"></div>
+
+  <div class="g2">
+    <div>
+      <div class="card">
+        <div class="cl cb">🍪 Atrybuty cookie</div>
+        <table class="t">
+          <tr><th>Atrybut</th><th>Co robi</th></tr>
+          <tr><td>HttpOnly</td><td>JS nie ma dostępu (<code>document.cookie</code> nie działa). Ochrona przed XSS.</td></tr>
+          <tr><td>Secure</td><td>Wysyłane tylko przez HTTPS. Nigdy przez HTTP.</td></tr>
+          <tr><td>SameSite=Strict</td><td>Cookie tylko przy nawigacji z tej samej strony. Silna ochrona CSRF.</td></tr>
+          <tr><td>SameSite=Lax</td><td>Domyślne w nowoczesnych przeglądarkach. Blokuje cross-site przy POST.</td></tr>
+          <tr><td>SameSite=None</td><td>Wysyłane zawsze (wymaga Secure). Potrzebne dla embedded widgets.</td></tr>
+          <tr><td>Domain</td><td>Dla jakiej domeny i subdomen. Brak = tylko ta subdomena.</td></tr>
+          <tr><td>Path</td><td>Dla jakiej ścieżki. <code>/</code> = cała domena.</td></tr>
+          <tr><td>Max-Age / Expires</td><td>Kiedy wygasa. Brak = session cookie (usuwa przy zamknięciu przeglądarki).</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="code">
+      <div class="cbar"><div class="dots"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div></div><span>ustawianie i czytanie cookies</span></div>
+      <pre><span class="cmt">// Serwer ustawia cookie (HTTP Response)</span>
+<span class="h2">Set-Cookie:</span> sessionId=abc123;
+  HttpOnly; Secure;
+  SameSite=Lax;
+  Path=/;
+  Max-Age=86400
+
+<span class="cmt">// Java (Spring)</span>
+ResponseCookie cookie = ResponseCookie
+  .from(<span class="str">"sessionId"</span>, <span class="str">"abc123"</span>)
+  .httpOnly(<span class="val">true</span>)
+  .secure(<span class="val">true</span>)
+  .sameSite(<span class="str">"Lax"</span>)
+  .maxAge(Duration.ofDays(<span class="val">1</span>))
+  .path(<span class="str">"/"</span>)
+  .build();
+response.addHeader(<span class="str">"Set-Cookie"</span>,
+                   cookie.toString());
+
+<span class="cmt">// Przeglądarka wysyła automatycznie:</span>
+<span class="h2">Cookie:</span> sessionId=abc123
+
+<span class="cmt">// JS - tylko bez HttpOnly!</span>
+document.cookie = <span class="str">"theme=dark; path=/"</span>;
+<span class="kw">const</span> cookies = document.cookie;</pre>
+    </div>
+  </div>
+</section>
+
+<!-- AUTH -->
+<section class="sec" id="auth">
+  <div class="sec-label">03 — tożsamość</div>
+  <div class="sec-title">Uwierzytelnianie — JWT, OAuth, OpenID</div>
+  <p class="sec-desc">Uwierzytelnianie (AuthN) = kim jesteś. Autoryzacja (AuthZ) = co możesz robić. Dwa różne problemy, często mylone.</p>
+  <div class="sec-hr"></div>
+
+  <div class="g2">
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="card">
+        <div class="cl cb">🎫 JWT — JSON Web Token</div>
+        <div style="padding:16px">
+          <div class="diag" style="font-size:0.7rem">
+Token = 3 części oddzielone kropką:
+
+<span class="h3">eyJhbGciOiJIUzI1NiJ9</span>   <span class="dim">← Header (base64)</span>
+<span class="dim">.</span>
+<span class="h2">eyJzdWIiOiIxMjMiLCJyb2xlIjoiQURNSU4ifQ</span>  <span class="dim">← Payload</span>
+<span class="dim">.</span>
+<span class="h1">SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c</span>  <span class="dim">← Signature</span>
+
+Payload po odkodowaniu:
+{
+  <span class="h2">"sub"</span>:  <span class="str">"123"</span>,        <span class="dim">← ID użytkownika</span>
+  <span class="h2">"role"</span>: <span class="str">"ADMIN"</span>,     <span class="dim">← role/uprawnienia</span>
+  <span class="h2">"iat"</span>:  <span class="val">1710000000</span>,  <span class="dim">← kiedy wystawiono</span>
+  <span class="h2">"exp"</span>:  <span class="val">1710086400</span>   <span class="dim">← kiedy wygasa</span>
+}
+
+Serwer weryfikuje <span class="h1">podpis</span> swoim kluczem.
+Nie musi odpytywać bazy danych! → <span class="good">szybko</span>
+Nie można unieważnić przed exp → <span class="bad">wada</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="code">
+        <div class="cbar"><div class="dots"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div></div><span>użycie JWT</span></div>
+        <pre><span class="cmt">// Wysyłanie tokena</span>
+<span class="h2">Authorization:</span> Bearer eyJhbG...
+
+<span class="cmt">// Java (Spring Security)</span>
+<span class="kw">String</span> token = Jwts.builder()
+  .subject(<span class="str">"userId123"</span>)
+  .claim(<span class="str">"role"</span>, <span class="str">"ADMIN"</span>)
+  .issuedAt(<span class="kw">new</span> Date())
+  .expiration(<span class="kw">new</span> Date(now + <span class="val">86400000</span>))
+  .signWith(secretKey)
+  .compact();
+
+<span class="cmt">// Weryfikacja</span>
+Claims claims = Jwts.parser()
+  .verifyWith(secretKey)
+  .build()
+  .parseSignedClaims(token)
+  .getPayload();</pre>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="card">
+        <div class="cl cp">🔑 OAuth 2.0 — autoryzacja przez trzecią stronę</div>
+        <div style="padding:16px">
+          <div class="diag" style="font-size:0.7rem">
+<span class="dim">── Authorization Code Flow ───────────────</span>
+
+<span class="h1">Użytkownik</span> klika "Zaloguj przez Google"
+     <span class="dim">│</span>
+     <span class="dim">▼</span>
+<span class="h3">Twoja apka</span> redirect → <span class="h2">Google /authorize</span>
+   <span class="dim">?client_id=...&redirect_uri=...&scope=email</span>
+     <span class="dim">│</span>
+     <span class="dim">▼ Użytkownik loguje się i zatwierdza</span>
+<span class="h2">Google</span> redirect → <span class="h3">Twoja apka</span>
+   <span class="dim">?code=AUTHORIZATION_CODE</span>
+     <span class="dim">│</span>
+     <span class="dim">▼</span>
+<span class="h3">Twoja apka</span> (backend) → <span class="h2">Google /token</span>
+   <span class="dim">POST code + client_secret</span>
+     <span class="dim">│</span>
+     <span class="dim">▼</span>
+<span class="h2">Google</span> zwraca <span class="h1">access_token</span> + <span class="h5">id_token</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cl cg">📋 Porównanie metod auth</div>
+        <table class="t">
+          <tr><th>Metoda</th><th>Kiedy używać</th></tr>
+          <tr><td>Session + Cookie</td><td>Tradycyjne web apps. Serwer pamięta sesję. Łatwo unieważnić.</td></tr>
+          <tr><td>JWT Bearer</td><td>API, SPA, mobile. Bezstanowy. Trudno unieważnić przed exp.</td></tr>
+          <tr><td>API Key</td><td>M2M (machine-to-machine). Proste, bez wygaśnięcia.</td></tr>
+          <tr><td>OAuth 2.0</td><td>"Zaloguj przez Google/GitHub". Dostęp do zasobów w imieniu usera.</td></tr>
+          <tr><td>OpenID Connect</td><td>OAuth 2.0 + uwierzytelnienie. Dostajesz id_token z danymi usera.</td></tr>
+          <tr><td>Basic Auth</td><td>Wewnętrzne API. Tylko z HTTPS. Base64(login:hasło) w nagłówku.</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROXY -->
+<section class="sec" id="proxy">
+  <div class="sec-label">04 — infrastruktura</div>
+  <div class="sec-title">Proxy i Reverse Proxy</div>
+  <p class="sec-desc">Pośrednicy w komunikacji sieciowej. Forward proxy stoi przed klientem, reverse proxy stoi przed serwerem.</p>
+  <div class="sec-hr"></div>
+
+  <div class="g2">
+    <div>
+      <div class="card">
+        <div class="cl cb">➡️ Forward Proxy (po stronie klienta)</div>
+        <div style="padding:16px">
+          <div class="diag" style="font-size:0.72rem">
+<span class="h1">Klient</span> → <span class="h3">Forward Proxy</span> → <span class="h2">Internet</span>
+
+Serwer widzi IP proxy, nie klienta.
+Klient konfiguruje proxy ręcznie.
+
+Zastosowania:
+- <span class="h5">Anonimizacja</span> (VPN to też rodzaj proxy)
+- <span class="h2">Filtrowanie</span> treści w firmach
+- <span class="h3">Cache</span> dla całej sieci lokalnej
+- Ominięcie blokad geograficznych
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px">
+        <div class="cl cg">⬅️ Reverse Proxy (po stronie serwera)</div>
+        <div style="padding:16px">
+          <div class="diag" style="font-size:0.72rem">
+<span class="h2">Internet</span> → <span class="h3">Reverse Proxy</span> → <span class="h1">Serwery</span>
+
+Klient widzi tylko proxy, nie backend.
+
+Zastosowania:
+- <span class="h1">Load balancing</span> (rozdzielanie ruchu)
+- <span class="h2">SSL termination</span> (proxy kończy TLS,
+  backend dostaje HTTP)
+- <span class="h3">Cache</span> odpowiedzi
+- <span class="h5">Ochrona</span> przed DDoS
+- Routing per domena/ścieżka
+
+Przykłady: <span class="h1">Nginx</span>, <span class="h2">Caddy</span>, <span class="h3">HAProxy</span>, Cloudflare
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="code">
+      <div class="cbar"><div class="dots"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div></div><span>Nginx — reverse proxy config</span></div>
+      <pre><span class="cmt"># Jedna apka na jednej domenie</span>
+<span class="kw">server</span> {
+  <span class="kw">listen</span> <span class="val">443</span> ssl;
+  <span class="kw">server_name</span> apka.com;
+
+  <span class="cmt"># SSL termination tutaj</span>
+  <span class="kw">ssl_certificate</span>     /etc/letsencrypt/...;
+  <span class="kw">ssl_certificate_key</span> /etc/letsencrypt/...;
+
+  <span class="kw">location</span> / {
+    <span class="cmt"># Przekaż do Docker kontenera</span>
+    <span class="kw">proxy_pass</span> http://localhost:<span class="val">3000</span>;
+
+    <span class="cmt"># Ważne nagłówki!</span>
+    <span class="kw">proxy_set_header</span> Host $host;
+    <span class="kw">proxy_set_header</span> X-Real-IP $remote_addr;
+    <span class="kw">proxy_set_header</span> X-Forwarded-For
+                     $proxy_add_x_forwarded_for;
+    <span class="kw">proxy_set_header</span> X-Forwarded-Proto $scheme;
+
+    <span class="cmt"># WebSocket support</span>
+    <span class="kw">proxy_set_header</span> Upgrade $http_upgrade;
+    <span class="kw">proxy_set_header</span> Connection <span class="str">"upgrade"</span>;
+  }
+
+  <span class="cmt"># /api → inny backend</span>
+  <span class="kw">location</span> /api/ {
+    <span class="kw">proxy_pass</span> http://localhost:<span class="val">8080</span>/;
+  }
+}
+
+<span class="cmt"># HTTP → HTTPS redirect</span>
+<span class="kw">server</span> {
+  <span class="kw">listen</span> <span class="val">80</span>;
+  <span class="kw">return</span> <span class="val">301</span> https://$host$request_uri;
+}</pre>
+    </div>
+  </div>
+</section>
+
+<!-- CDN -->
+<section class="sec" id="cdn">
+  <div class="sec-label">05 — dystrybucja</div>
+  <div class="sec-title">CDN — Content Delivery Network</div>
+  <p class="sec-desc">Sieć serwerów rozsianych geograficznie (PoP — Points of Presence). Użytkownik dostaje pliki z serwera najbliżej niego, nie z głównego serwera.</p>
+  <div class="sec-hr"></div>
+
+  <div class="g2">
+    <div>
+      <div class="diag">
+<span class="dim">BEZ CDN: wszyscy z jednego miejsca</span>
+
+Użytkownik (PL) ──────────────────► Serwer (US)
+                    <span class="h3">~150ms latencji</span>
+
+<span class="h2">Z CDN: serwer blisko użytkownika</span>
+
+Użytkownik (PL) ──► PoP Warszawa ──► odpowiedź
+                    <span class="h2">~5ms latencji!</span>
+
+Użytkownik (JP) ──► PoP Tokio ────► odpowiedź
+
+<span class="dim">Origin serwer jest odpytywany tylko</span>
+<span class="dim">gdy PoP nie ma w cache (cache miss).</span>
+      </div>
+
+      <div class="alert g" style="margin-top:12px">
+        <strong>Cache-Control nagłówki decydują co CDN cache'uje:</strong>
+        <code>Cache-Control: public, max-age=31536000, immutable</code> — dla plików z hashem w nazwie (JS/CSS).<br>
+        <code>Cache-Control: no-store</code> — dla danych prywatnych (nigdy nie cache'uj).<br>
+        <code>Cache-Control: public, max-age=3600</code> — dla publicznych API responses (1 godzina).
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <div class="cl cg">⚡ Co daje Cloudflare (darmowy plan)</div>
+        <table class="t">
+          <tr><th>Funkcja</th><th>Co to znaczy dla Ciebie</th></tr>
+          <tr><td>DDoS protection</td><td>Cloudflare pochłania atak zanim dotrze do Twojego serwera</td></tr>
+          <tr><td>Ukrycie IP</td><td>Atakujący nie zna prawdziwego IP Twojego VPS</td></tr>
+          <tr><td>Auto HTTPS</td><td>Darmowy certyfikat SSL bez Certbota</td></tr>
+          <tr><td>Cache statycznych</td><td>JS/CSS/obrazki serwowane z PoP, nie Twojego serwera</td></tr>
+          <tr><td>Analytics</td><td>Statystyki ruchu bez JS na stronie</td></tr>
+          <tr><td>Firewall rules</td><td>Blokuj kraje, IP, wzorce requestów</td></tr>
+          <tr><td>Cloudflare Tunnel</td><td>Publiczny URL dla lokalnego serwera bez otwierania portów</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LOAD BALANCER -->
+<section class="sec" id="lb">
+  <div class="sec-label">06 — skalowalność</div>
+  <div class="sec-title">Load Balancer</div>
+  <p class="sec-desc">Rozdziela ruch między wiele instancji serwera. Zapewnia wysoką dostępność (jeśli jedna pada — ruch idzie do pozostałych) i skalowalność.</p>
+  <div class="sec-hr"></div>
+
+  <div class="g2">
+    <div>
+      <div class="diag">
+<span class="h2">Użytkownicy</span>
+  <span class="dim">│││</span>
+  <span class="dim">▼▼▼</span>
+<span class="h1">Load Balancer</span>  ← jeden punkt wejścia
+  <span class="dim">│  │  │</span>
+  <span class="dim">▼  ▼  ▼</span>
+<span class="h3">App1</span> <span class="h3">App2</span> <span class="h3">App3</span>  ← wiele instancji
+  <span class="dim">│  │  │</span>
+  <span class="dim">▼  ▼  ▼</span>
+<span class="h4">Baza danych</span> (shared)
+
+Health checks: LB co kilka sekund
+sprawdza czy instancja żyje.
+Martwa instancja → wyciągana z puli.
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <div class="cl ct">⚖️ Algorytmy load balancingu</div>
+        <table class="t">
+          <tr><th>Algorytm</th><th>Jak działa</th><th>Kiedy</th></tr>
+          <tr><td>Round Robin</td><td>Po kolei: 1→2→3→1→2→3</td><td>Jednakowe serwery</td></tr>
+          <tr><td>Least Connections</td><td>Do serwera z najmniej aktywnych połączeń</td><td>Różne czasy requestów</td></tr>
+          <tr><td>IP Hash</td><td>Ten sam user → ten sam serwer</td><td>Sticky sessions (bez shared session store)</td></tr>
+          <tr><td>Weighted</td><td>Silniejsze serwery dostają więcej ruchu</td><td>Serwery różnej mocy</td></tr>
+          <tr><td>Random</td><td>Losowy wybór</td><td>Proste przypadki</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BEZPIECZEŃSTWO -->
+<section class="sec" id="sec">
+  <div class="sec-label">07 — bezpieczeństwo</div>
+  <div class="sec-title">Bezpieczeństwo sieciowe — OWASP Top 10</div>
+  <p class="sec-desc">Najczęstsze ataki na aplikacje webowe i jak się przed nimi bronić. Jako programista musisz rozumieć te zagrożenia.</p>
+  <div class="sec-hr"></div>
+
+  <div class="g2">
+    <div>
+      <div class="card">
+        <div class="cl cr">⚠️ Najważniejsze ataki</div>
+        <div class="owasp-list">
+          <div class="owasp-item">
+            <div class="owasp-n" style="background:#fee2e2;color:#dc2626">01</div>
+            <div>
+              <div class="owasp-title">SQL Injection</div>
+              <div class="owasp-desc">Wstrzykiwanie SQL w dane wejściowe: <code>' OR '1'='1</code></div>
+              <div class="owasp-fix" style="background:#f0fdf4;color:#16a34a">✅ Użyj prepared statements / parametrized queries</div>
+            </div>
+          </div>
+          <div class="owasp-item">
+            <div class="owasp-n" style="background:#fff7ed;color:#ea580c">02</div>
+            <div>
+              <div class="owasp-title">XSS — Cross-Site Scripting</div>
+              <div class="owasp-desc">Wstrzykiwanie JavaScript w stronę. Złodziej sesji, keylogger.</div>
+              <div class="owasp-fix" style="background:#f0fdf4;color:#16a34a">✅ Escape outputu, Content-Security-Policy, HttpOnly cookies</div>
+            </div>
+          </div>
+          <div class="owasp-item">
+            <div class="owasp-n" style="background:#fef2f2;color:#dc2626">03</div>
+            <div>
+              <div class="owasp-title">CSRF — Cross-Site Request Forgery</div>
+              <div class="owasp-desc">Złośliwa strona wykonuje akcje w imieniu zalogowanego usera.</div>
+              <div class="owasp-fix" style="background:#f0fdf4;color:#16a34a">✅ SameSite=Lax cookies, CSRF token, sprawdź Origin/Referer</div>
+            </div>
+          </div>
+          <div class="owasp-item">
+            <div class="owasp-n" style="background:#f5f3ff;color:#7c3aed">04</div>
+            <div>
+              <div class="owasp-title">Broken Authentication</div>
+              <div class="owasp-desc">Słabe hasła, brak rate limiting, nieważne tokeny.</div>
+              <div class="owasp-fix" style="background:#f0fdf4;color:#16a34a">✅ bcrypt, rate limiting, MFA, sprawdzaj exp tokenu</div>
+            </div>
+          </div>
+          <div class="owasp-item" style="border:none">
+            <div class="owasp-n" style="background:#ecfeff;color:#0891b2">05</div>
+            <div>
+              <div class="owasp-title">MITM — Man in the Middle</div>
+              <div class="owasp-desc">Atakujący przechwytuje komunikację między klientem a serwerem.</div>
+              <div class="owasp-fix" style="background:#f0fdf4;color:#16a34a">✅ HTTPS wszędzie, HSTS, certyfikat pinning</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="code">
+        <div class="cbar"><div class="dots"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div></div><span>SQL Injection — przykład ataku i obrony</span></div>
+        <pre><span class="cmt">// ❌ PODATNE — konkatenacja stringa</span>
+<span class="h3">String query = "SELECT * FROM users "</span>
+  <span class="h3">+ "WHERE email = '" + email + "'";</span>
+<span class="cmt">// Atak: email = "' OR '1'='1"</span>
+<span class="cmt">// Wynik: SELECT * FROM users</span>
+<span class="cmt">//   WHERE email = '' OR '1'='1'</span>
+<span class="cmt">// → zwraca WSZYSTKICH userów!</span>
+
+<span class="cmt">// ✅ BEZPIECZNE — prepared statement</span>
+PreparedStatement ps = conn.prepareStatement(
+  <span class="str">"SELECT * FROM users WHERE email = ?"</span>
+);
+ps.setString(<span class="val">1</span>, email);
+<span class="cmt">// Parametr jest escapowany automatycznie</span>
+<span class="cmt">// ' OR '1'='1 → traktowane jako tekst</span>
+
+<span class="cmt">// JPA/Hibernate — bezpieczne domyślnie</span>
+userRepo.findByEmail(email); <span class="cmt">// ok!</span></pre>
+      </div>
+
+      <div class="code">
+        <div class="cbar"><div class="dots"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div></div><span>Security headers — dobre praktyki</span></div>
+        <pre><span class="cmt"># Nginx — nagłówki bezpieczeństwa</span>
+
+<span class="cmt"># Wymuszenie HTTPS</span>
+<span class="h2">Strict-Transport-Security:</span>
+  max-age=31536000; includeSubDomains
+
+<span class="cmt"># Blokuj clickjacking</span>
+<span class="h2">X-Frame-Options:</span> DENY
+
+<span class="cmt"># Blokuj MIME sniffing</span>
+<span class="h2">X-Content-Type-Options:</span> nosniff
+
+<span class="cmt"># Content Security Policy</span>
+<span class="h2">Content-Security-Policy:</span>
+  default-src 'self';
+  script-src 'self' cdn.example.com;
+  style-src 'self' 'unsafe-inline';
+
+<span class="cmt"># Rate limiting w Nginx</span>
+<span class="kw">limit_req_zone</span> $binary_remote_addr
+  zone=api:<span class="val">10m</span> rate=<span class="val">10r/s</span>;
+
+<span class="kw">location</span> /api/ {
+  <span class="kw">limit_req</span> zone=api burst=<span class="val">20</span>;
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <div class="cl cg">✅ Checklist bezpieczeństwa dla programisty</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:0">
+      <div style="padding:16px;border-right:1px solid var(--bd)">
+        <div style="font-family:'Fira Code',monospace;font-size:0.65rem;color:var(--mt);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px">Hasła i auth</div>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:0.78rem;color:var(--tx2)">
+          <div>✅ Używaj <strong>bcrypt</strong> do hashowania haseł (nie MD5, nie SHA1)</div>
+          <div>✅ Rate limiting na endpointach logowania</div>
+          <div>✅ Krótki TTL dla JWT access tokenów (15min–1h)</div>
+          <div>✅ Refresh token w HttpOnly cookie</div>
+          <div>✅ Weryfikuj <code>exp</code> i <code>iss</code> w JWT</div>
+        </div>
+      </div>
+      <div style="padding:16px;border-right:1px solid var(--bd)">
+        <div style="font-family:'Fira Code',monospace;font-size:0.65rem;color:var(--mt);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px">Input / Output</div>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:0.78rem;color:var(--tx2)">
+          <div>✅ Prepared statements dla wszystkich zapytań SQL</div>
+          <div>✅ Waliduj i sanityzuj każdy input od usera</div>
+          <div>✅ Escapuj output w HTML (nie ufaj danym z bazy)</div>
+          <div>✅ Ogranicz rozmiar żądań (max body size)</div>
+          <div>✅ Whitelista zamiast blacklisty dla plików upload</div>
+        </div>
+      </div>
+      <div style="padding:16px">
+        <div style="font-family:'Fira Code',monospace;font-size:0.65rem;color:var(--mt);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px">Transport i nagłówki</div>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:0.78rem;color:var(--tx2)">
+          <div>✅ HTTPS wszędzie + HSTS header</div>
+          <div>✅ Baza danych tylko na <code>127.0.0.1</code> (nie 0.0.0.0)</div>
+          <div>✅ Security headers (CSP, X-Frame-Options)</div>
+          <div>✅ Ukryj wersje serwerów (<code>Server: nginx</code> bez wersji)</div>
+          <div>✅ Zasada najmniejszych uprawnień (DB user tylko SELECT/INSERT)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SQL — Zaawansowany</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080c14;
+  --surface: #0d1320;
+  --surface2: #111827;
+  --border: #1e293b;
+  --border2: #2d3748;
+  --text: #e2e8f0;
+  --muted: #64748b;
+  --dim: #334155;
+  --cyan: #22d3ee;
+  --cyan-d: #0891b2;
+  --cyan-bg: rgba(34,211,238,0.06);
+  --lime: #84cc16;
+  --lime-d: #65a30d;
+  --lime-bg: rgba(132,204,22,0.06);
+  --rose: #fb7185;
+  --rose-d: #e11d48;
+  --rose-bg: rgba(251,113,133,0.06);
+  --violet: #a78bfa;
+  --violet-d: #7c3aed;
+  --violet-bg: rgba(167,139,250,0.06);
+  --amber: #fbbf24;
+  --amber-d: #d97706;
+  --amber-bg: rgba(251,191,36,0.06);
+  --sky: #38bdf8;
+  --sky-bg: rgba(56,189,248,0.06);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+}
+
+/* HEADER */
+.header {
+  padding: 60px 48px 0;
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid var(--border);
+}
+
+.header-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 80% 50%, rgba(34,211,238,0.06) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 60% at 20% 80%, rgba(167,139,250,0.05) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.header-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--cyan);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.header-eyebrow::before {
+  content: '';
+  width: 24px;
+  height: 1px;
+  background: var(--cyan);
+}
+
+h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(4rem, 10vw, 8rem);
+  letter-spacing: 2px;
+  line-height: 0.9;
+  color: var(--text);
+  margin-bottom: 24px;
+}
+
+h1 .accent { color: var(--cyan); }
+
+.header-meta {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  padding: 24px 0;
+  border-top: 1px solid var(--border);
+  margin-top: 8px;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.meta-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* NAV */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(8,12,20,0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 48px;
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+}
+
+.nav a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.72rem;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.5px;
+  padding: 14px 14px;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+}
+
+.nav a:hover { color: var(--cyan); border-bottom-color: var(--cyan); }
+
+/* MAIN */
+.main {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 48px 24px 100px;
+}
+
+/* SECTION */
+.section {
+  margin-bottom: 72px;
+  animation: rise 0.6s ease backwards;
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(32px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.section:nth-child(1) { animation-delay: 0.05s; }
+.section:nth-child(2) { animation-delay: 0.1s; }
+.section:nth-child(3) { animation-delay: 0.15s; }
+.section:nth-child(4) { animation-delay: 0.2s; }
+
+.section-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.section-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.4rem;
+  letter-spacing: 1px;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.section-desc {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-bottom: 28px;
+  max-width: 600px;
+  line-height: 1.7;
+}
+
+.section-divider {
+  height: 1px;
+  background: linear-gradient(90deg, var(--border2), transparent);
+  margin-bottom: 28px;
+}
+
+/* GRID */
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.g3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+
+@media (max-width: 900px) {
+  .g2, .g3 { grid-template-columns: 1fr; }
+  .header { padding: 40px 20px 0; }
+  .nav { padding: 0 20px; }
+  .main { padding: 32px 16px 80px; }
+}
+
+/* CARD */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.card-label {
+  padding: 11px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lc { color: var(--cyan); background: var(--cyan-bg); }
+.ll { color: var(--lime); background: var(--lime-bg); }
+.lr { color: var(--rose); background: var(--rose-bg); }
+.lv { color: var(--violet); background: var(--violet-bg); }
+.la { color: var(--amber); background: var(--amber-bg); }
+.ls { color: var(--sky); background: var(--sky-bg); }
+
+/* CODE */
+.code {
+  background: #050810;
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 0;
+}
+
+.code-top {
+  background: #0a0e1a;
+  padding: 8px 14px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.62rem;
+  color: var(--muted);
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+}
+
+.dots { display: flex; gap: 5px; }
+.dot { width: 8px; height: 8px; border-radius: 50%; }
+
+pre {
+  padding: 18px 18px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.77rem;
+  line-height: 1.75;
+  overflow-x: auto;
+  color: #c8d3e8;
+}
+
+/* SYNTAX */
+.kw  { color: #22d3ee; font-weight: 700; }
+.fn  { color: #a78bfa; }
+.str { color: #86efac; }
+.num { color: #fdba74; }
+.cmt { color: #374151; font-style: italic; }
+.col { color: #93c5fd; }
+.tbl { color: #f9a8d4; }
+.op  { color: #fbbf24; }
+.hl  { background: rgba(34,211,238,0.08); border-radius: 2px; padding: 0 2px; }
+
+/* TABLE */
+.t {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+}
+
+.t th {
+  background: var(--surface2);
+  color: var(--muted);
+  padding: 10px 14px;
+  text-align: left;
+  font-size: 0.65rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-weight: 700;
+  border-bottom: 1px solid var(--border);
+}
+
+.t td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  color: var(--muted);
+  vertical-align: top;
+  line-height: 1.6;
+}
+
+.t tr:last-child td { border-bottom: none; }
+.t tr:hover td { background: var(--surface2); }
+.t td:first-child { color: var(--cyan); font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; }
+
+/* ALERT */
+.alert {
+  border-left: 3px solid;
+  padding: 14px 16px;
+  border-radius: 0 8px 8px 0;
+  font-size: 0.8rem;
+  line-height: 1.7;
+  color: var(--muted);
+  margin: 16px 0;
+}
+
+.alert strong { display: block; margin-bottom: 4px; }
+.alert.c { border-color: var(--cyan); background: var(--cyan-bg); }
+.alert.c strong { color: var(--cyan); }
+.alert.a { border-color: var(--amber); background: var(--amber-bg); }
+.alert.a strong { color: var(--amber); }
+.alert.r { border-color: var(--rose); background: var(--rose-bg); }
+.alert.r strong { color: var(--rose); }
+.alert.l { border-color: var(--lime); background: var(--lime-bg); }
+.alert.l strong { color: var(--lime); }
+
+/* DIAGRAM */
+.diag {
+  background: #050810;
+  border-radius: 8px;
+  padding: 20px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  line-height: 2;
+  color: var(--dim);
+  overflow-x: auto;
+}
+
+.diag .h1 { color: var(--cyan); font-weight: 700; }
+.diag .h2 { color: var(--lime); }
+.diag .h3 { color: var(--violet); }
+.diag .h4 { color: var(--amber); }
+.diag .h5 { color: var(--rose); }
+
+/* INDEX VISUAL */
+.index-visual {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 16px;
+}
+
+.iv-col {
+  background: #050810;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.iv-head {
+  padding: 8px 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 1px;
+  font-weight: 700;
+}
+
+.iv-row {
+  display: flex;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  border-top: 1px solid var(--border);
+}
+
+.iv-cell {
+  padding: 7px 12px;
+  flex: 1;
+  color: var(--muted);
+}
+
+.iv-cell.key { color: var(--amber); flex: 0 0 80px; }
+.iv-cell.ptr { color: var(--cyan); flex: 0 0 60px; }
+.iv-cell.hl  { color: var(--lime); background: rgba(132,204,22,0.05); }
+
+/* ACID */
+.acid-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 700px) {
+  .acid-grid { grid-template-columns: 1fr 1fr; }
+}
+
+.acid-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px 16px;
+  text-align: center;
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.acid-card:hover { transform: translateY(-3px); }
+.acid-card.ac { border-color: var(--cyan-d); }
+.acid-card.ac:hover { border-color: var(--cyan); }
+.acid-card.ai { border-color: var(--lime-d); }
+.acid-card.ai:hover { border-color: var(--lime); }
+.acid-card.ao { border-color: var(--violet-d); }
+.acid-card.ao:hover { border-color: var(--violet); }
+.acid-card.ad { border-color: var(--rose-d); }
+.acid-card.ad:hover { border-color: var(--rose); }
+
+.acid-letter {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 3rem;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.acid-card.ac .acid-letter { color: var(--cyan); }
+.acid-card.ai .acid-letter { color: var(--lime); }
+.acid-card.ao .acid-letter { color: var(--violet); }
+.acid-card.ad .acid-letter { color: var(--rose); }
+
+.acid-name {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.acid-desc {
+  font-size: 0.72rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.82em;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 3px;
+  padding: 1px 5px;
+  color: var(--cyan);
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-bg"></div>
+  <div class="header-eyebrow">// poziom zaawansowany</div>
+  <h1>SQL<br><span class="accent">Advanced</span></h1>
+  <div class="header-meta">
+    <div class="meta-item"><div class="meta-dot" style="background:var(--cyan)"></div>Indeksy i optymalizacja</div>
+    <div class="meta-item"><div class="meta-dot" style="background:var(--lime)"></div>Transakcje i ACID</div>
+    <div class="meta-item"><div class="meta-dot" style="background:var(--violet)"></div>Widoki, procedury, triggery</div>
+    <div class="meta-item"><div class="meta-dot" style="background:var(--rose)"></div>Window Functions</div>
+    <div class="meta-item"><div class="meta-dot" style="background:var(--amber)"></div>CTE i Subqueries</div>
+  </div>
+</div>
+
+<nav class="nav">
+  <a href="#indexy">Indeksy</a>
+  <a href="#explain">EXPLAIN</a>
+  <a href="#acid">Transakcje / ACID</a>
+  <a href="#views">Widoki</a>
+  <a href="#proc">Procedury i triggery</a>
+  <a href="#window">Window Functions</a>
+  <a href="#cte">CTE</a>
+  <a href="#sub">Subqueries</a>
+</nav>
+
+<main class="main">
+
+<!-- ===================== INDEKSY ===================== -->
+<section class="section" id="indexy">
+  <div class="section-label" style="color:var(--cyan)">01 — wydajność</div>
+  <div class="section-title">Indeksy i optymalizacja</div>
+  <p class="section-desc">Indeks to osobna struktura danych (B-Tree) która przyspiesza wyszukiwanie. Bez indeksu baza skanuje każdy wiersz — z indeksem skacze od razu do wyniku.</p>
+  <div class="section-divider"></div>
+
+  <div class="g2">
+    <div>
+      <div class="card">
+        <div class="card-label lc">⚡ Jak działa indeks — B-Tree</div>
+        <div class="index-visual">
+          <div class="iv-col">
+            <div class="iv-head" style="color:var(--rose);">Tabela BEZ indeksu</div>
+            <div class="iv-row"><div class="iv-cell">1</div><div class="iv-cell">Anna</div></div>
+            <div class="iv-row"><div class="iv-cell">2</div><div class="iv-cell">Kuba</div></div>
+            <div class="iv-row"><div class="iv-cell">3</div><div class="iv-cell">Jan</div></div>
+            <div class="iv-row"><div class="iv-cell">4</div><div class="iv-cell">Ola</div></div>
+            <div class="iv-row"><div class="iv-cell">5</div><div class="iv-cell">Piotr</div></div>
+            <div class="iv-row"><div class="iv-cell hl">6</div><div class="iv-cell hl">Marek</div></div>
+            <div style="padding:8px 12px;font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:var(--rose);">
+              Szukasz "Marek"?<br>Sprawdzam 1,2,3,4,5,6... O(n)
+            </div>
+          </div>
+          <div class="iv-col">
+            <div class="iv-head" style="color:var(--lime);">Indeks B-Tree</div>
+            <div class="iv-row"><div class="iv-cell key">Anna</div><div class="iv-cell ptr">→ #1</div></div>
+            <div class="iv-row"><div class="iv-cell key">Jan</div><div class="iv-cell ptr">→ #3</div></div>
+            <div class="iv-row"><div class="iv-cell key">Kuba</div><div class="iv-cell ptr">→ #2</div></div>
+            <div class="iv-row"><div class="iv-cell key hl">Marek</div><div class="iv-cell ptr hl">→ #6</div></div>
+            <div class="iv-row"><div class="iv-cell key">Ola</div><div class="iv-cell ptr">→ #4</div></div>
+            <div class="iv-row"><div class="iv-cell key">Piotr</div><div class="iv-cell ptr">→ #5</div></div>
+            <div style="padding:8px 12px;font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:var(--lime);">
+              Binary search!<br>Bezpośrednio do #6. O(log n)
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="alert a" style="margin-top:12px;">
+        <strong>⚠ Indeks ma koszt!</strong>
+        Każdy INSERT/UPDATE/DELETE musi aktualizować indeks. Nie dodawaj indeksów wszędzie — tylko na kolumnach które często filtrujesz (WHERE, JOIN, ORDER BY).
+      </div>
+    </div>
+
+    <div>
+      <div class="code" style="height:100%;">
+        <div class="code-top"><div class="dots"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div></div><span>rodzaje indeksów</span></div>
+        <pre><span class="cmt">-- Podstawowy indeks</span>
+<span class="kw">CREATE INDEX</span> <span class="col">idx_email</span>
+  <span class="kw">ON</span> <span class="tbl">uzytkownicy</span>(<span class="col">email</span>);
+
+<span class="cmt">-- Unikalny (jak UNIQUE constraint)</span>
+<span class="kw">CREATE UNIQUE INDEX</span> <span class="col">idx_email_uq</span>
+  <span class="kw">ON</span> <span class="tbl">uzytkownicy</span>(<span class="col">email</span>);
+
+<span class="cmt">-- Złożony — kolejność MA znaczenie!</span>
+<span class="cmt">-- Dobry dla: WHERE a=? AND b=?</span>
+<span class="cmt">-- Dobry dla: WHERE a=? (sam a)</span>
+<span class="cmt">-- Zły  dla: WHERE b=? (sam b)</span>
+<span class="kw">CREATE INDEX</span> <span class="col">idx_kraj_miasto</span>
+  <span class="kw">ON</span> <span class="tbl">adresy</span>(<span class="col">kraj</span>, <span class="col">miasto</span>);
+
+<span class="cmt">-- Indeks na wyrażeniu (MySQL 8+)</span>
+<span class="kw">CREATE INDEX</span> <span class="col">idx_lower_email</span>
+  <span class="kw">ON</span> <span class="tbl">uzytkownicy</span>((<span class="fn">LOWER</span>(<span class="col">email</span>)));
+
+<span class="cmt">-- Usuń indeks</span>
+<span class="kw">DROP INDEX</span> <span class="col">idx_email</span>
+  <span class="kw">ON</span> <span class="tbl">uzytkownicy</span>;
+
+<span class="cmt">-- Pokaż indeksy tabeli</span>
+<span class="kw">SHOW INDEX FROM</span> <span class="tbl">uzytkownicy</span>;</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== EXPLAIN ===================== -->
+<section class="section" id="explain">
+  <div class="section-label" style="color:var(--cyan)">01b — diagnoza</div>
+  <div class="section-title">EXPLAIN — analiza zapytań</div>
+  <p class="section-desc">EXPLAIN pokazuje jak baza wykona zapytanie — czy użyje indeksu, ile wierszy sprawdzi, jaką metodę join wybierze. Niezastąpione przy optymalizacji.</p>
+  <div class="section-divider"></div>
+
+  <div class="g2">
+    <div class="code">
+      <div class="code-top"><div class="dots"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="code-dot" style="background:#28c840"></div></div><span>EXPLAIN</span></div>
+      <pre><span class="cmt">-- Dodaj EXPLAIN przed zapytaniem</span>
+<span class="kw">EXPLAIN SELECT</span> <span class="op">*</span>
+<span class="kw">FROM</span> <span class="tbl">zamowienia</span>
+<span class="kw">WHERE</span> <span class="col">uzytkownik_id</span> <span class="op">=</span> <span class="num">5</span>;
+
+<span class="cmt">-- Wynik EXPLAIN (co sprawdzać):</span>
+<span class="cmt">-- type:  ALL = skan całej tabeli (źle!)</span>
+<span class="cmt">--        ref = używa indeksu (dobrze)</span>
+<span class="cmt">--        const = jeden wiersz (najlepiej)</span>
+<span class="cmt">-- rows:  ile wierszy sprawdzi</span>
+<span class="cmt">-- key:   który indeks użył (NULL = brak)</span>
+<span class="cmt">-- Extra: Using filesort = sortuje w pamięci</span>
+
+<span class="cmt">-- EXPLAIN ANALYZE — faktyczny czas</span>
+<span class="kw">EXPLAIN ANALYZE SELECT</span> <span class="op">*</span>
+<span class="kw">FROM</span> <span class="tbl">zamowienia</span> <span class="tbl">z</span>
+<span class="kw">JOIN</span> <span class="tbl">uzytkownicy</span> <span class="tbl">u</span>
+  <span class="kw">ON</span> <span class="tbl">z</span>.<span class="col">uzytkownik_id</span> <span class="op">=</span> <span class="tbl">u</span>.<span class="col">id</span>
+<span class="kw">WHERE</span> <span class="tbl">u</span>.<span class="col">kraj</span> <span class="op">=</span> <span class="str">'PL'</span>;</pre>
+    </div>
+
+    <div>
+      <div class="card">
+        <div class="card-label lc">📊 Co oznaczają kolumny EXPLAIN</div>
+        <table class="t">
+          <tr><th>Kolumna</th><th>Co oznacza</th></tr>
+          <tr><td>type</td><td><code>ALL</code>=pełny skan (źle), <code>index</code>=skan indeksu, <code>range</code>=zakres, <code>ref</code>=indeks, <code>const</code>=jeden wiersz (najlepiej)</td></tr>
+          <tr><td>key</td><td>Który indeks wybrała baza. NULL = żaden = brak indeksu!</td></tr>
+          <tr><td>rows</td><td>Szacowana liczba wierszy do sprawdzenia. Im mniej tym lepiej.</td></tr>
+          <tr><td>filtered</td><td>% wierszy które przejdą filtr WHERE. 100% = żadnego filtrowania.</td></tr>
+          <tr><td>Extra</td><td><code>Using index</code>=świetnie, <code>Using filesort</code>=wolne, <code>Using temporary</code>=tabela tymczasowa (bardzo wolne)</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TRANSAKCJE / ACID ===================== -->
+<section class="section" id="acid">
+  <div class="section-label" style="color:var(--lime)">02 — spójność danych</div>
+  <div class="section-title">Transakcje i ACID</div>
+  <p class="section-desc">Transakcja to grupa operacji która albo wykona się w całości, albo wcale. Kluczowe przy przelewach bankowych, zamówieniach, wszędzie gdzie dane muszą być spójne.</p>
+  <div class="section-divider"></div>
+
+  <div class="acid-grid" style="margin-bottom:24px;">
+    <div class="acid-card ac">
+      <div class="acid-letter">A</div>
+      <div class="acid-name">Atomicity</div>
+      <div class="acid-desc">Wszystko albo nic. Albo wszystkie operacje w transakcji się wykonają, albo żadna. Nie ma stanu pośredniego.</div>
+    </div>
+    <div class="acid-card ai">
+      <div class="acid-letter">C</div>
+      <div class="acid-name">Consistency</div>
+      <div class="acid-desc">Baza przechodzi z jednego spójnego stanu do drugiego. Wszystkie reguły (constraints) muszą być spełnione.</div>
+    </div>
+    <div class="acid-card ao">
+      <div class="acid-letter">I</div>
+      <div class="acid-name">Isolation</div>
+      <div class="acid-desc">Transakcje nie widzą siebie nawzajem w trakcie działania. Jedna transakcja nie wpływa na drugą.</div>
+    </div>
+    <div class="acid-card ad">
+      <div class="acid-letter">D</div>
+      <div class="acid-name">Durability</div>
+      <div class="acid-desc">Po COMMIT dane są trwałe. Nawet jeśli serwer padnie zaraz po COMMIT — dane przeżyją.</div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="code">
+      <div class="code-top"><div class="dots"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div></div><span>przelew bankowy — klasyczny przykład</span></div>
+      <pre><span class="cmt">-- Przelew 500 zł od Anny do Jana</span>
+<span class="kw">START TRANSACTION</span>;
+
+<span class="cmt">-- Krok 1: Odejmij od Anny</span>
+<span class="kw">UPDATE</span> <span class="tbl">konta</span>
+<span class="kw">SET</span> <span class="col">saldo</span> <span class="op">=</span> <span class="col">saldo</span> <span class="op">-</span> <span class="num">500</span>
+<span class="kw">WHERE</span> <span class="col">id</span> <span class="op">=</span> <span class="num">1</span>;
+
+<span class="cmt">-- Krok 2: Dodaj Janowi</span>
+<span class="kw">UPDATE</span> <span class="tbl">konta</span>
+<span class="kw">SET</span> <span class="col">saldo</span> <span class="op">=</span> <span class="col">saldo</span> <span class="op">+</span> <span class="num">500</span>
+<span class="kw">WHERE</span> <span class="col">id</span> <span class="op">=</span> <span class="num">2</span>;
+
+<span class="cmt">-- Sprawdź czy wszystko ok</span>
+<span class="kw">SELECT</span> <span class="col">saldo</span> <span class="kw">FROM</span> <span class="tbl">konta</span>
+<span class="kw">WHERE</span> <span class="col">id</span> <span class="op">=</span> <span class="num">1</span>;
+
+<span class="cmt">-- Jeśli ok — zatwierdź!</span>
+<span class="kw">COMMIT</span>;
+
+<span class="cmt">-- Jeśli coś poszło nie tak</span>
+<span class="cmt">-- ROLLBACK cofa WSZYSTKO</span>
+<span class="kw">ROLLBACK</span>;</pre>
+    </div>
+
+    <div>
+      <div class="code">
+        <div class="code-top"><div class="dots"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div></div><span>SAVEPOINT — częściowy rollback</span></div>
+        <pre><span class="kw">START TRANSACTION</span>;
+
+<span class="kw">INSERT INTO</span> <span class="tbl">zamowienia</span>
+  (<span class="col">user_id</span>, <span class="col">kwota</span>)
+<span class="kw">VALUES</span> (<span class="num">1</span>, <span class="num">200</span>);
+
+<span class="cmt">-- Zapisz punkt pośredni</span>
+<span class="kw">SAVEPOINT</span> <span class="col">po_zamowieniu</span>;
+
+<span class="kw">INSERT INTO</span> <span class="tbl">platnosci</span>
+  (<span class="col">zamowienie_id</span>, <span class="col">kwota</span>)
+<span class="kw">VALUES</span> (<span class="fn">LAST_INSERT_ID</span>(), <span class="num">200</span>);
+
+<span class="cmt">-- Cofnij tylko od savepoint</span>
+<span class="kw">ROLLBACK TO</span> <span class="col">po_zamowieniu</span>;
+
+<span class="cmt">-- zamówienie zostało,</span>
+<span class="cmt">-- płatność cofnięta</span>
+
+<span class="kw">COMMIT</span>;</pre>
+      </div>
+
+      <div class="alert c" style="margin-top:12px;">
+        <strong>Poziomy izolacji transakcji</strong>
+        READ UNCOMMITTED → READ COMMITTED → REPEATABLE READ → SERIALIZABLE. Wyższy poziom = lepsza izolacja ale wolniej. MySQL domyślnie: REPEATABLE READ.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== WIDOKI ===================== -->
+<section class="section" id="views">
+  <div class="section-label" style="color:var(--violet)">03 — abstrakcja</div>
+  <div class="section-title">Widoki (Views)</div>
+  <p class="section-desc">Widok to zapisane zapytanie SELECT które zachowuje się jak tabela. Ukrywa złożoność, upraszcza dostęp do danych, pozwala kontrolować co widzi użytkownik.</p>
+  <div class="section-divider"></div>
+
+  <div class="g2">
+    <div class="code">
+      <div class="code-top"><div class="dots"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div></div><span>tworzenie i używanie widoków</span></div>
+      <pre><span class="cmt">-- Stwórz widok</span>
+<span class="kw">CREATE VIEW</span> <span class="tbl">v_aktywni_uzytkownicy</span> <span class="kw">AS</span>
+<span class="kw">SELECT</span>
+  <span class="col">id</span>,
+  <span class="col">imie</span>,
+  <span class="col">email</span>,
+  <span class="fn">COUNT</span>(<span class="tbl">z</span>.<span class="col">id</span>) <span class="kw">AS</span> <span class="col">ile_zamowien</span>
+<span class="kw">FROM</span> <span class="tbl">uzytkownicy</span> <span class="tbl">u</span>
+<span class="kw">LEFT JOIN</span> <span class="tbl">zamowienia</span> <span class="tbl">z</span>
+  <span class="kw">ON</span> <span class="tbl">u</span>.<span class="col">id</span> <span class="op">=</span> <span class="tbl">z</span>.<span class="col">uzytkownik_id</span>
+<span class="kw">WHERE</span> <span class="tbl">u</span>.<span class="col">aktywny</span> <span class="op">=</span> <span class="num">1</span>
+<span class="kw">GROUP BY</span> <span class="tbl">u</span>.<span class="col">id</span>;
+
+<span class="cmt">-- Używasz jak zwykłą tabelę!</span>
+<span class="kw">SELECT</span> <span class="op">*</span>
+<span class="kw">FROM</span> <span class="tbl">v_aktywni_uzytkownicy</span>
+<span class="kw">WHERE</span> <span class="col">ile_zamowien</span> <span class="op">></span> <span class="num">3</span>;
+
+<span class="cmt">-- Aktualizuj widok</span>
+<span class="kw">CREATE OR REPLACE VIEW</span> <span class="tbl">v_aktywni_uzytkownicy</span>
+<span class="kw">AS</span> <span class="col">...</span>;
+
+<span class="cmt">-- Usuń widok</span>
+<span class="kw">DROP VIEW</span> <span class="tbl">v_aktywni_uzytkownicy</span>;</pre>
+    </div>
+
+    <div>
+      <div class="card">
+        <div class="card-label lv">💡 Kiedy używać widoków</div>
+        <table class="t">
+          <tr><td>Bezpieczeństwo</td><td>Pokaż userowi tylko widok bez dostępu do surowej tabeli (np. ukryj kolumnę haslo)</td></tr>
+          <tr><td>Uproszczenie</td><td>Skomplikowany JOIN z 5 tabel → widok → prosta nazwa</td></tr>
+          <tr><td>Kompatybilność</td><td>Zmień strukturę tabeli bez zmiany kodu który z niej korzysta</td></tr>
+          <tr><td>Raporty</td><td>Gotowe widoki do raportowania zamiast pisania za każdym razem</td></tr>
+        </table>
+      </div>
+      <div class="alert r" style="margin-top:12px;">
+        <strong>Widok to nie cache!</strong>
+        Widok wykonuje zapytanie za każdym razem gdy go odpytujesz. Jeśli potrzebujesz cache'owania — użyj Materialized View (PostgreSQL) lub tabeli pomocniczej.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PROCEDURY I TRIGGERY ===================== -->
+<section class="section" id="proc">
+  <div class="section-label" style="color:var(--violet)">04 — logika w bazie</div>
+  <div class="section-title">Procedury składowane i triggery</div>
+  <p class="section-desc">Procedury to funkcje napisane w SQL przechowywane w bazie. Triggery to automatyczne akcje uruchamiane przy INSERT/UPDATE/DELETE.</p>
+  <div class="section-divider"></div>
+
+  <div class="g2">
+    <div class="code">
+      <div class="code-top"><div class="dots"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div></div><span>procedura składowana</span></div>
+      <pre><span class="cmt">-- Tworzenie procedury</span>
+<span class="kw">DELIMITER</span> //
+
+<span class="kw">CREATE PROCEDURE</span> <span class="fn">dodaj_zamowienie</span>(
+  <span class="kw">IN</span>  <span class="col">p_user_id</span>  <span class="fn">INT</span>,
+  <span class="kw">IN</span>  <span class="col">p_kwota</span>    <span class="fn">DECIMAL</span>(<span class="num">10</span>,<span class="num">2</span>),
+  <span class="kw">OUT</span> <span class="col">p_order_id</span> <span class="fn">INT</span>
+)
+<span class="kw">BEGIN</span>
+  <span class="cmt">-- Walidacja</span>
+  <span class="kw">IF</span> <span class="col">p_kwota</span> <span class="op">&lt;=</span> <span class="num">0</span> <span class="kw">THEN</span>
+    <span class="fn">SIGNAL SQLSTATE</span> <span class="str">'45000'</span>
+    <span class="kw">SET</span> <span class="fn">MESSAGE_TEXT</span> <span class="op">=</span> <span class="str">'Kwota musi być > 0'</span>;
+  <span class="kw">END IF</span>;
+
+  <span class="cmt">-- Wstaw zamówienie</span>
+  <span class="kw">INSERT INTO</span> <span class="tbl">zamowienia</span>
+    (<span class="col">uzytkownik_id</span>, <span class="col">kwota</span>, <span class="col">data</span>)
+  <span class="kw">VALUES</span>
+    (<span class="col">p_user_id</span>, <span class="col">p_kwota</span>, <span class="fn">NOW</span>());
+
+  <span class="kw">SET</span> <span class="col">p_order_id</span> <span class="op">=</span> <span class="fn">LAST_INSERT_ID</span>();
+<span class="kw">END</span> //
+
+<span class="kw">DELIMITER</span> ;
+
+<span class="cmt">-- Wywołanie procedury</span>
+<span class="kw">CALL</span> <span class="fn">dodaj_zamowienie</span>(<span class="num">5</span>, <span class="num">299.99</span>, <span class="col">@order_id</span>);
+<span class="kw">SELECT</span> <span class="col">@order_id</span>;</pre>
+    </div>
+
+    <div class="code">
+      <div class="code-top"><div class="dots"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div></div><span>trigger — automatyczna akcja</span></div>
+      <pre><span class="cmt">-- BEFORE INSERT: waliduj dane</span>
+<span class="kw">DELIMITER</span> //
+<span class="kw">CREATE TRIGGER</span> <span class="fn">before_user_insert</span>
+  <span class="kw">BEFORE INSERT ON</span> <span class="tbl">uzytkownicy</span>
+  <span class="kw">FOR EACH ROW</span>
+<span class="kw">BEGIN</span>
+  <span class="cmt">-- Zamień email na lowercase</span>
+  <span class="kw">SET</span> <span class="kw">NEW</span>.<span class="col">email</span> <span class="op">=</span> <span class="fn">LOWER</span>(<span class="kw">NEW</span>.<span class="col">email</span>);
+<span class="kw">END</span> //
+<span class="kw">DELIMITER</span> ;
+
+<span class="cmt">-- AFTER DELETE: archiwizuj</span>
+<span class="kw">DELIMITER</span> //
+<span class="kw">CREATE TRIGGER</span> <span class="fn">after_user_delete</span>
+  <span class="kw">AFTER DELETE ON</span> <span class="tbl">uzytkownicy</span>
+  <span class="kw">FOR EACH ROW</span>
+<span class="kw">BEGIN</span>
+  <span class="kw">INSERT INTO</span> <span class="tbl">archiwum_uzytkownikow</span>
+    (<span class="col">user_id</span>, <span class="col">email</span>, <span class="col">deleted_at</span>)
+  <span class="kw">VALUES</span>
+    (<span class="kw">OLD</span>.<span class="col">id</span>, <span class="kw">OLD</span>.<span class="col">email</span>, <span class="fn">NOW</span>());
+<span class="cmt">-- OLD = stare wartości (przed zmianą)</span>
+<span class="cmt">-- NEW = nowe wartości (po zmianie)</span>
+<span class="kw">END</span> //
+<span class="kw">DELIMITER</span> ;</pre>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== WINDOW FUNCTIONS ===================== -->
+<section class="section" id="window">
+  <div class="section-label" style="color:var(--rose)">05 — analityka</div>
+  <div class="section-title">Window Functions</div>
+  <p class="section-desc">Wykonują obliczenia na zestawie wierszy powiązanych z bieżącym wierszem — bez zwijania wyników jak GROUP BY. Każdy wiersz zostaje, a obok pojawia się wynik obliczenia.</p>
+  <div class="section-divider"></div>
+
+  <div class="alert c">
+    <strong>Składnia: funkcja() OVER (PARTITION BY ... ORDER BY ...)</strong>
+    PARTITION BY = grupuj jak GROUP BY ale nie zwijaj. ORDER BY = kolejność w oknie. Bez PARTITION = jedno okno = wszystkie wiersze.
+  </div>
+
+  <div class="g2" style="margin-top:16px;">
+    <div class="code">
+      <div class="code-top"><div class="dots"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div></div><span>ROW_NUMBER, RANK, DENSE_RANK</span></div>
+      <pre><span class="cmt">-- ROW_NUMBER: unikalny numer wiersza</span>
+<span class="kw">SELECT</span>
+  <span class="col">imie</span>,
+  <span class="col">dzial</span>,
+  <span class="col">wynagrodzenie</span>,
+  <span class="fn">ROW_NUMBER</span>() <span class="kw">OVER</span> (
+    <span class="kw">PARTITION BY</span> <span class="col">dzial</span>
+    <span class="kw">ORDER BY</span> <span class="col">wynagrodzenie</span> <span class="kw">DESC</span>
+  ) <span class="kw">AS</span> <span class="col">miejsce_w_dziale</span>
+<span class="kw">FROM</span> <span class="tbl">pracownicy</span>;
+<span class="cmt">-- Wynik: każdy pracownik + jego</span>
+<span class="cmt">-- miejsce w rankingu swojego działu</span>
+
+<span class="cmt">-- RANK vs DENSE_RANK</span>
+<span class="cmt">-- wynagrodzenia: 5000, 5000, 3000</span>
+<span class="cmt">-- RANK:       1, 1, 3  (pomija 2)</span>
+<span class="cmt">-- DENSE_RANK: 1, 1, 2  (bez przerwy)</span>
+
+<span class="cmt">-- TOP 3 zarobki w każdym dziale</span>
+<span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> (
+  <span class="kw">SELECT</span> <span class="op">*</span>,
+    <span class="fn">RANK</span>() <span class="kw">OVER</span> (
+      <span class="kw">PARTITION BY</span> <span class="col">dzial</span>
+      <span class="kw">ORDER BY</span> <span class="col">wynagrodzenie</span> <span class="kw">DESC</span>
+    ) <span class="kw">AS</span> <span class="col">rk</span>
+  <span class="kw">FROM</span> <span class="tbl">pracownicy</span>
+) <span class="tbl">t</span>
+<span class="kw">WHERE</span> <span class="col">rk</span> <span class="op">&lt;=</span> <span class="num">3</span>;</pre>
+    </div>
+
+    <div class="code">
+      <div class="code-top"><div class="dots"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div></div><span>LAG, LEAD, SUM kumulacyjne</span></div>
+      <pre><span class="cmt">-- LAG: poprzedni wiersz</span>
+<span class="cmt">-- LEAD: następny wiersz</span>
+<span class="kw">SELECT</span>
+  <span class="col">miesiac</span>,
+  <span class="col">sprzedaz</span>,
+  <span class="fn">LAG</span>(<span class="col">sprzedaz</span>) <span class="kw">OVER</span> (
+    <span class="kw">ORDER BY</span> <span class="col">miesiac</span>
+  ) <span class="kw">AS</span> <span class="col">poprzedni_miesiac</span>,
+  <span class="col">sprzedaz</span> <span class="op">-</span> <span class="fn">LAG</span>(<span class="col">sprzedaz</span>) <span class="kw">OVER</span> (
+    <span class="kw">ORDER BY</span> <span class="col">miesiac</span>
+  ) <span class="kw">AS</span> <span class="col">zmiana</span>
+<span class="kw">FROM</span> <span class="tbl">sprzedaz_miesieczna</span>;
+
+<span class="cmt">-- SUM kumulacyjny (running total)</span>
+<span class="kw">SELECT</span>
+  <span class="col">data</span>,
+  <span class="col">kwota</span>,
+  <span class="fn">SUM</span>(<span class="col">kwota</span>) <span class="kw">OVER</span> (
+    <span class="kw">ORDER BY</span> <span class="col">data</span>
+  ) <span class="kw">AS</span> <span class="col">suma_narastajaco</span>
+<span class="kw">FROM</span> <span class="tbl">zamowienia</span>;
+
+<span class="cmt">-- AVG krocząca (ostatnie 3 miesiące)</span>
+<span class="fn">AVG</span>(<span class="col">sprzedaz</span>) <span class="kw">OVER</span> (
+  <span class="kw">ORDER BY</span> <span class="col">miesiac</span>
+  <span class="kw">ROWS BETWEEN</span> <span class="num">2</span> <span class="kw">PRECEDING AND CURRENT ROW</span>
+) <span class="kw">AS</span> <span class="col">srednia_3m</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CTE ===================== -->
+<section class="section" id="cte">
+  <div class="section-label" style="color:var(--amber)">06 — czytelność</div>
+  <div class="section-title">CTE — Common Table Expressions</div>
+  <p class="section-desc">CTE to tymczasowe nazwane zapytanie zdefiniowane na początku głównego zapytania klauzulą WITH. Rozbija skomplikowane zapytanie na czytelne kroki. Może być też rekurencyjne.</p>
+  <div class="section-divider"></div>
+
+  <div class="g2">
+    <div class="code">
+      <div class="code-top"><div class="dots"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div></div><span>CTE podstawowe i łańcuchowe</span></div>
+      <pre><span class="cmt">-- Jedno CTE</span>
+<span class="kw">WITH</span> <span class="tbl">top_klienci</span> <span class="kw">AS</span> (
+  <span class="kw">SELECT</span>
+    <span class="col">uzytkownik_id</span>,
+    <span class="fn">SUM</span>(<span class="col">kwota</span>) <span class="kw">AS</span> <span class="col">suma</span>
+  <span class="kw">FROM</span> <span class="tbl">zamowienia</span>
+  <span class="kw">GROUP BY</span> <span class="col">uzytkownik_id</span>
+  <span class="kw">HAVING</span> <span class="fn">SUM</span>(<span class="col">kwota</span>) <span class="op">></span> <span class="num">5000</span>
+)
+<span class="kw">SELECT</span> <span class="tbl">u</span>.<span class="col">imie</span>, <span class="tbl">tk</span>.<span class="col">suma</span>
+<span class="kw">FROM</span> <span class="tbl">top_klienci</span> <span class="tbl">tk</span>
+<span class="kw">JOIN</span> <span class="tbl">uzytkownicy</span> <span class="tbl">u</span>
+  <span class="kw">ON</span> <span class="tbl">tk</span>.<span class="col">uzytkownik_id</span> <span class="op">=</span> <span class="tbl">u</span>.<span class="col">id</span>;
+
+<span class="cmt">-- Wiele CTE po sobie</span>
+<span class="kw">WITH</span>
+<span class="tbl">zamowienia_2024</span> <span class="kw">AS</span> (
+  <span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> <span class="tbl">zamowienia</span>
+  <span class="kw">WHERE</span> <span class="fn">YEAR</span>(<span class="col">data</span>) <span class="op">=</span> <span class="num">2024</span>
+),
+<span class="tbl">sumy_per_user</span> <span class="kw">AS</span> (
+  <span class="kw">SELECT</span> <span class="col">uzytkownik_id</span>, <span class="fn">SUM</span>(<span class="col">kwota</span>) <span class="col">s</span>
+  <span class="kw">FROM</span> <span class="tbl">zamowienia_2024</span>
+  <span class="kw">GROUP BY</span> <span class="col">uzytkownik_id</span>
+)
+<span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> <span class="tbl">sumy_per_user</span>
+<span class="kw">ORDER BY</span> <span class="col">s</span> <span class="kw">DESC</span>;</pre>
+    </div>
+
+    <div class="code">
+      <div class="code-top"><div class="dots"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div></div><span>CTE rekurencyjne — drzewo kategorii</span></div>
+      <pre><span class="cmt">-- Tabela: kategorie(id, nazwa, parent_id)</span>
+<span class="cmt">-- Chcemy całe drzewo z poziomami</span>
+
+<span class="kw">WITH RECURSIVE</span> <span class="tbl">drzewo</span> <span class="kw">AS</span> (
+
+  <span class="cmt">-- Część bazowa: korzeń (bez rodzica)</span>
+  <span class="kw">SELECT</span>
+    <span class="col">id</span>, <span class="col">nazwa</span>,
+    <span class="num">0</span> <span class="kw">AS</span> <span class="col">poziom</span>,
+    <span class="col">nazwa</span> <span class="kw">AS</span> <span class="col">sciezka</span>
+  <span class="kw">FROM</span> <span class="tbl">kategorie</span>
+  <span class="kw">WHERE</span> <span class="col">parent_id</span> <span class="kw">IS NULL</span>
+
+  <span class="kw">UNION ALL</span>
+
+  <span class="cmt">-- Część rekurencyjna: dzieci</span>
+  <span class="kw">SELECT</span>
+    <span class="tbl">k</span>.<span class="col">id</span>, <span class="tbl">k</span>.<span class="col">nazwa</span>,
+    <span class="tbl">d</span>.<span class="col">poziom</span> <span class="op">+</span> <span class="num">1</span>,
+    <span class="fn">CONCAT</span>(<span class="tbl">d</span>.<span class="col">sciezka</span>, <span class="str">' > '</span>, <span class="tbl">k</span>.<span class="col">nazwa</span>)
+  <span class="kw">FROM</span> <span class="tbl">kategorie</span> <span class="tbl">k</span>
+  <span class="kw">JOIN</span> <span class="tbl">drzewo</span> <span class="tbl">d</span>
+    <span class="kw">ON</span> <span class="tbl">k</span>.<span class="col">parent_id</span> <span class="op">=</span> <span class="tbl">d</span>.<span class="col">id</span>
+)
+<span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> <span class="tbl">drzewo</span>
+<span class="kw">ORDER BY</span> <span class="col">sciezka</span>;
+<span class="cmt">-- Wynik: Elektronika > Telefony > iPhone</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SUBQUERIES ===================== -->
+<section class="section" id="sub">
+  <div class="section-label" style="color:var(--amber)">07 — zagnieżdżanie</div>
+  <div class="section-title">Subqueries — podzapytania</div>
+  <p class="section-desc">Zapytanie SQL wewnątrz innego zapytania. Może być w SELECT, FROM, WHERE lub HAVING. Często można zastąpić JOIN-em lub CTE — co jest czytelniejsze zależy od kontekstu.</p>
+  <div class="section-divider"></div>
+
+  <div class="g2">
+    <div class="code">
+      <div class="code-top"><div class="dots"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div></div><span>subquery w WHERE, SELECT, FROM</span></div>
+      <pre><span class="cmt">-- W WHERE: skalarne (jeden wynik)</span>
+<span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> <span class="tbl">produkty</span>
+<span class="kw">WHERE</span> <span class="col">cena</span> <span class="op">></span> (
+  <span class="kw">SELECT</span> <span class="fn">AVG</span>(<span class="col">cena</span>)
+  <span class="kw">FROM</span> <span class="tbl">produkty</span>
+);  <span class="cmt">-- droższe od średniej</span>
+
+<span class="cmt">-- W WHERE z IN</span>
+<span class="kw">SELECT</span> <span class="col">imie</span> <span class="kw">FROM</span> <span class="tbl">uzytkownicy</span>
+<span class="kw">WHERE</span> <span class="col">id</span> <span class="kw">IN</span> (
+  <span class="kw">SELECT DISTINCT</span> <span class="col">uzytkownik_id</span>
+  <span class="kw">FROM</span> <span class="tbl">zamowienia</span>
+  <span class="kw">WHERE</span> <span class="col">kwota</span> <span class="op">></span> <span class="num">1000</span>
+);  <span class="cmt">-- userzy z zamówieniem > 1000</span>
+
+<span class="cmt">-- W SELECT: dla każdego wiersza</span>
+<span class="kw">SELECT</span>
+  <span class="col">imie</span>,
+  (
+    <span class="kw">SELECT</span> <span class="fn">COUNT</span>(<span class="op">*</span>)
+    <span class="kw">FROM</span> <span class="tbl">zamowienia</span> <span class="tbl">z</span>
+    <span class="kw">WHERE</span> <span class="tbl">z</span>.<span class="col">uzytkownik_id</span> <span class="op">=</span> <span class="tbl">u</span>.<span class="col">id</span>
+  ) <span class="kw">AS</span> <span class="col">ile_zamowien</span>
+<span class="kw">FROM</span> <span class="tbl">uzytkownicy</span> <span class="tbl">u</span>;</pre>
+    </div>
+
+    <div class="code">
+      <div class="code-top"><div class="dots"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div></div><span>EXISTS, NOT EXISTS, FROM subquery</span></div>
+      <pre><span class="cmt">-- EXISTS: sprawdź czy istnieje</span>
+<span class="cmt">-- Często szybszy niż IN!</span>
+<span class="kw">SELECT</span> <span class="col">imie</span> <span class="kw">FROM</span> <span class="tbl">uzytkownicy</span> <span class="tbl">u</span>
+<span class="kw">WHERE EXISTS</span> (
+  <span class="kw">SELECT</span> <span class="num">1</span>
+  <span class="kw">FROM</span> <span class="tbl">zamowienia</span> <span class="tbl">z</span>
+  <span class="kw">WHERE</span> <span class="tbl">z</span>.<span class="col">uzytkownik_id</span> <span class="op">=</span> <span class="tbl">u</span>.<span class="col">id</span>
+  <span class="kw">AND</span> <span class="tbl">z</span>.<span class="col">kwota</span> <span class="op">></span> <span class="num">500</span>
+);
+
+<span class="cmt">-- NOT EXISTS: brak dopasowania</span>
+<span class="kw">SELECT</span> <span class="col">imie</span> <span class="kw">FROM</span> <span class="tbl">uzytkownicy</span> <span class="tbl">u</span>
+<span class="kw">WHERE NOT EXISTS</span> (
+  <span class="kw">SELECT</span> <span class="num">1</span> <span class="kw">FROM</span> <span class="tbl">zamowienia</span> <span class="tbl">z</span>
+  <span class="kw">WHERE</span> <span class="tbl">z</span>.<span class="col">uzytkownik_id</span> <span class="op">=</span> <span class="tbl">u</span>.<span class="col">id</span>
+); <span class="cmt">-- userzy bez zamówień</span>
+
+<span class="cmt">-- W FROM: inline view</span>
+<span class="kw">SELECT</span> <span class="tbl">sub</span>.<span class="col">dzial</span>, <span class="fn">AVG</span>(<span class="tbl">sub</span>.<span class="col">wyplata</span>)
+<span class="kw">FROM</span> (
+  <span class="kw">SELECT</span> <span class="col">dzial</span>, <span class="fn">SUM</span>(<span class="col">wynagrodzenie</span>) <span class="col">wyplata</span>
+  <span class="kw">FROM</span> <span class="tbl">pracownicy</span>
+  <span class="kw">GROUP BY</span> <span class="col">dzial</span>, <span class="fn">MONTH</span>(<span class="col">data</span>)
+) <span class="tbl">sub</span>
+<span class="kw">GROUP BY</span> <span class="tbl">sub</span>.<span class="col">dzial</span>;</pre>
+    </div>
+  </div>
+
+  <div class="alert l" style="margin-top:8px;">
+    <strong>Subquery vs JOIN vs CTE — kiedy co?</strong>
+    JOIN jest zazwyczaj najszybszy bo optymalizator ma więcej możliwości. Subquery w WHERE z IN jest wolniejszy przy dużych zbiorach — zamień na JOIN lub EXISTS. CTE używaj gdy chcesz podzielić złożone zapytanie na czytelne kroki — czytelność > mikro-optymalizacja.
+  </div>
+</section>
+
+</main>
+</body>
+</html>

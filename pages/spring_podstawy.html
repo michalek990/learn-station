@@ -1,0 +1,1178 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spring Boot — Podstawy</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f0f4f8;
+  --s1: #ffffff;
+  --s2: #e8f0f7;
+  --bd: #cbd5e0;
+  --bd2: #a0aec0;
+  --tx: #1a202c;
+  --tx2: #4a5568;
+  --mt: #718096;
+  --spring: #6db33f;
+  --spring-dark: #5a9e34;
+  --boot: #68bd45;
+  --accent: #3182ce;
+  --warn: #ed8936;
+  --danger: #e53e3e;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--tx);
+  font-family: 'Inter', sans-serif;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* BACK TO MENU */
+.back-to-menu{position:fixed;top:20px;left:20px;z-index:9999;background:rgba(0,0,0,0.8);backdrop-filter:blur(10px);border:2px solid rgba(255,255,255,0.2);border-radius:50px;padding:12px 24px;display:flex;align-items:center;gap:10px;text-decoration:none;color:#fff;font-family:inherit;font-size:0.85rem;font-weight:600;letter-spacing:1px;transition:all .3s ease;box-shadow:0 4px 20px rgba(0,0,0,0.3)}
+.back-to-menu:hover{background:rgba(255,255,255,0.15);border-color:rgba(255,255,255,0.4);transform:translateX(-3px);box-shadow:0 6px 30px rgba(0,0,0,0.5)}
+.back-arrow{font-size:1.2rem;transition:transform .3s ease}
+.back-to-menu:hover .back-arrow{transform:translateX(-3px)}
+
+/* HEADER */
+.hdr {
+  background: linear-gradient(135deg, #6db33f 0%, #5a9e34 100%);
+  color: white;
+  padding: 80px 64px 60px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hdr::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 600px;
+  height: 600px;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><path d="M100 10 L190 60 L190 140 L100 190 L10 140 L10 60 Z" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.1)" stroke-width="2"/></svg>');
+  background-size: contain;
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.hdr-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 20px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  margin-bottom: 24px;
+}
+
+.spring-leaf {
+  width: 16px;
+  height: 16px;
+  background: white;
+  border-radius: 50% 0;
+  transform: rotate(-45deg);
+}
+
+h1 {
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -2px;
+  margin-bottom: 16px;
+  position: relative;
+}
+
+.hdr-subtitle {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.9rem;
+  opacity: 0.9;
+  letter-spacing: 1px;
+  margin-bottom: 24px;
+}
+
+.hdr-desc {
+  font-size: 1.05rem;
+  opacity: 0.95;
+  max-width: 720px;
+  line-height: 1.8;
+}
+
+/* VERSION BADGE */
+.version-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.ver-badge {
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ver-label {
+  opacity: 0.8;
+}
+
+.ver-value {
+  font-weight: 700;
+}
+
+/* NAV */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(12px);
+  border-bottom: 2px solid var(--bd);
+  padding: 0 64px;
+  display: flex;
+  overflow-x: auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.nav a {
+  color: var(--tx2);
+  text-decoration: none;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  padding: 16px 18px;
+  white-space: nowrap;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+}
+
+.nav a:hover {
+  color: var(--spring);
+  border-bottom-color: var(--spring);
+  background: var(--s2);
+}
+
+/* MAIN */
+.main {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 64px 24px 120px;
+}
+
+.sec {
+  margin-bottom: 88px;
+  animation: rise 0.5s ease backwards;
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.sec:nth-child(1){animation-delay:.04s}.sec:nth-child(2){animation-delay:.07s}
+.sec:nth-child(3){animation-delay:.10s}.sec:nth-child(4){animation-delay:.13s}
+.sec:nth-child(5){animation-delay:.16s}.sec:nth-child(6){animation-delay:.19s}
+.sec:nth-child(7){animation-delay:.22s}.sec:nth-child(8){animation-delay:.25s}
+
+.sec-ey {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--spring);
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+
+.sec-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  letter-spacing: -1px;
+  line-height: 1.1;
+  margin-bottom: 12px;
+  color: var(--tx);
+}
+
+.sec-desc {
+  font-size: 0.95rem;
+  color: var(--tx2);
+  max-width: 720px;
+  line-height: 1.8;
+  margin-bottom: 32px;
+}
+
+.sec-rule {
+  height: 3px;
+  background: linear-gradient(90deg, var(--spring), transparent);
+  margin-bottom: 32px;
+  border-radius: 2px;
+}
+
+/* GRID */
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.g3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+
+@media (max-width: 900px) {
+  .g2, .g3 { grid-template-columns: 1fr; }
+  .hdr { padding: 60px 24px 40px; }
+  .nav { padding: 0 20px; }
+  h1 { font-size: 2.5rem; }
+}
+
+/* CARD */
+.card {
+  background: var(--s1);
+  border: 2px solid var(--bd);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s;
+}
+
+.card:hover {
+  border-color: var(--spring);
+  box-shadow: 0 4px 16px rgba(109, 179, 63, 0.15);
+  transform: translateY(-2px);
+}
+
+.cl {
+  padding: 14px 20px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border-bottom: 2px solid var(--bd);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cl-spring { background: linear-gradient(135deg, var(--spring), var(--boot)); color: white; border: none; }
+.cl-info { background: var(--s2); color: var(--accent); }
+.cl-warn { background: #fff5e6; color: var(--warn); }
+
+/* CODE */
+.code {
+  background: #2d2d2d;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.cbar {
+  background: #1e1e1e;
+  padding: 12px 18px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  color: #888;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #3d3d3d;
+}
+
+.file-icon {
+  color: var(--spring);
+  margin-right: 8px;
+}
+
+pre {
+  padding: 24px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  line-height: 1.8;
+  overflow-x: auto;
+  color: #d4d4d4;
+}
+
+.kw { color: #569cd6; font-weight: 600; }
+.fn { color: #dcdcaa; }
+.str { color: #ce9178; }
+.num { color: #b5cea8; }
+.cmt { color: #6a9955; font-style: italic; }
+.cls { color: #4ec9b0; }
+.ann { color: #dcdcaa; }
+.at { color: #9cdcfe; }
+.ok { color: #4ec9b0; }
+
+/* TABLE */
+.t { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+.t th {
+  background: var(--s2);
+  color: var(--tx);
+  padding: 14px 18px;
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid var(--bd);
+  font-family: 'JetBrains Mono', monospace;
+}
+.t td {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--bd);
+  color: var(--tx2);
+  vertical-align: top;
+  line-height: 1.6;
+}
+.t tr:last-child td { border-bottom: none; }
+.t tr:hover { background: var(--s2); }
+.t td:first-child {
+  color: var(--tx);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+/* ALERT */
+.alert {
+  border-left: 4px solid;
+  padding: 18px 22px;
+  border-radius: 0 12px 12px 0;
+  font-size: 0.9rem;
+  line-height: 1.8;
+  margin: 16px 0;
+}
+
+.alert strong {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.alert.spring {
+  border-color: var(--spring);
+  background: #f0f9f4;
+  color: var(--tx);
+}
+.alert.spring strong { color: var(--spring-dark); }
+
+.alert.info {
+  border-color: var(--accent);
+  background: #ebf5ff;
+  color: var(--tx);
+}
+.alert.info strong { color: var(--accent); }
+
+.alert.warn {
+  border-color: var(--warn);
+  background: #fff5e6;
+  color: var(--tx);
+}
+.alert.warn strong { color: var(--warn); }
+
+code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85em;
+  background: var(--s2);
+  border: 1px solid var(--bd);
+  border-radius: 4px;
+  padding: 2px 6px;
+  color: var(--spring-dark);
+  font-weight: 600;
+}
+
+/* FEATURE GRID */
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+}
+
+.feature-card {
+  background: var(--s1);
+  border: 2px solid var(--bd);
+  border-radius: 12px;
+  padding: 24px;
+  transition: all 0.3s;
+}
+
+.feature-card:hover {
+  border-color: var(--spring);
+  box-shadow: 0 4px 12px rgba(109, 179, 63, 0.1);
+}
+
+.feature-icon {
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+}
+
+.feature-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--tx);
+}
+
+.feature-desc {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--tx2);
+  line-height: 1.7;
+}
+
+/* ANNOTATION SHOWCASE */
+.ann-showcase {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ann-item {
+  background: var(--s1);
+  border: 2px solid var(--bd);
+  border-radius: 8px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  transition: all 0.2s;
+}
+
+.ann-item:hover {
+  border-color: var(--spring);
+  background: #f9fdf7;
+}
+
+.ann-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--spring-dark);
+  min-width: 200px;
+}
+
+.ann-desc {
+  font-size: 0.85rem;
+  color: var(--tx2);
+  line-height: 1.7;
+}
+</style>
+</head>
+<body>
+
+<a href="index.html" class="back-to-menu"><span class="back-arrow">←</span><span>MENU</span></a>
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="hdr-badge">
+    <div class="spring-leaf"></div>
+    <span>SPRING FRAMEWORK</span>
+  </div>
+  
+  <h1>Spring Boot<br>Podstawy</h1>
+  
+  <div class="hdr-subtitle">// fundamenty · dependency injection · auto-configuration · spring mvc</div>
+  
+  <p class="hdr-desc">
+    Spring Boot to najważniejszy framework w ekosystemie Java. Automatyzuje konfigurację, wbudowany serwer Tomcat, 
+    starter packs, production-ready features. Zacznij tutaj — poznaj IoC, DI, beans, adnotacje, REST controllers.
+  </p>
+
+  <div class="version-bar">
+    <div class="ver-badge">
+      <span class="ver-label">Spring Boot:</span>
+      <span class="ver-value">3.2+</span>
+    </div>
+    <div class="ver-badge">
+      <span class="ver-label">Java:</span>
+      <span class="ver-value">17+</span>
+    </div>
+    <div class="ver-badge">
+      <span class="ver-label">Spring Framework:</span>
+      <span class="ver-value">6.1+</span>
+    </div>
+  </div>
+</header>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="#czym-jest">Czym jest Spring</a>
+  <a href="#ioc-di">IoC & DI</a>
+  <a href="#beans">Beans</a>
+  <a href="#annotations">Adnotacje</a>
+  <a href="#starter">Spring Boot Starter</a>
+  <a href="#mvc">Spring MVC</a>
+  <a href="#properties">Configuration</a>
+  <a href="#struktura">Struktura projektu</a>
+</nav>
+
+<!-- MAIN -->
+<main class="main">
+
+<!-- CZYM JEST SPRING -->
+<section class="sec" id="czym-jest">
+  <div class="sec-ey">01 — wprowadzenie</div>
+  <div class="sec-title">Czym jest Spring Framework?</div>
+  <p class="sec-desc">Spring to framework do budowy aplikacji enterprise w Javie. Spring Boot to nadbudowa która automatyzuje większość konfiguracji. Zero XML, konwencja nad konfiguracją, embedded Tomcat — działająca aplikacja w 5 minut.</p>
+  <div class="sec-rule"></div>
+
+  <div class="feature-grid">
+    <div class="feature-card">
+      <div class="feature-icon">📦</div>
+      <div class="feature-name">Dependency Injection</div>
+      <div class="feature-desc">Framework zarządza obiektami (beans) i ich zależnościami. Nie musisz ręcznie tworzyć instancji.</div>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">⚙️</div>
+      <div class="feature-name">Auto-Configuration</div>
+      <div class="feature-desc">Spring Boot automatycznie konfiguruje komponenty na podstawie classpath. H2 w classpath → auto-konfiguruje DataSource.</div>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">🚀</div>
+      <div class="feature-name">Embedded Server</div>
+      <div class="feature-desc">Wbudowany Tomcat/Jetty/Undertow. Nie musisz deployować WAR na zewnętrzny serwer. Uruchamiasz JAR.</div>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">🔌</div>
+      <div class="feature-name">Spring Boot Starters</div>
+      <div class="feature-desc">Gotowe paczki zależności. spring-boot-starter-web daje MVC + Tomcat + JSON. Jedna linijka w pom.xml.</div>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">📊</div>
+      <div class="feature-name">Actuator</div>
+      <div class="feature-desc">Production-ready features: health checks, metrics, monitoring endpoints. /actuator/health out of the box.</div>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">🛠️</div>
+      <div class="feature-name">DevTools</div>
+      <div class="feature-desc">Hot reload — zmiana kodu → automatyczny restart aplikacji. Przyspiesza development.</div>
+    </div>
+  </div>
+
+  <div class="alert spring" style="margin-top:24px">
+    <strong>🍃 Dlaczego Spring Boot jest wszędzie?</strong>
+    95% aplikacji enterprise Java używa Spring. Dlaczego? Ogromny ekosystem (Security, Data, Cloud), dojrzałość (20+ lat), świetna dokumentacja, komercyjne wsparcie (VMware), ogromna społeczność. Jeśli uczysz się Java backend — musisz znać Spring.
+  </div>
+</section>
+
+<!-- IOC & DI -->
+<section class="sec" id="ioc-di">
+  <div class="sec-ey">02 — fundament</div>
+  <div class="sec-title">IoC & Dependency Injection</div>
+  <p class="sec-desc">Inversion of Control — odwrócenie kontroli. Nie ty tworzysz obiekty, Spring tworzy i wstrzykuje je tam gdzie potrzeba. Dependency Injection to mechanizm dostarczania zależności.</p>
+  <div class="sec-rule"></div>
+
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><span><span class="file-icon">📄</span>Bez DI — ręczne tworzenie</span></div>
+      <pre><span class="kw">public class</span> <span class="cls">OrderService</span> {
+  
+  <span class="cmt">// Musisz sam utworzyć zależności!</span>
+  <span class="kw">private</span> <span class="cls">OrderRepository</span> repository;
+  <span class="kw">private</span> <span class="cls">EmailService</span> emailService;
+  
+  <span class="kw">public</span> <span class="fn">OrderService</span>() {
+    <span class="cmt">// Tight coupling — trudno testować</span>
+    <span class="kw">this</span>.repository = <span class="kw">new</span> <span class="cls">OrderRepository</span>();
+    <span class="kw">this</span>.emailService = <span class="kw">new</span> <span class="cls">EmailService</span>();
+  }
+  
+  <span class="kw">public void</span> <span class="fn">createOrder</span>(<span class="cls">Order</span> order) {
+    repository.<span class="fn">save</span>(order);
+    emailService.<span class="fn">send</span>(order);
+  }
+}</pre>
+    </div>
+
+    <div class="code">
+      <div class="cbar"><span><span class="file-icon">🍃</span>Z DI — Spring wstrzykuje</span></div>
+      <pre><span class="ann">@Service</span> <span class="cmt">// Spring zarządza tym obiektem</span>
+<span class="kw">public class</span> <span class="cls">OrderService</span> {
+  
+  <span class="cmt">// Spring wstrzyknie zależności!</span>
+  <span class="kw">private final</span> <span class="cls">OrderRepository</span> repository;
+  <span class="kw">private final</span> <span class="cls">EmailService</span> emailService;
+  
+  <span class="cmt">// Constructor injection (BEST PRACTICE)</span>
+  <span class="kw">public</span> <span class="fn">OrderService</span>(
+      <span class="cls">OrderRepository</span> repository,
+      <span class="cls">EmailService</span> emailService) {
+    <span class="kw">this</span>.repository = repository;
+    <span class="kw">this</span>.emailService = emailService;
+  }
+  
+  <span class="kw">public void</span> <span class="fn">createOrder</span>(<span class="cls">Order</span> order) {
+    repository.<span class="fn">save</span>(order);
+    emailService.<span class="fn">send</span>(order);
+  }
+}</pre>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <div class="cl cl-info">🔍 3 typy Dependency Injection</div>
+    <table class="t">
+      <tr><th>Typ</th><th>Jak wygląda</th><th>Kiedy używać</th></tr>
+      <tr>
+        <td>Constructor</td>
+        <td><code>public Service(Repo repo) {...}</code></td>
+        <td><strong>✅ BEST PRACTICE</strong> — wymagane zależności, immutable, łatwe testowanie</td>
+      </tr>
+      <tr>
+        <td>Setter</td>
+        <td><code>@Autowired<br>public void setRepo(Repo r) {...}</code></td>
+        <td>⚠️ Opcjonalne zależności. Rzadko używane.</td>
+      </tr>
+      <tr>
+        <td>Field</td>
+        <td><code>@Autowired<br>private Repo repo;</code></td>
+        <td>❌ AVOID — nie da się testować bez Springa, ukrywa zależności</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="alert warn" style="margin-top:16px">
+    <strong>⚠️ Constructor Injection — zawsze!</strong>
+    Field injection (@Autowired na polu) wygląda prościej ale ma problemy: nie da się testować bez Springa, ukrywa liczbę zależności (jeśli klasa ma 10 @Autowired to znak że robi za dużo), nie działa z final fields. Constructor injection wymusza immutability i pokazuje prawdziwą liczbę zależności.
+  </div>
+</section>
+
+<!-- BEANS -->
+<section class="sec" id="beans">
+  <div class="sec-ey">03 — zarządzanie obiektami</div>
+  <div class="sec-title">Spring Beans</div>
+  <p class="sec-desc">Bean to obiekt zarządzany przez Spring IoC Container. Spring tworzy bean, zarządza jego lifecycle, wstrzykuje zależności. Beans są singletonami domyślnie — jedna instancja na cały application context.</p>
+  <div class="sec-rule"></div>
+
+  <div class="code">
+    <div class="cbar"><span><span class="file-icon">☕</span>Rejestracja beans — @Component i pochodne</span></div>
+    <pre><span class="cmt">// @Component — generyczny bean</span>
+<span class="ann">@Component</span>
+<span class="kw">public class</span> <span class="cls">MyComponent</span> {
+  <span class="cmt">// Spring utworzy instancję i zarządza</span>
+}
+
+<span class="cmt">// @Service — logika biznesowa (warstwa service)</span>
+<span class="ann">@Service</span>
+<span class="kw">public class</span> <span class="cls">UserService</span> { }
+
+<span class="cmt">// @Repository — dostęp do danych (warstwa DAO)</span>
+<span class="ann">@Repository</span>
+<span class="kw">public class</span> <span class="cls">UserRepository</span> { }
+
+<span class="cmt">// @Controller / @RestController — warstwa HTTP</span>
+<span class="ann">@RestController</span>
+<span class="kw">public class</span> <span class="cls">UserController</span> { }
+
+<span class="cmt">// @Configuration — klasa konfiguracyjna z @Bean methods</span>
+<span class="ann">@Configuration</span>
+<span class="kw">public class</span> <span class="cls">AppConfig</span> {
+  
+  <span class="cmt">// @Bean — ręczna rejestracja bean</span>
+  <span class="ann">@Bean</span>
+  <span class="kw">public</span> <span class="cls">ObjectMapper</span> <span class="fn">objectMapper</span>() {
+    <span class="kw">return new</span> <span class="cls">ObjectMapper</span>()
+      .<span class="fn">registerModule</span>(<span class="kw">new</span> <span class="cls">JavaTimeModule</span>());
+  }
+}</pre>
+  </div>
+
+  <div class="g2" style="margin-top:20px">
+    <div class="card">
+      <div class="cl cl-spring">📦 Bean Scopes</div>
+      <div style="padding:20px">
+        <div class="ann-showcase">
+          <div class="ann-item">
+            <div class="ann-name">singleton (default)</div>
+            <div class="ann-desc">Jedna instancja na cały ApplicationContext. Wszystkie injections dostają tę samą instancję.</div>
+          </div>
+          <div class="ann-item">
+            <div class="ann-name">prototype</div>
+            <div class="ann-desc">Nowa instancja przy każdym wstrzyknięciu. Spring nie zarządza lifecycle.</div>
+          </div>
+          <div class="ann-item">
+            <div class="ann-name">request (web)</div>
+            <div class="ann-desc">Jedna instancja per HTTP request. Umiera po zakończeniu requestu.</div>
+          </div>
+          <div class="ann-item">
+            <div class="ann-name">session (web)</div>
+            <div class="ann-desc">Jedna instancja per HTTP session. Żyje przez całą sesję usera.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="code">
+      <div class="cbar"><span>Użycie scope</span></div>
+      <pre><span class="cmt">// Domyślnie singleton</span>
+<span class="ann">@Service</span>
+<span class="kw">public class</span> <span class="cls">UserService</span> { }
+
+<span class="cmt">// Prototype — nowa instancja zawsze</span>
+<span class="ann">@Component</span>
+<span class="ann">@Scope</span>(<span class="str">"prototype"</span>)
+<span class="kw">public class</span> <span class="cls">ShoppingCart</span> { }
+
+<span class="cmt">// Request scope (web)</span>
+<span class="ann">@Component</span>
+<span class="ann">@Scope</span>(
+  value = <span class="cls">WebApplicationContext</span>.SCOPE_REQUEST,
+  proxyMode = <span class="cls">ScopedProxyMode</span>.TARGET_CLASS
+)
+<span class="kw">public class</span> <span class="cls">RequestContext</span> { }</pre>
+    </div>
+  </div>
+
+  <div class="alert info" style="margin-top:16px">
+    <strong>💡 Kiedy używać @Bean vs @Component?</strong>
+    <strong>@Component</strong> (i @Service/@Repository) — gdy masz dostęp do kodu klasy i możesz dodać adnotację. <strong>@Bean</strong> w @Configuration — gdy konfigurujesz klasę z zewnętrznej biblioteki (np. ObjectMapper, RestTemplate) lub potrzebujesz złożonej logiki tworzenia obiektu.
+  </div>
+</section>
+
+<!-- ANNOTATIONS -->
+<section class="sec" id="annotations">
+  <div class="sec-ey">04 — adnotacje</div>
+  <div class="sec-title">Najważniejsze Adnotacje Spring</div>
+  <p class="sec-desc">Spring Boot używa adnotacji do wszystkiego — rejestracja beans, mapowanie HTTP, validation, transakcje. Poznaj te najważniejsze.</p>
+  <div class="sec-rule"></div>
+
+  <div class="ann-showcase">
+    <div class="ann-item">
+      <div class="ann-name">@SpringBootApplication</div>
+      <div class="ann-desc">Meta-adnotacja = @Configuration + @EnableAutoConfiguration + @ComponentScan. Punkt startowy aplikacji. Skanuje pakiet i podpakiety.</div>
+    </div>
+
+    <div class="ann-item">
+      <div class="ann-name">@RestController</div>
+      <div class="ann-desc">= @Controller + @ResponseBody. Każda metoda zwraca JSON (nie view). Używaj do REST API.</div>
+    </div>
+
+    <div class="ann-item">
+      <div class="ann-name">@RequestMapping</div>
+      <div class="ann-desc">Mapuje HTTP request na metodę. @GetMapping/@PostMapping/@PutMapping/@DeleteMapping to skróty.</div>
+    </div>
+
+    <div class="ann-item">
+      <div class="ann-name">@Autowired</div>
+      <div class="ann-desc">Wstrzykuje zależność. Od Spring 4.3 opcjonalne w constructor injection (jeśli tylko 1 konstruktor).</div>
+    </div>
+
+    <div class="ann-item">
+      <div class="ann-name">@Value</div>
+      <div class="ann-desc">Wstrzykuje wartość z application.properties: @Value("${app.name}") String name;</div>
+    </div>
+
+    <div class="ann-item">
+      <div class="ann-name">@ConfigurationProperties</div>
+      <div class="ann-desc">Binduje grupę properties do POJO. Type-safe, walidacja, auto-complete w IDE.</div>
+    </div>
+
+    <div class="ann-item">
+      <div class="ann-name">@Transactional</div>
+      <div class="ann-desc">Opakowuje metodę w transakcję bazodanową. Rollback przy exception. Używaj na service layer.</div>
+    </div>
+
+    <div class="ann-item">
+      <div class="ann-name">@Async</div>
+      <div class="ann-desc">Wykonuje metodę asynchronicznie w osobnym wątku. Wymaga @EnableAsync w konfiguracji.</div>
+    </div>
+
+    <div class="ann-item">
+      <div class="ann-name">@Scheduled</div>
+      <div class="ann-desc">Zaplanowane wykonanie metody (cron, fixedDelay, fixedRate). Wymaga @EnableScheduling.</div>
+    </div>
+
+    <div class="ann-item">
+      <div class="ann-name">@Profile</div>
+      <div class="ann-desc">Aktywuj bean tylko w określonym profilu. @Profile("dev") — tylko gdy spring.profiles.active=dev</div>
+    </div>
+
+    <div class="ann-item">
+      <div class="ann-name">@Conditional</div>
+      <div class="ann-desc">Warunkowa rejestracja bean. @ConditionalOnProperty, @ConditionalOnClass, @ConditionalOnMissingBean.</div>
+    </div>
+  </div>
+</section>
+
+<!-- SPRING BOOT STARTER -->
+<section class="sec" id="starter">
+  <div class="sec-ey">05 — szybki start</div>
+  <div class="sec-title">Spring Boot Starter Project</div>
+  <p class="sec-desc">Najprostszy sposób na start — pom.xml + jedna klasa @SpringBootApplication. Spring Boot zrobi resztę: skonfiguruje Tomcat, Jackson, logging, wszystko.</p>
+  <div class="sec-rule"></div>
+
+  <div class="code">
+    <div class="cbar"><span><span class="file-icon">📦</span>pom.xml — minimalna konfiguracja</span></div>
+    <pre><span class="str">&lt;parent&gt;</span>
+  <span class="str">&lt;groupId&gt;</span>org.springframework.boot<span class="str">&lt;/groupId&gt;</span>
+  <span class="str">&lt;artifactId&gt;</span>spring-boot-starter-parent<span class="str">&lt;/artifactId&gt;</span>
+  <span class="str">&lt;version&gt;</span><span class="num">3.2.0</span><span class="str">&lt;/version&gt;</span>
+<span class="str">&lt;/parent&gt;</span>
+
+<span class="str">&lt;dependencies&gt;</span>
+  <span class="cmt">&lt;!-- Web starter: MVC + Tomcat + JSON --&gt;</span>
+  <span class="str">&lt;dependency&gt;</span>
+    <span class="str">&lt;groupId&gt;</span>org.springframework.boot<span class="str">&lt;/groupId&gt;</span>
+    <span class="str">&lt;artifactId&gt;</span>spring-boot-starter-web<span class="str">&lt;/artifactId&gt;</span>
+  <span class="str">&lt;/dependency&gt;</span>
+  
+  <span class="cmt">&lt;!-- JPA + Hibernate --&gt;</span>
+  <span class="str">&lt;dependency&gt;</span>
+    <span class="str">&lt;groupId&gt;</span>org.springframework.boot<span class="str">&lt;/groupId&gt;</span>
+    <span class="str">&lt;artifactId&gt;</span>spring-boot-starter-data-jpa<span class="str">&lt;/artifactId&gt;</span>
+  <span class="str">&lt;/dependency&gt;</span>
+  
+  <span class="cmt">&lt;!-- PostgreSQL driver --&gt;</span>
+  <span class="str">&lt;dependency&gt;</span>
+    <span class="str">&lt;groupId&gt;</span>org.postgresql<span class="str">&lt;/groupId&gt;</span>
+    <span class="str">&lt;artifactId&gt;</span>postgresql<span class="str">&lt;/artifactId&gt;</span>
+  <span class="str">&lt;/dependency&gt;</span>
+<span class="str">&lt;/dependencies&gt;</span></pre>
+  </div>
+
+  <div class="g2" style="margin-top:20px">
+    <div class="code">
+      <div class="cbar"><span><span class="file-icon">☕</span>Application.java — main class</span></div>
+      <pre><span class="kw">package</span> com.example.demo;
+
+<span class="kw">import</span> org.springframework.boot.*;
+<span class="kw">import</span> org.springframework.boot.autoconfigure.*;
+
+<span class="ann">@SpringBootApplication</span> <span class="cmt">// 🍃 Magic happens here</span>
+<span class="kw">public class</span> <span class="cls">Application</span> {
+  
+  <span class="kw">public static void</span> <span class="fn">main</span>(<span class="cls">String</span>[] args) {
+    <span class="cls">SpringApplication</span>.<span class="fn">run</span>(
+      <span class="cls">Application</span>.<span class="kw">class</span>, 
+      args
+    );
+  }
+}</pre>
+    </div>
+
+    <div class="code">
+      <div class="cbar"><span><span class="file-icon">🎮</span>HelloController.java</span></div>
+      <pre><span class="kw">package</span> com.example.demo;
+
+<span class="kw">import</span> org.springframework.web.bind.annotation.*;
+
+<span class="ann">@RestController</span>
+<span class="kw">public class</span> <span class="cls">HelloController</span> {
+  
+  <span class="ann">@GetMapping</span>(<span class="str">"/hello"</span>)
+  <span class="kw">public</span> <span class="cls">String</span> <span class="fn">hello</span>() {
+    <span class="kw">return</span> <span class="str">"Hello Spring Boot!"</span>;
+  }
+}</pre>
+    </div>
+  </div>
+
+  <div class="alert spring" style="margin-top:16px">
+    <strong>🚀 To wszystko! Uruchom i masz API:</strong>
+    <code>mvn spring-boot:run</code> → Tomcat startuje na porcie 8080 → <code>GET http://localhost:8080/hello</code> → zwraca "Hello Spring Boot!". Zero XML, zero konfiguracji serwera, zero headache. Spring Boot auto-konfiguruje Tomcat, Jackson (JSON), logging, wszystko.
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <div class="cl cl-info">📦 Najpopularniejsze Spring Boot Starters</div>
+    <table class="t">
+      <tr><th>Starter</th><th>Co daje</th></tr>
+      <tr><td>spring-boot-starter-web</td><td>Spring MVC + Tomcat + Jackson JSON</td></tr>
+      <tr><td>spring-boot-starter-data-jpa</td><td>Hibernate + JPA + Spring Data repositories</td></tr>
+      <tr><td>spring-boot-starter-security</td><td>Spring Security + basic auth/OAuth</td></tr>
+      <tr><td>spring-boot-starter-test</td><td>JUnit 5 + Mockito + AssertJ + Spring Test</td></tr>
+      <tr><td>spring-boot-starter-validation</td><td>Hibernate Validator (Jakarta Bean Validation)</td></tr>
+      <tr><td>spring-boot-starter-actuator</td><td>Monitoring: /health, /metrics, /info endpoints</td></tr>
+      <tr><td>spring-boot-starter-cache</td><td>Spring Cache abstraction + providers</td></tr>
+      <tr><td>spring-boot-starter-mail</td><td>JavaMail API + mail sending support</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- SPRING MVC -->
+<section class="sec" id="mvc">
+  <div class="sec-ey">06 — REST API</div>
+  <div class="sec-title">Spring MVC — REST Controllers</div>
+  <p class="sec-desc">Spring MVC to framework do budowy aplikacji web. W kontekście Spring Boot używamy go głównie do REST API. @RestController + @GetMapping/@PostMapping i masz endpoint w 5 linijek.</p>
+  <div class="sec-rule"></div>
+
+  <div class="code">
+    <div class="cbar"><span><span class="file-icon">🎮</span>UserController.java — kompletny CRUD REST</span></div>
+    <pre><span class="ann">@RestController</span>
+<span class="ann">@RequestMapping</span>(<span class="str">"/api/users"</span>)
+<span class="kw">public class</span> <span class="cls">UserController</span> {
+  
+  <span class="kw">private final</span> <span class="cls">UserService</span> userService;
+  
+  <span class="kw">public</span> <span class="fn">UserController</span>(<span class="cls">UserService</span> userService) {
+    <span class="kw">this</span>.userService = userService;
+  }
+  
+  <span class="cmt">// GET /api/users — lista wszystkich</span>
+  <span class="ann">@GetMapping</span>
+  <span class="kw">public</span> <span class="cls">List</span>&lt;<span class="cls">User</span>&gt; <span class="fn">getAllUsers</span>() {
+    <span class="kw">return</span> userService.<span class="fn">findAll</span>();
+  }
+  
+  <span class="cmt">// GET /api/users/5 — jeden user po ID</span>
+  <span class="ann">@GetMapping</span>(<span class="str">"/{id}"</span>)
+  <span class="kw">public</span> <span class="cls">User</span> <span class="fn">getUserById</span>(<span class="ann">@PathVariable</span> <span class="cls">Long</span> id) {
+    <span class="kw">return</span> userService.<span class="fn">findById</span>(id)
+      .<span class="fn">orElseThrow</span>(() -> <span class="kw">new</span> <span class="cls">NotFoundException</span>(<span class="str">"User not found"</span>));
+  }
+  
+  <span class="cmt">// POST /api/users — utwórz nowego</span>
+  <span class="ann">@PostMapping</span>
+  <span class="ann">@ResponseStatus</span>(<span class="cls">HttpStatus</span>.CREATED)
+  <span class="kw">public</span> <span class="cls">User</span> <span class="fn">createUser</span>(<span class="ann">@RequestBody</span> <span class="cls">CreateUserRequest</span> request) {
+    <span class="kw">return</span> userService.<span class="fn">create</span>(request);
+  }
+  
+  <span class="cmt">// PUT /api/users/5 — update całego usera</span>
+  <span class="ann">@PutMapping</span>(<span class="str">"/{id}"</span>)
+  <span class="kw">public</span> <span class="cls">User</span> <span class="fn">updateUser</span>(
+      <span class="ann">@PathVariable</span> <span class="cls">Long</span> id,
+      <span class="ann">@RequestBody</span> <span class="cls">UpdateUserRequest</span> request) {
+    <span class="kw">return</span> userService.<span class="fn">update</span>(id, request);
+  }
+  
+  <span class="cmt">// DELETE /api/users/5 — usuń usera</span>
+  <span class="ann">@DeleteMapping</span>(<span class="str">"/{id}"</span>)
+  <span class="ann">@ResponseStatus</span>(<span class="cls">HttpStatus</span>.NO_CONTENT)
+  <span class="kw">public void</span> <span class="fn">deleteUser</span>(<span class="ann">@PathVariable</span> <span class="cls">Long</span> id) {
+    userService.<span class="fn">delete</span>(id);
+  }
+}</pre>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <div class="cl cl-spring">🔍 Adnotacje parametrów</div>
+    <table class="t">
+      <tr><th>Adnotacja</th><th>Skąd bierze dane</th><th>Przykład</th></tr>
+      <tr>
+        <td>@PathVariable</td>
+        <td>Z URL path: <code>/users/{id}</code></td>
+        <td><code>@GetMapping("/{id}")<br>User get(@PathVariable Long id)</code></td>
+      </tr>
+      <tr>
+        <td>@RequestParam</td>
+        <td>Z query string: <code>?page=1&size=20</code></td>
+        <td><code>@GetMapping<br>List get(@RequestParam int page)</code></td>
+      </tr>
+      <tr>
+        <td>@RequestBody</td>
+        <td>Z body HTTP (JSON → POJO)</td>
+        <td><code>@PostMapping<br>User create(@RequestBody UserDTO dto)</code></td>
+      </tr>
+      <tr>
+        <td>@RequestHeader</td>
+        <td>Z HTTP header</td>
+        <td><code>@GetMapping<br>void get(@RequestHeader("Auth") String token)</code></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="g2" style="margin-top:20px">
+    <div class="alert info">
+      <strong>💡 @RequestBody → JSON automatycznie!</strong>
+      Spring Boot ma wbudowany Jackson (JSON library). Jak widzisz @RequestBody — automatycznie deserializuje JSON z body do POJO. Zwracasz obiekt z metody → Jackson serializuje do JSON. Zero konfiguracji!
+    </div>
+
+    <div class="alert warn">
+      <strong>⚠️ Validation z Jakarta Bean Validation</strong>
+      Dodaj <code>spring-boot-starter-validation</code> → możesz używać @Valid + adnotacje: @NotNull, @NotBlank, @Email, @Size, @Min/@Max. Spring automatycznie waliduje i rzuca MethodArgumentNotValidException jeśli błąd.
+    </div>
+  </div>
+</section>
+
+<!-- PROPERTIES -->
+<section class="sec" id="properties">
+  <div class="sec-ey">07 — konfiguracja</div>
+  <div class="sec-title">application.properties / application.yml</div>
+  <p class="sec-desc">Cała konfiguracja aplikacji w jednym pliku. Connection string do bazy, port serwera, profile, logging — wszystko w application.properties lub application.yml (YAML format).</p>
+  <div class="sec-rule"></div>
+
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><span><span class="file-icon">⚙️</span>application.properties</span></div>
+      <pre><span class="cmt"># Server config</span>
+<span class="at">server.port</span>=<span class="num">8080</span>
+<span class="at">server.servlet.context-path</span>=<span class="str">/api</span>
+
+<span class="cmt"># Database (PostgreSQL)</span>
+<span class="at">spring.datasource.url</span>=<span class="str">jdbc:postgresql://localhost:5432/mydb</span>
+<span class="at">spring.datasource.username</span>=<span class="str">postgres</span>
+<span class="at">spring.datasource.password</span>=<span class="str">secret</span>
+
+<span class="cmt"># JPA / Hibernate</span>
+<span class="at">spring.jpa.hibernate.ddl-auto</span>=<span class="str">validate</span>
+<span class="at">spring.jpa.show-sql</span>=<span class="kw">true</span>
+<span class="at">spring.jpa.properties.hibernate.format_sql</span>=<span class="kw">true</span>
+
+<span class="cmt"># Logging</span>
+<span class="at">logging.level.root</span>=<span class="str">INFO</span>
+<span class="at">logging.level.com.example</span>=<span class="str">DEBUG</span>
+
+<span class="cmt"># Custom properties</span>
+<span class="at">app.name</span>=<span class="str">My Spring App</span>
+<span class="at">app.version</span>=<span class="str">1.0.0</span></pre>
+    </div>
+
+    <div class="code">
+      <div class="cbar"><span><span class="file-icon">📄</span>application.yml (YAML — czytelniejszy)</span></div>
+      <pre><span class="at">server</span>:
+  <span class="at">port</span>: <span class="num">8080</span>
+  <span class="at">servlet</span>:
+    <span class="at">context-path</span>: <span class="str">/api</span>
+
+<span class="at">spring</span>:
+  <span class="at">datasource</span>:
+    <span class="at">url</span>: <span class="str">jdbc:postgresql://localhost:5432/mydb</span>
+    <span class="at">username</span>: <span class="str">postgres</span>
+    <span class="at">password</span>: <span class="str">secret</span>
+  
+  <span class="at">jpa</span>:
+    <span class="at">hibernate</span>:
+      <span class="at">ddl-auto</span>: <span class="str">validate</span>
+    <span class="at">show-sql</span>: <span class="kw">true</span>
+
+<span class="at">logging</span>:
+  <span class="at">level</span>:
+    <span class="at">root</span>: <span class="str">INFO</span>
+    <span class="at">com.example</span>: <span class="str">DEBUG</span>
+
+<span class="at">app</span>:
+  <span class="at">name</span>: <span class="str">My Spring App</span>
+  <span class="at">version</span>: <span class="str">1.0.0</span></pre>
+    </div>
+  </div>
+
+  <div class="code" style="margin-top:20px">
+    <div class="cbar"><span><span class="file-icon">☕</span>Użycie properties w kodzie — @Value i @ConfigurationProperties</span></div>
+    <pre><span class="cmt">// METODA 1: @Value — pojedyncze wartości</span>
+<span class="ann">@Component</span>
+<span class="kw">public class</span> <span class="cls">AppInfo</span> {
+  
+  <span class="ann">@Value</span>(<span class="str">"${app.name}"</span>)
+  <span class="kw">private</span> <span class="cls">String</span> appName;
+  
+  <span class="ann">@Value</span>(<span class="str">"${app.version}"</span>)
+  <span class="kw">private</span> <span class="cls">String</span> version;
+}
+
+<span class="cmt">// METODA 2: @ConfigurationProperties — type-safe binding</span>
+<span class="ann">@ConfigurationProperties</span>(prefix = <span class="str">"app"</span>)
+<span class="ann">@Component</span>
+<span class="kw">public class</span> <span class="cls">AppProperties</span> {
+  
+  <span class="kw">private</span> <span class="cls">String</span> name;     <span class="cmt">// binduje app.name</span>
+  <span class="kw">private</span> <span class="cls">String</span> version;  <span class="cmt">// binduje app.version</span>
+  
+  <span class="cmt">// getters & setters</span>
+  <span class="kw">public</span> <span class="cls">String</span> <span class="fn">getName</span>() { <span class="kw">return</span> name; }
+  <span class="kw">public void</span> <span class="fn">setName</span>(<span class="cls">String</span> name) { <span class="kw">this</span>.name = name; }
+  <span class="cmt">// ...</span>
+}</pre>
+  </div>
+
+  <div class="alert spring" style="margin-top:16px">
+    <strong>🍃 Profile-specific properties</strong>
+    <code>application-dev.yml</code> (development), <code>application-prod.yml</code> (production). Aktywuj przez <code>spring.profiles.active=dev</code> lub environment variable <code>SPRING_PROFILES_ACTIVE=prod</code>. Spring Boot automatycznie ładuje odpowiedni plik!
+  </div>
+</section>
+
+<!-- STRUKTURA PROJEKTU -->
+<section class="sec" id="struktura">
+  <div class="sec-ey">08 — best practices</div>
+  <div class="sec-title">Struktura Projektu Spring Boot</div>
+  <p class="sec-desc">Dobrze zorganizowany projekt to połowa sukcesu. Podział na warstwy (controller/service/repository), pakiety po feature nie po typie, jasne nazewnictwo.</p>
+  <div class="sec-rule"></div>
+
+  <div class="code">
+    <div class="cbar"><span><span class="file-icon">📁</span>Struktura katalogów — wariant 1: Package by Layer</span></div>
+    <pre>src/main/java/com/example/myapp/
+├── <span class="at">Application.java</span>         <span class="cmt">// @SpringBootApplication</span>
+├── <span class="at">config/</span>                  <span class="cmt">// @Configuration classes</span>
+│   ├── SecurityConfig.java
+│   └── DatabaseConfig.java
+├── <span class="at">controller/</span>              <span class="cmt">// @RestController</span>
+│   ├── UserController.java
+│   └── OrderController.java
+├── <span class="at">service/</span>                 <span class="cmt">// @Service (business logic)</span>
+│   ├── UserService.java
+│   └── OrderService.java
+├── <span class="at">repository/</span>              <span class="cmt">// @Repository / JPA interfaces</span>
+│   ├── UserRepository.java
+│   └── OrderRepository.java
+├── <span class="at">model/</span>                   <span class="cmt">// @Entity classes</span>
+│   ├── User.java
+│   └── Order.java
+├── <span class="at">dto/</span>                     <span class="cmt">// Data Transfer Objects</span>
+│   ├── CreateUserRequest.java
+│   └── UserResponse.java
+└── <span class="at">exception/</span>               <span class="cmt">// Custom exceptions</span>
+    ├── NotFoundException.java
+    └── GlobalExceptionHandler.java</pre>
+  </div>
+
+  <div class="code" style="margin-top:20px">
+    <div class="cbar"><span><span class="file-icon">📁</span>Struktura — wariant 2: Package by Feature (LEPSZY)</span></div>
+    <pre>src/main/java/com/example/myapp/
+├── <span class="at">Application.java</span>
+├── <span class="at">config/</span>
+│   └── SecurityConfig.java
+├── <span class="at">user/</span>                    <span class="cmt">// Wszystko o userach w jednym miejscu</span>
+│   ├── User.java
+│   ├── UserController.java
+│   ├── UserService.java
+│   ├── UserRepository.java
+│   ├── CreateUserRequest.java
+│   └── UserResponse.java
+├── <span class="at">order/</span>                   <span class="cmt">// Wszystko o zamówieniach</span>
+│   ├── Order.java
+│   ├── OrderController.java
+│   ├── OrderService.java
+│   ├── OrderRepository.java
+│   └── OrderDTO.java
+└── <span class="at">common/</span>                  <span class="cmt">// Shared code</span>
+    ├── exception/
+    │   └── GlobalExceptionHandler.java
+    └── util/
+        └── DateUtils.java</pre>
+  </div>
+
+  <div class="g2" style="margin-top:20px">
+    <div class="alert info">
+      <strong>💡 Package by Feature > Package by Layer</strong>
+      Package by feature jest lepszy dla większych projektów — wszystko związane z userem jest w pakiecie <code>user/</code>. Łatwiej znaleźć kod, łatwiej dodać nową feature (nowy pakiet), lepsze enkapsulowanie. Package by layer wymusza przeskakiwanie między pakietami.
+    </div>
+
+    <div class="alert spring">
+      <strong>🍃 Naming conventions</strong>
+      <strong>Entity:</strong> User, Order (bez sufixu)<br>
+      <strong>Repository:</strong> UserRepository<br>
+      <strong>Service:</strong> UserService<br>
+      <strong>Controller:</strong> UserController<br>
+      <strong>DTO:</strong> CreateUserRequest, UserResponse (cel w nazwie)
+    </div>
+  </div>
+</section>
+
+</main>
+
+</body>
+</html>

@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Observability — Kompletna Wiedza</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ffffff;--s1:#f8f9fa;--s2:#f1f3f5;--s3:#e9ecef;
+  --bd:#dee2e6;--bd2:#ced4da;--tx:#1a1a2e;--tx2:#495057;--mt:#6c757d;
+  --k1:#f97316;--k2:#ea6c0a;
+  --green:#16a34a;--teal:#0d9488;--violet:#7c3aed;--rose:#e11d48;
+  --amber:#d97706;--pink:#c026d3;--sky:#0284c7;--orange:#ea580c;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;line-height:1.65;overflow-x:hidden}
+.back{position:fixed;top:22px;left:22px;z-index:9999;background:rgba(255,255,255,.95);backdrop-filter:blur(14px);border:1px solid var(--bd2);border-radius:40px;padding:10px 20px;display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--tx2);font-family:'IBM Plex Mono',monospace;font-size:.72rem;font-weight:500;letter-spacing:1px;transition:all .25s}
+.back:hover{color:var(--k1);border-color:var(--k1)}
+.hdr{min-height:500px;padding:110px 80px 80px;position:relative;overflow:hidden;display:flex;align-items:flex-end}
+.hdr-bg{position:absolute;inset:0;background:var(--s1)}
+.hdr-bg::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 55% at 3% 100%,rgba(45,212,191,.13) 0%,transparent 55%),radial-gradient(ellipse 50% 65% at 97% 5%,rgba(56,189,248,.09) 0%,transparent 50%),radial-gradient(ellipse 45% 50% at 50% 50%,rgba(167,139,250,.04) 0%,transparent 60%)}
+.hdr-grid{position:absolute;inset:0;background-image:linear-gradient(var(--bd) 1px,transparent 1px),linear-gradient(90deg,var(--bd) 1px,transparent 1px);background-size:48px 48px;opacity:.13;mask-image:radial-gradient(ellipse 85% 90% at 50% 50%,black,transparent)}
+.hdr-content{position:relative;max-width:1400px;width:100%}
+.hdr-tier{display:inline-flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:.65rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--k1);margin-bottom:28px;padding:7px 16px;border:1px solid rgba(45,212,191,.35);border-radius:4px;background:rgba(45,212,191,.07)}
+.tier-dot{width:6px;height:6px;border-radius:50%;background:var(--k1);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+h1{font-size:clamp(2.8rem,7vw,6rem);font-weight:800;line-height:.9;letter-spacing:-4px;margin-bottom:28px}
+h1 em{font-style:normal;background:linear-gradient(135deg,var(--teal),var(--violet));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+h1 small{display:block;font-size:.36em;letter-spacing:-1px;color:var(--tx2);font-weight:500;margin-top:14px;-webkit-text-fill-color:var(--tx2)}
+.hdr-desc{font-size:1rem;color:var(--tx2);max-width:680px;line-height:1.9}
+.hdr-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.chip{font-family:'IBM Plex Mono',monospace;font-size:.63rem;font-weight:600;letter-spacing:.5px;padding:5px 12px;border-radius:3px;border:1px solid}
+.ck{color:var(--k1);border-color:rgba(45,212,191,.4);background:rgba(45,212,191,.07)}
+.cg{color:var(--green);border-color:rgba(74,222,128,.35);background:rgba(74,222,128,.05)}
+.ct{color:var(--teal);border-color:rgba(45,212,191,.35);background:rgba(45,212,191,.05)}
+.cv{color:var(--violet);border-color:rgba(167,139,250,.35);background:rgba(167,139,250,.07)}
+.cr{color:var(--rose);border-color:rgba(251,113,133,.35);background:rgba(251,113,133,.05)}
+.ca{color:var(--amber);border-color:rgba(251,191,36,.35);background:rgba(251,191,36,.05)}
+.co{color:var(--orange);border-color:rgba(251,146,60,.35);background:rgba(251,146,60,.05)}
+.cs{color:var(--sky);border-color:rgba(56,189,248,.35);background:rgba(56,189,248,.05)}
+.nav{position:sticky;top:0;z-index:300;background:rgba(255,255,255,.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--bd);display:flex;overflow-x:auto;scrollbar-width:none;padding:0 80px}
+.nav::-webkit-scrollbar{display:none}
+.nav-a{color:var(--mt);text-decoration:none;font-family:'IBM Plex Mono',monospace;font-size:.63rem;font-weight:600;letter-spacing:.5px;padding:14px 12px;white-space:nowrap;border-bottom:2px solid transparent;transition:all .18s}
+.nav-a:hover{color:var(--k1);border-bottom-color:var(--k1)}
+.main{max-width:1400px;margin:0 auto;padding:80px 24px 160px}
+.chapter{margin-bottom:100px;animation:fadeUp .5s ease backwards}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.chapter:nth-child(1){animation-delay:.04s}.chapter:nth-child(2){animation-delay:.08s}
+.chapter:nth-child(3){animation-delay:.12s}.chapter:nth-child(4){animation-delay:.16s}
+.chapter:nth-child(5){animation-delay:.20s}.chapter:nth-child(6){animation-delay:.24s}
+.chapter:nth-child(7){animation-delay:.28s}.chapter:nth-child(8){animation-delay:.32s}
+.chapter:nth-child(9){animation-delay:.36s}.chapter:nth-child(10){animation-delay:.40s}
+.chapter:nth-child(11){animation-delay:.44s}
+.ch-head{display:flex;align-items:flex-start;gap:22px;margin-bottom:36px;padding-bottom:28px;border-bottom:1px solid var(--bd)}
+.ch-num{font-family:'IBM Plex Mono',monospace;font-size:.62rem;font-weight:700;letter-spacing:3px;color:var(--mt);padding-top:6px;white-space:nowrap}
+.ch-info{flex:1}
+.ch-cat{font-family:'IBM Plex Mono',monospace;font-size:.58rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:6px}
+.ch-title{font-size:1.9rem;font-weight:800;letter-spacing:-1px;line-height:1.1;margin-bottom:10px}
+.ch-desc{font-size:.9rem;color:var(--tx2);max-width:840px;line-height:1.9}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:1100px){.g4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:900px){.g2,.g3,.g4{grid-template-columns:1fr}.hdr{padding:80px 24px 56px}.nav{padding:0 16px}h1{font-size:2.8rem;letter-spacing:-2px}}
+.card{background:var(--s1);border:1px solid var(--bd);border-radius:8px;overflow:hidden;transition:border-color .2s,box-shadow .2s}
+.card:hover{border-color:var(--bd2);box-shadow:0 6px 28px rgba(0,0,0,.5)}
+.card-h{padding:11px 18px;font-family:'IBM Plex Mono',monospace;font-size:.66rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:8px}
+.card-b{padding:18px}
+.code{background:#f4f4f5;border:1px solid var(--bd);border-radius:8px;overflow:hidden}
+.cbar{background:var(--s1);border-bottom:1px solid var(--bd);padding:9px 16px;font-family:'IBM Plex Mono',monospace;font-size:.64rem;color:var(--mt);display:flex;align-items:center;gap:7px}
+.fdot{width:7px;height:7px;border-radius:50%}
+pre{padding:20px;font-family:'IBM Plex Mono',monospace;font-size:.77rem;line-height:1.75;overflow-x:auto;color:#374151}
+.kw{color:#c678dd}.cls{color:#e5c07b}.fn{color:#61afef}.str{color:#98c379}
+.cm{color:#1e3040;font-style:italic}.num{color:#d19a66}.ann{color:#e06c75}
+.ifc{color:#56b6c2}.tp{color:#e5c07b}.prop{color:#5eead4}
+.alert{padding:16px 20px;border-radius:6px;border-left:3px solid;font-size:.87rem;line-height:1.85;color:var(--tx2)}
+.alert strong{color:var(--tx)}
+.alert-label{font-family:'IBM Plex Mono',monospace;font-size:.58rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;display:block;margin-bottom:6px}
+.al-k{background:rgba(45,212,191,.05);border-color:var(--k1)}.al-k .alert-label{color:var(--k1)}
+.al-green{background:rgba(74,222,128,.05);border-color:var(--green)}.al-green .alert-label{color:var(--green)}
+.al-rose{background:rgba(251,113,133,.05);border-color:var(--rose)}.al-rose .alert-label{color:var(--rose)}
+.al-violet{background:rgba(167,139,250,.05);border-color:var(--violet)}.al-violet .alert-label{color:var(--violet)}
+.al-teal{background:rgba(45,212,191,.05);border-color:var(--teal)}.al-teal .alert-label{color:var(--teal)}
+.al-amber{background:rgba(251,191,36,.05);border-color:var(--amber)}.al-amber .alert-label{color:var(--amber)}
+.al-orange{background:rgba(251,146,60,.05);border-color:var(--orange)}.al-orange .alert-label{color:var(--orange)}
+.al-sky{background:rgba(56,189,248,.05);border-color:var(--sky)}.al-sky .alert-label{color:var(--sky)}
+.tbl{width:100%;border-collapse:collapse;font-size:.84rem}
+.tbl th{background:var(--s2);color:var(--tx2);font-family:'IBM Plex Mono',monospace;font-size:.63rem;letter-spacing:2px;text-transform:uppercase;font-weight:700;padding:11px 16px;text-align:left;border-bottom:1px solid var(--bd)}
+.tbl td{padding:11px 16px;border-bottom:1px solid var(--bd);color:var(--tx2);vertical-align:top;line-height:1.75}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:var(--s2);color:var(--tx)}
+.tbl code{font-family:'IBM Plex Mono',monospace;font-size:.76rem;color:var(--k2);background:rgba(45,212,191,.1);padding:2px 7px;border-radius:3px}
+.ritem{display:flex;gap:16px;padding:12px 0;border-bottom:1px solid var(--bd);align-items:flex-start}
+.ritem:last-child{border-bottom:none}
+.ritem-key{font-family:'IBM Plex Mono',monospace;font-size:.76rem;white-space:nowrap;padding-top:2px;min-width:170px;flex-shrink:0}
+.ritem-val{font-size:.85rem;color:var(--tx2);line-height:1.75}
+.ritem-val code{font-family:'IBM Plex Mono',monospace;font-size:.76rem;color:var(--k2);background:rgba(45,212,191,.1);padding:1px 6px;border-radius:3px}
+.ritem-val strong{color:var(--tx)}
+.strip{border:1px solid var(--bd);border-radius:8px;padding:18px 22px;font-size:.87rem;color:var(--tx2);line-height:1.85;display:flex;gap:16px;align-items:flex-start}
+.strip-icon{font-size:1.3rem;flex-shrink:0;padding-top:2px}
+.strip strong{color:var(--tx)}
+.gap8{margin-top:8px}.gap12{margin-top:12px}.gap16{margin-top:16px}.gap24{margin-top:24px}
+.footer{border-top:1px solid var(--bd);background:var(--s1);padding:36px 80px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;font-family:'IBM Plex Mono',monospace;font-size:.68rem;color:var(--mt)}
+.footer-title{color:var(--k1);font-weight:700}
+.arch-box{background:var(--s2);border:1px solid var(--bd2);border-radius:6px;padding:14px 18px;font-family:'IBM Plex Mono',monospace;font-size:.74rem;line-height:1.9}
+.stack-flow{display:flex;flex-direction:column;gap:6px}
+.sf-row{display:flex;align-items:center;gap:10px}
+.sf-box{padding:7px 14px;border-radius:5px;font-size:.7rem;font-weight:700;white-space:nowrap}
+.sf-arrow{color:var(--mt);font-size:1rem}
+</style>
+</head>
+<body>
+<a class="back" href="#">← MENU</a>
+<header class="hdr">
+  <div class="hdr-bg"></div><div class="hdr-grid"></div>
+  <div class="hdr-content">
+    <div class="hdr-tier"><div class="tier-dot"></div> Observability · ELK · Prometheus · Grafana</div>
+    <h1><em>Observability</em><small>ELK Stack · Prometheus · Grafana — od teorii do produkcji</small></h1>
+    <p class="hdr-desc">Kompletny przewodnik po obserwowalności systemów — trzy filary (logs, metrics, traces), stos ELK (Elasticsearch, Logstash, Kibana), Prometheus jako silnik metryk, Grafana jako warstwa wizualizacji, alerting i dobre praktyki.</p>
+    <div class="hdr-chips">
+      <span class="chip ck">● Trzy Filary</span>
+      <span class="chip ca">Elasticsearch</span>
+      <span class="chip cg">Logstash / Beats</span>
+      <span class="chip ct">Kibana</span>
+      <span class="chip cv">Prometheus</span>
+      <span class="chip cr">PromQL</span>
+      <span class="chip cs">Grafana</span>
+      <span class="chip co">Alerting &amp; SLO</span>
+    </div>
+  </div>
+</header>
+<nav class="nav">
+  <a class="nav-a" href="#three-pillars">Trzy Filary</a>
+  <a class="nav-a" href="#elk-overview">ELK Overview</a>
+  <a class="nav-a" href="#elasticsearch">Elasticsearch</a>
+  <a class="nav-a" href="#logstash">Logstash &amp; Beats</a>
+  <a class="nav-a" href="#kibana">Kibana</a>
+  <a class="nav-a" href="#prometheus">Prometheus</a>
+  <a class="nav-a" href="#promql">PromQL</a>
+  <a class="nav-a" href="#grafana">Grafana</a>
+  <a class="nav-a" href="#alerting">Alerting &amp; SLO</a>
+  <a class="nav-a" href="#spring-integration">Spring Integration</a>
+  <a class="nav-a" href="#production">Produkcja</a>
+</nav>
+<main class="main">
+
+<!-- ══ 01 TRZY FILARY ══ -->
+<section class="chapter" id="three-pillars">
+  <div class="ch-head">
+    <div class="ch-num">01 / 11</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--teal)">Observability — Fundament</div>
+      <div class="ch-title">Trzy filary obserwowalności</div>
+      <div class="ch-desc">Observability to zdolność do zrozumienia wewnętrznego stanu systemu na podstawie jego zewnętrznych wyjść. Trzy filary: <strong>Logs</strong> (co się stało), <strong>Metrics</strong> (ile/jak szybko), <strong>Traces</strong> (dlaczego i gdzie). Razem tworzą pełny obraz systemu.</div>
+    </div>
+  </div>
+  <div class="g3">
+    <div class="card">
+      <div class="card-h" style="color:var(--amber)">📋 Logs — co się stało</div>
+      <div class="card-b">
+        <div class="ritem"><div class="ritem-key" style="color:var(--amber)">Definicja</div><div class="ritem-val">Dyskretne, niezmienne zdarzenia z timestampem. Najstarszy i najbardziej znany filar. Tekst lub JSON.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--amber)">Kiedy używać</div><div class="ritem-val">Diagnoza błędów, audyt, debug konkretnego zdarzenia — "co dokładnie poszło nie tak o 14:23?"</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--amber)">Narzędzia</div><div class="ritem-val">ELK Stack, Loki (Grafana), Splunk, CloudWatch Logs</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--amber)">Problem</div><div class="ritem-val">Trudne do agregacji, kosztowne w dużej skali. Bez korelacji — trudno śledzić flow przez mikroserwisy.</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--teal)">📊 Metrics — ile i jak szybko</div>
+      <div class="card-b">
+        <div class="ritem"><div class="ritem-key" style="color:var(--teal)">Definicja</div><div class="ritem-val">Liczby agregowane w czasie. Tanie w przechowywaniu. Idealne do monitorowania trendów i anomalii.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--teal)">Typy</div><div class="ritem-val"><strong>Counter</strong> (tylko rośnie), <strong>Gauge</strong> (dowolna wartość), <strong>Histogram</strong> (rozkład), <strong>Summary</strong> (percentyle)</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--teal)">Kiedy używać</div><div class="ritem-val">Dashboardy, alerty, SLO/SLA. "Ile requestów/s? Jakie p99 latencji?"</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--teal)">Narzędzia</div><div class="ritem-val">Prometheus, InfluxDB, Datadog, CloudWatch Metrics</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--violet)">🔗 Traces — dlaczego i gdzie</div>
+      <div class="card-b">
+        <div class="ritem"><div class="ritem-key" style="color:var(--violet)">Definicja</div><div class="ritem-val">Śledzenie pojedynczego żądania przez wszystkie serwisy. Span = jednostka pracy. Trace = drzewo spanów.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--violet)">Kiedy używać</div><div class="ritem-val">Latencja mikroserwisów, bottle-neck, cascade failures. "Gdzie moje żądanie spędza czas?"</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--violet)">Narzędzia</div><div class="ritem-val">Jaeger, Zipkin, Tempo (Grafana), OpenTelemetry (standard)</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--violet)">Standard</div><div class="ritem-val"><strong>OpenTelemetry</strong> — vendor-neutral SDK. W3C TraceContext — propagacja trace ID między serwisami.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="gap16"></div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-h" style="color:var(--k1)">🔭 Observability vs Monitoring</div>
+      <div class="card-b" style="font-size:.84rem">
+        <table class="tbl">
+          <tr><th>Cecha</th><th>Monitoring</th><th>Observability</th></tr>
+          <tr><td>Pytanie</td><td>Czy system działa?</td><td><strong style="color:var(--k1)">Dlaczego nie działa?</strong></td></tr>
+          <tr><td>Podejście</td><td>Znane problemy, znane alerty</td><td><strong style="color:var(--green)">Eksploracja nieznanych stanów</strong></td></tr>
+          <tr><td>Narzędzia</td><td>Nagios, Zabbix, uptime checks</td><td>ELK, Prometheus, Jaeger, Grafana</td></tr>
+          <tr><td>Kontekst</td><td>Monolity, infrastruktura</td><td><strong style="color:var(--violet)">Mikroserwisy, cloud-native</strong></td></tr>
+          <tr><td>Dane</td><td>Metryki agregowane</td><td>Logs + Metrics + Traces razem</td></tr>
+        </table>
+      </div>
+    </div>
+    <div>
+      <div class="alert al-k">
+        <span class="alert-label">Golden Signals (Google SRE)</span>
+        <strong>4 sygnały, które zawsze musisz monitorować:</strong><br>
+        🔴 <strong>Latency</strong> — czas odpowiedzi (szczególnie p95, p99). Rozróżniaj sukces od błędów.<br>
+        🟡 <strong>Traffic</strong> — liczba żądań/s, requests per minute. Baseline dla anomalii.<br>
+        🔴 <strong>Errors</strong> — % błędów (HTTP 5xx, wyjątki). Error rate &gt; X% = alert.<br>
+        🟢 <strong>Saturation</strong> — "ile zasobu używam vs ile mam" — CPU, RAM, I/O, connections.
+      </div>
+      <div class="gap12"></div>
+      <div class="alert al-violet">
+        <span class="alert-label">RED Method (mikroserwisy)</span>
+        <strong>Rate</strong> — liczba żądań/sekundę<br>
+        <strong>Errors</strong> — liczba błędnych żądań/sekundę<br>
+        <strong>Duration</strong> — czas przetwarzania żądań (rozkład)<br>
+        <em>Alternatywa dla Golden Signals w kontekście HTTP services.</em>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 02 ELK OVERVIEW ══ -->
+<section class="chapter" id="elk-overview">
+  <div class="ch-head">
+    <div class="ch-num">02 / 11</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--amber)">ELK Stack</div>
+      <div class="ch-title">ELK Stack — architektura i przepływ danych</div>
+      <div class="ch-desc">ELK = <strong>Elasticsearch</strong> (silnik wyszukiwania i przechowywania) + <strong>Logstash</strong> (przetwarzanie i pipeline) + <strong>Kibana</strong> (wizualizacja). Beats to lekkie agenty zbierające dane. Razem tworzą platformę do centralizacji i analizy logów.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div>
+      <div class="arch-box">
+        <div style="font-size:.65rem;color:var(--amber);font-weight:700;letter-spacing:2px;margin-bottom:14px">PRZEPŁYW DANYCH W ELK STACK</div>
+        <div class="stack-flow">
+          <div class="sf-row">
+            <div class="sf-box" style="background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.3);color:var(--sky)">📱 Aplikacja Java / Spring</div>
+            <span class="sf-arrow">↓</span>
+            <div style="font-size:.68rem;color:var(--tx2)">Logback / Log4j2 → JSON</div>
+          </div>
+          <div class="sf-row">
+            <div class="sf-box" style="background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.3);color:var(--green)">🐾 Filebeat / Logstash Agent</div>
+            <span class="sf-arrow">↓</span>
+            <div style="font-size:.68rem;color:var(--tx2)">zbieranie, parsowanie, filtrowanie</div>
+          </div>
+          <div class="sf-row">
+            <div class="sf-box" style="background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.3);color:var(--amber)">⚙️ Logstash (centralny)</div>
+            <span class="sf-arrow">↓</span>
+            <div style="font-size:.68rem;color:var(--tx2)">enrich, transform, route</div>
+          </div>
+          <div class="sf-row">
+            <div class="sf-box" style="background:rgba(45,212,191,.1);border:1px solid rgba(45,212,191,.3);color:var(--teal)">🔍 Elasticsearch Cluster</div>
+            <span class="sf-arrow">↓</span>
+            <div style="font-size:.68rem;color:var(--tx2)">indeksowanie, przechowywanie</div>
+          </div>
+          <div class="sf-row">
+            <div class="sf-box" style="background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.3);color:var(--violet)">📊 Kibana</div>
+            <span class="sf-arrow">↓</span>
+            <div style="font-size:.68rem;color:var(--tx2)">dashboardy, Discover, alerts</div>
+          </div>
+        </div>
+      </div>
+      <div class="gap12"></div>
+      <div class="alert al-amber">
+        <span class="alert-label">Elastic Stack (nowa nazwa)</span>
+        Elastic rebrandował ELK na <strong>Elastic Stack</strong> i dodał <strong>Beats</strong> jako czwarty komponent — lekkie agenty (Filebeat, Metricbeat, Heartbeat). Logstash jest teraz opcjonalny — Beats mogą wysyłać bezpośrednio do Elasticsearch.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--amber)">🧩 Komponenty ELK — porównanie</div>
+      <div class="card-b">
+        <div class="ritem"><div class="ritem-key" style="color:var(--teal)">Elasticsearch</div><div class="ritem-val">Silnik wyszukiwania oparty na Lucene. <strong>Przechowuje, indeksuje, wyszukuje</strong> dane (logi, metryki, APM). Rozproszony, skalowalny poziomo. REST API + Query DSL.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--amber)">Logstash</div><div class="ritem-val"><strong>Pipeline ETL</strong> dla logów. Input → Filter (grok, mutate, geoip) → Output. Ciężki (JVM), ale potężny. Alternatywa: Fluentd.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--violet)">Kibana</div><div class="ritem-val"><strong>Warstwa UI</strong> dla Elasticsearch. Discover (eksploracja), Visualize, Dashboards, Lens, Alerting. APM UI, Fleet (zarządzanie Beats).</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--green)">Filebeat</div><div class="ritem-val"><strong>Lekki agent</strong> (Go, ~60MB RAM) do czytania plików logów. Śledzi pozycję (registry). Modules dla popularnych technologii (nginx, docker, spring).</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--sky)">Metricbeat</div><div class="ritem-val">Zbiera <strong>metryki systemowe</strong> — CPU, RAM, dysk, sieć, Docker, Kubernetes. Wysyła do Elasticsearch lub Logstash.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--rose)">APM (Elastic)</div><div class="ritem-val"><strong>Application Performance Monitoring</strong> — agenty dla Java, Python, Node.js. Traces + Metrics + Logs korelowane automatycznie.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 03 ELASTICSEARCH ══ -->
+<section class="chapter" id="elasticsearch">
+  <div class="ch-head">
+    <div class="ch-num">03 / 11</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--teal)">Elasticsearch</div>
+      <div class="ch-title">Elasticsearch — architektura, indeksy, zapytania</div>
+      <div class="ch-desc">Elasticsearch to rozproszony silnik wyszukiwania oparty na Lucene. Dane przechowuje w <strong>indeksach</strong> (analogia: tabela w SQL), każdy dokument to JSON. Klaster składa się z nodów — Master, Data, Ingest, Coordinating.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-h" style="color:var(--teal)">🏗️ Architektura klastra</div>
+      <div class="card-b">
+        <div class="ritem"><div class="ritem-key" style="color:var(--teal)">Cluster</div><div class="ritem-val">Zbiór nodów z tą samą <code>cluster.name</code>. Jeden Master node zarządza stanem klastra (elected).</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--teal)">Index</div><div class="ritem-val">Logiczny kontener dokumentów. Analogia: tabela w DB. Podzielony na shardy.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--teal)">Shard</div><div class="ritem-val"><strong>Primary shard</strong> — podstawowa kopia danych. <strong>Replica shard</strong> — kopia HA. Liczba primary shardów niezmienna po utworzeniu indeksu!</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--teal)">Document</div><div class="ritem-val">Jednostka danych — JSON. Każdy ma unikalny <code>_id</code>. Typ: dawniej <code>_type</code>, od ES 7.x deprecated.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--teal)">Mapping</div><div class="ritem-val">Schemat indeksu — typy pól (text, keyword, date, long, ip). <strong>Dynamic mapping</strong> = auto-detect. Złe mapowanie = problemy z wyszukiwaniem.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--teal)">ILM</div><div class="ritem-val"><strong>Index Lifecycle Management</strong> — automatyczne zarządzanie indeksami: Hot → Warm → Cold → Delete. Kluczowe dla logów.</div></div>
+      </div>
+    </div>
+    <div>
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--teal)"></div> Elasticsearch — REST API i Query DSL</div>
+        <pre><span class="cm"># ══ Tworzenie indeksu z mapowaniem ═══════════════════════════</span>
+PUT /app-logs-2024-01
+{
+  <span class="str">"settings"</span>: {
+    <span class="str">"number_of_shards"</span>: <span class="num">3</span>,
+    <span class="str">"number_of_replicas"</span>: <span class="num">1</span>
+  },
+  <span class="str">"mappings"</span>: {
+    <span class="str">"properties"</span>: {
+      <span class="str">"@timestamp"</span>:  { <span class="str">"type"</span>: <span class="str">"date"</span> },
+      <span class="str">"level"</span>:      { <span class="str">"type"</span>: <span class="str">"keyword"</span> },
+      <span class="str">"message"</span>:    { <span class="str">"type"</span>: <span class="str">"text"</span> },
+      <span class="str">"service"</span>:    { <span class="str">"type"</span>: <span class="str">"keyword"</span> },
+      <span class="str">"traceId"</span>:    { <span class="str">"type"</span>: <span class="str">"keyword"</span> },
+      <span class="str">"duration_ms"</span>:{ <span class="str">"type"</span>: <span class="str">"long"</span> }
+    }
+  }
+}
+
+<span class="cm"># ══ Wyszukiwanie — Query DSL ══════════════════════════════════</span>
+GET /app-logs-*/_search
+{
+  <span class="str">"query"</span>: {
+    <span class="str">"bool"</span>: {
+      <span class="str">"must"</span>: [
+        { <span class="str">"match"</span>: { <span class="str">"message"</span>: <span class="str">"NullPointerException"</span> } }
+      ],
+      <span class="str">"filter"</span>: [
+        { <span class="str">"term"</span>:  { <span class="str">"level"</span>: <span class="str">"ERROR"</span> } },
+        { <span class="str">"term"</span>:  { <span class="str">"service"</span>: <span class="str">"order-service"</span> } },
+        { <span class="str">"range"</span>: {
+            <span class="str">"@timestamp"</span>: {
+              <span class="str">"gte"</span>: <span class="str">"now-1h"</span>,
+              <span class="str">"lte"</span>: <span class="str">"now"</span>
+            }
+          }
+        }
+      ]
+    }
+  },
+  <span class="str">"sort"</span>: [{ <span class="str">"@timestamp"</span>: { <span class="str">"order"</span>: <span class="str">"desc"</span> } }],
+  <span class="str">"size"</span>: <span class="num">20</span>
+}
+
+<span class="cm"># ══ Agregacje — analityka ═════════════════════════════════════</span>
+GET /app-logs-*/_search
+{
+  <span class="str">"query"</span>: { <span class="str">"range"</span>: { <span class="str">"@timestamp"</span>: { <span class="str">"gte"</span>: <span class="str">"now-24h"</span> }}},
+  <span class="str">"aggs"</span>: {
+    <span class="str">"errors_by_service"</span>: {
+      <span class="str">"terms"</span>: { <span class="str">"field"</span>: <span class="str">"service"</span>, <span class="str">"size"</span>: <span class="num">10</span> }
+    },
+    <span class="str">"error_timeline"</span>: {
+      <span class="str">"date_histogram"</span>: {
+        <span class="str">"field"</span>: <span class="str">"@timestamp"</span>,
+        <span class="str">"fixed_interval"</span>: <span class="str">"1h"</span>
+      }
+    }
+  },
+  <span class="str">"size"</span>: <span class="num">0</span>
+}
+
+<span class="cm"># ══ ILM Policy dla logów ══════════════════════════════════════</span>
+PUT _ilm/policy/logs-policy
+{
+  <span class="str">"policy"</span>: {
+    <span class="str">"phases"</span>: {
+      <span class="str">"hot"</span>:    { <span class="str">"actions"</span>: { <span class="str">"rollover"</span>: { <span class="str">"max_age"</span>: <span class="str">"1d"</span>, <span class="str">"max_size"</span>: <span class="str">"50gb"</span> }}},
+      <span class="str">"warm"</span>:   { <span class="str">"min_age"</span>: <span class="str">"7d"</span>,  <span class="str">"actions"</span>: { <span class="str">"shrink"</span>: { <span class="str">"number_of_shards"</span>: <span class="num">1</span> }}},
+      <span class="str">"cold"</span>:   { <span class="str">"min_age"</span>: <span class="str">"30d"</span>, <span class="str">"actions"</span>: { <span class="str">"freeze"</span>: {} }},
+      <span class="str">"delete"</span>: { <span class="str">"min_age"</span>: <span class="str">"90d"</span>, <span class="str">"actions"</span>: { <span class="str">"delete"</span>: {} }}
+    }
+  }
+}</pre>
+      </div>
+    </div>
+  </div>
+  <div class="gap16"></div>
+  <div class="g4">
+    <div class="card">
+      <div class="card-h" style="color:var(--teal)">text vs keyword</div>
+      <div class="card-b" style="font-size:.82rem;color:var(--tx2);line-height:1.85">
+        <p><strong style="color:var(--tx)">text</strong> — analizowany (tokenizowany). Używaj do <code>full-text search</code>. Nie możesz sortować ani agregować.</p>
+        <p style="margin-top:8px"><strong style="color:var(--tx)">keyword</strong> — verbatim. Używaj do <code>filter</code>, <code>sort</code>, <code>aggs</code>, exact match.</p>
+        <p style="margin-top:8px">⚠️ <code>message</code> = text, <code>level/service</code> = keyword. Często używasz obu: <code>message.keyword</code></p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--teal)">must vs filter</div>
+      <div class="card-b" style="font-size:.82rem;color:var(--tx2);line-height:1.85">
+        <p><strong style="color:var(--tx)">must</strong> — wpływa na <code>_score</code>. Używaj do full-text search gdzie relevance ma znaczenie.</p>
+        <p style="margin-top:8px"><strong style="color:var(--tx)">filter</strong> — tak/nie, <strong>cacheable</strong>, szybsze. Używaj dla: term, range, date filters.</p>
+        <p style="margin-top:8px">✅ Praktyka: logi → prawie zawsze filter (szybciej!)</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--teal)">Skalowanie</div>
+      <div class="card-b" style="font-size:.82rem;color:var(--tx2);line-height:1.85">
+        <p>• <strong>Hot nodes</strong>: SSD, duże CPU — aktywne zapisy/odczyty</p>
+        <p>• <strong>Warm nodes</strong>: HDD, mniej CPU — starsze dane</p>
+        <p>• <strong>Cold/Frozen</strong>: tanie storage, rzadkie odczyty</p>
+        <p style="margin-top:8px">• Nie za dużo shardów — każdy shard = Lucene index, overhead. Rule: &lt;50GB/shard</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--teal)">Częste błędy</div>
+      <div class="card-b" style="font-size:.82rem;color:var(--tx2);line-height:1.85">
+        <p>🔴 <strong>Too many shards</strong> — domyślnie 5, często za dużo dla małych indeksów</p>
+        <p>🔴 <strong>Dynamic mapping</strong> — pola o wielu wartościach = mapping explosion</p>
+        <p>🔴 <strong>Wildcard na początku</strong> — <code>*error*</code> = full scan, bardzo wolne</p>
+        <p>🔴 <strong>Brak ILM</strong> — indeksy rosną w nieskończoność</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 04 LOGSTASH & BEATS ══ -->
+<section class="chapter" id="logstash">
+  <div class="ch-head">
+    <div class="ch-num">04 / 11</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--green)">Logstash &amp; Beats</div>
+      <div class="ch-title">Logstash pipeline i Filebeat — zbieranie i przetwarzanie logów</div>
+      <div class="ch-desc">Logstash to serwer ETL z trójfazowym pipeline: <strong>Input → Filter → Output</strong>. Filebeat to lekki agent Go do zbierania plików logów. W praktyce: Filebeat (na każdym hoście) → Logstash (centralny) → Elasticsearch.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--green)"></div> Logstash — pipeline konfiguracja</div>
+      <pre><span class="cm"># ══ logstash.conf — kompletny pipeline ═══════════════════════</span>
+
+<span class="prop">input</span> {
+  <span class="cm"># Odbieranie z Filebeat (port 5044, Beats protocol)</span>
+  <span class="fn">beats</span> {
+    <span class="prop">port</span> => <span class="num">5044</span>
+    <span class="prop">ssl</span> => <span class="kw">true</span>
+    <span class="prop">ssl_certificate</span> => <span class="str">"/etc/ssl/logstash.crt"</span>
+  }
+  <span class="cm"># Alternatywnie: bezpośrednio z Kafki</span>
+  <span class="fn">kafka</span> {
+    <span class="prop">bootstrap_servers</span> => <span class="str">"kafka:9092"</span>
+    <span class="prop">topics</span> => [<span class="str">"app-logs"</span>]
+    <span class="prop">codec</span> => <span class="str">"json"</span>
+  }
+}
+
+<span class="prop">filter</span> {
+  <span class="cm"># ── Parsowanie JSON logów Spring Boot ─────────────────────</span>
+  <span class="kw">if</span> [fields][type] == <span class="str">"spring-app"</span> {
+    <span class="fn">json</span> {
+      <span class="prop">source</span> => <span class="str">"message"</span>
+      <span class="prop">target</span> => <span class="str">"parsed"</span>
+    }
+    <span class="fn">mutate</span> {
+      <span class="prop">rename</span> => {
+        <span class="str">"[parsed][level]"</span>     => <span class="str">"level"</span>
+        <span class="str">"[parsed][message]"</span>   => <span class="str">"log_message"</span>
+        <span class="str">"[parsed][traceId]"</span>   => <span class="str">"trace_id"</span>
+        <span class="str">"[parsed][spanId]"</span>    => <span class="str">"span_id"</span>
+        <span class="str">"[parsed][service]"</span>   => <span class="str">"service_name"</span>
+      }
+      <span class="prop">remove_field</span> => [<span class="str">"message"</span>, <span class="str">"parsed"</span>]
+    }
+  }
+
+  <span class="cm"># ── Grok — parsowanie plain-text logów ────────────────────</span>
+  <span class="kw">if</span> [fields][type] == <span class="str">"nginx"</span> {
+    <span class="fn">grok</span> {
+      <span class="prop">match</span> => { <span class="str">"message"</span> => <span class="str">"%{COMBINEDAPACHELOG}"</span> }
+    }
+    <span class="fn">geoip</span> { <span class="prop">source</span> => <span class="str">"clientip"</span> }
+    <span class="fn">date</span> {
+      <span class="prop">match</span> => [<span class="str">"timestamp"</span>, <span class="str">"dd/MMM/yyyy:HH:mm:ss Z"</span>]
+    }
+  }
+
+  <span class="cm"># ── Wzbogacanie danych ─────────────────────────────────────</span>
+  <span class="fn">mutate</span> {
+    <span class="prop">add_field</span>  => { <span class="str">"environment"</span> => <span class="str">"production"</span> }
+    <span class="prop">convert</span>    => { <span class="str">"duration_ms"</span> => <span class="str">"integer"</span> }
+    <span class="prop">uppercase</span>  => [<span class="str">"level"</span>]
+  }
+
+  <span class="cm"># ── Odrzucanie debug logów na produkcji ────────────────────</span>
+  <span class="kw">if</span> [level] == <span class="str">"DEBUG"</span> or [level] == <span class="str">"TRACE"</span> {
+    <span class="fn">drop</span> { }
+  }
+}
+
+<span class="prop">output</span> {
+  <span class="fn">elasticsearch</span> {
+    <span class="prop">hosts</span>       => [<span class="str">"https://es-node1:9200"</span>, <span class="str">"https://es-node2:9200"</span>]
+    <span class="prop">index</span>       => <span class="str">"app-logs-%{service_name}-%{+YYYY.MM.dd}"</span>
+    <span class="prop">user</span>        => <span class="str">"logstash_writer"</span>
+    <span class="prop">password</span>    => <span class="str">"${ES_PASSWORD}"</span>
+    <span class="prop">ilm_enabled</span> => <span class="kw">true</span>
+    <span class="prop">ilm_policy</span>  => <span class="str">"logs-policy"</span>
+  }
+  <span class="cm"># Debug: loguj do stdout w dev</span>
+  <span class="kw">if</span> [environment] == <span class="str">"dev"</span> {
+    <span class="fn">stdout</span> { <span class="prop">codec</span> => <span class="fn">rubydebug</span> }
+  }
+}</pre>
+    </div>
+    <div>
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--green)"></div> filebeat.yml — konfiguracja agenta</div>
+        <pre><span class="cm"># ══ filebeat.yml ══════════════════════════════════════════════</span>
+filebeat.inputs:
+  - <span class="prop">type</span>: filestream
+    <span class="prop">id</span>: spring-app-logs
+    <span class="prop">enabled</span>: <span class="kw">true</span>
+    <span class="prop">paths</span>:
+      - /var/log/app/*.log
+      - /var/log/app/*.json
+    <span class="prop">fields</span>:
+      <span class="prop">type</span>: spring-app
+      <span class="prop">service</span>: order-service
+    <span class="prop">fields_under_root</span>: <span class="kw">true</span>
+    <span class="prop">parsers</span>:
+      - <span class="prop">ndjson</span>:
+          <span class="prop">target</span>: <span class="str">""</span>
+          <span class="prop">overwrite_keys</span>: <span class="kw">true</span>
+          <span class="prop">expand_keys</span>: <span class="kw">true</span>
+
+  - <span class="prop">type</span>: container
+    <span class="prop">paths</span>:
+      - /var/lib/docker/containers/*/*.log
+    <span class="prop">processors</span>:
+      - <span class="prop">add_docker_metadata</span>:
+          <span class="prop">host</span>: <span class="str">"unix:///var/run/docker.sock"</span>
+
+<span class="cm"># Wysyłaj do Logstash (opcjonalnie pomiń Logstash → ES direct)</span>
+output.logstash:
+  <span class="prop">hosts</span>: [<span class="str">"logstash:5044"</span>]
+  <span class="prop">ssl.certificate_authorities</span>: [<span class="str">"/etc/ssl/ca.crt"</span>]
+
+<span class="cm"># LUB bezpośrednio do ES:</span>
+<span class="cm"># output.elasticsearch:</span>
+<span class="cm">#   hosts: ["https://es:9200"]</span>
+<span class="cm">#   index: "filebeat-%{[agent.version]}-%{+yyyy.MM.dd}"</span>
+
+<span class="cm"># Monitoring stanu Filebeat</span>
+monitoring.enabled: <span class="kw">true</span>
+monitoring.cluster_uuid: <span class="str">"YOUR_CLUSTER_UUID"</span></pre>
+      </div>
+      <div class="gap12"></div>
+      <div class="alert al-green">
+        <span class="alert-label">Logstash vs Fluentd vs Filebeat</span>
+        <strong>Logstash</strong> — potężny, JVM, dużo pluginów, dużo RAM (~600MB). Używaj gdy potrzebujesz złożonej logiki.<br>
+        <strong>Fluentd / Fluent Bit</strong> — standard w Kubernetes (CNCF), lekki, C. Fluent Bit = ultra lekki (&lt;1MB).<br>
+        <strong>Filebeat</strong> — tylko do zbierania plików, lekki Go agent. Nie ma pełnego filtrowania jak Logstash.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 05 KIBANA ══ -->
+<section class="chapter" id="kibana">
+  <div class="ch-head">
+    <div class="ch-num">05 / 11</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--violet)">Kibana</div>
+      <div class="ch-title">Kibana — eksploracja logów, dashboardy, KQL</div>
+      <div class="ch-desc">Kibana to interfejs webowy dla Elasticsearch. Kluczowe narzędzia: <strong>Discover</strong> (eksploracja logów w czasie rzeczywistym), <strong>Lens/Visualize</strong> (budowanie wykresów), <strong>Dashboards</strong> (zestawy wizualizacji), <strong>Alerting</strong>.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-h" style="color:var(--violet)">🔍 KQL — Kibana Query Language</div>
+      <div class="card-b">
+        <div class="ritem"><div class="ritem-key" style="color:var(--violet)">Exact match</div><div class="ritem-val"><code>level: "ERROR"</code> — pole keyword, dokładne dopasowanie. Odpowiednik filter term.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--violet)">Full-text</div><div class="ritem-val"><code>message: "connection refused"</code> — szuka w tekście. Tokenizowany.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--violet)">Wildcard</div><div class="ritem-val"><code>service_name: order-*</code> — wildcard na keyword. Uwaga: wolne na text!</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--violet)">Zakresy</div><div class="ritem-val"><code>duration_ms >= 500</code> lub <code>duration_ms: [500 TO 2000]</code></div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--violet)">Logiczne AND/OR</div><div class="ritem-val"><code>level: "ERROR" and service_name: "order-service"</code></div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--violet)">Negacja</div><div class="ritem-val"><code>not level: "DEBUG"</code> lub <code>level: "ERROR" and not message: "timeout"</code></div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--violet)">Zagnieżdżone</div><div class="ritem-val"><code>http.response.status_code >= 500</code> — dot notation dla zagnieżdżonych pól</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--violet)">Exists</div><div class="ritem-val"><code>trace_id: *</code> — pole istnieje (nie jest null)</div></div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-h" style="color:var(--violet)">📊 Kibana — kluczowe ekrany</div>
+        <div class="card-b" style="font-size:.84rem;color:var(--tx2);line-height:1.85">
+          <table class="tbl">
+            <tr><th>Ekran</th><th>Do czego</th><th>Kluczowe funkcje</th></tr>
+            <tr><td><strong style="color:var(--violet)">Discover</strong></td><td>Eksploracja, debug, szukanie błędów</td><td>KQL, timeline, field stats, surrounding docs</td></tr>
+            <tr><td><strong style="color:var(--violet)">Lens</strong></td><td>Budowanie wizualizacji drag&amp;drop</td><td>Bar/Line/Metric/Treemap, formula field</td></tr>
+            <tr><td><strong style="color:var(--violet)">Dashboards</strong></td><td>Zestawy wykresów, NOC view</td><td>Filters, drilldown, auto-refresh</td></tr>
+            <tr><td><strong style="color:var(--violet)">Alerting</strong></td><td>Alerty na bazach ES</td><td>Rule types: ES query, threshold, index pattern</td></tr>
+            <tr><td><strong style="color:var(--violet)">APM</strong></td><td>Traces, services map</td><td>Service health, transaction traces, errors</td></tr>
+            <tr><td><strong style="color:var(--violet)">Fleet</strong></td><td>Zarządzanie Beats agentami</td><td>Policies, enroll, monitoring</td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="gap12"></div>
+      <div class="alert al-violet">
+        <span class="alert-label">Praktyczne wskazówki — Discover</span>
+        • Zawsze ustaw <strong>time picker</strong> na konkretny zakres (nie "Last 15 min" przy debugowaniu)<br>
+        • <strong>Surrounding docs</strong> — kliknij na dokument → "View surrounding documents" — kontekst logu<br>
+        • <strong>Save search</strong> + użyj w Dashboard — wyszukiwania wielokrotnego użytku<br>
+        • <strong>Data view</strong> (dawniej Index Pattern) — musisz stworzyć dla każdego wzorca indeksu
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 06 PROMETHEUS ══ -->
+<section class="chapter" id="prometheus">
+  <div class="ch-head">
+    <div class="ch-num">06 / 11</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--rose)">Prometheus</div>
+      <div class="ch-title">Prometheus — architektura, metryki, scraping</div>
+      <div class="ch-desc">Prometheus to open-source system monitoringu i alertingu oparty na modelu <strong>pull</strong>. Scrape'uje metryki z endpointów <code>/metrics</code> w formacie Prometheus (OpenMetrics). Przechowuje w lokalnej TSDB. Używa PromQL do zapytań.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-h" style="color:var(--rose)">🏗️ Architektura Prometheus</div>
+      <div class="card-b">
+        <div class="ritem"><div class="ritem-key" style="color:var(--rose)">Pull model</div><div class="ritem-val">Prometheus <strong>sam odpytuje</strong> targety (odwrotnie niż push w Logstash/Graphite). Targetty konfigurowane statycznie lub przez Service Discovery.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--rose)">TSDB</div><div class="ritem-val">Wbudowana Time Series Database zoptymalizowana do write-heavy workloads. Przechowuje dane lokalnie (domyślnie 15 dni). Nie skaluje poziomo.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--rose)">Exporter</div><div class="ritem-val">Agent eksponujący metryki zewnętrznych systemów. <code>node_exporter</code> (system), <code>jmx_exporter</code> (JVM), <code>postgres_exporter</code>, <code>kafka_exporter</code>.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--rose)">Pushgateway</div><div class="ritem-val">Dla batch jobs (które kończą się zanim Prometheus je zescrapuje). Push → Pushgateway → Prometheus scrape'uje Pushgateway.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--rose)">Alertmanager</div><div class="ritem-val">Obsługuje alerty z Prometheus: routing, grouping, deduplication, silencing. Notyfikacje: Slack, PagerDuty, email, webhook.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--rose)">Service Discovery</div><div class="ritem-val">Automatyczne odkrywanie targetów: Kubernetes SD, Consul SD, EC2 SD, DNS SD. Nie musisz ręcznie dodawać każdego serwisu.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--rose)">Remote Storage</div><div class="ritem-val">Thanos / Cortex / VictoriaMetrics — horizontal scaling + long-term storage. Prometheus → remote write → zewnętrzny storage.</div></div>
+      </div>
+    </div>
+    <div>
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--rose)"></div> prometheus.yml + Spring Boot Actuator</div>
+        <pre><span class="cm"># ══ prometheus.yml — konfiguracja scraping ═══════════════════</span>
+global:
+  <span class="prop">scrape_interval</span>:     15s
+  <span class="prop">evaluation_interval</span>: 15s
+  <span class="prop">external_labels</span>:
+    <span class="prop">env</span>: production
+    <span class="prop">region</span>: eu-west-1
+
+<span class="prop">rule_files</span>:
+  - <span class="str">"alerts/*.yml"</span>
+
+<span class="prop">alerting</span>:
+  <span class="prop">alertmanagers</span>:
+    - <span class="prop">static_configs</span>:
+        - <span class="prop">targets</span>: [<span class="str">"alertmanager:9093"</span>]
+
+<span class="prop">scrape_configs</span>:
+  <span class="cm"># Spring Boot Actuator / Micrometer</span>
+  - <span class="prop">job_name</span>: <span class="str">"spring-apps"</span>
+    <span class="prop">metrics_path</span>: <span class="str">"/actuator/prometheus"</span>
+    <span class="prop">kubernetes_sd_configs</span>:
+      - <span class="prop">role</span>: pod
+    <span class="prop">relabel_configs</span>:
+      - <span class="prop">source_labels</span>: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+        <span class="prop">action</span>: keep
+        <span class="prop">regex</span>: <span class="kw">true</span>
+      - <span class="prop">source_labels</span>: [__meta_kubernetes_pod_label_app]
+        <span class="prop">target_label</span>: app
+
+  <span class="cm"># Node Exporter — metryki systemu</span>
+  - <span class="prop">job_name</span>: <span class="str">"node-exporter"</span>
+    <span class="prop">static_configs</span>:
+      - <span class="prop">targets</span>: [<span class="str">"node-exporter:9100"</span>]
+
+  <span class="cm"># JMX Exporter — metryki JVM</span>
+  - <span class="prop">job_name</span>: <span class="str">"jvm-metrics"</span>
+    <span class="prop">static_configs</span>:
+      - <span class="prop">targets</span>: [<span class="str">"order-service:8080"</span>]
+    <span class="prop">metrics_path</span>: <span class="str">"/actuator/prometheus"</span></pre>
+      </div>
+      <div class="gap12"></div>
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--rose)"></div> Spring Boot — Micrometer + własne metryki</div>
+        <pre><span class="cm">// ── application.yml ─────────────────────────────────────────</span>
+<span class="cm">// management.endpoints.web.exposure.include=prometheus,health</span>
+<span class="cm">// management.metrics.export.prometheus.enabled=true</span>
+<span class="cm">// management.metrics.tags.application=order-service</span>
+
+<span class="ann">@Component</span>
+<span class="kw">public class</span> <span class="cls">MetricsManager</span> {
+
+  <span class="kw">private final</span> <span class="cls">Counter</span> ordersCreated;
+  <span class="kw">private final</span> <span class="cls">Timer</span> orderProcessingTime;
+  <span class="kw">private final</span> <span class="cls">Gauge</span> pendingOrdersGauge;
+
+  <span class="kw">public</span> <span class="fn">MetricsManager</span>(<span class="cls">MeterRegistry</span> registry,
+                         <span class="cls">OrderRepository</span> orderRepo) {
+    <span class="cm">// Counter — rośnie monotoniczne (zamówienia, błędy, eventy)</span>
+    ordersCreated = <span class="cls">Counter</span>.<span class="fn">builder</span>(<span class="str">"orders.created.total"</span>)
+        .<span class="fn">description</span>(<span class="str">"Total orders created"</span>)
+        .<span class="fn">tag</span>(<span class="str">"region"</span>, <span class="str">"eu"</span>)
+        .<span class="fn">register</span>(registry);
+
+    <span class="cm">// Timer — mierzy czas (automatycznie count + sum + histogram)</span>
+    orderProcessingTime = <span class="cls">Timer</span>.<span class="fn">builder</span>(<span class="str">"orders.processing.duration"</span>)
+        .<span class="fn">description</span>(<span class="str">"Order processing latency"</span>)
+        .<span class="fn">publishPercentiles</span>(<span class="num">0.5</span>, <span class="num">0.95</span>, <span class="num">0.99</span>)
+        .<span class="fn">publishPercentileHistogram</span>()
+        .<span class="fn">register</span>(registry);
+
+    <span class="cm">// Gauge — bieżąca wartość (kolejka, connections, cache size)</span>
+    pendingOrdersGauge = <span class="cls">Gauge</span>.<span class="fn">builder</span>(<span class="str">"orders.pending.count"</span>,
+                                    orderRepo,
+                                    <span class="cls">OrderRepository</span>::<span class="fn">countPending</span>)
+        .<span class="fn">register</span>(registry);
+  }
+
+  <span class="kw">public void</span> <span class="fn">recordOrderCreated</span>() {
+    ordersCreated.<span class="fn">increment</span>();
+  }
+
+  <span class="kw">public</span> &lt;<span class="cls">T</span>&gt; <span class="cls">T</span> <span class="fn">timeOrderProcessing</span>(<span class="cls">Supplier</span>&lt;<span class="cls">T</span>&gt; supplier) {
+    <span class="kw">return</span> orderProcessingTime.<span class="fn">record</span>(supplier);
+  }
+}</pre>
+      </div>
+    </div>
+  </div>
+  <div class="gap16"></div>
+  <div class="g4">
+    <div class="card">
+      <div class="card-h" style="color:var(--rose)">Counter</div>
+      <div class="card-b" style="font-size:.82rem;color:var(--tx2);line-height:1.85">
+        <p><strong style="color:var(--tx)">Tylko rośnie</strong> (lub reset przy restarcie). Używaj do: liczby żądań, błędów, eventów.</p>
+        <p style="margin-top:8px">W PromQL zawsze <code>rate()</code> lub <code>increase()</code>, nigdy surową wartość.</p>
+        <p style="margin-top:6px">Przykład: <code>http_requests_total</code>, <code>exceptions_total</code></p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--rose)">Gauge</div>
+      <div class="card-b" style="font-size:.82rem;color:var(--tx2);line-height:1.85">
+        <p><strong style="color:var(--tx)">Dowolna wartość</strong> — może rosnąć i maleć. Używaj do: temperatury, aktywnych połączeń, rozmiaru kolejki, heap.</p>
+        <p style="margin-top:8px">Używaj bezpośrednio: <code>jvm_memory_used_bytes</code>, <code>pending_orders</code></p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--rose)">Histogram</div>
+      <div class="card-b" style="font-size:.82rem;color:var(--tx2);line-height:1.85">
+        <p><strong style="color:var(--tx)">Buckety</strong> zliczające wartości do progu. Tworzy trzy serie: <code>_bucket</code>, <code>_sum</code>, <code>_count</code>.</p>
+        <p style="margin-top:8px">Percentyle obliczane <strong>na serwerze Prometheus</strong> (<code>histogram_quantile</code>). Skaluje się w klastrze!</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--rose)">Summary</div>
+      <div class="card-b" style="font-size:.82rem;color:var(--tx2);line-height:1.85">
+        <p><strong style="color:var(--tx)">Percentyle</strong> obliczane na kliencie. Precyzyjne, ale nie można agregować między instancjami.</p>
+        <p style="margin-top:8px">⚠️ Preferuj Histogram zamiast Summary w środowiskach wieloinstancyjnych!</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 07 PROMQL ══ -->
+<section class="chapter" id="promql">
+  <div class="ch-head">
+    <div class="ch-num">07 / 11</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--amber)">PromQL</div>
+      <div class="ch-title">PromQL — język zapytań Prometheus</div>
+      <div class="ch-desc">PromQL (Prometheus Query Language) to funkcyjny język do odpytywania metryk. Operuje na <strong>time series</strong>. Kluczowe koncepty: instant vector, range vector, funkcje (rate, increase, histogram_quantile), operatory agregacji.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--amber)"></div> PromQL — najważniejsze zapytania</div>
+      <pre><span class="cm"># ══ RATE — średnia szybkość zmian per sekunda ════════════════</span>
+<span class="cm"># rate() — dla counter. ZAWSZE używaj rate() na counterach!</span>
+rate(http_requests_total[5m])
+<span class="cm"># Filtrowanie po labelach:</span>
+rate(http_requests_total{job="order-service", status="200"}[5m])
+<span class="cm"># Aggregacja po serwisach:</span>
+sum by (job) (rate(http_requests_total[5m]))
+
+<span class="cm"># ══ ERROR RATE — % błędów ════════════════════════════════════</span>
+<span class="cm"># (błędy 5xx) / (wszystkie żądania) * 100</span>
+100 * (
+  sum(rate(http_requests_total{status=~"5.."}[5m]))
+  /
+  sum(rate(http_requests_total[5m]))
+)
+
+<span class="cm"># ══ LATENCJA — percentyle z histogram ════════════════════════</span>
+histogram_quantile(0.99,
+  sum by (le) (
+    rate(http_request_duration_seconds_bucket{job="order-service"}[5m])
+  )
+)
+<span class="cm"># 0.99 = p99, 0.95 = p95, 0.50 = p50 (mediana)</span>
+
+<span class="cm"># ══ CPU USAGE ════════════════════════════════════════════════</span>
+100 - (avg by (instance) (
+  rate(node_cpu_seconds_total{mode="idle"}[5m])
+) * 100)
+
+<span class="cm"># ══ JVM HEAP USAGE ════════════════════════════════════════════</span>
+sum(jvm_memory_used_bytes{area="heap"}) by (application)
+  /
+sum(jvm_memory_max_bytes{area="heap"}) by (application)
+  * 100
+
+<span class="cm"># ══ INCREASE — całkowity wzrost w oknie ══════════════════════</span>
+increase(orders_created_total[1h])
+<span class="cm"># Ile zamówień w ostatniej godzinie? (approximate)</span>
+
+<span class="cm"># ══ TOPK / BOTTOMK ════════════════════════════════════════════</span>
+topk(5, sum by (service) (rate(http_requests_total[5m])))
+
+<span class="cm"># ══ IRATE — natychmiastowa szybkość (ostatnie 2 próbki) ══════</span>
+irate(http_requests_total[5m])
+<span class="cm"># Bardziej reaktywny niż rate(), ale noisier. Dla alertów: rate()</span>
+
+<span class="cm"># ══ PREDICT_LINEAR — przewidywanie trendu ════════════════════</span>
+predict_linear(disk_free_bytes[6h], 4 * 3600)
+<span class="cm"># Ile bajtów wolnych za 4 godziny przy obecnym trendzie?</span>
+
+<span class="cm"># ══ LABEL MATCHING ════════════════════════════════════════════</span>
+<span class="cm"># =~ regex match: status=~"5.."  (5xx errors)</span>
+<span class="cm"># !~ negacja regex: status!~"2.."</span>
+<span class="cm"># != not equal: env!="dev"</span></pre>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-h" style="color:var(--amber)">📐 PromQL — koncepty</div>
+        <div class="card-b">
+          <div class="ritem"><div class="ritem-key" style="color:var(--amber)">Instant vector</div><div class="ritem-val">Aktualna wartość metryk dla każdej kombinacji labelów. Np. <code>http_requests_total</code> — wynik: jedna wartość per seria.</div></div>
+          <div class="ritem"><div class="ritem-key" style="color:var(--amber)">Range vector</div><div class="ritem-val">Wartości z okna czasowego. Np. <code>http_requests_total[5m]</code> — wynik: tablica punktów per seria. Potrzebne dla <code>rate()</code>.</div></div>
+          <div class="ritem"><div class="ritem-key" style="color:var(--amber)">Labels</div><div class="ritem-val">Wymiary metryk — <code>{job="api", instance="host:8080", env="prod"}</code>. Każda unikalna kombinacja = osobna seria. Uważaj na wysoką kardynalność!</div></div>
+          <div class="ritem"><div class="ritem-key" style="color:var(--amber)">Aggregation ops</div><div class="ritem-val"><code>sum</code>, <code>avg</code>, <code>min</code>, <code>max</code>, <code>count</code>, <code>stddev</code>. Zawsze z <code>by</code> lub <code>without</code>.</div></div>
+          <div class="ritem"><div class="ritem-key" style="color:var(--amber)">rate() vs irate()</div><div class="ritem-val"><code>rate()</code> = średnia po całym oknie (gładka). <code>irate()</code> = ostatnie 2 punkty (reaktywna). Alerty: rate(). Wykresy real-time: irate().</div></div>
+          <div class="ritem"><div class="ritem-key" style="color:var(--amber)">Kardynalność</div><div class="ritem-val"><strong>Największy problem Prometheus!</strong> Nie używaj jako labeli: user_id, request_id, IP — miliony unikalnych wartości = OOM. Labels powinny mieć &lt;1000 unikalnych wartości.</div></div>
+        </div>
+      </div>
+      <div class="gap12"></div>
+      <div class="alert al-rose">
+        <span class="alert-label">Uwaga — wysoka kardynalność</span>
+        Każda kombinacja labelów = osobna szereg czasowy. Label z milionami wartości (user_id, request_id, URL) zabije Prometheus. <strong>Praktyka:</strong> parametry URL w labelach → <code>/api/users/123</code> zawsze normalizuj do <code>/api/users/{id}</code> (<code>http.route</code> w Spring Web MVC).
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 08 GRAFANA ══ -->
+<section class="chapter" id="grafana">
+  <div class="ch-head">
+    <div class="ch-num">08 / 11</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--orange)">Grafana</div>
+      <div class="ch-title">Grafana — dashboardy, data sources, panele</div>
+      <div class="ch-desc">Grafana to platforma wizualizacji danych obsługująca <strong>ponad 80 data sources</strong> — Prometheus, Elasticsearch, Loki, InfluxDB, CloudWatch, MySQL i wiele innych. Jedna Grafana = pełny obraz całego systemu.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-h" style="color:var(--orange)">🧩 Grafana — kluczowe koncepty</div>
+      <div class="card-b">
+        <div class="ritem"><div class="ritem-key" style="color:var(--orange)">Data Source</div><div class="ritem-val">Połączenie z backendem danych. Jeden Grafana = wiele data sources. Prometheus, Loki, Elasticsearch, CloudWatch, PostgreSQL, itd.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--orange)">Dashboard</div><div class="ritem-val">Kolekcja paneli. Zapisany jako JSON — można wersjonować w Git. Darmowe dashboardy w <strong>grafana.com/dashboards</strong> (import po ID).</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--orange)">Panel</div><div class="ritem-val">Pojedyncza wizualizacja — Time series, Bar gauge, Stat, Table, Logs, Geomap, Heatmap, Pie chart, Node graph.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--orange)">Variables</div><div class="ritem-val">Dynamiczne filtry w dashboardzie — <code>$service</code>, <code>$env</code>. Typ: Query (z DS), Custom, Constant, Data source, Interval. Używaj w zapytaniach: <code>job="$service"</code></div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--orange)">Transformations</div><div class="ritem-val">Przetwarzanie danych bez zmiany źródła — Join, Filter, Rename, Organize fields, Calculate field, Merge. Potężne combo z SQL-like.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--orange)">Annotations</div><div class="ritem-val">Markery na osi czasu — automatyczne (z Prometheus alerts) lub manualne (deployment). Pokazują korelację zmian z anomaliami.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--orange)">Alerting</div><div class="ritem-val">Grafana Alerting (od v8) — alerty bezpośrednio z Grafany. Wspiera wiele Data Sources. Contact points: Slack, PagerDuty, email, webhook, OpsGenie.</div></div>
+      </div>
+    </div>
+    <div>
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--orange)"></div> Grafana — provisioning jako kod (IaC)</div>
+        <pre><span class="cm"># ══ datasources/prometheus.yml ════════════════════════════════</span>
+apiVersion: 1
+datasources:
+  - <span class="prop">name</span>: Prometheus
+    <span class="prop">type</span>: prometheus
+    <span class="prop">url</span>: http://prometheus:9090
+    <span class="prop">access</span>: proxy
+    <span class="prop">isDefault</span>: <span class="kw">true</span>
+    <span class="prop">jsonData</span>:
+      <span class="prop">httpMethod</span>: POST
+      <span class="prop">timeInterval</span>: 15s
+      <span class="prop">exemplarTraceIdDestinations</span>:
+        - <span class="prop">name</span>: traceId
+          <span class="prop">datasourceUid</span>: tempo
+
+  - <span class="prop">name</span>: Elasticsearch-Logs
+    <span class="prop">type</span>: elasticsearch
+    <span class="prop">url</span>: http://elasticsearch:9200
+    <span class="prop">database</span>: <span class="str">"app-logs-*"</span>
+    <span class="prop">jsonData</span>:
+      <span class="prop">esVersion</span>: <span class="str">"8.0.0"</span>
+      <span class="prop">timeField</span>: <span class="str">"@timestamp"</span>
+      <span class="prop">logMessageField</span>: log_message
+      <span class="prop">logLevelField</span>: level
+
+<span class="cm"># ══ Ważne dashboardy do importu z grafana.com ═════════════════</span>
+<span class="cm"># ID 1860  — Node Exporter Full (system metrics)</span>
+<span class="cm"># ID 4701  — JVM Micrometer (Spring Boot JVM)</span>
+<span class="cm"># ID 11378 — Spring Boot 2.1+ Statistics</span>
+<span class="cm"># ID 7362  — Kubernetes Cluster Monitoring</span>
+<span class="cm"># ID 3662  — Prometheus 2.0 Overview</span>
+
+<span class="cm"># ══ Przykładowy panel — Time Series (JSON fragment) ══════════</span>
+{
+  <span class="str">"title"</span>: <span class="str">"HTTP Requests Rate"</span>,
+  <span class="str">"type"</span>: <span class="str">"timeseries"</span>,
+  <span class="str">"targets"</span>: [{
+    <span class="str">"expr"</span>: <span class="str">"sum by (status) (rate(http_requests_total{job=~\"$service\"}[5m]))"</span>,
+    <span class="str">"legendFormat"</span>: <span class="str">"{{status}}"</span>
+  }],
+  <span class="str">"fieldConfig"</span>: {
+    <span class="str">"defaults"</span>: {
+      <span class="str">"unit"</span>: <span class="str">"reqps"</span>,
+      <span class="str">"thresholds"</span>: {
+        <span class="str">"steps"</span>: [
+          { <span class="str">"color"</span>: <span class="str">"green"</span>, <span class="str">"value"</span>: <span class="kw">null</span> },
+          { <span class="str">"color"</span>: <span class="str">"yellow"</span>, <span class="str">"value"</span>: <span class="num">100</span> },
+          { <span class="str">"color"</span>: <span class="str">"red"</span>, <span class="str">"value"</span>: <span class="num">500</span> }
+        ]
+      }
+    }
+  }
+}</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 09 ALERTING & SLO ══ -->
+<section class="chapter" id="alerting">
+  <div class="ch-head">
+    <div class="ch-num">09 / 11</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--rose)">Alerting &amp; SLO</div>
+      <div class="ch-title">Alerty, Alertmanager i SLO/SLA</div>
+      <div class="ch-desc">Dobry alert jest <strong>actionable</strong> — wskazuje konkretny problem i możliwe działanie. SLO (Service Level Objective) definiuje docelową niezawodność — podstawa error budget i decyzji inżynierskich.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--rose)"></div> Prometheus Alerting Rules + Alertmanager</div>
+      <pre><span class="cm"># ══ alerts/app.yml — reguły alertów ══════════════════════════</span>
+groups:
+  - <span class="prop">name</span>: order-service
+    <span class="prop">rules</span>:
+      <span class="cm"># Alert na wysoki error rate</span>
+      - <span class="prop">alert</span>: HighErrorRate
+        <span class="prop">expr</span>: |
+          (
+            sum(rate(http_requests_total{status=~"5..",job="order-service"}[5m]))
+            /
+            sum(rate(http_requests_total{job="order-service"}[5m]))
+          ) > 0.05
+        <span class="prop">for</span>: 5m
+        <span class="prop">labels</span>:
+          <span class="prop">severity</span>: critical
+          <span class="prop">team</span>: backend
+        <span class="prop">annotations</span>:
+          <span class="prop">summary</span>: <span class="str">"High error rate on order-service"</span>
+          <span class="prop">description</span>: <span class="str">"Error rate {{ $value | humanizePercentage }} > 5%"</span>
+          <span class="prop">runbook_url</span>: <span class="str">"https://wiki.company.com/runbooks/order-service"</span>
+
+      <span class="cm"># Alert na wysokie p99 latencji</span>
+      - <span class="prop">alert</span>: HighLatencyP99
+        <span class="prop">expr</span>: |
+          histogram_quantile(0.99,
+            sum by (le, job) (
+              rate(http_request_duration_seconds_bucket[5m])
+            )
+          ) > 2.0
+        <span class="prop">for</span>: 10m
+        <span class="prop">labels</span>:
+          <span class="prop">severity</span>: warning
+        <span class="prop">annotations</span>:
+          <span class="prop">summary</span>: <span class="str">"p99 latency > 2s on {{ $labels.job }}"</span>
+
+      <span class="cm"># Alert na pełny dysk (predict_linear)</span>
+      - <span class="prop">alert</span>: DiskWillFillIn4Hours
+        <span class="prop">expr</span>: predict_linear(node_filesystem_free_bytes[1h], 4 * 3600) < 0
+        <span class="prop">for</span>: 30m
+        <span class="prop">labels</span>:
+          <span class="prop">severity</span>: warning
+
+      <span class="cm"># Recording rule — precompute dla wydajności</span>
+      - <span class="prop">record</span>: job:http_request_duration_seconds:p99_5m
+        <span class="prop">expr</span>: |
+          histogram_quantile(0.99,
+            sum by (le, job) (rate(http_request_duration_seconds_bucket[5m]))
+          )
+
+<span class="cm"># ══ alertmanager.yml — routing i notyfikacje ═════════════════</span>
+route:
+  <span class="prop">group_by</span>: [alertname, team]
+  <span class="prop">group_wait</span>: 30s
+  <span class="prop">group_interval</span>: 5m
+  <span class="prop">repeat_interval</span>: 4h
+  <span class="prop">receiver</span>: default
+  <span class="prop">routes</span>:
+    - <span class="prop">match</span>: { severity: critical }
+      <span class="prop">receiver</span>: pagerduty
+    - <span class="prop">match</span>: { team: backend }
+      <span class="prop">receiver</span>: slack-backend
+
+receivers:
+  - <span class="prop">name</span>: slack-backend
+    <span class="prop">slack_configs</span>:
+      - <span class="prop">api_url</span>: <span class="str">"${SLACK_WEBHOOK_URL}"</span>
+        <span class="prop">channel</span>: <span class="str">"#alerts-backend"</span>
+        <span class="prop">title</span>: <span class="str">"[{{ .Status | toUpper }}] {{ .GroupLabels.alertname }}"</span>
+        <span class="prop">text</span>: <span class="str">"{{ range .Alerts }}{{ .Annotations.description }}\n{{ end }}"</span>
+  - <span class="prop">name</span>: pagerduty
+    <span class="prop">pagerduty_configs</span>:
+      - <span class="prop">routing_key</span>: <span class="str">"${PAGERDUTY_KEY}"</span></pre>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-h" style="color:var(--rose)">🎯 SLO / SLA / Error Budget</div>
+        <div class="card-b">
+          <div class="ritem"><div class="ritem-key" style="color:var(--rose)">SLI</div><div class="ritem-val"><strong>Service Level Indicator</strong> — miara jakości (np. % successful requests, latencja p99, availability)</div></div>
+          <div class="ritem"><div class="ritem-key" style="color:var(--rose)">SLO</div><div class="ritem-val"><strong>Service Level Objective</strong> — target dla SLI. Np. "99.9% requestów zakończy się sukcesem w ciągu miesiąca"</div></div>
+          <div class="ritem"><div class="ritem-key" style="color:var(--rose)">SLA</div><div class="ritem-val"><strong>Service Level Agreement</strong> — kontrakt z klientem. Konsekwencje (finansowe) za przekroczenie. SLO powinno być ostrzejsze niż SLA!</div></div>
+          <div class="ritem"><div class="ritem-key" style="color:var(--rose)">Error Budget</div><div class="ritem-val">SLO 99.9% = 0.1% czasu możesz mieć problemy = <strong>43.8 min/miesiąc</strong>. Gdy budget wyczerpany: freeze feature releases.</div></div>
+          <div class="ritem"><div class="ritem-key" style="color:var(--rose)">Burn Rate</div><div class="ritem-val">Jak szybko konsumujesz error budget. Burn rate 1 = dokładnie na granicy. Burn rate 10 = wyczerpasz 10x szybciej.</div></div>
+        </div>
+      </div>
+      <div class="gap12"></div>
+      <div class="alert al-rose">
+        <span class="alert-label">Dobre praktyki alertów</span>
+        🔴 <strong>Alert na symptomy, nie przyczyny</strong> — "użytkownicy widzą błędy" nie "CPU > 80%"<br>
+        🟡 <strong>Każdy alert = runbook</strong> — link do dokumentacji co zrobić<br>
+        🟡 <strong>for: 5m</strong> — czekaj na potwierdzenie, unikaj flapping<br>
+        🟢 <strong>severity</strong> — critical (page), warning (Slack). Nigdy nie page za warning!<br>
+        🟢 <strong>Testuj alerty</strong> — unit tests dla reguł (<code>promtool test rules</code>)
+      </div>
+      <div class="gap12"></div>
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--rose)"></div> SLO — Availability PromQL</div>
+        <pre><span class="cm"># Availability za ostatnie 30 dni (w %)</span>
+100 * (1 - (
+  sum_over_time(
+    (sum(rate(http_requests_total{status=~"5.."}[5m]))
+     / sum(rate(http_requests_total[5m])))
+    [30d:5m]
+  ) / (30 * 24 * 12)
+))
+
+<span class="cm"># Error Budget Remaining (%)</span>
+<span class="cm"># SLO = 99.9% → error_rate_allowed = 0.001</span>
+(1 - (
+  sum(increase(http_requests_total{status=~"5.."}[30d]))
+  /
+  sum(increase(http_requests_total[30d]))
+)) / 0.001 * 100</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 10 SPRING INTEGRATION ══ -->
+<section class="chapter" id="spring-integration">
+  <div class="ch-head">
+    <div class="ch-num">10 / 11</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--sky)">Spring Boot Integration</div>
+      <div class="ch-title">Spring Boot + Observability — Actuator, Micrometer, structured logging</div>
+      <div class="ch-desc">Spring Boot od wersji 3.0 ma wbudowane wsparcie dla observability przez <strong>Micrometer Observation API</strong>. Auto-konfiguracja Prometheus, Zipkin/OTLP traces, structured logging przez Logback.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--sky)"></div> Spring Boot — konfiguracja observability</div>
+      <pre><span class="cm">/* ── pom.xml dependencies ─────────────────────────────────── */</span>
+<span class="cm">// Spring Boot Actuator</span>
+&lt;dependency&gt;
+  &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+  &lt;artifactId&gt;spring-boot-starter-actuator&lt;/artifactId&gt;
+&lt;/dependency&gt;
+<span class="cm">// Prometheus Metrics (Micrometer)</span>
+&lt;dependency&gt;
+  &lt;groupId&gt;io.micrometer&lt;/groupId&gt;
+  &lt;artifactId&gt;micrometer-registry-prometheus&lt;/artifactId&gt;
+&lt;/dependency&gt;
+<span class="cm">// Distributed Tracing (OTLP → Tempo/Jaeger)</span>
+&lt;dependency&gt;
+  &lt;groupId&gt;io.micrometer&lt;/groupId&gt;
+  &lt;artifactId&gt;micrometer-tracing-bridge-brave&lt;/artifactId&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+  &lt;groupId&gt;io.zipkin.reporter2&lt;/groupId&gt;
+  &lt;artifactId&gt;zipkin-reporter-brave&lt;/artifactId&gt;
+&lt;/dependency&gt;
+<span class="cm">// Structured Logging (Logback JSON encoder)</span>
+&lt;dependency&gt;
+  &lt;groupId&gt;net.logstash.logback&lt;/groupId&gt;
+  &lt;artifactId&gt;logstash-logback-encoder&lt;/artifactId&gt;
+  &lt;version&gt;7.4&lt;/version&gt;
+&lt;/dependency&gt;
+
+<span class="cm">/* ── application.yml ─────────────────────────────────────── */</span>
+management:
+  endpoints.web.exposure.include: prometheus,health,info,metrics
+  metrics:
+    export.prometheus.enabled: <span class="kw">true</span>
+    tags:
+      application: order-service
+      env: <span class="str">"${ENVIRONMENT:local}"</span>
+  tracing:
+    sampling.probability: <span class="num">1.0</span>   <span class="cm"># 100% na dev, 0.1 na prod</span>
+    enabled: <span class="kw">true</span>
+
+logging:
+  pattern:
+    console: <span class="str">"%d{ISO8601} [%X{traceId}/%X{spanId}] %-5level %logger: %msg%n"</span>
+
+<span class="cm">// Zipkin endpoint (dla Grafana Tempo / Jaeger)</span>
+management.zipkin.tracing.endpoint: http://tempo:9411/api/v2/spans</pre>
+    </div>
+    <div>
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--sky)"></div> Structured Logging — logback-spring.xml</div>
+        <pre><span class="cm">&lt;!-- logback-spring.xml — JSON logi dla ELK --&gt;</span>
+&lt;<span class="fn">configuration</span>&gt;
+
+  &lt;<span class="fn">springProfile</span> name=<span class="str">"!local"</span>&gt;
+    &lt;<span class="fn">appender</span> name=<span class="str">"JSON"</span>
+              class=<span class="str">"ch.qos.logback.core.ConsoleAppender"</span>&gt;
+      &lt;<span class="fn">encoder</span>
+        class=<span class="str">"net.logstash.logback.encoder.LogstashEncoder"</span>&gt;
+        &lt;<span class="fn">includeMdcKeyName</span>&gt;traceId&lt;/<span class="fn">includeMdcKeyName</span>&gt;
+        &lt;<span class="fn">includeMdcKeyName</span>&gt;spanId&lt;/<span class="fn">includeMdcKeyName</span>&gt;
+        &lt;<span class="fn">customFields</span>&gt;
+          {<span class="str">"service"</span>:<span class="str">"order-service"</span>,<span class="str">"env"</span>:<span class="str">"prod"</span>}
+        &lt;/<span class="fn">customFields</span>&gt;
+      &lt;/<span class="fn">encoder</span>&gt;
+    &lt;/<span class="fn">appender</span>&gt;
+    &lt;<span class="fn">root</span> level=<span class="str">"INFO"</span>&gt;
+      &lt;<span class="fn">appender-ref</span> ref=<span class="str">"JSON"</span> /&gt;
+    &lt;/<span class="fn">root</span>&gt;
+  &lt;/<span class="fn">springProfile</span>&gt;
+
+&lt;/<span class="fn">configuration</span>&gt;
+
+<span class="cm">/* ── Wynikowy log JSON dla ELK ────────────────────────────── */</span>
+{
+  <span class="str">"@timestamp"</span>: <span class="str">"2024-01-15T14:23:41.123Z"</span>,
+  <span class="str">"level"</span>: <span class="str">"ERROR"</span>,
+  <span class="str">"message"</span>: <span class="str">"Order processing failed"</span>,
+  <span class="str">"logger_name"</span>: <span class="str">"com.example.OrderService"</span>,
+  <span class="str">"traceId"</span>: <span class="str">"4bf92f3577b34da6a3ce929d0e0e4736"</span>,
+  <span class="str">"spanId"</span>: <span class="str">"00f067aa0ba902b7"</span>,
+  <span class="str">"service"</span>: <span class="str">"order-service"</span>,
+  <span class="str">"env"</span>: <span class="str">"prod"</span>,
+  <span class="str">"stack_trace"</span>: <span class="str">"..."</span>
+}</pre>
+      </div>
+      <div class="gap12"></div>
+      <div class="alert al-sky">
+        <span class="alert-label">Korelacja Logs + Traces</span>
+        <strong>traceId w logach</strong> to killer feature — wklejasz traceId z Grafana Traces do Kibana KQL: <code>traceId: "4bf92f35..."</code> i widzisz dokładnie co logowała ta konkretna instancja podczas tego żądania. Spring Boot + Micrometer Tracing automatycznie propaguje traceId do MDC.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 11 PRODUKCJA ══ -->
+<section class="chapter" id="production">
+  <div class="ch-head">
+    <div class="ch-num">11 / 11</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--orange)">Produkcja &amp; Dobre Praktyki</div>
+      <div class="ch-title">Observability na produkcji — porady seniorskie</div>
+      <div class="ch-desc">Jak zbudować dojrzałą observability w prawdziwym systemie — skalowanie, bezpieczeństwo, koszty i antywzorce których unikać.</div>
+    </div>
+  </div>
+  <div class="g3">
+    <div class="card">
+      <div class="card-h" style="color:var(--orange)">📈 Skalowanie Prometheus</div>
+      <div class="card-b" style="font-size:.83rem;color:var(--tx2);line-height:1.85">
+        <p>Prometheus nie skaluje poziomo (TSDB lokalna). Opcje:</p>
+        <p style="margin-top:8px"><strong style="color:var(--tx)">Thanos</strong> — sidecar przy każdym Prometheus, global query, long-term S3 storage. Deduplication po HA pairs.</p>
+        <p style="margin-top:8px"><strong style="color:var(--tx)">Cortex / Mimir</strong> — Grafana Mimir = cloud-native, horizontal scaling, multi-tenancy, compatible API.</p>
+        <p style="margin-top:8px"><strong style="color:var(--tx)">VictoriaMetrics</strong> — single binary, bardzo wydajny, kompatybilny z PromQL. Dobry wybór przy dużych workloadach.</p>
+        <p style="margin-top:8px">🔑 Reguła: &gt;500k active series = rozważ zewnętrzne storage.</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--orange)">💰 Koszty i storage ELK</div>
+      <div class="card-b" style="font-size:.83rem;color:var(--tx2);line-height:1.85">
+        <p><strong style="color:var(--tx)">Logi to najdroższy filar</strong> — rosną proporcjonalnie do trafficu. Strategie oszczędzania:</p>
+        <p style="margin-top:8px">• <strong>Sampling logów DEBUG/INFO</strong> — nie loguj 100% na prod, próbkuj</p>
+        <p>• <strong>ILM agresywny</strong> — delete po 30-90 dniach, cold tier po 7 dniach</p>
+        <p>• <strong>Logstash filter: drop DEBUG</strong> — nie wysyłaj do ES</p>
+        <p>• <strong>Loki zamiast ES</strong> — Grafana Loki = tańszy dla logów, indeksuje tylko labele nie treść</p>
+        <p>• <strong>Kompresja</strong> — ES używa LZ4 domyślnie, można zmienić na DEFLATE</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--orange)">🔐 Bezpieczeństwo</div>
+      <div class="card-b" style="font-size:.83rem;color:var(--tx2);line-height:1.85">
+        <p><strong style="color:var(--tx)">Elasticsearch</strong> — domyślnie od ES 8.0 TLS i auth włączone. Stwórz dedykowane role: <code>logstash_writer</code>, <code>kibana_user</code>.</p>
+        <p style="margin-top:8px"><strong style="color:var(--tx)">Prometheus</strong> — brak auth domyślnie! Użyj reverse proxy (nginx) z basic auth lub mTLS.</p>
+        <p style="margin-top:8px"><strong style="color:var(--tx)">Grafana</strong> — RBAC od Grafana 9. Organizacje dla multi-tenancy. OAuth/SSO (Google, GitHub, Okta).</p>
+        <p style="margin-top:8px">⚠️ <strong>Nie loguj PII!</strong> — hasła, tokeny, numery kart. Maskuj w Logstash/Filebeat.</p>
+      </div>
+    </div>
+  </div>
+  <div class="gap16"></div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-h" style="color:var(--orange)">🚫 Antywzorce — czego NIE robić</div>
+      <div class="card-b" style="font-size:.83rem;color:var(--tx2);line-height:1.85">
+        <table class="tbl">
+          <tr><th>Antywzorzec</th><th>Problem</th><th>Rozwiązanie</th></tr>
+          <tr><td>🔴 Wysoką kardynalność labelów w Prometheus</td><td>OOM, degradacja TSDB</td><td>Max ~1000 unikalnych wartości per label</td></tr>
+          <tr><td>🔴 Logi w formacie plain-text</td><td>Trudne do parsowania, grok kosztowny</td><td>JSON od razu z aplikacji (logstash-logback-encoder)</td></tr>
+          <tr><td>🔴 Alertowanie na przyczyny (CPU 80%)</td><td>Alert bez kontekstu = useless</td><td>Alert na symptomy użytkownika: error rate, latencja</td></tr>
+          <tr><td>🔴 Jeden indeks ES na wszystkie logi</td><td>Brak ILM, skalowanie niemożliwe</td><td>Index per service per day: <code>app-order-2024.01.15</code></td></tr>
+          <tr><td>🔴 Brak rate() na counterach PromQL</td><td>Wykresy pokazują rosnący total</td><td>Zawsze <code>rate(counter[5m])</code></td></tr>
+          <tr><td>🔴 Brak for: w alertach</td><td>Alert flapping przy chwilowych spike'ach</td><td>Minimum <code>for: 5m</code> dla stabilnych alertów</td></tr>
+          <tr><td>🔴 Logowanie requestId jako label Prometheus</td><td>Miliony unikalnych wartości = OOM</td><td>requestId tylko w logach, nie metrykach</td></tr>
+        </table>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-h" style="color:var(--orange)">🛠️ Stack — co kiedy używać</div>
+        <div class="card-b" style="font-size:.83rem">
+          <table class="tbl">
+            <tr><th>Potrzeba</th><th>Rozwiązanie</th></tr>
+            <tr><td>Logi w małym projekcie / K8s</td><td><strong style="color:var(--green)">Grafana Loki + Promtail</strong> — tańszy, prostszy niż ELK</td></tr>
+            <tr><td>Logi z zaawansowanym search + analytics</td><td><strong style="color:var(--amber)">ELK Stack</strong> — pełny tekst, agregacje, SIEM</td></tr>
+            <tr><td>Metryki aplikacji, alerting</td><td><strong style="color:var(--rose)">Prometheus + Alertmanager</strong></td></tr>
+            <tr><td>Dashboardy ujednolicone</td><td><strong style="color:var(--orange)">Grafana</strong> (łączy Prometheus + Loki + Tempo)</td></tr>
+            <tr><td>Distributed traces</td><td><strong style="color:var(--violet)">Grafana Tempo</strong> (free) lub Jaeger</td></tr>
+            <tr><td>Wszystko jako managed cloud</td><td><strong style="color:var(--sky)">Grafana Cloud</strong> lub Datadog / New Relic</td></tr>
+            <tr><td>Long-term Prometheus storage</td><td><strong style="color:var(--teal)">Thanos / VictoriaMetrics / Mimir</strong></td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="gap12"></div>
+      <div class="alert al-teal">
+        <span class="alert-label">Dojrzała observability — checklist</span>
+        ✅ Structured logs (JSON) z traceId w każdym logu<br>
+        ✅ Metryki: RED method na każdym serwisie HTTP<br>
+        ✅ Metryki JVM: heap, GC, threads — z Micrometer<br>
+        ✅ Alerty na symptomy z runbookami<br>
+        ✅ Korelacja logs + metrics + traces (ten sam traceId)<br>
+        ✅ SLO zdefiniowane dla każdego krytycznego serwisu<br>
+        ✅ ILM dla Elasticsearch — automatyczne usuwanie<br>
+        ✅ Dashboardy w Git (Grafana provisioning)<br>
+        ✅ Alert na error budget burn rate, nie tylko on/off
+      </div>
+    </div>
+  </div>
+  <div class="gap16"></div>
+  <div class="strip" style="border-color:var(--k1);background:rgba(45,212,191,.04)">
+    <div class="strip-icon">🏆</div>
+    <div><strong>Senior z Observability:</strong> Rozumiesz różnicę między monitoringiem a observability. Logs bez struktury to stracony czas — zawsze JSON z traceId. Prometheus i Elasticsearch rozwiązują różne problemy — jedno nie zastępuje drugiego. Alerty na symptomy, nie przyczyny. SLO to kontrakt z biznesem, error budget to narzędzie inżynierskie. I najważniejsze: <strong>observability to kultura</strong>, nie zestaw narzędzi — każdy developer odpowiada za to, że jego serwis jest obserwowalny.</div>
+  </div>
+</section>
+
+</main>
+<footer class="footer">
+  <div><span class="footer-title">Observability</span> — Kompendium Senior Java Developer</div>
+  <div>ELK Stack · Prometheus · PromQL · Grafana · Alerting · SLO</div>
+</footer>
+</body>
+</html>

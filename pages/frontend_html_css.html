@@ -1,0 +1,1753 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HTML & CSS — Kompletna Wiedza Frontend</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ffffff;--s1:#f8f9fa;--s2:#f1f3f5;--s3:#e9ecef;
+  --bd:#dee2e6;--bd2:#ced4da;--tx:#1a1a2e;--tx2:#495057;--mt:#6c757d;
+  --k1:#f97316;--k2:#ea6c0a;
+  --green:#16a34a;--teal:#0d9488;--violet:#7c3aed;--rose:#e11d48;
+  --amber:#d97706;--pink:#c026d3;--sky:#0284c7;--orange:#ea580c;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;line-height:1.65;overflow-x:hidden}
+.back{position:fixed;top:22px;left:22px;z-index:9999;background:rgba(255,255,255,.95);backdrop-filter:blur(14px);border:1px solid var(--bd2);border-radius:40px;padding:10px 20px;display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--tx2);font-family:'IBM Plex Mono',monospace;font-size:.72rem;font-weight:500;letter-spacing:1px;transition:all .25s}
+.back:hover{color:var(--html);border-color:var(--html)}
+.hdr{min-height:500px;padding:110px 80px 80px;position:relative;overflow:hidden;display:flex;align-items:flex-end}
+.hdr-bg{position:absolute;inset:0;background:var(--s1)}
+.hdr-bg::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 55% at 3% 100%,rgba(228,77,38,.14) 0%,transparent 55%),radial-gradient(ellipse 50% 65% at 97% 5%,rgba(79,125,245,.12) 0%,transparent 50%),radial-gradient(ellipse 45% 50% at 50% 50%,rgba(167,139,250,.05) 0%,transparent 60%)}
+.hdr-grid{position:absolute;inset:0;background-image:linear-gradient(var(--bd) 1px,transparent 1px),linear-gradient(90deg,var(--bd) 1px,transparent 1px);background-size:48px 48px;opacity:.13;mask-image:radial-gradient(ellipse 85% 90% at 50% 50%,black,transparent)}
+.hdr-content{position:relative;max-width:1400px;width:100%}
+.hdr-tier{display:inline-flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:.65rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--html);margin-bottom:28px;padding:7px 16px;border:1px solid rgba(228,77,38,.35);border-radius:4px;background:rgba(228,77,38,.07)}
+.tier-dot{width:6px;height:6px;border-radius:50%;background:var(--html);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+h1{font-size:clamp(2.8rem,7vw,6rem);font-weight:800;line-height:.9;letter-spacing:-4px;margin-bottom:28px}
+h1 em{font-style:normal;background:linear-gradient(135deg,var(--html),var(--css2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+h1 small{display:block;font-size:.36em;letter-spacing:-1px;color:var(--tx2);font-weight:500;margin-top:14px;-webkit-text-fill-color:var(--tx2)}
+.hdr-desc{font-size:1rem;color:var(--tx2);max-width:680px;line-height:1.9}
+.hdr-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.chip{font-family:'IBM Plex Mono',monospace;font-size:.63rem;font-weight:600;letter-spacing:.5px;padding:5px 12px;border-radius:3px;border:1px solid}
+.ch{color:var(--html);border-color:rgba(228,77,38,.4);background:rgba(228,77,38,.07)}
+.cc{color:var(--css2);border-color:rgba(79,125,245,.4);background:rgba(79,125,245,.07)}
+.cj{color:var(--js2);border-color:rgba(247,223,30,.35);background:rgba(247,223,30,.07)}
+.cg{color:var(--green);border-color:rgba(74,222,128,.35);background:rgba(74,222,128,.05)}
+.ct{color:var(--teal);border-color:rgba(45,212,191,.35);background:rgba(45,212,191,.05)}
+.cv{color:var(--violet);border-color:rgba(167,139,250,.35);background:rgba(167,139,250,.07)}
+.cr{color:var(--rose);border-color:rgba(251,113,133,.35);background:rgba(251,113,133,.05)}
+.ca{color:var(--amber);border-color:rgba(251,191,36,.35);background:rgba(251,191,36,.05)}
+.nav{position:sticky;top:0;z-index:300;background:rgba(10,8,15,.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--bd);display:flex;overflow-x:auto;scrollbar-width:none;padding:0 80px}
+.nav::-webkit-scrollbar{display:none}
+.nav-a{color:var(--mt);text-decoration:none;font-family:'IBM Plex Mono',monospace;font-size:.63rem;font-weight:600;letter-spacing:.5px;padding:14px 12px;white-space:nowrap;border-bottom:2px solid transparent;transition:all .18s}
+.nav-a:hover{color:var(--html);border-bottom-color:var(--html)}
+.main{max-width:1400px;margin:0 auto;padding:80px 24px 160px}
+.chapter{margin-bottom:100px;animation:fadeUp .5s ease backwards}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.chapter:nth-child(1){animation-delay:.04s}.chapter:nth-child(2){animation-delay:.08s}
+.chapter:nth-child(3){animation-delay:.12s}.chapter:nth-child(4){animation-delay:.16s}
+.chapter:nth-child(5){animation-delay:.20s}.chapter:nth-child(6){animation-delay:.24s}
+.chapter:nth-child(7){animation-delay:.28s}.chapter:nth-child(8){animation-delay:.32s}
+.chapter:nth-child(9){animation-delay:.36s}.chapter:nth-child(10){animation-delay:.40s}
+.chapter:nth-child(11){animation-delay:.44s}.chapter:nth-child(12){animation-delay:.48s}
+.chapter:nth-child(13){animation-delay:.52s}.chapter:nth-child(14){animation-delay:.56s}
+.ch-head{display:flex;align-items:flex-start;gap:22px;margin-bottom:36px;padding-bottom:28px;border-bottom:1px solid var(--bd)}
+.ch-num{font-family:'IBM Plex Mono',monospace;font-size:.62rem;font-weight:700;letter-spacing:3px;color:var(--mt);padding-top:6px;white-space:nowrap}
+.ch-info{flex:1}
+.ch-cat{font-family:'IBM Plex Mono',monospace;font-size:.58rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:6px}
+.ch-title{font-size:1.9rem;font-weight:800;letter-spacing:-1px;line-height:1.1;margin-bottom:10px}
+.ch-desc{font-size:.9rem;color:var(--tx2);max-width:840px;line-height:1.9}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:1100px){.g4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:900px){.g2,.g3,.g4{grid-template-columns:1fr}.hdr{padding:80px 24px 56px}.nav{padding:0 16px}h1{font-size:2.8rem;letter-spacing:-2px}}
+.card{background:var(--s1);border:1px solid var(--bd);border-radius:8px;overflow:hidden;transition:border-color .2s,box-shadow .2s}
+.card:hover{border-color:var(--bd2);box-shadow:0 6px 28px rgba(0,0,0,.5)}
+.card-h{padding:11px 18px;font-family:'IBM Plex Mono',monospace;font-size:.66rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:8px}
+.card-b{padding:18px}
+.code{background:#040208;border:1px solid var(--bd);border-radius:8px;overflow:hidden}
+.cbar{background:var(--s1);border-bottom:1px solid var(--bd);padding:9px 16px;font-family:'IBM Plex Mono',monospace;font-size:.64rem;color:var(--mt);display:flex;align-items:center;gap:7px}
+.fdot{width:7px;height:7px;border-radius:50%}
+pre{padding:20px;font-family:'IBM Plex Mono',monospace;font-size:.77rem;line-height:1.75;overflow-x:auto;color:#374151}
+.tag{color:#e06c75}.atn{color:#e5c07b}.atv{color:#98c379}
+.prp{color:#61afef}.val{color:#98c379}.sel{color:#c678dd}
+.unt{color:#e5c07b}.psv{color:#56b6c2}.kw{color:#c678dd}
+.fn{color:#61afef}.cm{color:#2a1a50;font-style:italic}
+.num{color:#d19a66}.str{color:#98c379}
+.alert{padding:16px 20px;border-radius:6px;border-left:3px solid;font-size:.87rem;line-height:1.85;color:var(--tx2)}
+.alert strong{color:var(--tx)}
+.alert-label{font-family:'IBM Plex Mono',monospace;font-size:.58rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;display:block;margin-bottom:6px}
+.al-html{background:rgba(228,77,38,.05);border-color:var(--html)}.al-html .alert-label{color:var(--html)}
+.al-css{background:rgba(79,125,245,.05);border-color:var(--css2)}.al-css .alert-label{color:var(--css2)}
+.al-js{background:rgba(247,223,30,.06);border-color:var(--js2)}.al-js .alert-label{color:var(--js2)}
+.al-green{background:rgba(74,222,128,.05);border-color:var(--green)}.al-green .alert-label{color:var(--green)}
+.al-rose{background:rgba(251,113,133,.05);border-color:var(--rose)}.al-rose .alert-label{color:var(--rose)}
+.al-violet{background:rgba(167,139,250,.05);border-color:var(--violet)}.al-violet .alert-label{color:var(--violet)}
+.al-teal{background:rgba(45,212,191,.05);border-color:var(--teal)}.al-teal .alert-label{color:var(--teal)}
+.al-amber{background:rgba(251,191,36,.05);border-color:var(--amber)}.al-amber .alert-label{color:var(--amber)}
+.tbl{width:100%;border-collapse:collapse;font-size:.84rem}
+.tbl th{background:var(--s2);color:var(--tx2);font-family:'IBM Plex Mono',monospace;font-size:.63rem;letter-spacing:2px;text-transform:uppercase;font-weight:700;padding:11px 16px;text-align:left;border-bottom:1px solid var(--bd)}
+.tbl td{padding:11px 16px;border-bottom:1px solid var(--bd);color:var(--tx2);vertical-align:top;line-height:1.75}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:var(--s2);color:var(--tx)}
+.tbl code{font-family:'IBM Plex Mono',monospace;font-size:.76rem;color:var(--html2);background:rgba(228,77,38,.1);padding:2px 7px;border-radius:3px}
+.ritem{display:flex;gap:16px;padding:12px 0;border-bottom:1px solid var(--bd);align-items:flex-start}
+.ritem:last-child{border-bottom:none}
+.ritem-key{font-family:'IBM Plex Mono',monospace;font-size:.76rem;white-space:nowrap;padding-top:2px;min-width:160px;flex-shrink:0}
+.ritem-val{font-size:.85rem;color:var(--tx2);line-height:1.75}
+.ritem-val code{font-family:'IBM Plex Mono',monospace;font-size:.76rem;color:var(--html2);background:rgba(228,77,38,.1);padding:1px 6px;border-radius:3px}
+.ritem-val strong{color:var(--tx)}
+.strip{border:1px solid var(--bd);border-radius:8px;padding:18px 22px;font-size:.87rem;color:var(--tx2);line-height:1.85;display:flex;gap:16px;align-items:flex-start}
+.strip-icon{font-size:1.3rem;flex-shrink:0;padding-top:2px}
+.strip strong{color:var(--tx)}
+.bm-margin{background:rgba(251,191,36,.07);border:2px dashed rgba(251,191,36,.4);padding:20px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:.65rem;color:var(--amber);letter-spacing:1px}
+.bm-border{background:rgba(228,77,38,.1);border:2px solid rgba(228,77,38,.5);padding:16px;color:var(--html)}
+.bm-padding{background:rgba(74,222,128,.07);border:2px dashed rgba(74,222,128,.4);padding:16px;color:var(--green)}
+.bm-content{background:rgba(79,125,245,.15);border:2px solid rgba(79,125,245,.5);padding:14px;color:var(--css2);font-weight:700}
+.gap8{margin-top:8px}.gap12{margin-top:12px}.gap16{margin-top:16px}.gap24{margin-top:24px}
+.footer{border-top:1px solid var(--bd);background:var(--s1);padding:36px 80px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;font-family:'IBM Plex Mono',monospace;font-size:.68rem;color:var(--mt)}
+.footer-title{color:var(--html);font-weight:700}
+</style>
+</head>
+<body>
+<a class="back" href="#">← MENU</a>
+<header class="hdr">
+  <div class="hdr-bg"></div><div class="hdr-grid"></div>
+  <div class="hdr-content">
+    <div class="hdr-tier"><div class="tier-dot"></div> HTML · CSS · Frontend</div>
+    <h1><em>HTML &amp; CSS</em><small>Kompletna wiedza frontendu — od znaczników do animacji</small></h1>
+    <p class="hdr-desc">Wszystko o HTML i CSS — semantyka, box model, selektory, flexbox, grid, animacje, zmienne CSS, responsive design, pseudo-elementy, formularze, dostępność i podstawy JS DOM.</p>
+    <div class="hdr-chips">
+      <span class="chip ch">● HTML5 Semantics</span>
+      <span class="chip cc">CSS3 &amp; Modern CSS</span>
+      <span class="chip cg">Flexbox &amp; Grid</span>
+      <span class="chip cv">CSS Variables</span>
+      <span class="chip ct">Animacje</span>
+      <span class="chip cr">Responsive Design</span>
+      <span class="chip cj">JS DOM</span>
+      <span class="chip ca">Accessibility</span>
+    </div>
+  </div>
+</header>
+<nav class="nav">
+  <a class="nav-a" href="#html-basics">HTML Podstawy</a>
+  <a class="nav-a" href="#semantics">Semantyka</a>
+  <a class="nav-a" href="#forms">Formularze</a>
+  <a class="nav-a" href="#css-basics">CSS Podstawy</a>
+  <a class="nav-a" href="#box-model">Box Model</a>
+  <a class="nav-a" href="#selectors">Selektory</a>
+  <a class="nav-a" href="#layout">Pozycjonowanie</a>
+  <a class="nav-a" href="#flexbox">Flexbox</a>
+  <a class="nav-a" href="#grid">CSS Grid</a>
+  <a class="nav-a" href="#typography">Typografia</a>
+  <a class="nav-a" href="#animations">Animacje</a>
+  <a class="nav-a" href="#responsive">Responsive</a>
+  <a class="nav-a" href="#modern-css">Modern CSS</a>
+  <a class="nav-a" href="#js-dom">JS DOM</a>
+</nav>
+<main class="main">
+
+<!-- ══ 01 HTML BASICS ══ -->
+<section class="chapter" id="html-basics">
+  <div class="ch-head">
+    <div class="ch-num">01 / 14</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--html)">HTML — HyperText Markup Language</div>
+      <div class="ch-title">Struktura dokumentu i podstawowe znaczniki</div>
+      <div class="ch-desc">HTML to szkielet każdej strony. Przeglądarka parsuje HTML i buduje DOM — drzewo obiektów. Każdy element to znacznik otwierający + treść + znacznik zamykający (lub samozamykający). Atrybuty dodają dodatkowe informacje.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--html)"></div> Kompletna struktura dokumentu HTML5</div>
+      <pre><span class="tag">&lt;!DOCTYPE html&gt;</span>  <span class="cm">&lt;!-- deklaracja HTML5 — zawsze pierwsza! --&gt;</span>
+<span class="tag">&lt;html</span> <span class="atn">lang</span>=<span class="atv">"pl"</span><span class="tag">&gt;</span>  <span class="cm">&lt;!-- lang ważny dla SEO i czytników --&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;meta</span> <span class="atn">charset</span>=<span class="atv">"UTF-8"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;meta</span> <span class="atn">name</span>=<span class="atv">"viewport"</span> <span class="atn">content</span>=<span class="atv">"width=device-width, initial-scale=1.0"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;meta</span> <span class="atn">name</span>=<span class="atv">"description"</span> <span class="atn">content</span>=<span class="atv">"Opis strony — ważny dla SEO, 150-160 znaków"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;meta</span> <span class="atn">name</span>=<span class="atv">"robots"</span> <span class="atn">content</span>=<span class="atv">"index, follow"</span><span class="tag">&gt;</span>
+  <span class="cm">&lt;!-- Open Graph — wygląd przy udostępnianiu w social --&gt;</span>
+  <span class="tag">&lt;meta</span> <span class="atn">property</span>=<span class="atv">"og:title"</span> <span class="atn">content</span>=<span class="atv">"Tytuł"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;meta</span> <span class="atn">property</span>=<span class="atv">"og:description"</span> <span class="atn">content</span>=<span class="atv">"Opis"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;meta</span> <span class="atn">property</span>=<span class="atv">"og:image"</span> <span class="atn">content</span>=<span class="atv">"thumbnail.jpg"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;meta</span> <span class="atn">property</span>=<span class="atv">"og:type"</span> <span class="atn">content</span>=<span class="atv">"website"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;title&gt;</span>Tytuł strony — widoczny w zakładce i Google<span class="tag">&lt;/title&gt;</span>
+  <span class="cm">&lt;!-- CSS —  w &lt;head&gt; żeby uniknąć FOUC --&gt;</span>
+  <span class="tag">&lt;link</span> <span class="atn">rel</span>=<span class="atv">"stylesheet"</span> <span class="atn">href</span>=<span class="atv">"style.css"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;link</span> <span class="atn">rel</span>=<span class="atv">"icon"</span> <span class="atn">href</span>=<span class="atv">"favicon.ico"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;link</span> <span class="atn">rel</span>=<span class="atv">"preconnect"</span> <span class="atn">href</span>=<span class="atv">"https://fonts.googleapis.com"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+<span class="tag">&lt;body&gt;</span>
+  <span class="cm">&lt;!-- cała widoczna treść tutaj --&gt;</span>
+
+  <span class="cm">&lt;!-- JS na końcu body lub z defer — nie blokuje renderowania --&gt;</span>
+  <span class="tag">&lt;script</span> <span class="atn">src</span>=<span class="atv">"app.js"</span> <span class="atn">defer</span><span class="tag">&gt;&lt;/script&gt;</span>
+  <span class="tag">&lt;script</span> <span class="atn">src</span>=<span class="atv">"analytics.js"</span> <span class="atn">async</span><span class="tag">&gt;&lt;/script&gt;</span>
+  <span class="cm">&lt;!-- defer: zachowuje kolejność, czeka na DOM
+       async: ładuje równolegle, wykonuje natychmiast --&gt;</span>
+<span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span></pre>
+    </div>
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--html)"></div> Znaczniki tekstowe, media i linki</div>
+      <pre><span class="cm">&lt;!-- NAGŁÓWKI — hierarchia (H1 tylko jeden na stronie!) --&gt;</span>
+<span class="tag">&lt;h1&gt;</span>...<span class="tag">&lt;/h1&gt;</span>  <span class="tag">&lt;h2&gt;</span>...<span class="tag">&lt;/h2&gt;</span>  <span class="tag">&lt;h3&gt;</span>...<span class="tag">&lt;/h3&gt;</span>  <span class="tag">&lt;h4-h6&gt;</span>
+
+<span class="cm">&lt;!-- TEKST --&gt;</span>
+<span class="tag">&lt;p&gt;</span>Akapit.<span class="tag">&lt;/p&gt;</span>
+<span class="tag">&lt;strong&gt;</span>Ważne (bold + semantyczne)<span class="tag">&lt;/strong&gt;</span>
+<span class="tag">&lt;em&gt;</span>Zaakcentowane (italic + semantyczne)<span class="tag">&lt;/em&gt;</span>
+<span class="tag">&lt;b&gt;</span>Pogrubienie bez semantyki<span class="tag">&lt;/b&gt;</span>  <span class="tag">&lt;i&gt;</span>Kursywa bez semantyki<span class="tag">&lt;/i&gt;</span>
+<span class="tag">&lt;mark&gt;</span>Zaznaczony<span class="tag">&lt;/mark&gt;</span>  <span class="tag">&lt;del&gt;</span>Usunięty<span class="tag">&lt;/del&gt;</span>  <span class="tag">&lt;ins&gt;</span>Dodany<span class="tag">&lt;/ins&gt;</span>
+<span class="tag">&lt;sub&gt;</span>dolny<span class="tag">&lt;/sub&gt;</span>  <span class="tag">&lt;sup&gt;</span>górny<span class="tag">&lt;/sup&gt;</span>
+<span class="tag">&lt;code&gt;</span>kod inline<span class="tag">&lt;/code&gt;</span>
+<span class="tag">&lt;pre&gt;&lt;code&gt;</span>blok kodu preformatowany<span class="tag">&lt;/code&gt;&lt;/pre&gt;</span>
+<span class="tag">&lt;abbr</span> <span class="atn">title</span>=<span class="atv">"HyperText Markup Language"</span><span class="tag">&gt;</span>HTML<span class="tag">&lt;/abbr&gt;</span>
+<span class="tag">&lt;blockquote</span> <span class="atn">cite</span>=<span class="atv">"url"</span><span class="tag">&gt;</span>Cytat<span class="tag">&lt;/blockquote&gt;</span>
+<span class="tag">&lt;br&gt;</span>  <span class="cm">&lt;!-- łamanie linii — używaj rzadko --&gt;</span>
+<span class="tag">&lt;hr&gt;</span>  <span class="cm">&lt;!-- separator tematyczny --&gt;</span>
+
+<span class="cm">&lt;!-- LINKI --&gt;</span>
+<span class="tag">&lt;a</span> <span class="atn">href</span>=<span class="atv">"https://example.com"</span> <span class="atn">target</span>=<span class="atv">"_blank"</span>
+   <span class="atn">rel</span>=<span class="atv">"noopener noreferrer"</span><span class="tag">&gt;</span>Zewnętrzny<span class="tag">&lt;/a&gt;</span>
+<span class="tag">&lt;a</span> <span class="atn">href</span>=<span class="atv">"#sekcja"</span><span class="tag">&gt;</span>Anchor na tej stronie<span class="tag">&lt;/a&gt;</span>
+<span class="tag">&lt;a</span> <span class="atn">href</span>=<span class="atv">"mailto:<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="82e8e3ecc2e7fae3eff2eee7ace1edef">[email&#160;protected]</a>"</span><span class="tag">&gt;</span>Email<span class="tag">&lt;/a&gt;</span>
+<span class="tag">&lt;a</span> <span class="atn">href</span>=<span class="atv">"tel:+48123456789"</span><span class="tag">&gt;</span>Telefon<span class="tag">&lt;/a&gt;</span>
+
+<span class="cm">&lt;!-- OBRAZY --&gt;</span>
+<span class="tag">&lt;img</span> <span class="atn">src</span>=<span class="atv">"photo.jpg"</span> <span class="atn">alt</span>=<span class="atv">"Opis — wymagany dla dostępności!"</span>
+     <span class="atn">width</span>=<span class="atv">"800"</span> <span class="atn">height</span>=<span class="atv">"600"</span> <span class="atn">loading</span>=<span class="atv">"lazy"</span> <span class="atn">decoding</span>=<span class="atv">"async"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;picture&gt;</span>
+  <span class="tag">&lt;source</span> <span class="atn">type</span>=<span class="atv">"image/webp"</span> <span class="atn">srcset</span>=<span class="atv">"img.webp 1x, <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="4821252f087a30663f2d2a38">[email&#160;protected]</a> 2x"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;source</span> <span class="atn">media</span>=<span class="atv">"(max-width:600px)"</span> <span class="atn">srcset</span>=<span class="atv">"img-sm.jpg"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;img</span> <span class="atn">src</span>=<span class="atv">"img.jpg"</span> <span class="atn">alt</span>=<span class="atv">"Opis"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;/picture&gt;</span>
+<span class="tag">&lt;video</span> <span class="atn">src</span>=<span class="atv">"film.mp4"</span> <span class="atn">controls</span> <span class="atn">muted</span> <span class="atn">autoplay</span> <span class="atn">loop</span> <span class="atn">playsinline</span><span class="tag">&gt;&lt;/video&gt;</span>
+<span class="tag">&lt;audio</span> <span class="atn">src</span>=<span class="atv">"audio.mp3"</span> <span class="atn">controls</span><span class="tag">&gt;&lt;/audio&gt;</span></pre>
+    </div>
+  </div>
+  <div class="gap16"></div>
+  <div class="g3">
+    <div class="card">
+      <div class="card-h" style="color:var(--html)">📋 Listy i tabele</div>
+      <div class="card-b">
+        <div class="code" style="border:none;background:transparent"><pre style="padding:0;font-size:.75rem"><span class="cm">&lt;!-- Nieuporządkowana --&gt;</span>
+<span class="tag">&lt;ul&gt;</span>
+  <span class="tag">&lt;li&gt;</span>Element<span class="tag">&lt;/li&gt;</span>
+<span class="tag">&lt;/ul&gt;</span>
+<span class="cm">&lt;!-- Uporządkowana --&gt;</span>
+<span class="tag">&lt;ol</span> <span class="atn">type</span>=<span class="atv">"1"</span> <span class="atn">start</span>=<span class="atv">"3"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;li&gt;</span>Krok 3<span class="tag">&lt;/li&gt;</span>
+<span class="tag">&lt;/ol&gt;</span>
+<span class="cm">&lt;!-- Definicji --&gt;</span>
+<span class="tag">&lt;dl&gt;</span>
+  <span class="tag">&lt;dt&gt;</span>Termin<span class="tag">&lt;/dt&gt;</span>
+  <span class="tag">&lt;dd&gt;</span>Definicja<span class="tag">&lt;/dd&gt;</span>
+<span class="tag">&lt;/dl&gt;</span>
+
+<span class="cm">&lt;!-- Tabela --&gt;</span>
+<span class="tag">&lt;table&gt;</span>
+  <span class="tag">&lt;caption&gt;</span>Tytuł<span class="tag">&lt;/caption&gt;</span>
+  <span class="tag">&lt;thead&gt;&lt;tr&gt;&lt;th</span> <span class="atn">scope</span>=<span class="atv">"col"</span><span class="tag">&gt;</span>Kol<span class="tag">&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;</span>
+  <span class="tag">&lt;tbody&gt;&lt;tr&gt;</span>
+    <span class="tag">&lt;td</span> <span class="atn">colspan</span>=<span class="atv">"2"</span><span class="tag">&gt;</span>Scala 2<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td</span> <span class="atn">rowspan</span>=<span class="atv">"3"</span><span class="tag">&gt;</span>3 wiersze<span class="tag">&lt;/td&gt;</span>
+  <span class="tag">&lt;/tr&gt;&lt;/tbody&gt;</span>
+  <span class="tag">&lt;tfoot&gt;</span>...<span class="tag">&lt;/tfoot&gt;</span>
+<span class="tag">&lt;/table&gt;</span></pre></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--html)">🎭 Kontenery ogólne</div>
+      <div class="card-b">
+        <div class="ritem"><div class="ritem-key" style="color:var(--html)">&lt;div&gt;</div><div class="ritem-val"><strong>Block container</strong> — bez semantyki, layout i stylowanie. Najczęściej używany.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--html)">&lt;span&gt;</div><div class="ritem-val"><strong>Inline container</strong> — bez semantyki, wewnątrz tekstu. Do stylowania fragmentów.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--html)">&lt;details&gt;</div><div class="ritem-val">Rozwijana sekcja. Z <code>&lt;summary&gt;</code> jako nagłówkiem. Accordion bez JS!</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--html)">&lt;dialog&gt;</div><div class="ritem-val">Natywny modal. <code>.showModal()</code> w JS. <code>::backdrop</code> pseudo-element tła.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--html)">&lt;template&gt;</div><div class="ritem-val">HTML nierendowany — klon przez JS do dynamicznych treści.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--html)">&lt;canvas&gt;</div><div class="ritem-val">Obszar rysowania 2D/WebGL przez JavaScript API.</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--html)">⚡ Atrybuty globalne HTML</div>
+      <div class="card-b">
+        <div class="ritem"><div class="ritem-key" style="color:var(--html)">id</div><div class="ritem-val">Unikalny identyfikator. Cel linków anchor, hook JS.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--html)">class</div><div class="ritem-val">Klasy CSS (wiele oddzielonych spacją). Selektor CSS/JS.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--html)">data-*</div><div class="ritem-val">Własne dane: <code>data-id="5"</code> → JS: <code>el.dataset.id</code></div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--html)">style</div><div class="ritem-val">Inline CSS. Najwyższa specyficzność — unikaj!</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--html)">hidden</div><div class="ritem-val">Ukrywa element (jak display:none).</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--html)">tabindex</div><div class="ritem-val"><code>0</code>=fokus tabem, <code>-1</code>=fokus JS, <code>1+</code>=kolejność (unikaj).</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--html)">contenteditable</div><div class="ritem-val">Edytowalny element w przeglądarce.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--html)">draggable</div><div class="ritem-val">Drag and Drop API.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 02 SEMANTICS ══ -->
+<section class="chapter" id="semantics">
+  <div class="ch-head">
+    <div class="ch-num">02 / 14</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--html)">HTML5 Semantyka</div>
+      <div class="ch-title">Znaczniki semantyczne — struktura ze znaczeniem</div>
+      <div class="ch-desc">Semantyczny HTML opisuje znaczenie treści. Ważny dla SEO (Google rozumie strukturę), dostępności (screen readery nawigują po landmarks) i czytelności kodu. Zamiast "div soup" — odpowiednie znaczniki.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--html)"></div> Pełny układ semantyczny strony</div>
+      <pre><span class="tag">&lt;body&gt;</span>
+  <span class="tag">&lt;header&gt;</span>  <span class="cm">&lt;!-- nagłówek strony lub sekcji --&gt;</span>
+    <span class="tag">&lt;nav</span> <span class="atn">aria-label</span>=<span class="atv">"Główna nawigacja"</span><span class="tag">&gt;</span>
+      <span class="tag">&lt;ul&gt;&lt;li&gt;&lt;a</span> <span class="atn">href</span>=<span class="atv">"/"</span><span class="tag">&gt;</span>Strona główna<span class="tag">&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;</span>
+    <span class="tag">&lt;/nav&gt;</span>
+  <span class="tag">&lt;/header&gt;</span>
+
+  <span class="tag">&lt;main&gt;</span>  <span class="cm">&lt;!-- JEDEN na stronie — główna treść --&gt;</span>
+
+    <span class="tag">&lt;section&gt;</span>  <span class="cm">&lt;!-- tematyczna sekcja — zawsze z nagłówkiem --&gt;</span>
+      <span class="tag">&lt;h2&gt;</span>Tytuł sekcji<span class="tag">&lt;/h2&gt;</span>
+
+      <span class="tag">&lt;article&gt;</span>  <span class="cm">&lt;!-- samodzielna treść (post, karta, komentarz) --&gt;</span>
+        <span class="tag">&lt;header&gt;</span>
+          <span class="tag">&lt;h3&gt;</span>Tytuł artykułu<span class="tag">&lt;/h3&gt;</span>
+          <span class="tag">&lt;time</span> <span class="atn">datetime</span>=<span class="atv">"2024-06-15T10:00"</span><span class="tag">&gt;</span>15 czerwca 2024<span class="tag">&lt;/time&gt;</span>
+          <span class="tag">&lt;address&gt;</span>Autor: <span class="tag">&lt;a</span> <span class="atn">href</span>=<span class="atv">"mailto:<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="91f0d1f3bff2fefc">[email&#160;protected]</a>"</span><span class="tag">&gt;</span>Jan Kowalski<span class="tag">&lt;/a&gt;&lt;/address&gt;</span>
+        <span class="tag">&lt;/header&gt;</span>
+        <span class="tag">&lt;p&gt;</span>Treść...<span class="tag">&lt;/p&gt;</span>
+        <span class="tag">&lt;figure&gt;</span>
+          <span class="tag">&lt;img</span> <span class="atn">src</span>=<span class="atv">"chart.png"</span> <span class="atn">alt</span>=<span class="atv">"Wykres sprzedaży"</span><span class="tag">&gt;</span>
+          <span class="tag">&lt;figcaption&gt;</span>Wykres 1. Wzrost sprzedaży 2024<span class="tag">&lt;/figcaption&gt;</span>
+        <span class="tag">&lt;/figure&gt;</span>
+        <span class="tag">&lt;footer&gt;</span>
+          <span class="tag">&lt;p&gt;</span>Tagi: <span class="tag">&lt;a</span> <span class="atn">href</span>=<span class="atv">"/css"</span> <span class="atn">rel</span>=<span class="atv">"tag"</span><span class="tag">&gt;</span>CSS<span class="tag">&lt;/a&gt;&lt;/p&gt;</span>
+        <span class="tag">&lt;/footer&gt;</span>
+      <span class="tag">&lt;/article&gt;</span>
+
+    <span class="tag">&lt;/section&gt;</span>
+
+    <span class="tag">&lt;aside</span> <span class="atn">aria-label</span>=<span class="atv">"Powiązane treści"</span><span class="tag">&gt;</span>  <span class="cm">&lt;!-- sidebar --&gt;</span>
+      <span class="tag">&lt;h2&gt;</span>Powiązane artykuły<span class="tag">&lt;/h2&gt;</span>
+    <span class="tag">&lt;/aside&gt;</span>
+
+  <span class="tag">&lt;/main&gt;</span>
+
+  <span class="tag">&lt;footer&gt;</span>  <span class="cm">&lt;!-- stopka strony --&gt;</span>
+    <span class="tag">&lt;p&gt;&lt;small&gt;</span>&amp;copy; 2024 Firma. Wszelkie prawa zastrzeżone.<span class="tag">&lt;/small&gt;&lt;/p&gt;</span>
+  <span class="tag">&lt;/footer&gt;</span>
+<span class="tag">&lt;/body&gt;</span></pre>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:14px">
+        <div class="card-h" style="color:var(--html)">🏷️ Kompletny katalog znaczników semantycznych</div>
+        <div class="card-b" style="overflow-x:auto">
+          <table class="tbl">
+            <thead><tr><th>Znacznik</th><th>Zastosowanie</th></tr></thead>
+            <tbody>
+              <tr><td><code>&lt;header&gt;</code></td><td>Nagłówek strony lub sekcji. Logo, nav, h1.</td></tr>
+              <tr><td><code>&lt;nav&gt;</code></td><td>Blok linków nawigacyjnych. Menu, breadcrumbs, paginacja.</td></tr>
+              <tr><td><code>&lt;main&gt;</code></td><td>Główna, unikalna treść. Jeden per strona.</td></tr>
+              <tr><td><code>&lt;article&gt;</code></td><td>Samodzielna treść (post, tweet, karta produktu, komentarz).</td></tr>
+              <tr><td><code>&lt;section&gt;</code></td><td>Tematyczna grupa treści. Wymaga nagłówka.</td></tr>
+              <tr><td><code>&lt;aside&gt;</code></td><td>Poboczna treść (sidebar, reklama, powiązane linki).</td></tr>
+              <tr><td><code>&lt;footer&gt;</code></td><td>Stopka strony lub sekcji. Prawa autorskie, linki.</td></tr>
+              <tr><td><code>&lt;figure&gt;</code></td><td>Ilustracja, wykres, kod — z <code>&lt;figcaption&gt;</code>.</td></tr>
+              <tr><td><code>&lt;time&gt;</code></td><td>Data/czas. <code>datetime</code> atrybut dla maszyn.</td></tr>
+              <tr><td><code>&lt;address&gt;</code></td><td>Dane kontaktowe autora lub organizacji.</td></tr>
+              <tr><td><code>&lt;details&gt;</code></td><td>Rozwijana sekcja. <code>&lt;summary&gt;</code> jako widoczny nagłówek.</td></tr>
+              <tr><td><code>&lt;dialog&gt;</code></td><td>Natywny modal/dialog. API: <code>.showModal()</code>.</td></tr>
+              <tr><td><code>&lt;search&gt;</code></td><td>Obszar wyszukiwania (HTML 5.3, nowy!).</td></tr>
+              <tr><td><code>&lt;hgroup&gt;</code></td><td>Grupuje nagłówek z podtytułem.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="alert al-html">
+        <span class="alert-label">💡 Div vs Section vs Article — kiedy co?</span>
+        <strong>div</strong>: brak semantyki, czysty layout/hook JS.<br>
+        <strong>section</strong>: tematyczna część strony — zawsze z h2/h3.<br>
+        <strong>article</strong>: samodzielna treść którą można skopiować do innego kontekstu.<br>
+        Reguła: "Czy ten element ma <em>znaczenie</em>?" → tak: semantyczny. Nie: div.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 03 FORMS ══ -->
+<section class="chapter" id="forms">
+  <div class="ch-head">
+    <div class="ch-num">03 / 14</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--html)">Formularze HTML5</div>
+      <div class="ch-title">Formularze — wszystkie typy inputów i walidacja</div>
+      <div class="ch-desc">HTML5 dodał wiele nowych typów inputów (email, date, range, color...) i natywną walidację. Prawidłowe formularze są kluczowe dla dostępności — każdy input musi mieć label.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--html)"></div> Kompletny formularz — wszystkie typy inputów</div>
+      <pre><span class="tag">&lt;form</span> <span class="atn">action</span>=<span class="atv">"/submit"</span> <span class="atn">method</span>=<span class="atv">"post"</span>
+      <span class="atn">enctype</span>=<span class="atv">"multipart/form-data"</span><span class="tag">&gt;</span>  <span class="cm">&lt;!-- wymagane dla plików --&gt;</span>
+
+  <span class="cm">&lt;!-- label FOR powiązany z input ID! --&gt;</span>
+  <span class="tag">&lt;label</span> <span class="atn">for</span>=<span class="atv">"email"</span><span class="tag">&gt;</span>Email:<span class="tag">&lt;/label&gt;</span>
+  <span class="tag">&lt;input</span> <span class="atn">type</span>=<span class="atv">"email"</span> <span class="atn">id</span>=<span class="atv">"email"</span> <span class="atn">name</span>=<span class="atv">"email"</span>
+         <span class="atn">required</span> <span class="atn">placeholder</span>=<span class="atv">"<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="84eee5eac4e1fce5e9f4e8e1aae7ebe9">[email&#160;protected]</a>"</span>
+         <span class="atn">autocomplete</span>=<span class="atv">"email"</span><span class="tag">&gt;</span>
+
+  <span class="cm">&lt;!-- Wszystkie typy --&gt;</span>
+  <span class="tag">&lt;input</span> <span class="atn">type</span>=<span class="atv">"text"</span>     <span class="atn">minlength</span>=<span class="atv">"3"</span> <span class="atn">maxlength</span>=<span class="atv">"50"</span> <span class="atn">pattern</span>=<span class="atv">"[A-Za-z]+"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;input</span> <span class="atn">type</span>=<span class="atv">"password"</span>  <span class="atn">autocomplete</span>=<span class="atv">"new-password"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;input</span> <span class="atn">type</span>=<span class="atv">"number"</span>   <span class="atn">min</span>=<span class="atv">"0"</span> <span class="atn">max</span>=<span class="atv">"100"</span> <span class="atn">step</span>=<span class="atv">"5"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;input</span> <span class="atn">type</span>=<span class="atv">"date"</span>     <span class="atn">min</span>=<span class="atv">"2020-01-01"</span> <span class="atn">max</span>=<span class="atv">"2024-12-31"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;input</span> <span class="atn">type</span>=<span class="atv">"time"</span>     <span class="atn">step</span>=<span class="atv">"300"</span><span class="tag">&gt;</span>  <span class="cm">&lt;!-- co 5 minut --&gt;</span>
+  <span class="tag">&lt;input</span> <span class="atn">type</span>=<span class="atv">"datetime-local"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;input</span> <span class="atn">type</span>=<span class="atv">"week"</span><span class="tag">&gt;</span>  <span class="tag">&lt;input</span> <span class="atn">type</span>=<span class="atv">"month"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;input</span> <span class="atn">type</span>=<span class="atv">"range"</span>    <span class="atn">min</span>=<span class="atv">"0"</span> <span class="atn">max</span>=<span class="atv">"100"</span> <span class="atn">value</span>=<span class="atv">"50"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;input</span> <span class="atn">type</span>=<span class="atv">"color"</span>    <span class="atn">value</span>=<span class="atv">"#e44d26"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;input</span> <span class="atn">type</span>=<span class="atv">"file"</span>     <span class="atn">accept</span>=<span class="atv">"image/*,.pdf"</span> <span class="atn">multiple</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;input</span> <span class="atn">type</span>=<span class="atv">"checkbox"</span> <span class="atn">name</span>=<span class="atv">"agree"</span> <span class="atn">value</span>=<span class="atv">"yes"</span> <span class="atn">checked</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;input</span> <span class="atn">type</span>=<span class="atv">"radio"</span>    <span class="atn">name</span>=<span class="atv">"group"</span> <span class="atn">value</span>=<span class="atv">"a"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;input</span> <span class="atn">type</span>=<span class="atv">"search"</span>   <span class="atn">list</span>=<span class="atv">"suggestions"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;input</span> <span class="atn">type</span>=<span class="atv">"tel"</span>      <span class="atn">pattern</span>=<span class="atv">"[0-9]{9}"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;input</span> <span class="atn">type</span>=<span class="atv">"url"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;input</span> <span class="atn">type</span>=<span class="atv">"hidden"</span>   <span class="atn">value</span>=<span class="atv">"csrf_token_123"</span><span class="tag">&gt;</span>
+
+  <span class="tag">&lt;textarea</span> <span class="atn">rows</span>=<span class="atv">"5"</span> <span class="atn">resize</span>=<span class="atv">"vertical"</span><span class="tag">&gt;&lt;/textarea&gt;</span>
+
+  <span class="tag">&lt;select</span> <span class="atn">name</span>=<span class="atv">"country"</span> <span class="atn">multiple</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;optgroup</span> <span class="atn">label</span>=<span class="atv">"Europa"</span><span class="tag">&gt;</span>
+      <span class="tag">&lt;option</span> <span class="atn">value</span>=<span class="atv">"pl"</span> <span class="atn">selected</span><span class="tag">&gt;</span>Polska<span class="tag">&lt;/option&gt;</span>
+    <span class="tag">&lt;/optgroup&gt;</span>
+  <span class="tag">&lt;/select&gt;</span>
+
+  <span class="cm">&lt;!-- Datalist = natywne autocomplete --&gt;</span>
+  <span class="tag">&lt;datalist</span> <span class="atn">id</span>=<span class="atv">"suggestions"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;option</span> <span class="atn">value</span>=<span class="atv">"Warszawa"</span><span class="tag">&gt;</span>  <span class="tag">&lt;option</span> <span class="atn">value</span>=<span class="atv">"Kraków"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;/datalist&gt;</span>
+
+  <span class="tag">&lt;fieldset&gt;</span>
+    <span class="tag">&lt;legend&gt;</span>Dane osobowe<span class="tag">&lt;/legend&gt;</span>
+    <span class="cm">&lt;!-- grupuje powiązane pola --&gt;</span>
+  <span class="tag">&lt;/fieldset&gt;</span>
+
+  <span class="tag">&lt;button</span> <span class="atn">type</span>=<span class="atv">"submit"</span><span class="tag">&gt;</span>Wyślij<span class="tag">&lt;/button&gt;</span>
+  <span class="tag">&lt;button</span> <span class="atn">type</span>=<span class="atv">"reset"</span><span class="tag">&gt;</span>Resetuj<span class="tag">&lt;/button&gt;</span>
+  <span class="tag">&lt;button</span> <span class="atn">type</span>=<span class="atv">"button"</span> <span class="atn">onclick</span>=<span class="atv">"doStuff()"</span><span class="tag">&gt;</span>Akcja JS<span class="tag">&lt;/button&gt;</span>
+<span class="tag">&lt;/form&gt;</span></pre>
+    </div>
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--html)"></div> Walidacja — atrybuty i CSS</div>
+      <pre><span class="cm">&lt;!-- ─── Atrybuty walidacji ─────────────────────────────── --&gt;</span>
+<span class="atn">required</span>              <span class="cm">&lt;!-- pole wymagane --&gt;</span>
+<span class="atn">minlength</span>=<span class="atv">"3"</span>         <span class="cm">&lt;!-- min znaków (text, password) --&gt;</span>
+<span class="atn">maxlength</span>=<span class="atv">"100"</span>       <span class="cm">&lt;!-- max znaków --&gt;</span>
+<span class="atn">min</span>=<span class="atv">"0"</span> <span class="atn">max</span>=<span class="atv">"100"</span>      <span class="cm">&lt;!-- zakres liczbowy --&gt;</span>
+<span class="atn">pattern</span>=<span class="atv">"[A-Za-z]{3,}"</span> <span class="cm">&lt;!-- regex (bez // i flag) --&gt;</span>
+<span class="atn">step</span>=<span class="atv">"0.01"</span>            <span class="cm">&lt;!-- krok liczby/daty --&gt;</span>
+<span class="atn">accept</span>=<span class="atv">"image/png,image/jpeg"</span> <span class="cm">&lt;!-- typy pliku --&gt;</span>
+<span class="atn">disabled</span>               <span class="cm">&lt;!-- wyłączone — nie wysyłane! --&gt;</span>
+<span class="atn">readonly</span>               <span class="cm">&lt;!-- tylko do odczytu — wysyłane --&gt;</span>
+<span class="atn">novalidate</span>             <span class="cm">&lt;!-- na form — wyłącza walidację --&gt;</span>
+
+<span class="cm">/* ─── CSS pseudo-klasy walidacji ──────────────────────── */</span>
+<span class="sel">input:valid</span>            { <span class="prp">border-color</span>: <span class="val">green</span>; }
+<span class="sel">input:invalid</span>          { <span class="prp">border-color</span>: <span class="val">red</span>; }
+<span class="sel">input:required</span>         { <span class="prp">border-left</span>: <span class="num">3</span><span class="unt">px</span> <span class="val">solid</span> <span class="val">orange</span>; }
+<span class="sel">input:optional</span>         { <span class="prp">opacity</span>: <span class="num">.8</span>; }
+<span class="sel">input:focus</span>            { <span class="prp">outline</span>: <span class="num">2</span><span class="unt">px</span> <span class="val">solid</span> <span class="val">blue</span>; }
+<span class="sel">input:disabled</span>         { <span class="prp">opacity</span>: <span class="num">.4</span>; <span class="prp">cursor</span>: <span class="val">not-allowed</span>; }
+<span class="sel">input:read-only</span>        { <span class="prp">background</span>: <span class="val">#f5f5f5</span>; }
+<span class="sel">input:placeholder-shown</span>{ <span class="prp">background</span>: <span class="val">lightyellow</span>; }
+<span class="sel">input:user-invalid</span>     { <span class="prp">border-color</span>: <span class="val">red</span>; } <span class="cm">/* po interakcji */</span>
+<span class="sel">input:user-valid</span>       { <span class="prp">border-color</span>: <span class="val">green</span>; }
+
+<span class="cm">/* ─── ARIA dla dostępności formularzy ──────────────────── */</span>
+<span class="tag">&lt;input</span> <span class="atn">aria-required</span>=<span class="atv">"true"</span>
+       <span class="atn">aria-invalid</span>=<span class="atv">"true"</span>
+       <span class="atn">aria-describedby</span>=<span class="atv">"email-error"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;span</span> <span class="atn">id</span>=<span class="atv">"email-error"</span> <span class="atn">role</span>=<span class="atv">"alert"</span><span class="tag">&gt;</span>
+  Nieprawidłowy adres email
+<span class="tag">&lt;/span&gt;</span></pre>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ 04 CSS BASICS ══ -->
+<section class="chapter" id="css-basics">
+  <div class="ch-head">
+    <div class="ch-num">04 / 14</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--css2)">CSS — Cascading Style Sheets</div>
+      <div class="ch-title">Kaskada, specyficzność, dziedziczenie, jednostki</div>
+      <div class="ch-desc">CSS decyduje o wyglądzie. Kaskada, specyficzność i dziedziczenie to trzy fundamenty. Zrozumienie ich usuwa "nie wiem dlaczego moje style nie działają". Jednostki relatywne (rem, em, vw) to podstawa responsive design.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--css2)"></div> Specyficzność i kaskada</div>
+      <pre><span class="cm">/* Specyficzność = (A, B, C):
+   A = #id selectors
+   B = .class, [attr], :pseudo-class
+   C = element, ::pseudo-element
+   Większa = wygrywa. Przy równej = OSTATNIA wygrywa */</span>
+
+<span class="sel">*</span>             <span class="cm">/* (0,0,0) — universal */</span>
+<span class="sel">p</span>             <span class="cm">/* (0,0,1) — element */</span>
+<span class="sel">.card</span>         <span class="cm">/* (0,1,0) — class */</span>
+<span class="sel">#header</span>       <span class="cm">/* (1,0,0) — ID */</span>
+<span class="sel">p.card</span>        <span class="cm">/* (0,1,1) */</span>
+<span class="sel">#header .nav a</span><span class="cm">/* (1,1,1) */</span>
+<span class="cm">/* style="" → inline — bije selektory */</span>
+<span class="prp">color</span>: <span class="val">red</span> <span class="kw">!important</span>; <span class="cm">/* nuclear — unikaj! */</span>
+
+<span class="cm">/* Kolejność kaskady (co wygrywa):
+   1. !important browser
+   2. !important user
+   3. !important author
+   4. Inline style
+   5. ID selector
+   6. Class/attr/pseudo-class
+   7. Element/pseudo-element
+   8. Browser defaults */</span>
+
+<span class="cm">/* Wartości kaskady */</span>
+<span class="prp">color</span>: <span class="kw">inherit</span>;  <span class="cm">/* przejmij od rodzica */</span>
+<span class="prp">color</span>: <span class="kw">initial</span>;  <span class="cm">/* domyślna przeglądarki */</span>
+<span class="prp">color</span>: <span class="kw">unset</span>;    <span class="cm">/* inherit jeśli dziedziczone, else initial */</span>
+<span class="prp">color</span>: <span class="kw">revert</span>;   <span class="cm">/* cofnij do stylu user-agent */</span>
+<span class="prp">all</span>: <span class="kw">revert</span>;     <span class="cm">/* reset WSZYSTKICH właściwości */</span>
+
+<span class="cm">/* Co się DZIEDZICZY:
+   color, font-*, line-height, text-*, cursor, visibility
+   Co NIE:
+   background, border, margin, padding, width, height */</span></pre>
+    </div>
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--css2)"></div> Kolory i jednostki — wszystkie typy</div>
+      <pre><span class="cm">/* ─── KOLORY ──────────────────────────────────────────── */</span>
+<span class="prp">color</span>: <span class="val">red</span>;
+<span class="prp">color</span>: <span class="val">#e44d26</span>;
+<span class="prp">color</span>: <span class="val">#e4d</span>;            <span class="cm">/* hex skrócony */</span>
+<span class="prp">color</span>: <span class="fn">rgb</span>(<span class="num">228</span>,<span class="num">77</span>,<span class="num">38</span>);
+<span class="prp">color</span>: <span class="fn">rgba</span>(<span class="num">228</span>,<span class="num">77</span>,<span class="num">38</span>,<span class="num">.8</span>);
+<span class="prp">color</span>: <span class="fn">hsl</span>(<span class="num">14</span>,<span class="num">76%</span>,<span class="num">52%</span>);  <span class="cm">/* hue, saturation, lightness */</span>
+<span class="prp">color</span>: <span class="fn">hsla</span>(<span class="num">14</span>,<span class="num">76%</span>,<span class="num">52%</span>,<span class="num">.8</span>);
+<span class="prp">color</span>: <span class="fn">oklch</span>(<span class="num">60%</span> <span class="num">0.2</span> <span class="num">30</span>); <span class="cm">/* nowoczesny, perceptualny */</span>
+<span class="prp">color</span>: <span class="kw">currentColor</span>;     <span class="cm">/* dziedzicz kolor tekstu */</span>
+<span class="prp">color</span>: <span class="kw">transparent</span>;      <span class="cm">/* rgba(0,0,0,0) */</span>
+
+<span class="cm">/* ─── JEDNOSTKI absolutne ────────────────────────────── */</span>
+<span class="num">16</span><span class="unt">px</span>   <span class="cm">/* pixel — 1/96 cala */</span>
+<span class="num">1</span><span class="unt">pt</span>    <span class="cm">/* point = 1/72 cala (druk) */</span>
+<span class="num">1</span><span class="unt">cm</span>    <span class="cm">/* centimetr (druk) */</span>
+
+<span class="cm">/* ─── JEDNOSTKI relatywne ────────────────────────────── */</span>
+<span class="num">1</span><span class="unt">em</span>    <span class="cm">/* względna do RODZICA (kumuluje się!) */</span>
+<span class="num">1</span><span class="unt">rem</span>   <span class="cm">/* względna do ROOT &lt;html&gt; — bezpieczna! */</span>
+<span class="num">50</span><span class="unt">%</span>    <span class="cm">/* procent rodzica */</span>
+<span class="num">50</span><span class="unt">vw</span>   <span class="cm">/* viewport width */</span>
+<span class="num">100</span><span class="unt">vh</span>  <span class="cm">/* viewport height */</span>
+<span class="num">100</span><span class="unt">svh</span> <span class="cm">/* small viewport (bez mobile UI) */</span>
+<span class="num">100</span><span class="unt">dvh</span> <span class="cm">/* dynamic viewport (zmienia się) */</span>
+<span class="num">100</span><span class="unt">lvh</span> <span class="cm">/* large viewport */</span>
+<span class="num">1</span><span class="unt">ch</span>    <span class="cm">/* szerokość znaku "0" */</span>
+<span class="num">1</span><span class="unt">ex</span>    <span class="cm">/* wysokość litery x */</span>
+<span class="num">1</span><span class="unt">cqw</span>   <span class="cm">/* container query width (nowe!) */</span>
+
+<span class="cm">/* ─── Funkcje ────────────────────────────────────────── */</span>
+<span class="prp">width</span>: <span class="fn">calc</span>(<span class="num">100%</span> - <span class="num">2</span><span class="unt">rem</span>);
+<span class="prp">width</span>: <span class="fn">min</span>(<span class="num">50%</span>, <span class="num">400</span><span class="unt">px</span>);     <span class="cm">/* mniejsza wartość */</span>
+<span class="prp">width</span>: <span class="fn">max</span>(<span class="num">200</span><span class="unt">px</span>, <span class="num">50%</span>);     <span class="cm">/* większa wartość */</span>
+<span class="prp">font-size</span>: <span class="fn">clamp</span>(<span class="num">1</span><span class="unt">rem</span>, <span class="num">3</span><span class="unt">vw</span>, <span class="num">2</span><span class="unt">rem</span>); <span class="cm">/* min, preferred, max */</span>
+<span class="prp">width</span>: <span class="fn">round</span>(<span class="num">100</span><span class="unt">px</span> / <span class="num">3</span>);   <span class="cm">/* zaokrągl (nowe CSS4) */</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 05 BOX MODEL ══ -->
+<section class="chapter" id="box-model">
+  <div class="ch-head">
+    <div class="ch-num">05 / 14</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--css2)">Box Model & Display</div>
+      <div class="ch-title">Model pudełkowy — margin, border, padding, content</div>
+      <div class="ch-desc">Każdy element HTML to prostokąt. Box Model definiuje jak zajmuje miejsce. box-sizing: border-box to najważniejsza właściwość CSS — zawsze jej używaj. Display określa jak element zachowuje się w flow.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div>
+      <div class="bm-margin" style="margin-bottom:16px">
+        MARGIN — przestrzeń zewnętrzna (transparentna, background nie widoczny)
+        <div class="bm-border">
+          BORDER — obramowanie (tło widoczne)
+          <div class="bm-padding">
+            PADDING — wewnętrzna przestrzeń (tło rodzica widoczne)
+            <div class="bm-content">CONTENT — tekst, img, dzieci</div>
+          </div>
+        </div>
+      </div>
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--css2)"></div> Box Model właściwości</div>
+        <pre style="font-size:.74rem"><span class="cm">/* NAJWAŻNIEJSZE — zawsze stosuj! */</span>
+<span class="sel">*, *::before, *::after</span> { <span class="prp">box-sizing</span>: <span class="val">border-box</span>; }
+<span class="cm">/* content-box (domyślnie): width = tylko content
+   border-box: width = content + padding + border */</span>
+
+<span class="cm">/* Margin — shorthand (clock: góra, prawo, dół, lewo) */</span>
+<span class="prp">margin</span>: <span class="num">10</span><span class="unt">px</span>;              <span class="cm">/* wszystkie strony */</span>
+<span class="prp">margin</span>: <span class="num">10</span><span class="unt">px</span> <span class="num">20</span><span class="unt">px</span>;         <span class="cm">/* góra/dół, lewo/prawo */</span>
+<span class="prp">margin</span>: <span class="num">5</span><span class="unt">px</span> <span class="num">10</span><span class="unt">px</span> <span class="num">15</span><span class="unt">px</span>;     <span class="cm">/* góra, lewo/prawo, dół */</span>
+<span class="prp">margin</span>: <span class="num">5</span><span class="unt">px</span> <span class="num">10</span><span class="unt">px</span> <span class="num">15</span><span class="unt">px</span> <span class="num">20</span><span class="unt">px</span>;<span class="cm">/* góra, prawo, dół, lewo */</span>
+<span class="prp">margin</span>: <span class="kw">auto</span>;             <span class="cm">/* centrowanie block elementów! */</span>
+<span class="prp">margin-top</span>: -<span class="num">10</span><span class="unt">px</span>;        <span class="cm">/* ujemny margin = nakładanie */</span>
+<span class="cm">/* Margin Collapse! Dwa sąsiednie bloki: bierze większy */</span>
+
+<span class="cm">/* Border */</span>
+<span class="prp">border</span>: <span class="num">2</span><span class="unt">px</span> <span class="val">solid</span> <span class="val">#333</span>;
+<span class="prp">border-style</span>: <span class="val">solid</span>|<span class="val">dashed</span>|<span class="val">dotted</span>|<span class="val">double</span>|<span class="val">none</span>;
+<span class="prp">border-radius</span>: <span class="num">8</span><span class="unt">px</span>;
+<span class="prp">border-radius</span>: <span class="num">50</span><span class="unt">%</span>;        <span class="cm">/* koło */</span>
+<span class="prp">border-radius</span>: <span class="num">10</span><span class="unt">px</span> <span class="num">20</span><span class="unt">px</span> <span class="num">30</span><span class="unt">px</span> <span class="num">5</span><span class="unt">px</span>; <span class="cm">/* per róg */</span>
+<span class="prp">outline</span>: <span class="num">2</span><span class="unt">px</span> <span class="val">solid</span> <span class="val">blue</span>;  <span class="cm">/* poza border, nie zajmuje miejsca */</span>
+<span class="prp">outline-offset</span>: <span class="num">4</span><span class="unt">px</span>;
+<span class="prp">box-shadow</span>: <span class="num">0</span> <span class="num">4</span><span class="unt">px</span> <span class="num">12</span><span class="unt">px</span> <span class="fn">rgba</span>(<span class="num">0</span>,<span class="num">0</span>,<span class="num">0</span>,<span class="num">.2</span>);
+<span class="prp">box-shadow</span>: <span class="kw">inset</span> <span class="num">0</span> <span class="num">2</span><span class="unt">px</span> <span class="num">4</span><span class="unt">px</span> <span class="fn">rgba</span>(<span class="num">0</span>,<span class="num">0</span>,<span class="num">0</span>,<span class="num">.1</span>); <span class="cm">/* wewnętrzny */</span></pre>
+      </div>
+    </div>
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--css2)"></div> Display — zachowanie elementów</div>
+      <pre><span class="prp">display</span>: <span class="val">block</span>;
+<span class="cm">/* Zajmuje pełną szerokość rodzica
+   Nowa linia przed i po. Width/height działa.
+   Elementy: div, p, h1-h6, ul, form, section */</span>
+
+<span class="prp">display</span>: <span class="val">inline</span>;
+<span class="cm">/* Tylko tyle miejsca ile treść. Nie łamie.
+   BRAK width/height, pionowy margin/padding ignorowany
+   Elementy: span, a, strong, em */</span>
+
+<span class="prp">display</span>: <span class="val">inline-block</span>;
+<span class="cm">/* Inline (nie łamie) + block (width/height działa)
+   Przydatne: przyciski, badge, ikonki */</span>
+
+<span class="prp">display</span>: <span class="val">none</span>;
+<span class="cm">/* Ukryty — NIE zajmuje miejsca
+   vs visibility:hidden — ukryty ale zajmuje miejsce
+   vs opacity:0 — niewidoczny, zajmuje, reaguje na eventy */</span>
+
+<span class="prp">display</span>: <span class="val">flex</span>;   <span class="cm">/* Flexbox container */</span>
+<span class="prp">display</span>: <span class="val">grid</span>;   <span class="cm">/* Grid container */</span>
+<span class="prp">display</span>: <span class="val">contents</span>; <span class="cm">/* "Znikający" wrapper */</span>
+<span class="prp">display</span>: <span class="val">list-item</span>; <span class="cm">/* jak li — ma bullet */</span>
+
+<span class="cm">/* ─── Overflow ────────────────────────────────────────── */</span>
+<span class="prp">overflow</span>: <span class="val">visible</span>;  <span class="cm">/* domyślnie — wychodzi poza */</span>
+<span class="prp">overflow</span>: <span class="val">hidden</span>;   <span class="cm">/* obcina — tworzy BFC! */</span>
+<span class="prp">overflow</span>: <span class="val">scroll</span>;   <span class="cm">/* zawsze scrollbar */</span>
+<span class="prp">overflow</span>: <span class="val">auto</span>;     <span class="cm">/* scrollbar gdy potrzeba ✓ */</span>
+<span class="prp">overflow-clip-margin</span>: <span class="num">8</span><span class="unt">px</span>; <span class="cm">/* margines przed clip */</span>
+
+<span class="cm">/* Obcięcie jednej linii z "..." */</span>
+<span class="sel">.truncate</span> {
+  <span class="prp">white-space</span>: <span class="val">nowrap</span>;
+  <span class="prp">overflow</span>: <span class="val">hidden</span>;
+  <span class="prp">text-overflow</span>: <span class="val">ellipsis</span>;
+}
+<span class="cm">/* Wieloliniowe "..." — line-clamp */</span>
+<span class="sel">.clamp-3</span> {
+  <span class="prp">display</span>: <span class="val">-webkit-box</span>;
+  <span class="prp">-webkit-line-clamp</span>: <span class="num">3</span>;
+  <span class="prp">-webkit-box-orient</span>: <span class="val">vertical</span>;
+  <span class="prp">overflow</span>: <span class="val">hidden</span>;
+}</pre>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 06 SELECTORS ══ -->
+<section class="chapter" id="selectors">
+  <div class="ch-head">
+    <div class="ch-num">06 / 14</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--css2)">Selektory i Pseudo-elementy</div>
+      <div class="ch-title">Selektory, pseudo-klasy, pseudo-elementy</div>
+      <div class="ch-desc">Selektory to sposób celowania w elementy. Od prostych przez kombinatory, atrybuty, pseudo-klasy strukturalne (:nth-child, :has) po pseudo-elementy tworzące wirtualne węzły DOM (::before, ::after).</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--css2)"></div> Kompletne selektory CSS</div>
+      <pre><span class="cm">/* ─── Podstawowe ─────────────────────────────────────── */</span>
+<span class="sel">*</span>              { } <span class="cm">/* universal */</span>
+<span class="sel">div</span>            { } <span class="cm">/* element */</span>
+<span class="sel">.class</span>         { } <span class="cm">/* class */</span>
+<span class="sel">#id</span>            { } <span class="cm">/* ID — unikaj w CSS! */</span>
+<span class="sel">div, p, span</span>   { } <span class="cm">/* lista selektorów */</span>
+
+<span class="cm">/* ─── Kombinatory ───────────────────────────────────── */</span>
+<span class="sel">div p</span>          { } <span class="cm">/* descendant — p w dowolnym div */</span>
+<span class="sel">div > p</span>        { } <span class="cm">/* direct child — tylko bezpośredni */</span>
+<span class="sel">h2 + p</span>         { } <span class="cm">/* adjacent sibling — p tuż po h2 */</span>
+<span class="sel">h2 ~ p</span>         { } <span class="cm">/* general sibling — wszystkie p po h2 */</span>
+
+<span class="cm">/* ─── Atrybuty ──────────────────────────────────────── */</span>
+<span class="sel">[href]</span>            { } <span class="cm">/* ma atrybut href */</span>
+<span class="sel">[type="text"]</span>     { } <span class="cm">/* href = wartość */</span>
+<span class="sel">[class~="card"]</span>   { } <span class="cm">/* słowo card w class */</span>
+<span class="sel">[href^="https"]</span>   { } <span class="cm">/* zaczyna się od https */</span>
+<span class="sel">[href$=".pdf"]</span>    { } <span class="cm">/* kończy się .pdf */</span>
+<span class="sel">[href*="google"]</span>  { } <span class="cm">/* zawiera google */</span>
+<span class="sel">[lang|="pl"]</span>      { } <span class="cm">/* pl lub pl-PL */</span>
+<span class="sel">[type="text" i]</span>  { } <span class="cm">/* case-insensitive */</span>
+
+<span class="cm">/* ─── Pseudo-klasy — stan ───────────────────────────── */</span>
+<span class="sel">:hover</span>            <span class="cm">/* kursor nad elementem */</span>
+<span class="sel">:focus</span>            <span class="cm">/* element w fokusie */</span>
+<span class="sel">:focus-visible</span>    <span class="cm">/* fokus z klawiatury (nie klik) */</span>
+<span class="sel">:focus-within</span>     <span class="cm">/* potomek ma fokus */</span>
+<span class="sel">:active</span>           <span class="cm">/* kliknięty */</span>
+<span class="sel">:visited</span>          <span class="cm">/* odwiedzony link */</span>
+<span class="sel">:target</span>           <span class="cm">/* el który jest celem URL #anchor */</span>
+<span class="sel">:checked</span>          <span class="cm">/* checkbox/radio zaznaczony */</span>
+<span class="sel">:indeterminate</span>    <span class="cm">/* checkbox w stanie pośrednim */</span>
+
+<span class="cm">/* ─── Pseudo-klasy — strukturalne ──────────────────── */</span>
+<span class="sel">:first-child</span>       <span class="cm">/* pierwsze dziecko */</span>
+<span class="sel">:last-child</span>        <span class="cm">/* ostatnie dziecko */</span>
+<span class="sel">:nth-child(2)</span>      <span class="cm">/* drugie dziecko */</span>
+<span class="sel">:nth-child(odd)</span>    <span class="cm">/* nieparzyste */</span>
+<span class="sel">:nth-child(even)</span>   <span class="cm">/* parzyste */</span>
+<span class="sel">:nth-child(3n+1)</span>   <span class="cm">/* 1,4,7,10... */</span>
+<span class="sel">:nth-child(-n+3)</span>   <span class="cm">/* pierwsze 3 */</span>
+<span class="sel">:first-of-type</span>     <span class="cm">/* pierwszy element tego typu */</span>
+<span class="sel">:only-child</span>        <span class="cm">/* jedyne dziecko */</span>
+<span class="sel">:empty</span>             <span class="cm">/* bez dzieci ani tekstu */</span>
+<span class="sel">:not(.active)</span>      <span class="cm">/* NOT selector */</span>
+<span class="sel">:is(h1,h2,h3)</span>      <span class="cm">/* który z listy — bierze max specyficzność */</span>
+<span class="sel">:where(h1,h2)</span>      <span class="cm">/* jak :is ale specyficzność 0 */</span>
+<span class="sel">:has(img)</span>          <span class="cm">/* rodzic który MA img ← game changer! */</span>
+<span class="sel">:has(+ p)</span>          <span class="cm">/* ma bezpośrednio po sobie p */</span></pre>
+    </div>
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--css2)"></div> Pseudo-elementy — wirtualne węzły DOM</div>
+      <pre><span class="cm">/* Tworzą "wirtualne" elementy (nie w DOM)
+   Zawsze :: (dwa dwukropki) w CSS3 */</span>
+
+<span class="sel">.el::before</span> {
+  <span class="prp">content</span>: <span class="str">"▶ "</span>;          <span class="cm">/* tekst przed */</span>
+  <span class="prp">content</span>: <span class="str">""</span>;             <span class="cm">/* pusty — do kształtów */</span>
+  <span class="prp">content</span>: <span class="fn">attr</span>(<span class="val">data-label</span>);<span class="cm">/* wartość atrybutu */</span>
+  <span class="prp">content</span>: <span class="fn">url</span>(<span class="str">"icon.svg"</span>); <span class="cm">/* obraz */</span>
+  <span class="prp">display</span>: <span class="val">block</span>;
+  <span class="prp">width</span>: <span class="num">20</span><span class="unt">px</span>; <span class="prp">height</span>: <span class="num">20</span><span class="unt">px</span>;
+}
+<span class="sel">.el::after</span>  { <span class="prp">content</span>: <span class="str">""</span>; } <span class="cm">/* za elementem */</span>
+
+<span class="cm">/* Inne pseudo-elementy: */</span>
+<span class="sel">p::first-line</span>   { <span class="prp">font-weight</span>: <span class="val">bold</span>; }
+<span class="sel">p::first-letter</span> {               <span class="cm">/* dropcap */</span>
+  <span class="prp">font-size</span>: <span class="num">3</span><span class="unt">em</span>; <span class="prp">float</span>: <span class="val">left</span>;
+  <span class="prp">line-height</span>: <span class="num">1</span>;
+}
+<span class="sel">::selection</span>     { <span class="prp">background</span>: <span class="val">yellow</span>; <span class="prp">color</span>: <span class="val">black</span>; }
+<span class="sel">::placeholder</span>   { <span class="prp">color</span>: <span class="val">gray</span>; <span class="prp">opacity</span>: <span class="num">.7</span>; }
+<span class="sel">::marker</span>        { <span class="prp">color</span>: <span class="val">red</span>; <span class="prp">font-size</span>: <span class="num">1.2</span><span class="unt">em</span>; }
+<span class="sel">::backdrop</span>      { <span class="prp">background</span>: <span class="fn">rgba</span>(<span class="num">0</span>,<span class="num">0</span>,<span class="num">0</span>,<span class="num">.7</span>); }
+<span class="sel">::scrollbar</span>          { <span class="prp">width</span>: <span class="num">8</span><span class="unt">px</span>; }
+<span class="sel">::scrollbar-track</span>    { <span class="prp">background</span>: <span class="val">#f1f1f1</span>; }
+<span class="sel">::scrollbar-thumb</span>    { <span class="prp">background</span>: <span class="val">#888</span>; <span class="prp">border-radius</span>: <span class="num">4</span><span class="unt">px</span>; }
+<span class="sel">::-webkit-scrollbar</span> { } <span class="cm">/* Chrome/Safari prefix */</span>
+
+<span class="cm">/* ─── Tooltip bez JS ──────────────────────────────────── */</span>
+<span class="sel">[data-tip]</span> { <span class="prp">position</span>: <span class="val">relative</span>; }
+<span class="sel">[data-tip]:hover::after</span> {
+  <span class="prp">content</span>: <span class="fn">attr</span>(<span class="val">data-tip</span>);
+  <span class="prp">position</span>: <span class="val">absolute</span>;
+  <span class="prp">bottom</span>: <span class="num">100</span><span class="unt">%</span>; <span class="prp">left</span>: <span class="num">50</span><span class="unt">%</span>;
+  <span class="prp">transform</span>: <span class="fn">translateX</span>(-<span class="num">50</span><span class="unt">%</span>);
+  <span class="prp">background</span>: <span class="val">#333</span>; <span class="prp">color</span>: <span class="val">white</span>;
+  <span class="prp">padding</span>: <span class="num">4</span><span class="unt">px</span> <span class="num">8</span><span class="unt">px</span>; <span class="prp">border-radius</span>: <span class="num">4</span><span class="unt">px</span>;
+  <span class="prp">white-space</span>: <span class="val">nowrap</span>; <span class="prp">font-size</span>: <span class="num">.85</span><span class="unt">rem</span>;
+  <span class="prp">pointer-events</span>: <span class="val">none</span>;
+}
+
+<span class="cm">/* ─── CSS @layer — kontroluj kaskadę ─────────────────── */</span>
+<span class="kw">@layer</span> reset, base, components, utilities;
+<span class="kw">@layer</span> components { <span class="sel">.btn</span> { <span class="prp">padding</span>: <span class="num">.5</span><span class="unt">rem</span> <span class="num">1</span><span class="unt">rem</span>; } }
+<span class="cm">/* Layers w kolejności deklaracji. utilities bije components. */</span></pre>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ 07 LAYOUT ══ -->
+<section class="chapter" id="layout">
+  <div class="ch-head">
+    <div class="ch-num">07 / 14</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--css2)">Pozycjonowanie CSS</div>
+      <div class="ch-title">Position, Float, Z-index — kontrola pozycji</div>
+      <div class="ch-desc">Position: relative/absolute/fixed/sticky są niezbędne dla konkretnych przypadków nawet w erze flexbox/grid. Z-index zarządza stosem warstw. Sticky headery i tooltopy to codzienność każdego frontend developera.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--css2)"></div> Position — wszystkie tryby</div>
+      <pre><span class="prp">position</span>: <span class="val">static</span>;
+<span class="cm">/* Domyślne. top/left/z-index IGNOROWANE */</span>
+
+<span class="prp">position</span>: <span class="val">relative</span>;
+<span class="cm">/* Przesunięcie od WŁASNEJ normalnej pozycji
+   Nadal zajmuje oryginalne miejsce w flow!
+   *** Tworzy kontekst dla absolute dzieci *** */</span>
+
+<span class="prp">position</span>: <span class="val">absolute</span>;
+<span class="cm">/* Wyrywa z flow — nie zajmuje miejsca
+   Pozycja względem najbliższego NON-STATIC rodzica
+   Jeśli brak → względem &lt;html&gt; */</span>
+<span class="sel">.parent</span> { <span class="prp">position</span>: <span class="val">relative</span>; }
+<span class="sel">.child</span>  {
+  <span class="prp">position</span>: <span class="val">absolute</span>;
+  <span class="prp">top</span>: <span class="num">0</span>; <span class="prp">right</span>: <span class="num">0</span>;   <span class="cm">/* prawy górny róg */</span>
+  <span class="prp">bottom</span>: <span class="num">0</span>; <span class="prp">left</span>: <span class="num">0</span>; <span class="cm">/* rozciągnij na cały rodzic */</span>
+}
+<span class="cm">/* Centrowanie absolute: */</span>
+<span class="sel">.center</span> {
+  <span class="prp">position</span>: <span class="val">absolute</span>;
+  <span class="prp">top</span>: <span class="num">50</span><span class="unt">%</span>; <span class="prp">left</span>: <span class="num">50</span><span class="unt">%</span>;
+  <span class="prp">transform</span>: <span class="fn">translate</span>(-<span class="num">50</span><span class="unt">%</span>, -<span class="num">50</span><span class="unt">%</span>);
+}
+
+<span class="prp">position</span>: <span class="val">fixed</span>;
+<span class="cm">/* Pozycja względem VIEWPORT
+   Zostaje na miejscu przy scrollu
+   Navbar fixed, FAB button, cookie banner */</span>
+<span class="sel">.navbar</span> {
+  <span class="prp">position</span>: <span class="val">fixed</span>;
+  <span class="prp">top</span>: <span class="num">0</span>; <span class="prp">left</span>: <span class="num">0</span>; <span class="prp">right</span>: <span class="num">0</span>;
+  <span class="prp">z-index</span>: <span class="num">1000</span>;
+}
+
+<span class="prp">position</span>: <span class="val">sticky</span>;
+<span class="cm">/* Hybrid: relative AŻ DO progu, potem fixed
+   Działa WEWNĄTRZ scroll container!
+   Próg (top, bottom) WYMAGANY */</span>
+<span class="sel">th, thead</span> {
+  <span class="prp">position</span>: <span class="val">sticky</span>;
+  <span class="prp">top</span>: <span class="num">0</span>;
+  <span class="prp">background</span>: <span class="val">white</span>;
+  <span class="prp">z-index</span>: <span class="num">10</span>;
+}</pre>
+    </div>
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--css2)"></div> Z-index, Stacking Context, Float</div>
+      <pre><span class="cm">/* ─── Z-index ─────────────────────────────────────────── */</span>
+<span class="cm">/* TYLKO działa na non-static elements!
+   Wyższy = na wierzchu. Może być ujemny. */</span>
+<span class="sel">.modal</span>    { <span class="prp">z-index</span>: <span class="num">1000</span>; <span class="prp">position</span>: <span class="val">fixed</span>; }
+<span class="sel">.overlay</span>  { <span class="prp">z-index</span>: <span class="num">999</span>; }
+<span class="sel">.dropdown</span> { <span class="prp">z-index</span>: <span class="num">100</span>; }
+<span class="sel">.tooltip</span>  { <span class="prp">z-index</span>: <span class="num">50</span>; }
+<span class="sel">.behind</span>   { <span class="prp">z-index</span>: -<span class="num">1</span>; }
+
+<span class="cm">/* Stacking Context — tworzą:
+   - position non-static + z-index != auto
+   - opacity &lt; 1
+   - transform, filter, clip-path, mask
+   - will-change: transform
+   - isolation: isolate (wymuś nowy SC)
+   Dzieci NIE mogą wyjść z SC rodzica! */</span>
+
+<span class="cm">/* Fix: dropdown chowany przez sąsiedni element */</span>
+<span class="sel">.card</span> { <span class="prp">isolation</span>: <span class="val">isolate</span>; }
+
+<span class="cm">/* ─── Float — teksty obok obrazu ────────────────────── */</span>
+<span class="sel">img.left</span>  { <span class="prp">float</span>: <span class="val">left</span>; <span class="prp">margin-right</span>: <span class="num">1</span><span class="unt">rem</span>; }
+<span class="sel">img.right</span> { <span class="prp">float</span>: <span class="val">right</span>; <span class="prp">margin-left</span>: <span class="num">1</span><span class="unt">rem</span>; }
+
+<span class="cm">/* Clearfix — usuń efekt float */</span>
+<span class="sel">.clearfix::after</span> {
+  <span class="prp">content</span>: <span class="str">""</span>; <span class="prp">display</span>: <span class="val">block</span>; <span class="prp">clear</span>: <span class="val">both</span>;
+}
+
+<span class="cm">/* CSS Shapes — tekst opływa kształt */</span>
+<span class="sel">img.circle</span> {
+  <span class="prp">float</span>: <span class="val">left</span>;
+  <span class="prp">shape-outside</span>: <span class="fn">circle</span>(<span class="num">50%</span>);
+  <span class="prp">border-radius</span>: <span class="num">50</span><span class="unt">%</span>;
+}
+
+<span class="cm">/* ─── Aspect Ratio ────────────────────────────────── */</span>
+<span class="sel">.video-wrap</span> { <span class="prp">aspect-ratio</span>: <span class="num">16</span> / <span class="num">9</span>; }
+<span class="sel">.square</span>     { <span class="prp">aspect-ratio</span>: <span class="num">1</span>; }
+<span class="sel">img</span> {
+  <span class="prp">aspect-ratio</span>: <span class="fn">attr</span>(<span class="val">width</span>) / <span class="fn">attr</span>(<span class="val">height</span>);
+  <span class="cm">/* zapobiega layout shift podczas ładowania */</span>
+}</pre>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 08 FLEXBOX ══ -->
+<section class="chapter" id="flexbox">
+  <div class="ch-head">
+    <div class="ch-num">08 / 14</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--css2)">Flexbox</div>
+      <div class="ch-title">CSS Flexbox — jednowymiarowy layout</div>
+      <div class="ch-desc">Flexbox to układ jednowymiarowy — wiersz lub kolumna. Idealny dla komponentów: nawigacja, karty, przyciski, centra. Dwa zestawy właściwości: kontener (flex-direction, justify-content, align-items) i elementy (flex, order, align-self).</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--css2)"></div> Flexbox — kontener (parent)</div>
+      <pre><span class="sel">.flex-container</span> {
+  <span class="prp">display</span>: <span class="val">flex</span>;  <span class="cm">/* lub inline-flex */</span>
+
+  <span class="cm">/* Oś główna */</span>
+  <span class="prp">flex-direction</span>: <span class="val">row</span>;            <span class="cm">/* → domyślnie */</span>
+  <span class="prp">flex-direction</span>: <span class="val">row-reverse</span>;   <span class="cm">/* ← */</span>
+  <span class="prp">flex-direction</span>: <span class="val">column</span>;        <span class="cm">/* ↓ */</span>
+  <span class="prp">flex-direction</span>: <span class="val">column-reverse</span>;<span class="cm">/* ↑ */</span>
+
+  <span class="cm">/* Zawijanie */</span>
+  <span class="prp">flex-wrap</span>: <span class="val">nowrap</span>;    <span class="cm">/* domyślnie — jedna linia */</span>
+  <span class="prp">flex-wrap</span>: <span class="val">wrap</span>;      <span class="cm">/* zawijaj do nowych linii */</span>
+  <span class="prp">flex-wrap</span>: <span class="val">wrap-reverse</span>;
+  <span class="prp">flex-flow</span>: <span class="val">row wrap</span>; <span class="cm">/* skrót direction + wrap */</span>
+
+  <span class="cm">/* Wyrównanie na OSI GŁÓWNEJ */</span>
+  <span class="prp">justify-content</span>: <span class="val">flex-start</span>;    <span class="cm">/* domyślnie */</span>
+  <span class="prp">justify-content</span>: <span class="val">flex-end</span>;
+  <span class="prp">justify-content</span>: <span class="val">center</span>;
+  <span class="prp">justify-content</span>: <span class="val">space-between</span>; <span class="cm">/* równe odstępy między */</span>
+  <span class="prp">justify-content</span>: <span class="val">space-around</span>;  <span class="cm">/* odstępy wokół */</span>
+  <span class="prp">justify-content</span>: <span class="val">space-evenly</span>;  <span class="cm">/* identyczne odstępy */</span>
+
+  <span class="cm">/* Wyrównanie na OSI POPRZECZNEJ */</span>
+  <span class="prp">align-items</span>: <span class="val">stretch</span>;    <span class="cm">/* domyślnie */</span>
+  <span class="prp">align-items</span>: <span class="val">flex-start</span>;
+  <span class="prp">align-items</span>: <span class="val">flex-end</span>;
+  <span class="prp">align-items</span>: <span class="val">center</span>;     <span class="cm">/* ← pionowe centrowanie! */</span>
+  <span class="prp">align-items</span>: <span class="val">baseline</span>;   <span class="cm">/* linia bazowa tekstu */</span>
+
+  <span class="cm">/* Gdy flex-wrap — dla wielu linii */</span>
+  <span class="prp">align-content</span>: <span class="val">space-between</span>;
+
+  <span class="cm">/* Odstępy — nowoczesne */</span>
+  <span class="prp">gap</span>: <span class="num">1</span><span class="unt">rem</span>;
+  <span class="prp">gap</span>: <span class="num">1</span><span class="unt">rem</span> <span class="num">2</span><span class="unt">rem</span>; <span class="cm">/* row-gap col-gap */</span>
+  <span class="prp">row-gap</span>: <span class="num">1</span><span class="unt">rem</span>;
+  <span class="prp">column-gap</span>: <span class="num">2</span><span class="unt">rem</span>;
+}</pre>
+    </div>
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--css2)"></div> Flexbox — elementy (children) + wzorce</div>
+      <pre><span class="sel">.flex-item</span> {
+  <span class="cm">/* flex = flex-grow flex-shrink flex-basis */</span>
+  <span class="prp">flex</span>: <span class="num">1</span>;           <span class="cm">/* = 1 1 0 — rośnie równo */</span>
+  <span class="prp">flex</span>: <span class="val">auto</span>;        <span class="cm">/* = 1 1 auto */</span>
+  <span class="prp">flex</span>: <span class="kw">none</span>;        <span class="cm">/* = 0 0 auto — nie zmienia */</span>
+  <span class="prp">flex</span>: <span class="num">0</span> <span class="num">0</span> <span class="num">200</span><span class="unt">px</span>;  <span class="cm">/* stały 200px */</span>
+  <span class="prp">flex</span>: <span class="num">1</span> <span class="num">0</span> <span class="num">33</span><span class="unt">%</span>;   <span class="cm">/* min 33%, może rosnąć */</span>
+
+  <span class="prp">flex-grow</span>: <span class="num">2</span>;     <span class="cm">/* rośnie 2x szybciej niż grow:1 */</span>
+  <span class="prp">flex-shrink</span>: <span class="num">0</span>;   <span class="cm">/* nie kurczy się nigdy */</span>
+  <span class="prp">flex-basis</span>: <span class="num">25</span><span class="unt">%</span>;  <span class="cm">/* bazowy rozmiar */</span>
+
+  <span class="prp">align-self</span>: <span class="val">flex-end</span>;  <span class="cm">/* nadpisz align-items dla 1 el. */</span>
+  <span class="prp">order</span>: -<span class="num">1</span>;             <span class="cm">/* na początku (nie zmienia DOM) */</span>
+}
+
+<span class="cm">/* ─── Wzorce ─────────────────────────────────────────── */</span>
+
+<span class="cm">/* Idealne centrowanie */</span>
+<span class="sel">.center</span> {
+  <span class="prp">display</span>: <span class="val">flex</span>;
+  <span class="prp">justify-content</span>: <span class="val">center</span>;
+  <span class="prp">align-items</span>: <span class="val">center</span>;
+  <span class="prp">min-height</span>: <span class="num">100</span><span class="unt">vh</span>;
+}
+
+<span class="cm">/* Push last item to right */</span>
+<span class="sel">.nav-last</span> { <span class="prp">margin-left</span>: <span class="val">auto</span>; }
+<span class="cm">/* lub spacer: &lt;div style="flex:1"&gt;&lt;/div&gt; */</span>
+
+<span class="cm">/* Equal-height cards */</span>
+<span class="sel">.card-row</span>  { <span class="prp">display</span>: <span class="val">flex</span>; <span class="prp">align-items</span>: <span class="val">stretch</span>; }
+
+<span class="cm">/* Responsive row→column */</span>
+<span class="sel">.form-row</span>  {
+  <span class="prp">display</span>: <span class="val">flex</span>;
+  <span class="prp">flex-wrap</span>: <span class="val">wrap</span>;
+  <span class="prp">gap</span>: <span class="num">1</span><span class="unt">rem</span>;
+}
+<span class="sel">.form-row input</span> { <span class="prp">flex</span>: <span class="num">1</span> <span class="num">1</span> <span class="num">200</span><span class="unt">px</span>; }
+
+<span class="cm">/* Holy Grail z flexbox */</span>
+<span class="sel">.page</span>    { <span class="prp">display</span>: <span class="val">flex</span>; <span class="prp">flex-direction</span>: <span class="val">column</span>; }
+<span class="sel">.content</span> { <span class="prp">display</span>: <span class="val">flex</span>; <span class="prp">flex</span>: <span class="num">1</span>; }
+<span class="sel">main</span>     { <span class="prp">flex</span>: <span class="num">1</span>; }
+<span class="sel">aside</span>    { <span class="prp">width</span>: <span class="num">250</span><span class="unt">px</span>; }
+<span class="sel">footer</span>   { <span class="prp">margin-top</span>: <span class="val">auto</span>; } <span class="cm">/* sticky footer! */</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 09 GRID ══ -->
+<section class="chapter" id="grid">
+  <div class="ch-head">
+    <div class="ch-num">09 / 14</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--css2)">CSS Grid</div>
+      <div class="ch-title">CSS Grid — dwuwymiarowy layout</div>
+      <div class="ch-desc">CSS Grid to najsilniejszy system layoutu — wiersze I kolumny jednocześnie. Nazwane obszary, auto-fill, subgrid, minmax — eliminuje potrzebę hacków. Razem z Flexbox: Grid do macro-layout, Flex do micro-layout.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--css2)"></div> Grid — kontener i definiowanie siatki</div>
+      <pre><span class="sel">.grid</span> {
+  <span class="prp">display</span>: <span class="val">grid</span>;
+
+  <span class="cm">/* Kolumny */</span>
+  <span class="prp">grid-template-columns</span>: <span class="num">200</span><span class="unt">px</span> <span class="num">1</span><span class="unt">fr</span> <span class="num">1</span><span class="unt">fr</span>;
+  <span class="prp">grid-template-columns</span>: <span class="fn">repeat</span>(<span class="num">3</span>, <span class="num">1</span><span class="unt">fr</span>);
+  <span class="prp">grid-template-columns</span>: <span class="fn">repeat</span>(<span class="kw">auto-fill</span>, <span class="fn">minmax</span>(<span class="num">200</span><span class="unt">px</span>, <span class="num">1</span><span class="unt">fr</span>));
+  <span class="cm">/* auto-fill: tyle kolumn ile się zmieści! */</span>
+  <span class="prp">grid-template-columns</span>: <span class="fn">repeat</span>(<span class="kw">auto-fit</span>, <span class="fn">minmax</span>(<span class="num">200</span><span class="unt">px</span>, <span class="num">1</span><span class="unt">fr</span>));
+  <span class="cm">/* auto-fit: rozciąga elementy gdy za mało */</span>
+  <span class="prp">grid-template-columns</span>: <span class="val">max-content</span> <span class="num">1</span><span class="unt">fr</span> <span class="val">min-content</span>;
+
+  <span class="cm">/* Wiersze */</span>
+  <span class="prp">grid-template-rows</span>: <span class="val">auto</span> <span class="num">1</span><span class="unt">fr</span> <span class="val">auto</span>;
+  <span class="prp">grid-auto-rows</span>: <span class="fn">minmax</span>(<span class="num">100</span><span class="unt">px</span>, <span class="val">auto</span>);
+
+  <span class="cm">/* Named areas */</span>
+  <span class="prp">grid-template-areas</span>:
+    <span class="str">"header  header  header"</span>
+    <span class="str">"sidebar content aside"</span>
+    <span class="str">"footer  footer  footer"</span>;
+
+  <span class="cm">/* Named lines */</span>
+  <span class="prp">grid-template-columns</span>: [start] <span class="num">1</span><span class="unt">fr</span> [mid] <span class="num">1</span><span class="unt">fr</span> [end];
+
+  <span class="prp">gap</span>: <span class="num">1</span><span class="unt">rem</span> <span class="num">2</span><span class="unt">rem</span>;
+
+  <span class="cm">/* Wyrównanie komórek */</span>
+  <span class="prp">justify-items</span>: <span class="val">stretch</span>;   <span class="cm">/* poziomo w kolumnie */</span>
+  <span class="prp">align-items</span>: <span class="val">stretch</span>;    <span class="cm">/* pionowo w wierszu */</span>
+  <span class="prp">place-items</span>: <span class="val">center</span>;     <span class="cm">/* skrót: align justify */</span>
+
+  <span class="cm">/* Wyrównanie gridu w kontenerze */</span>
+  <span class="prp">justify-content</span>: <span class="val">space-between</span>;
+  <span class="prp">align-content</span>: <span class="val">start</span>;
+  <span class="prp">place-content</span>: <span class="val">center space-between</span>;
+}</pre>
+    </div>
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--css2)"></div> Grid — elementy, areas, subgrid</div>
+      <pre><span class="sel">.item</span> {
+  <span class="cm">/* Pozycja przez linie */</span>
+  <span class="prp">grid-column</span>: <span class="num">1</span> / <span class="num">3</span>;      <span class="cm">/* od linii 1 do 3 */</span>
+  <span class="prp">grid-column</span>: <span class="num">1</span> / -<span class="num">1</span>;     <span class="cm">/* od 1 do końca */</span>
+  <span class="prp">grid-column</span>: <span class="val">span</span> <span class="num">2</span>;     <span class="cm">/* zajmij 2 kolumny */</span>
+  <span class="prp">grid-row</span>: <span class="num">2</span> / <span class="num">4</span>;
+  <span class="prp">grid-area</span>: <span class="num">2</span> / <span class="num">1</span> / <span class="num">4</span> / <span class="num">3</span>; <span class="cm">/* row-s/col-s/row-e/col-e */</span>
+
+  <span class="cm">/* Przez nazwę obszaru */</span>
+  <span class="prp">grid-area</span>: <span class="val">header</span>;
+
+  <span class="prp">justify-self</span>: <span class="val">end</span>;
+  <span class="prp">align-self</span>: <span class="val">center</span>;
+  <span class="prp">place-self</span>: <span class="val">center end</span>;
+}
+
+<span class="cm">/* ─── Holy Grail z Grid ───────────────────────────────── */</span>
+<span class="sel">.page</span> {
+  <span class="prp">display</span>: <span class="val">grid</span>;
+  <span class="prp">grid-template</span>:
+    <span class="str">"header"</span>  <span class="val">auto</span>
+    <span class="str">"sidebar content"</span> <span class="num">1</span><span class="unt">fr</span>
+    <span class="str">"footer"</span> <span class="val">auto</span>
+    / <span class="num">250</span><span class="unt">px</span> <span class="num">1</span><span class="unt">fr</span>;
+  <span class="prp">min-height</span>: <span class="num">100</span><span class="unt">vh</span>;
+}
+<span class="sel">header</span> { <span class="prp">grid-area</span>: <span class="val">header</span>; }
+<span class="sel">aside</span>  { <span class="prp">grid-area</span>: <span class="val">sidebar</span>; }
+<span class="sel">main</span>   { <span class="prp">grid-area</span>: <span class="val">content</span>; }
+<span class="sel">footer</span> { <span class="prp">grid-area</span>: <span class="val">footer</span>; }
+
+<span class="cm">/* ─── Subgrid — dopasuj siatki dzieci ─────────────────── */</span>
+<span class="sel">.card</span>    { <span class="prp">display</span>: <span class="val">grid</span>; <span class="prp">grid-row</span>: <span class="val">span</span> <span class="num">3</span>; }
+<span class="sel">.card > *</span> { <span class="prp">grid-column</span>: <span class="num">1</span>; }
+<span class="sel">.cards-grid</span> { <span class="prp">display</span>: <span class="val">grid</span>; }
+<span class="sel">.cards-grid .card</span> {
+  <span class="prp">display</span>: <span class="val">subgrid</span>;  <span class="cm">/* dzieli siatkę rodzica! */</span>
+  <span class="prp">grid-row</span>: <span class="val">span</span> <span class="num">3</span>;
+}
+
+<span class="cm">/* ─── Responsive bez media queries ─────────────────────── */</span>
+<span class="sel">.auto-grid</span> {
+  <span class="prp">display</span>: <span class="val">grid</span>;
+  <span class="prp">grid-template-columns</span>: <span class="fn">repeat</span>(<span class="kw">auto-fill</span>, <span class="fn">minmax</span>(<span class="fn">min</span>(<span class="num">300</span><span class="unt">px</span>,<span class="num">100%</span>), <span class="num">1</span><span class="unt">fr</span>));
+  <span class="prp">gap</span>: <span class="num">1</span><span class="unt">rem</span>;
+}
+<span class="cm">/* min(300px, 100%) = nigdy nie overflow na małym ekranie */</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 10 TYPOGRAPHY ══ -->
+<section class="chapter" id="typography">
+  <div class="ch-head">
+    <div class="ch-num">10 / 14</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--css2)">Typografia CSS</div>
+      <div class="ch-title">Fonty, tekst, line-height, web fonts</div>
+      <div class="ch-desc">Typografia to 95% web designu. CSS daje pełną kontrolę nad fontami, odstępami, wyrównaniem, dekoracjami tekstu. Web fonts (Google Fonts, @font-face) umożliwiają własne kroje. Variable fonts to jedna plik = cała rodzina.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--css2)"></div> Font właściwości — kompletnie</div>
+      <pre><span class="cm">/* ─── @font-face — własny font ──────────────────────────── */</span>
+<span class="kw">@font-face</span> {
+  <span class="prp">font-family</span>: <span class="str">'MyFont'</span>;
+  <span class="prp">src</span>: <span class="fn">url</span>(<span class="str">'font.woff2'</span>) <span class="kw">format</span>(<span class="str">'woff2'</span>),
+       <span class="fn">url</span>(<span class="str">'font.woff'</span>)  <span class="kw">format</span>(<span class="str">'woff'</span>);
+  <span class="prp">font-weight</span>: <span class="num">400</span>;
+  <span class="prp">font-style</span>: <span class="val">normal</span>;
+  <span class="prp">font-display</span>: <span class="val">swap</span>;  <span class="cm">/* fallback podczas ładowania */</span>
+}
+<span class="cm">/* Variable font — jeden plik, wiele wagości/stylów */</span>
+<span class="kw">@font-face</span> {
+  <span class="prp">font-family</span>: <span class="str">'InterVariable'</span>;
+  <span class="prp">src</span>: <span class="fn">url</span>(<span class="str">'Inter.woff2'</span>) <span class="kw">format</span>(<span class="str">'woff2-variations'</span>);
+  <span class="prp">font-weight</span>: <span class="num">100</span> <span class="num">900</span>;  <span class="cm">/* zakres wagości */</span>
+}
+<span class="sel">.title</span> { <span class="prp">font-variation-settings</span>: <span class="str">'wght'</span> <span class="num">750</span>, <span class="str">'slnt'</span> -<span class="num">10</span>; }
+
+<span class="cm">/* ─── Właściwości fontu ──────────────────────────────────── */</span>
+<span class="prp">font-family</span>: <span class="str">'Inter'</span>, <span class="str">'Segoe UI'</span>, <span class="val">system-ui</span>, <span class="val">sans-serif</span>;
+<span class="cm">/* Stosy fontów: własny → systemowy → fallback generic
+   Generic: serif, sans-serif, monospace, cursive, fantasy, system-ui */</span>
+
+<span class="prp">font-size</span>: <span class="num">1</span><span class="unt">rem</span>;        <span class="cm">/* 16px domyślnie */</span>
+<span class="prp">font-size</span>: <span class="fn">clamp</span>(<span class="num">1</span><span class="unt">rem</span>, <span class="num">2.5</span><span class="unt">vw</span>, <span class="num">2</span><span class="unt">rem</span>); <span class="cm">/* fluid typography */</span>
+<span class="prp">font-weight</span>: <span class="num">400</span>;        <span class="cm">/* 100-900, lub normal/bold */</span>
+<span class="prp">font-style</span>: <span class="val">italic</span>;
+<span class="prp">font-variant</span>: <span class="val">small-caps</span>;
+
+<span class="cm">/* ─── font shorthand ──────────────────────────────────────── */</span>
+<span class="prp">font</span>: <span class="val">italic</span> <span class="val">small-caps</span> <span class="val">bold</span> <span class="num">1.2</span><span class="unt">rem</span>/<span class="num">1.6</span> <span class="str">'Inter'</span>, <span class="val">sans-serif</span>;
+<span class="cm">/* style variant weight size/line-height family */</span>
+
+<span class="cm">/* ─── Tekst właściwości ──────────────────────────────────── */</span>
+<span class="prp">line-height</span>: <span class="num">1.6</span>;       <span class="cm">/* bez jednostki! = 1.6 × font-size */</span>
+<span class="prp">letter-spacing</span>: <span class="num">0.05</span><span class="unt">em</span>; <span class="cm">/* tracking */</span>
+<span class="prp">word-spacing</span>: <span class="num">0.1</span><span class="unt">em</span>;
+<span class="prp">text-align</span>: <span class="val">left</span>|<span class="val">right</span>|<span class="val">center</span>|<span class="val">justify</span>|<span class="val">start</span>|<span class="val">end</span>;
+<span class="prp">text-indent</span>: <span class="num">2</span><span class="unt">em</span>;       <span class="cm">/* wcięcie pierwszej linii */</span>
+<span class="prp">vertical-align</span>: <span class="val">middle</span>; <span class="cm">/* dla inline elementów */</span>
+<span class="prp">text-transform</span>: <span class="val">uppercase</span>|<span class="val">lowercase</span>|<span class="val">capitalize</span>|<span class="val">none</span>;
+<span class="prp">text-decoration</span>: <span class="val">underline</span>|<span class="val">line-through</span>|<span class="val">none</span>;
+<span class="prp">text-decoration</span>: <span class="val">underline</span> <span class="val">wavy</span> <span class="val">red</span> <span class="num">2</span><span class="unt">px</span>;</pre>
+    </div>
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--css2)"></div> Tekst — zaawansowane właściwości</div>
+      <pre><span class="prp">white-space</span>: <span class="val">normal</span>;    <span class="cm">/* domyślnie — wrap + collapse */</span>
+<span class="prp">white-space</span>: <span class="val">nowrap</span>;    <span class="cm">/* nie wrap */</span>
+<span class="prp">white-space</span>: <span class="val">pre</span>;       <span class="cm">/* zachowaj spacje i newlines */</span>
+<span class="prp">white-space</span>: <span class="val">pre-wrap</span>;  <span class="cm">/* zachowaj + wrap */</span>
+<span class="prp">white-space</span>: <span class="val">pre-line</span>;  <span class="cm">/* tylko newlines zachowaj */</span>
+<span class="prp">white-space-collapse</span>: <span class="val">collapse</span>; <span class="cm">/* nowe CSS4 */</span>
+
+<span class="prp">word-break</span>: <span class="val">normal</span>|<span class="val">break-all</span>|<span class="val">keep-all</span>|<span class="val">break-word</span>;
+<span class="prp">overflow-wrap</span>: <span class="val">anywhere</span>; <span class="cm">/* łam gdzie potrzeba */</span>
+<span class="prp">hyphens</span>: <span class="val">auto</span>;           <span class="cm">/* dziel wyrazy, wymaga lang */</span>
+
+<span class="prp">writing-mode</span>: <span class="val">vertical-rl</span>; <span class="cm">/* tekst pionowy */</span>
+<span class="prp">text-orientation</span>: <span class="val">mixed</span>;
+<span class="prp">direction</span>: <span class="val">rtl</span>;           <span class="cm">/* prawo→lewo (arabski) */</span>
+
+<span class="cm">/* ─── Text gradient ──────────────────────────────────── */</span>
+<span class="sel">.gradient-text</span> {
+  <span class="prp">background</span>: <span class="fn">linear-gradient</span>(<span class="num">135</span><span class="unt">deg</span>, <span class="val">blue</span>, <span class="val">purple</span>);
+  <span class="prp">-webkit-background-clip</span>: <span class="val">text</span>;
+  <span class="prp">-webkit-text-fill-color</span>: <span class="kw">transparent</span>;
+  <span class="prp">background-clip</span>: <span class="val">text</span>;
+}
+
+<span class="cm">/* ─── CSS Counter — automatyczna numeracja ───────────── */</span>
+<span class="sel">ol</span> { <span class="prp">counter-reset</span>: <span class="val">section</span>; }
+<span class="sel">li::before</span> {
+  <span class="prp">counter-increment</span>: <span class="val">section</span>;
+  <span class="prp">content</span>: <span class="fn">counter</span>(<span class="val">section</span>) <span class="str">". "</span>;
+}
+
+<span class="cm">/* ─── System fonts stack — bez ładowania ────────────── */</span>
+<span class="sel">body</span> {
+  <span class="prp">font-family</span>: <span class="val">system-ui</span>, -<span class="val">apple-system</span>, <span class="str">'Segoe UI'</span>,
+    <span class="str">'Roboto'</span>, <span class="str">'Helvetica Neue'</span>, <span class="val">Arial</span>, <span class="val">sans-serif</span>;
+}
+<span class="cm">/* Monospace stack */</span>
+<span class="sel">code</span> {
+  <span class="prp">font-family</span>: <span class="str">'Cascadia Code'</span>, <span class="str">'Fira Code'</span>,
+    <span class="str">'JetBrains Mono'</span>, <span class="val">Consolas</span>, <span class="val">monospace</span>;
+}</pre>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ 11 ANIMATIONS ══ -->
+<section class="chapter" id="animations">
+  <div class="ch-head">
+    <div class="ch-num">11 / 14</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--css2)">Animacje i Transformacje</div>
+      <div class="ch-title">Transitions, Animations, Transform — ruch w CSS</div>
+      <div class="ch-desc">CSS animacje są realizowane przez GPU — znacznie szybsze niż JavaScript animacje DOM. Transition dla prostych stanów, @keyframes dla złożonych sekwencji. transform i opacity nie wywołują reflow — animuj tylko te właściwości!</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--css2)"></div> Transform — transformacje elementów</div>
+      <pre><span class="cm">/* ─── Transform 2D ──────────────────────────────────────── */</span>
+<span class="prp">transform</span>: <span class="fn">translateX</span>(<span class="num">50</span><span class="unt">px</span>);     <span class="cm">/* przesunięcie X */</span>
+<span class="prp">transform</span>: <span class="fn">translateY</span>(-<span class="num">20</span><span class="unt">px</span>);   <span class="cm">/* przesunięcie Y */</span>
+<span class="prp">transform</span>: <span class="fn">translate</span>(<span class="num">50</span><span class="unt">px</span>, -<span class="num">20</span><span class="unt">px</span>); <span class="cm">/* XY */</span>
+<span class="prp">transform</span>: <span class="fn">scale</span>(<span class="num">1.5</span>);          <span class="cm">/* skalowanie */</span>
+<span class="prp">transform</span>: <span class="fn">scaleX</span>(<span class="num">2</span>) <span class="fn">scaleY</span>(<span class="num">.5</span>);
+<span class="prp">transform</span>: <span class="fn">rotate</span>(<span class="num">45</span><span class="unt">deg</span>);        <span class="cm">/* obrót */</span>
+<span class="prp">transform</span>: <span class="fn">rotate</span>(<span class="num">0.125</span><span class="unt">turn</span>);
+<span class="prp">transform</span>: <span class="fn">skewX</span>(<span class="num">20</span><span class="unt">deg</span>);         <span class="cm">/* pochylenie */</span>
+<span class="prp">transform-origin</span>: <span class="val">top left</span>;     <span class="cm">/* punkt transformacji */</span>
+<span class="prp">transform-origin</span>: <span class="num">50</span><span class="unt">%</span> <span class="num">50</span><span class="unt">%</span>;      <span class="cm">/* domyślnie: center */</span>
+
+<span class="cm">/* Łączenie transformacji — kolejność ma znaczenie! */</span>
+<span class="prp">transform</span>: <span class="fn">translateX</span>(<span class="num">100</span><span class="unt">px</span>) <span class="fn">rotate</span>(<span class="num">45</span><span class="unt">deg</span>) <span class="fn">scale</span>(<span class="num">.8</span>);
+
+<span class="cm">/* ─── Transform 3D ──────────────────────────────────────── */</span>
+<span class="prp">transform</span>: <span class="fn">translateZ</span>(<span class="num">100</span><span class="unt">px</span>);
+<span class="prp">transform</span>: <span class="fn">rotateX</span>(<span class="num">60</span><span class="unt">deg</span>);
+<span class="prp">transform</span>: <span class="fn">rotateY</span>(<span class="num">180</span><span class="unt">deg</span>);
+<span class="prp">transform</span>: <span class="fn">perspective</span>(<span class="num">500</span><span class="unt">px</span>) <span class="fn">rotateY</span>(<span class="num">45</span><span class="unt">deg</span>);
+<span class="prp">perspective</span>: <span class="num">1000</span><span class="unt">px</span>;           <span class="cm">/* na kontenerze! */</span>
+<span class="prp">transform-style</span>: <span class="val">preserve-3d</span>;  <span class="cm">/* dzieci w 3D */</span>
+<span class="prp">backface-visibility</span>: <span class="val">hidden</span>;   <span class="cm">/* ukryj tył */</span>
+
+<span class="cm">/* ─── Transition ─────────────────────────────────────────── */</span>
+<span class="prp">transition</span>: <span class="val">all</span> <span class="num">.3</span><span class="unt">s</span> <span class="val">ease</span>;
+<span class="prp">transition</span>: <span class="val">transform</span> <span class="num">.3</span><span class="unt">s</span> <span class="val">ease-out</span>, <span class="val">opacity</span> <span class="num">.2</span><span class="unt">s</span>;
+<span class="cm">/* property duration timing-function delay */</span>
+<span class="prp">transition-property</span>: <span class="val">transform</span>, <span class="val">opacity</span>;
+<span class="prp">transition-duration</span>: <span class="num">.3</span><span class="unt">s</span>;
+<span class="prp">transition-timing-function</span>: <span class="val">ease</span>|<span class="val">ease-in</span>|<span class="val">ease-out</span>|<span class="val">ease-in-out</span>|<span class="val">linear</span>;
+<span class="prp">transition-timing-function</span>: <span class="fn">cubic-bezier</span>(<span class="num">.4</span>,<span class="num">0</span>,<span class="num">.2</span>,<span class="num">1</span>); <span class="cm">/* Material */</span>
+<span class="prp">transition-delay</span>: <span class="num">.1</span><span class="unt">s</span>;
+<span class="cm">/* Animuj TYLKO: transform, opacity (GPU!) */</span></pre>
+    </div>
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--css2)"></div> @keyframes — złożone animacje</div>
+      <pre><span class="cm">/* Definiowanie animacji */</span>
+<span class="kw">@keyframes</span> <span class="val">fadeIn</span> {
+  <span class="kw">from</span> { <span class="prp">opacity</span>: <span class="num">0</span>; <span class="prp">transform</span>: <span class="fn">translateY</span>(<span class="num">20</span><span class="unt">px</span>); }
+  <span class="kw">to</span>   { <span class="prp">opacity</span>: <span class="num">1</span>; <span class="prp">transform</span>: <span class="fn">translateY</span>(<span class="num">0</span>); }
+}
+<span class="kw">@keyframes</span> <span class="val">pulse</span> {
+  <span class="num">0%</span>   { <span class="prp">transform</span>: <span class="fn">scale</span>(<span class="num">1</span>); }
+  <span class="num">50%</span>  { <span class="prp">transform</span>: <span class="fn">scale</span>(<span class="num">1.1</span>); }
+  <span class="num">100%</span> { <span class="prp">transform</span>: <span class="fn">scale</span>(<span class="num">1</span>); }
+}
+<span class="kw">@keyframes</span> <span class="val">shimmer</span> {
+  <span class="kw">from</span> { <span class="prp">background-position</span>: -<span class="num">200</span><span class="unt">%</span> <span class="num">0</span>; }
+  <span class="kw">to</span>   { <span class="prp">background-position</span>:  <span class="num">200</span><span class="unt">%</span> <span class="num">0</span>; }
+}
+
+<span class="cm">/* Używanie animacji */</span>
+<span class="sel">.animated</span> {
+  <span class="prp">animation</span>: <span class="val">fadeIn</span> <span class="num">.5</span><span class="unt">s</span> <span class="val">ease-out</span> <span class="val">forwards</span>;
+  <span class="cm">/* name duration timing fill-mode */</span>
+}
+<span class="prp">animation-name</span>: <span class="val">pulse</span>;
+<span class="prp">animation-duration</span>: <span class="num">2</span><span class="unt">s</span>;
+<span class="prp">animation-timing-function</span>: <span class="val">ease-in-out</span>;
+<span class="prp">animation-delay</span>: <span class="num">.5</span><span class="unt">s</span>;
+<span class="prp">animation-iteration-count</span>: <span class="num">3</span>|<span class="kw">infinite</span>;
+<span class="prp">animation-direction</span>: <span class="val">normal</span>|<span class="val">reverse</span>|<span class="val">alternate</span>;
+<span class="prp">animation-fill-mode</span>: <span class="val">none</span>|<span class="val">forwards</span>|<span class="val">backwards</span>|<span class="val">both</span>;
+<span class="prp">animation-play-state</span>: <span class="val">running</span>|<span class="val">paused</span>;
+
+<span class="cm">/* Multiple animations */</span>
+<span class="prp">animation</span>: <span class="val">fadeIn</span> <span class="num">.3</span><span class="unt">s</span>, <span class="val">pulse</span> <span class="num">2</span><span class="unt">s</span> <span class="num">.3</span><span class="unt">s</span> <span class="kw">infinite</span>;
+
+<span class="cm">/* ─── prefers-reduced-motion — dostępność! ──────────────── */</span>
+<span class="kw">@media</span> (<span class="val">prefers-reduced-motion</span>: <span class="val">reduce</span>) {
+  *, *::before, *::after {
+    <span class="prp">animation-duration</span>: <span class="num">.01</span><span class="unt">ms</span> <span class="kw">!important</span>;
+    <span class="prp">transition-duration</span>: <span class="num">.01</span><span class="unt">ms</span> <span class="kw">!important</span>;
+  }
+}
+
+<span class="cm">/* ─── will-change — optymalizacja GPU ───────────────────── */</span>
+<span class="sel">.animating</span> { <span class="prp">will-change</span>: <span class="val">transform</span>, <span class="val">opacity</span>; }
+<span class="cm">/* Używaj oszczędnie — kosztuje pamięć GPU */</span>
+
+<span class="cm">/* ─── CSS View Transitions (nowe!) ──────────────────────── */</span>
+<span class="sel">::view-transition-old</span>(root) { <span class="prp">animation</span>: <span class="val">fadeOut</span> <span class="num">.3</span><span class="unt">s</span>; }
+<span class="sel">::view-transition-new</span>(root) { <span class="prp">animation</span>: <span class="val">fadeIn</span> <span class="num">.3</span><span class="unt">s</span>; }</pre>
+    </div>
+  </div>
+  <div class="gap16"></div>
+  <div class="g3">
+    <div class="card">
+      <div class="card-h" style="color:var(--css2)">🎨 Backgrounds</div>
+      <div class="card-b">
+        <div class="code" style="border:none;background:transparent"><pre style="padding:0;font-size:.74rem"><span class="prp">background-color</span>: <span class="val">#fff</span>;
+<span class="prp">background-image</span>: <span class="fn">url</span>(<span class="str">'bg.png'</span>);
+<span class="prp">background-repeat</span>: <span class="val">no-repeat</span>|<span class="val">repeat</span>|<span class="val">repeat-x</span>;
+<span class="prp">background-position</span>: <span class="val">center</span>;
+<span class="prp">background-size</span>: <span class="val">cover</span>|<span class="val">contain</span>|<span class="num">50</span><span class="unt">%</span>;
+<span class="prp">background-attachment</span>: <span class="val">fixed</span>; <span class="cm">/* parallax! */</span>
+<span class="prp">background-clip</span>: <span class="val">border-box</span>|<span class="val">padding-box</span>|<span class="val">text</span>;
+
+<span class="cm">/* Gradienty */</span>
+<span class="prp">background</span>: <span class="fn">linear-gradient</span>(<span class="num">135</span><span class="unt">deg</span>, <span class="val">#e44d26</span>, <span class="val">#264de4</span>);
+<span class="prp">background</span>: <span class="fn">radial-gradient</span>(<span class="val">circle</span>, <span class="val">#fff</span>, <span class="val">#000</span>);
+<span class="prp">background</span>: <span class="fn">conic-gradient</span>(<span class="val">red</span>, <span class="val">yellow</span>, <span class="val">green</span>);
+<span class="cm">/* Wiele tła */</span>
+<span class="prp">background</span>: <span class="fn">url</span>(<span class="str">'top.png'</span>) <span class="val">top</span>,
+             <span class="fn">url</span>(<span class="str">'bottom.png'</span>) <span class="val">bottom</span>,
+             <span class="fn">linear-gradient</span>(<span class="val">#fff</span>, <span class="val">#f0f0f0</span>);</pre></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--css2)">🌊 Filters i Effects</div>
+      <div class="card-b">
+        <div class="code" style="border:none;background:transparent"><pre style="padding:0;font-size:.74rem"><span class="cm">/* CSS Filters */</span>
+<span class="prp">filter</span>: <span class="fn">blur</span>(<span class="num">4</span><span class="unt">px</span>);
+<span class="prp">filter</span>: <span class="fn">brightness</span>(<span class="num">1.5</span>);
+<span class="prp">filter</span>: <span class="fn">contrast</span>(<span class="num">200%</span>);
+<span class="prp">filter</span>: <span class="fn">grayscale</span>(<span class="num">100%</span>);
+<span class="prp">filter</span>: <span class="fn">hue-rotate</span>(<span class="num">90</span><span class="unt">deg</span>);
+<span class="prp">filter</span>: <span class="fn">invert</span>(<span class="num">100%</span>);
+<span class="prp">filter</span>: <span class="fn">sepia</span>(<span class="num">100%</span>);
+<span class="prp">filter</span>: <span class="fn">drop-shadow</span>(<span class="num">0</span> <span class="num">4</span><span class="unt">px</span> <span class="num">8</span><span class="unt">px</span> <span class="val">rgba</span>(<span class="num">0</span>,<span class="num">0</span>,<span class="num">0</span>,<span class="num">.3</span>));
+<span class="prp">filter</span>: <span class="fn">blur</span>(<span class="num">2</span><span class="unt">px</span>) <span class="fn">brightness</span>(<span class="num">1.2</span>);
+
+<span class="cm">/* Backdrop filter — glass effect */</span>
+<span class="sel">.glass</span> {
+  <span class="prp">backdrop-filter</span>: <span class="fn">blur</span>(<span class="num">10</span><span class="unt">px</span>) <span class="fn">brightness</span>(<span class="num">1.1</span>);
+  <span class="prp">background</span>: <span class="fn">rgba</span>(<span class="num">255</span>,<span class="num">255</span>,<span class="num">255</span>,<span class="num">.2</span>);
+}
+
+<span class="cm">/* Mix-blend-mode */</span>
+<span class="prp">mix-blend-mode</span>: <span class="val">multiply</span>|<span class="val">screen</span>|<span class="val">overlay</span>;
+
+<span class="cm">/* Clip-path — przycinanie kształtem */</span>
+<span class="prp">clip-path</span>: <span class="fn">circle</span>(<span class="num">50%</span>);
+<span class="prp">clip-path</span>: <span class="fn">polygon</span>(<span class="num">0</span> <span class="num">0</span>, <span class="num">100%</span> <span class="num">0</span>, <span class="num">100%</span> <span class="num">80%</span>, <span class="num">0</span> <span class="num">100%</span>);</pre></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--css2)">🖱️ Cursor i Pointer Events</div>
+      <div class="card-b">
+        <div class="code" style="border:none;background:transparent"><pre style="padding:0;font-size:.74rem"><span class="prp">cursor</span>: <span class="val">default</span>|<span class="val">pointer</span>|<span class="val">text</span>|<span class="val">grab</span>|<span class="val">grabbing</span>;
+<span class="prp">cursor</span>: <span class="val">crosshair</span>|<span class="val">wait</span>|<span class="val">progress</span>|<span class="val">help</span>;
+<span class="prp">cursor</span>: <span class="val">not-allowed</span>|<span class="val">no-drop</span>|<span class="val">zoom-in</span>;
+<span class="prp">cursor</span>: <span class="fn">url</span>(<span class="str">'cursor.cur'</span>), <span class="val">auto</span>;
+<span class="prp">cursor</span>: <span class="val">none</span>;         <span class="cm">/* ukryj kursor */</span>
+
+<span class="prp">pointer-events</span>: <span class="val">none</span>;  <span class="cm">/* ignoruje kliknięcia */</span>
+<span class="prp">pointer-events</span>: <span class="val">auto</span>;
+
+<span class="prp">user-select</span>: <span class="val">none</span>;    <span class="cm">/* nie można zaznaczyć */</span>
+<span class="prp">user-select</span>: <span class="val">all</span>;     <span class="cm">/* zaznaczy całość */</span>
+
+<span class="cm">/* Scroll behavior */</span>
+<span class="prp">scroll-behavior</span>: <span class="val">smooth</span>;
+<span class="prp">scroll-snap-type</span>: <span class="val">x mandatory</span>;
+<span class="sel">.snap-item</span> { <span class="prp">scroll-snap-align</span>: <span class="val">start</span>; }
+<span class="prp">overscroll-behavior</span>: <span class="val">contain</span>; <span class="cm">/* stop chain scroll */</span>
+
+<span class="cm">/* Scrollbar styling */</span>
+<span class="prp">scrollbar-width</span>: <span class="val">thin</span>|<span class="val">none</span>;  <span class="cm">/* Firefox */</span>
+<span class="prp">scrollbar-color</span>: <span class="val">thumb</span> <span class="val">track</span>; <span class="cm">/* Firefox */</span></pre></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 12 RESPONSIVE ══ -->
+<section class="chapter" id="responsive">
+  <div class="ch-head">
+    <div class="ch-num">12 / 14</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--css2)">Responsive Design</div>
+      <div class="ch-title">Media Queries, Container Queries, mobile-first</div>
+      <div class="ch-desc">Responsive design to zasada "mobile-first" — zacznij od małego ekranu, dodawaj style dla większych. Media Queries badają viewport i preferencje urządzenia. Container Queries (nowe!) badają rozmiar rodzica.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--css2)"></div> Media Queries — wszystkie typy</div>
+      <pre><span class="cm">/* ─── Breakpointy — mobile first ────────────────────────── */</span>
+<span class="cm">/* Base styles: mobile (bez @media)
+   Potem rozszerzaj dla większych ekranów */</span>
+
+<span class="kw">@media</span> (<span class="val">min-width</span>: <span class="num">640</span><span class="unt">px</span>)  { } <span class="cm">/* sm — tablet */</span>
+<span class="kw">@media</span> (<span class="val">min-width</span>: <span class="num">768</span><span class="unt">px</span>)  { } <span class="cm">/* md */</span>
+<span class="kw">@media</span> (<span class="val">min-width</span>: <span class="num">1024</span><span class="unt">px</span>) { } <span class="cm">/* lg — laptop */</span>
+<span class="kw">@media</span> (<span class="val">min-width</span>: <span class="num">1280</span><span class="unt">px</span>) { } <span class="cm">/* xl — desktop */</span>
+<span class="kw">@media</span> (<span class="val">min-width</span>: <span class="num">1536</span><span class="unt">px</span>) { } <span class="cm">/* 2xl */</span>
+<span class="cm">/* Tailwind breakpointy — de facto standard */</span>
+
+<span class="cm">/* Desktop-first (min→max) */</span>
+<span class="kw">@media</span> (<span class="val">max-width</span>: <span class="num">767</span><span class="unt">px</span>) { }   <span class="cm">/* tylko mobile */</span>
+
+<span class="cm">/* Zakres */</span>
+<span class="kw">@media</span> (<span class="num">768</span><span class="unt">px</span> &lt;= <span class="val">width</span> &lt; <span class="num">1024</span><span class="unt">px</span>) { } <span class="cm">/* nowy syntax! */</span>
+
+<span class="cm">/* Typ urządzenia */</span>
+<span class="kw">@media</span> <span class="val">screen</span> { }        <span class="cm">/* ekran */</span>
+<span class="kw">@media</span> <span class="val">print</span>  { }        <span class="cm">/* drukowanie */</span>
+
+<span class="cm">/* Preferencje użytkownika */</span>
+<span class="kw">@media</span> (<span class="val">prefers-color-scheme</span>: <span class="val">dark</span>)  { } <span class="cm">/* dark mode */</span>
+<span class="kw">@media</span> (<span class="val">prefers-color-scheme</span>: <span class="val">light</span>) { } <span class="cm">/* light mode */</span>
+<span class="kw">@media</span> (<span class="val">prefers-reduced-motion</span>: <span class="val">reduce</span>) { } <span class="cm">/* mniej ruchu */</span>
+<span class="kw">@media</span> (<span class="val">prefers-contrast</span>: <span class="val">high</span>) { }      <span class="cm">/* wysoki kontrast */</span>
+<span class="kw">@media</span> (<span class="val">forced-colors</span>: <span class="val">active</span>) { }      <span class="cm">/* Windows High Contrast */</span>
+
+<span class="cm">/* Orientacja */</span>
+<span class="kw">@media</span> (<span class="val">orientation</span>: <span class="val">landscape</span>) { }
+<span class="kw">@media</span> (<span class="val">orientation</span>: <span class="val">portrait</span>)  { }
+
+<span class="cm">/* Kombinacje z AND, OR */</span>
+<span class="kw">@media</span> <span class="val">screen</span> <span class="kw">and</span> (<span class="val">min-width</span>: <span class="num">768</span><span class="unt">px</span>) <span class="kw">and</span> (<span class="val">orientation</span>: <span class="val">landscape</span>) { }
+<span class="kw">@media</span> (<span class="val">min-width</span>: <span class="num">768</span><span class="unt">px</span>), (<span class="val">orientation</span>: <span class="val">landscape</span>) { } <span class="cm">/* OR */</span>
+<span class="kw">@media</span> <span class="kw">not</span> (<span class="val">min-width</span>: <span class="num">768</span><span class="unt">px</span>) { }</pre>
+    </div>
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--css2)"></div> Container Queries + Dark Mode</div>
+      <pre><span class="cm">/* ─── Container Queries — game changer! ──────────────────── */</span>
+<span class="cm">/* Reaguj na rozmiar RODZICA, nie viewport */</span>
+
+<span class="cm">/* 1. Zdefiniuj kontener */</span>
+<span class="sel">.card-wrapper</span> {
+  <span class="prp">container-type</span>: <span class="val">inline-size</span>; <span class="cm">/* obserwuj szerokość */</span>
+  <span class="prp">container-name</span>: <span class="val">card</span>;         <span class="cm">/* opcjonalna nazwa */</span>
+}
+<span class="cm">/* container shorthand: */</span>
+<span class="sel">.sidebar</span> { <span class="prp">container</span>: <span class="val">sidebar</span> / <span class="val">inline-size</span>; }
+
+<span class="cm">/* 2. Pytaj o rozmiar kontenera */</span>
+<span class="kw">@container</span> (<span class="val">min-width</span>: <span class="num">400</span><span class="unt">px</span>) {
+  <span class="sel">.card</span> { <span class="prp">flex-direction</span>: <span class="val">row</span>; }
+}
+<span class="kw">@container</span> <span class="val">card</span> (<span class="val">min-width</span>: <span class="num">600</span><span class="unt">px</span>) {
+  <span class="sel">.card-title</span> { <span class="prp">font-size</span>: <span class="num">2</span><span class="unt">rem</span>; }
+}
+<span class="cm">/* Jednostki CQ: cqw, cqh, cqi, cqb, cqmin, cqmax */</span>
+<span class="sel">.card img</span> { <span class="prp">width</span>: <span class="num">50</span><span class="unt">cqw</span>; }
+
+<span class="cm">/* ─── Dark Mode ──────────────────────────────────────────── */</span>
+<span class="cm">/* Metoda 1: prefers-color-scheme */</span>
+<span class="kw">@media</span> (<span class="val">prefers-color-scheme</span>: <span class="val">dark</span>) {
+  <span class="sel">:root</span> { <span class="prp">--bg</span>: <span class="val">#1a1a1a</span>; <span class="prp">--tx</span>: <span class="val">#f0f0f0</span>; }
+}
+
+<span class="cm">/* Metoda 2: klasa (toggle przez JS) */</span>
+<span class="sel">:root</span>       { <span class="prp">--bg</span>: <span class="val">white</span>; <span class="prp">--tx</span>: <span class="val">black</span>; }
+<span class="sel">[data-theme="dark"]</span> { <span class="prp">--bg</span>: <span class="val">#1a1a1a</span>; <span class="prp">--tx</span>: <span class="val">white</span>; }
+
+<span class="cm">/* Metoda 3: color-scheme */</span>
+<span class="sel">:root</span> { <span class="prp">color-scheme</span>: <span class="val">light dark</span>; }
+<span class="cm">/* Przeglądarka adapuje natywne UI (inputs, scrollbar) */</span>
+
+<span class="cm">/* ─── @media print ───────────────────────────────────────── */</span>
+<span class="kw">@media</span> <span class="val">print</span> {
+  <span class="sel">nav, aside, .no-print</span> { <span class="prp">display</span>: <span class="val">none</span>; }
+  <span class="sel">a::after</span>              { <span class="prp">content</span>: <span class="str">" ("</span> <span class="fn">attr</span>(<span class="val">href</span>) <span class="str">")"</span>; }
+  <span class="sel">*</span>                      { <span class="prp">color</span>: <span class="val">black</span>; }
+  <span class="prp">page-break-inside</span>: <span class="val">avoid</span>;
+}</pre>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 13 MODERN CSS ══ -->
+<section class="chapter" id="modern-css">
+  <div class="ch-head">
+    <div class="ch-num">13 / 14</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--css2)">Modern CSS</div>
+      <div class="ch-title">CSS Variables, Nesting, :has(), Logical Properties</div>
+      <div class="ch-desc">CSS Custom Properties (zmienne), nesting (zagnieżdżanie jak Sass), @layer (kontrola kaskady), nowe selektory :has() i :is() — nowoczesny CSS jest potężniejszy niż kiedykolwiek. Wiele funkcji Sass jest już natywnie w CSS.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--css2)"></div> CSS Custom Properties — zmienne</div>
+      <pre><span class="cm">/* Definiowanie — zawsze z -- */</span>
+<span class="sel">:root</span> {
+  <span class="prp">--color-primary</span>: <span class="val">#3b82f6</span>;
+  <span class="prp">--color-text</span>: <span class="val">#1f2937</span>;
+  <span class="prp">--spacing-sm</span>: <span class="num">0.5</span><span class="unt">rem</span>;
+  <span class="prp">--spacing-md</span>: <span class="num">1</span><span class="unt">rem</span>;
+  <span class="prp">--radius</span>: <span class="num">8</span><span class="unt">px</span>;
+  <span class="prp">--shadow</span>: <span class="num">0</span> <span class="num">4</span><span class="unt">px</span> <span class="num">12</span><span class="unt">px</span> <span class="fn">rgba</span>(<span class="num">0</span>,<span class="num">0</span>,<span class="num">0</span>,<span class="num">.1</span>);
+}
+
+<span class="cm">/* Używanie */</span>
+<span class="sel">.btn</span> {
+  <span class="prp">background</span>: <span class="fn">var</span>(<span class="prp">--color-primary</span>);
+  <span class="prp">padding</span>: <span class="fn">var</span>(<span class="prp">--spacing-sm</span>) <span class="fn">var</span>(<span class="prp">--spacing-md</span>);
+  <span class="prp">border-radius</span>: <span class="fn">var</span>(<span class="prp">--radius</span>);
+}
+
+<span class="cm">/* Fallback */</span>
+<span class="prp">color</span>: <span class="fn">var</span>(<span class="prp">--text</span>, <span class="val">black</span>);
+<span class="prp">color</span>: <span class="fn">var</span>(<span class="prp">--a</span>, <span class="fn">var</span>(<span class="prp">--b</span>, <span class="val">red</span>)); <span class="cm">/* chain fallback */</span>
+
+<span class="cm">/* Lokalne — nadpisz w komponencie */</span>
+<span class="sel">.card</span> { <span class="prp">--radius</span>: <span class="num">12</span><span class="unt">px</span>; }  <span class="cm">/* nadpisuje :root */</span>
+
+<span class="cm">/* Manipulacja przez JS */</span>
+<span class="cm">// Czytaj</span>
+<span class="fn">getComputedStyle</span>(document.documentElement)
+  .getPropertyValue(<span class="str">'--color-primary'</span>);
+<span class="cm">// Pisz</span>
+document.documentElement.style
+  .setProperty(<span class="str">'--color-primary'</span>, <span class="str">'#ef4444'</span>);
+
+<span class="cm">/* Animacja zmiennych @property */</span>
+<span class="kw">@property</span> <span class="prp">--angle</span> {
+  <span class="prp">syntax</span>: <span class="str">'&lt;angle&gt;'</span>;
+  <span class="prp">initial-value</span>: <span class="num">0</span><span class="unt">deg</span>;
+  <span class="prp">inherits</span>: <span class="val">false</span>;
+}
+<span class="cm">/* Teraz można animować --angle przez transition! */</span></pre>
+    </div>
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--css2)"></div> CSS Nesting, Logical Props, nowe funkcje</div>
+      <pre><span class="cm">/* ─── CSS Nesting — natywne bez preprocessora! ───────────── */</span>
+<span class="sel">.card</span> {
+  <span class="prp">padding</span>: <span class="num">1</span><span class="unt">rem</span>;
+
+  <span class="cm">/* Zagnieżdżone selektory */</span>
+  <span class="sel">.title</span> { <span class="prp">font-size</span>: <span class="num">1.25</span><span class="unt">rem</span>; }
+
+  <span class="cm">/* & = referencja rodzica */</span>
+  <span class="sel">&amp;:hover</span>    { <span class="prp">box-shadow</span>: <span class="fn">var</span>(<span class="prp">--shadow</span>); }
+  <span class="sel">&amp;.active</span>   { <span class="prp">border-color</span>: <span class="fn">var</span>(<span class="prp">--primary</span>); }
+  <span class="sel">&amp; + &amp;</span>      { <span class="prp">margin-top</span>: <span class="num">1</span><span class="unt">rem</span>; } <span class="cm">/* .card + .card */</span>
+
+  <span class="cm">/* Media query wewnątrz */</span>
+  <span class="kw">@media</span> (<span class="val">min-width</span>: <span class="num">768</span><span class="unt">px</span>) {
+    <span class="prp">padding</span>: <span class="num">2</span><span class="unt">rem</span>;
+  }
+}
+
+<span class="cm">/* ─── Logical Properties — dla i18n ─────────────────────── */</span>
+<span class="cm">/* Zamiast top/bottom/left/right używaj:
+   block = oś pionowa, inline = oś pozioma */</span>
+<span class="prp">margin-block</span>: <span class="num">1</span><span class="unt">rem</span>;    <span class="cm">/* top + bottom */</span>
+<span class="prp">margin-inline</span>: <span class="val">auto</span>;  <span class="cm">/* left + right → centrowanie */</span>
+<span class="prp">padding-block-start</span>: <span class="num">2</span><span class="unt">rem</span>;  <span class="cm">/* padding-top */</span>
+<span class="prp">padding-inline-end</span>: <span class="num">1</span><span class="unt">rem</span>;  <span class="cm">/* padding-right (LTR) */</span>
+<span class="prp">border-block-end</span>: <span class="num">1</span><span class="unt">px</span> <span class="val">solid</span>;  <span class="cm">/* border-bottom */</span>
+<span class="prp">inset</span>: <span class="num">0</span>;          <span class="cm">/* top/right/bottom/left: 0 */</span>
+<span class="prp">inset-block</span>: <span class="num">0</span>;    <span class="cm">/* top + bottom */</span>
+<span class="prp">inset-inline</span>: <span class="num">0</span>;   <span class="cm">/* left + right */</span>
+<span class="prp">block-size</span>: <span class="num">100</span><span class="unt">%</span>; <span class="cm">/* height */</span>
+<span class="prp">inline-size</span>: <span class="num">50</span><span class="unt">%</span>; <span class="cm">/* width */</span>
+
+<span class="cm">/* ─── Nowe CSS 2024 ──────────────────────────────────────── */</span>
+<span class="cm">/* :has() — parent selector */</span>
+<span class="sel">form:has(:invalid)</span>   { <span class="prp">border-color</span>: <span class="val">red</span>; }
+<span class="sel">.card:has(img)</span>       { <span class="prp">padding</span>: <span class="num">0</span>; }
+<span class="sel">li:has(+ li:last-child)</span> { <span class="prp">font-weight</span>: <span class="val">bold</span>; }
+
+<span class="cm">/* @scope — lokalne style */</span>
+<span class="kw">@scope</span> (<span class="sel">.card</span>) <span class="kw">to</span> (<span class="sel">.nested-card</span>) {
+  <span class="sel">p</span> { <span class="prp">color</span>: <span class="val">blue</span>; } <span class="cm">/* tylko p w .card ale nie w .nested-card */</span>
+}
+
+<span class="cm">/* CSS trigonometry */</span>
+<span class="prp">transform</span>: <span class="fn">rotate</span>(<span class="fn">calc</span>(<span class="fn">sin</span>(<span class="kw">var</span>(<span class="prp">--t</span>)) * <span class="num">360</span><span class="unt">deg</span>));</pre>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 14 JS DOM ══ -->
+<section class="chapter" id="js-dom">
+  <div class="ch-head">
+    <div class="ch-num">14 / 14</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--js2)">JavaScript DOM — Frontend Basics</div>
+      <div class="ch-title">DOM manipulation, Events, Fetch API</div>
+      <div class="ch-desc">JavaScript w przeglądarce to DOM API, Events i asynchroniczność. Bez Reacta — czyste JS DOM jest podstawą rozumienia jak działa frontend. Fetch API, localStorage, IntersectionObserver — narzędzia każdego frontend dev.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--js2)"></div> DOM Selection i Manipulation</div>
+      <pre><span class="cm">// ─── Selekcja elementów ───────────────────────────────── */</span>
+document.<span class="fn">querySelector</span>(<span class="str">'.card'</span>);        <span class="cm">// pierwszy match</span>
+document.<span class="fn">querySelectorAll</span>(<span class="str">'li'</span>);       <span class="cm">// NodeList (nie Array!)</span>
+document.<span class="fn">getElementById</span>(<span class="str">'myId'</span>);       <span class="cm">// szybkie, brak #</span>
+document.<span class="fn">getElementsByClassName</span>(<span class="str">'btn'</span>); <span class="cm">// live HTMLCollection</span>
+el.<span class="fn">closest</span>(<span class="str">'.parent'</span>);                 <span class="cm">// szukaj w górę DOM</span>
+el.<span class="fn">matches</span>(<span class="str">':hover'</span>);                  <span class="cm">// sprawdź selektor</span>
+
+<span class="cm">// ─── Modyfikacja ──────────────────────────────────────── */</span>
+el.textContent = <span class="str">'Nowy tekst'</span>;          <span class="cm">// bezpieczne (no XSS)</span>
+el.innerHTML = <span class="str">'&lt;b&gt;HTML&lt;/b&gt;'</span>;           <span class="cm">// uwaga XSS!</span>
+el.outerHTML = <span class="str">'&lt;div&gt;...&lt;/div&gt;'</span>;        <span class="cm">// zastąp cały element</span>
+
+<span class="cm">// Atrybuty</span>
+el.<span class="fn">setAttribute</span>(<span class="str">'aria-label'</span>, <span class="str">'opis'</span>);
+el.<span class="fn">getAttribute</span>(<span class="str">'href'</span>);
+el.<span class="fn">removeAttribute</span>(<span class="str">'disabled'</span>);
+el.<span class="fn">hasAttribute</span>(<span class="str">'hidden'</span>);
+el.dataset.userId;                       <span class="cm">// data-user-id="5"</span>
+
+<span class="cm">// Klasy</span>
+el.classList.<span class="fn">add</span>(<span class="str">'active'</span>, <span class="str">'visible'</span>);
+el.classList.<span class="fn">remove</span>(<span class="str">'active'</span>);
+el.classList.<span class="fn">toggle</span>(<span class="str">'open'</span>);
+el.classList.<span class="fn">toggle</span>(<span class="str">'dark'</span>, <span class="kw">true</span>);      <span class="cm">// force add/remove</span>
+el.classList.<span class="fn">replace</span>(<span class="str">'old'</span>, <span class="str">'new'</span>);
+el.classList.<span class="fn">contains</span>(<span class="str">'active'</span>);
+
+<span class="cm">// Style</span>
+el.style.color = <span class="str">'red'</span>;
+el.style.cssText = <span class="str">'color:red;font-size:2rem'</span>;
+<span class="fn">getComputedStyle</span>(el).getPropertyValue(<span class="str">'color'</span>);
+
+<span class="cm">// Tworzenie i wstawianie</span>
+<span class="kw">const</span> div = document.<span class="fn">createElement</span>(<span class="str">'div'</span>);
+div.textContent = <span class="str">'Hello'</span>;
+parent.<span class="fn">appendChild</span>(div);
+parent.<span class="fn">prepend</span>(div);
+parent.<span class="fn">insertBefore</span>(div, referenceEl);
+el.<span class="fn">insertAdjacentHTML</span>(<span class="str">'beforeend'</span>, <span class="str">'&lt;p&gt;tekst&lt;/p&gt;'</span>);
+el.<span class="fn">remove</span>();                            <span class="cm">// usuń z DOM</span>
+el.<span class="fn">replaceWith</span>(newEl);</pre>
+    </div>
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--js2)"></div> Events, Fetch API, Storage, Observers</div>
+      <pre><span class="cm">// ─── Eventy ───────────────────────────────────────────── */</span>
+el.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, <span class="kw">function</span>(e) {
+  e.<span class="fn">preventDefault</span>();   <span class="cm">// blokuj domyślne zachowanie</span>
+  e.<span class="fn">stopPropagation</span>();   <span class="cm">// stop bubbling</span>
+  e.target;              <span class="cm">// element który wywołał</span>
+  e.currentTarget;       <span class="cm">// element z listenerem</span>
+});
+
+<span class="cm">// Event Delegation — jeden listener dla wielu dzieci</span>
+document.<span class="fn">querySelector</span>(<span class="str">'.list'</span>)
+  .<span class="fn">addEventListener</span>(<span class="str">'click'</span>, e => {
+    <span class="kw">if</span>(e.target.<span class="fn">matches</span>(<span class="str">'li'</span>)) {
+      <span class="cm">/* obsłuż kliknięcie na li */</span>
+    }
+  });
+
+<span class="cm">// Ważne eventy: click, dblclick, mouseenter/mouseleave</span>
+<span class="cm">// keydown/keyup/keypress, input/change, submit, focus/blur</span>
+<span class="cm">// scroll, resize, DOMContentLoaded, load</span>
+<span class="cm">// touchstart/touchend, pointerdown/pointerup</span>
+
+<span class="cm">// ─── Fetch API ─────────────────────────────────────────── */</span>
+<span class="kw">const</span> data = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">'/api/users'</span>);
+<span class="kw">const</span> json = <span class="kw">await</span> data.<span class="fn">json</span>();
+
+<span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">'/api/users'</span>, {
+  method: <span class="str">'POST'</span>,
+  headers: { <span class="str">'Content-Type'</span>: <span class="str">'application/json'</span> },
+  body: JSON.<span class="fn">stringify</span>({ name: <span class="str">'Jan'</span> })
+});
+
+<span class="cm">// ─── Storage ───────────────────────────────────────────── */</span>
+localStorage.<span class="fn">setItem</span>(<span class="str">'user'</span>, JSON.<span class="fn">stringify</span>(user));
+<span class="kw">const</span> u = JSON.<span class="fn">parse</span>(localStorage.<span class="fn">getItem</span>(<span class="str">'user'</span>));
+localStorage.<span class="fn">removeItem</span>(<span class="str">'user'</span>);
+localStorage.<span class="fn">clear</span>();
+<span class="cm">// sessionStorage — jak local ale tylko do zamknięcia tab</span>
+
+<span class="cm">// ─── IntersectionObserver — lazy load / animations ───── */</span>
+<span class="kw">const</span> obs = <span class="kw">new</span> <span class="fn">IntersectionObserver</span>((entries) => {
+  entries.<span class="fn">forEach</span>(e => {
+    <span class="kw">if</span>(e.isIntersecting) {
+      e.target.classList.<span class="fn">add</span>(<span class="str">'visible'</span>);
+      obs.<span class="fn">unobserve</span>(e.target);
+    }
+  });
+}, { threshold: <span class="num">0.1</span> });
+document.<span class="fn">querySelectorAll</span>(<span class="str">'.fade-in'</span>)
+  .<span class="fn">forEach</span>(el => obs.<span class="fn">observe</span>(el));
+
+<span class="cm">// ─── ResizeObserver — reaguj na zmianę rozmiaru ────────── */</span>
+<span class="kw">new</span> <span class="fn">ResizeObserver</span>(entries => {
+  entries.<span class="fn">forEach</span>(e => {
+    <span class="kw">const</span> { width, height } = e.contentRect;
+  });
+}).<span class="fn">observe</span>(el);</pre>
+    </div>
+  </div>
+  <div class="gap16"></div>
+  <div class="g4">
+    <div class="card">
+      <div class="card-h" style="color:var(--js2)">♿ ARIA Podstawy</div>
+      <div class="card-b" style="font-size:.82rem;color:var(--tx2);line-height:1.8">
+        <p><strong style="color:var(--tx)">Roles:</strong> <code>role="button"</code>, <code>role="dialog"</code>, <code>role="alert"</code>, <code>role="navigation"</code>, <code>role="main"</code></p>
+        <p style="margin-top:8px"><strong style="color:var(--tx)">States:</strong> <code>aria-expanded="true"</code>, <code>aria-selected</code>, <code>aria-checked</code>, <code>aria-disabled</code>, <code>aria-hidden="true"</code></p>
+        <p style="margin-top:8px"><strong style="color:var(--tx)">Properties:</strong> <code>aria-label="opis"</code>, <code>aria-labelledby="id"</code>, <code>aria-describedby="id"</code>, <code>aria-live="polite"</code></p>
+        <p style="margin-top:8px"><strong style="color:var(--tx)">Zasada:</strong> używaj semantycznego HTML — unikasz ARIA. Kiedy musisz (custom widget) → pełne ARIA.</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--js2)">📐 Web Performance</div>
+      <div class="card-b" style="font-size:.82rem;color:var(--tx2);line-height:1.8">
+        <p><strong style="color:var(--tx)">Critical Rendering Path:</strong> Parse HTML → CSS (CSSOM) → JS → Render Tree → Layout → Paint → Composite</p>
+        <p style="margin-top:8px"><strong style="color:var(--tx)">Nie wywołuj reflow:</strong> Grupuj odczyty i zapisy DOM. Czytaj →<code>getBoundingClientRect()</code> przed zapisem.</p>
+        <p style="margin-top:8px"><strong style="color:var(--tx)">Core Web Vitals:</strong> LCP (Largest Contentful Paint) &lt;2.5s, FID/INP &lt;200ms, CLS &lt;0.1</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--js2)">🛠️ Dev Tools — skróty</div>
+      <div class="card-b" style="font-size:.82rem;color:var(--tx2);line-height:1.8">
+        <p><strong style="color:var(--tx)">$0</strong> — ostatni zaznaczony element w Elements</p>
+        <p><strong style="color:var(--tx)">$(</strong><code>'.class'</code><strong>)</strong> — alias querySelector</p>
+        <p style="margin-top:6px">Elements → <strong>Computed</strong> — finalne style z kaskady</p>
+        <p>Elements → <strong>Force State</strong> — symuluj :hover, :focus</p>
+        <p>Network → <strong>Throttle</strong> — symuluj wolne łącze</p>
+        <p>Lighthouse — audyt performance, SEO, a11y</p>
+        <p>Coverage — nieużywany JS/CSS</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--js2)">🔗 Narzędzia Ecosystem</div>
+      <div class="card-b" style="font-size:.82rem;color:var(--tx2);line-height:1.8">
+        <p><strong style="color:var(--tx)">CSS Framework:</strong> Tailwind CSS (utility-first), Bootstrap (component), Open Props (zmienne)</p>
+        <p style="margin-top:6px"><strong style="color:var(--tx)">Preprocessory:</strong> Sass/SCSS (nesting, mixiny, extend — dziś mniej potrzebne)</p>
+        <p style="margin-top:6px"><strong style="color:var(--tx)">Build tools:</strong> Vite, Parcel (PostCSS, autoprefixer, minifikacja)</p>
+        <p style="margin-top:6px"><strong style="color:var(--tx)">Linting:</strong> Stylelint (CSS), ESLint (JS), Prettier (formatowanie)</p>
+      </div>
+    </div>
+  </div>
+  <div class="gap24"></div>
+  <div class="strip" style="border-color:var(--html);background:rgba(228,77,38,.04)">
+    <div class="strip-icon">🌐</div>
+    <div><strong>HTML to semantyka, CSS to prezentacja, JavaScript to zachowanie.</strong> Trzy osobne warstwy tej samej abstrakcji. Dobry frontend developer rozumie wszystkie trzy i wie kiedy używać kt

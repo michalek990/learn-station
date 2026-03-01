@@ -1,0 +1,1459 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Komputer — Architektura, Boot & Systemy Plików</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #070a0f;
+  --s1: #0c1018;
+  --s2: #121824;
+  --s3: #192030;
+  --bd: #1e2d42;
+  --bd2: #283d58;
+  --tx: #d0e8ff;
+  --tx2: #7090b8;
+  --mt: #354d68;
+  --acc: #38bdf8;
+  --acc2: #67d0fa;
+  --green: #4ade80;
+  --teal: #2dd4bf;
+  --violet: #a78bfa;
+  --rose: #fb7185;
+  --amber: #fbbf24;
+  --orange: #fb923c;
+  --pink: #e879f9;
+  --emerald: #34d399;
+  --lime: #a3e635;
+  --win: #00adef;
+  --linux: #f5a623;
+  --hw: #a78bfa;
+}
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;line-height:1.65;overflow-x:hidden}
+
+.back{position:fixed;top:22px;left:22px;z-index:9999;background:rgba(255,255,255,.95);backdrop-filter:blur(14px);border:1px solid var(--bd2);border-radius:40px;padding:10px 20px;display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--tx2);font-family:'IBM Plex Mono',monospace;font-size:.72rem;font-weight:500;letter-spacing:1px;transition:all .25s}
+.back:hover{color:var(--acc);border-color:var(--acc)}
+
+/* HEADER */
+.hdr{min-height:520px;padding:110px 80px 80px;position:relative;overflow:hidden;display:flex;align-items:flex-end}
+.hdr-bg{position:absolute;inset:0;background:var(--s1)}
+.hdr-bg::before{content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 65% 60% at 5% 100%,rgba(56,189,248,.13) 0%,transparent 55%),
+    radial-gradient(ellipse 45% 65% at 95% 5%,rgba(167,139,250,.09) 0%,transparent 50%),
+    radial-gradient(ellipse 55% 50% at 55% 55%,rgba(251,162,36,.04) 0%,transparent 60%)}
+.hdr-grid{position:absolute;inset:0;background-image:linear-gradient(var(--bd) 1px,transparent 1px),linear-gradient(90deg,var(--bd) 1px,transparent 1px);background-size:48px 48px;opacity:.14;mask-image:radial-gradient(ellipse 85% 90% at 50% 50%,black,transparent)}
+.hdr-content{position:relative;max-width:1400px;width:100%}
+.hdr-tier{display:inline-flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:.65rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--acc);margin-bottom:28px;padding:7px 16px;border:1px solid rgba(56,189,248,.35);border-radius:4px;background:rgba(56,189,248,.06)}
+.tier-dot{width:6px;height:6px;border-radius:50%;background:var(--acc);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+h1{font-size:clamp(2.8rem,7vw,6.5rem);font-weight:800;line-height:.9;letter-spacing:-4px;margin-bottom:28px}
+h1 em{font-style:normal;color:var(--acc2)}
+h1 small{display:block;font-size:.36em;letter-spacing:-1px;color:var(--tx2);font-weight:500;margin-top:14px}
+.hdr-desc{font-size:1rem;color:var(--tx2);max-width:680px;line-height:1.9}
+.hdr-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.chip{font-family:'IBM Plex Mono',monospace;font-size:.63rem;font-weight:600;letter-spacing:.5px;padding:5px 12px;border-radius:3px;border:1px solid}
+.ca{color:var(--acc);   border-color:rgba(56,189,248,.4); background:rgba(56,189,248,.06)}
+.ch{color:var(--hw);    border-color:rgba(167,139,250,.4);background:rgba(167,139,250,.07)}
+.cg{color:var(--green); border-color:rgba(74,222,128,.35);background:rgba(74,222,128,.05)}
+.cw{color:var(--win);   border-color:rgba(0,173,239,.4);  background:rgba(0,173,239,.06)}
+.cl{color:var(--linux); border-color:rgba(245,166,35,.4); background:rgba(245,166,35,.06)}
+.cr{color:var(--rose);  border-color:rgba(251,113,133,.35);background:rgba(251,113,133,.05)}
+.ct{color:var(--teal);  border-color:rgba(45,212,191,.35);background:rgba(45,212,191,.05)}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:300;background:rgba(7,10,15,.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--bd);display:flex;overflow-x:auto;scrollbar-width:none;padding:0 80px}
+.nav::-webkit-scrollbar{display:none}
+.nav-a{color:var(--mt);text-decoration:none;font-family:'IBM Plex Mono',monospace;font-size:.63rem;font-weight:600;letter-spacing:.5px;padding:14px 12px;white-space:nowrap;border-bottom:2px solid transparent;transition:all .18s}
+.nav-a:hover{color:var(--acc);border-bottom-color:var(--acc)}
+
+/* MAIN */
+.main{max-width:1400px;margin:0 auto;padding:80px 24px 160px}
+.chapter{margin-bottom:104px;animation:fadeUp .5s ease backwards}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.chapter:nth-child(1){animation-delay:.04s}.chapter:nth-child(2){animation-delay:.08s}
+.chapter:nth-child(3){animation-delay:.12s}.chapter:nth-child(4){animation-delay:.16s}
+.chapter:nth-child(5){animation-delay:.20s}.chapter:nth-child(6){animation-delay:.24s}
+.chapter:nth-child(7){animation-delay:.28s}.chapter:nth-child(8){animation-delay:.32s}
+.chapter:nth-child(9){animation-delay:.36s}.chapter:nth-child(10){animation-delay:.40s}
+.chapter:nth-child(11){animation-delay:.44s}.chapter:nth-child(12){animation-delay:.48s}
+
+.ch-head{display:flex;align-items:flex-start;gap:22px;margin-bottom:36px;padding-bottom:28px;border-bottom:1px solid var(--bd)}
+.ch-num{font-family:'IBM Plex Mono',monospace;font-size:.62rem;font-weight:700;letter-spacing:3px;color:var(--mt);padding-top:6px;white-space:nowrap}
+.ch-info{flex:1}
+.ch-cat{font-family:'IBM Plex Mono',monospace;font-size:.58rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:6px}
+.ch-title{font-size:1.9rem;font-weight:800;letter-spacing:-1px;line-height:1.1;margin-bottom:10px}
+.ch-desc{font-size:.9rem;color:var(--tx2);max-width:840px;line-height:1.9}
+
+/* GRIDS */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.g13{display:grid;grid-template-columns:1fr 3fr;gap:14px}
+.g32{display:grid;grid-template-columns:3fr 2fr;gap:14px}
+@media(max-width:1100px){.g4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:900px){.g2,.g3,.g4,.g13,.g32{grid-template-columns:1fr}.hdr{padding:80px 24px 56px}.nav{padding:0 16px}h1{font-size:2.8rem;letter-spacing:-2px}}
+
+/* CARD */
+.card{background:var(--s1);border:1px solid var(--bd);border-radius:8px;overflow:hidden;transition:border-color .2s,box-shadow .2s}
+.card:hover{border-color:var(--bd2);box-shadow:0 6px 28px rgba(0,0,0,.5)}
+.card-h{padding:11px 18px;font-family:'IBM Plex Mono',monospace;font-size:.66rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:8px}
+.card-b{padding:18px}
+
+/* CODE */
+.code{background:#030508;border:1px solid var(--bd);border-radius:8px;overflow:hidden}
+.cbar{background:var(--s1);border-bottom:1px solid var(--bd);padding:9px 16px;font-family:'IBM Plex Mono',monospace;font-size:.64rem;color:var(--mt);display:flex;align-items:center;justify-content:space-between}
+.cbar-l{display:flex;align-items:center;gap:7px}
+.fdot{width:7px;height:7px;border-radius:50%}
+pre{padding:20px;font-family:'IBM Plex Mono',monospace;font-size:.76rem;line-height:1.75;overflow-x:auto;color:#374151}
+.kw{color:#c792ea}.cm{color:#2a4058;font-style:italic}.st{color:#c3e88d}
+.go{color:var(--acc2)}.gr{color:var(--green)}.or{color:var(--orange)}
+.vi{color:var(--violet)}.re{color:var(--rose)}.am{color:var(--amber)}
+.wn{color:var(--win)}.ln{color:var(--linux)}.hw{color:var(--hw)}
+
+/* ALERTS */
+.alert{padding:16px 20px;border-radius:6px;border-left:3px solid;font-size:.87rem;line-height:1.85;color:var(--tx2)}
+.alert strong{color:var(--tx)}
+.alert-label{font-family:'IBM Plex Mono',monospace;font-size:.58rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;display:block;margin-bottom:6px}
+.al-acc{background:rgba(56,189,248,.05);border-color:var(--acc)} .al-acc .alert-label{color:var(--acc)}
+.al-rose{background:rgba(251,113,133,.05);border-color:var(--rose)} .al-rose .alert-label{color:var(--rose)}
+.al-teal{background:rgba(45,212,191,.05);border-color:var(--teal)} .al-teal .alert-label{color:var(--teal)}
+.al-violet{background:rgba(167,139,250,.05);border-color:var(--violet)} .al-violet .alert-label{color:var(--violet)}
+.al-green{background:rgba(74,222,128,.05);border-color:var(--green)} .al-green .alert-label{color:var(--green)}
+.al-amber{background:rgba(251,191,36,.05);border-color:var(--amber)} .al-amber .alert-label{color:var(--amber)}
+.al-win{background:rgba(0,173,239,.05);border-color:var(--win)} .al-win .alert-label{color:var(--win)}
+.al-linux{background:rgba(245,166,35,.05);border-color:var(--linux)} .al-linux .alert-label{color:var(--linux)}
+.al-hw{background:rgba(167,139,250,.05);border-color:var(--hw)} .al-hw .alert-label{color:var(--hw)}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;font-size:.84rem}
+.tbl th{background:var(--s2);color:var(--tx2);font-family:'IBM Plex Mono',monospace;font-size:.63rem;letter-spacing:2px;text-transform:uppercase;font-weight:700;padding:11px 16px;text-align:left;border-bottom:1px solid var(--bd);white-space:nowrap}
+.tbl td{padding:11px 16px;border-bottom:1px solid var(--bd);color:var(--tx2);vertical-align:top;line-height:1.75}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:var(--s2);color:var(--tx)}
+.tbl code{font-family:'IBM Plex Mono',monospace;font-size:.76rem;color:var(--acc2);background:rgba(56,189,248,.09);padding:2px 7px;border-radius:3px}
+
+/* RLIST */
+.ritem{display:flex;gap:16px;padding:12px 0;border-bottom:1px solid var(--bd);align-items:flex-start}
+.ritem:last-child{border-bottom:none}
+.ritem-key{font-family:'IBM Plex Mono',monospace;font-size:.76rem;white-space:nowrap;padding-top:2px;min-width:200px;flex-shrink:0}
+.ritem-val{font-size:.85rem;color:var(--tx2);line-height:1.75}
+.ritem-val code{font-family:'IBM Plex Mono',monospace;font-size:.76rem;color:var(--acc2);background:rgba(56,189,248,.09);padding:1px 6px;border-radius:3px}
+.ritem-val strong{color:var(--tx)}
+
+/* BOOT STEPS */
+.boot-flow{display:flex;flex-direction:column;gap:0;position:relative}
+.boot-step{display:grid;grid-template-columns:200px 1fr;gap:0;position:relative}
+.boot-step::before{content:'';position:absolute;left:187px;top:24px;bottom:-1px;width:2px;background:linear-gradient(var(--bd2),var(--bd))}
+.boot-step:last-child::before{display:none}
+.boot-step-num{font-family:'IBM Plex Mono',monospace;font-size:.72rem;font-weight:700;padding:16px 0;text-align:right;padding-right:28px;position:relative;color:var(--mt);white-space:nowrap}
+.boot-step-num::after{content:'';position:absolute;right:-6px;top:20px;width:14px;height:14px;border-radius:50%;border:2px solid;background:var(--bg)}
+.boot-step-body{padding:14px 0 14px 28px;border-bottom:1px solid var(--bd);margin-bottom:0}
+.boot-step:last-child .boot-step-body{border-bottom:none}
+.boot-step-title{font-size:.95rem;font-weight:700;margin-bottom:5px}
+.boot-step-desc{font-size:.84rem;color:var(--tx2);line-height:1.8}
+
+/* TREE */
+.tree{font-family:'IBM Plex Mono',monospace;font-size:.76rem;line-height:1.9;background:var(--s2);border:1px solid var(--bd);border-radius:8px;padding:18px 22px;overflow-x:auto}
+.tree-dir{font-weight:700}
+.tree-file{color:var(--tx2)}
+.tree-desc{color:var(--mt);font-style:italic;margin-left:4px}
+.w{color:var(--win)}.l{color:var(--linux)}.g{color:var(--green)}.v{color:var(--violet)}
+.o{color:var(--orange)}.t{color:var(--teal)}.a{color:var(--acc2)}.r{color:var(--rose)}
+
+/* COMPARE */
+.compare{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--bd);border-radius:8px;overflow:hidden}
+.compare-col:first-child{border-right:1px solid var(--bd)}
+.compare-head{padding:11px 18px;font-family:'IBM Plex Mono',monospace;font-size:.66rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border-bottom:1px solid var(--bd)}
+.compare-body{padding:16px 18px;font-size:.84rem;color:var(--tx2);line-height:1.85}
+
+/* STRIP */
+.strip{border:1px solid var(--bd);border-radius:8px;padding:18px 22px;font-size:.87rem;color:var(--tx2);line-height:1.85;display:flex;gap:16px;align-items:flex-start}
+.strip-icon{font-size:1.3rem;flex-shrink:0;padding-top:2px}
+.strip strong{color:var(--tx)}
+
+.gap8{margin-top:8px}.gap12{margin-top:12px}.gap16{margin-top:16px}.gap24{margin-top:24px}
+
+/* MEMORY BAR */
+.mem-bar{display:flex;border-radius:6px;overflow:hidden;height:36px;margin-bottom:8px}
+.mem-seg{display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:.62rem;font-weight:700;letter-spacing:.5px;white-space:nowrap;padding:0 8px}
+
+/* FOOTER */
+.footer{border-top:1px solid var(--bd);background:var(--s1);padding:36px 80px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;font-family:'IBM Plex Mono',monospace;font-size:.68rem;color:var(--mt)}
+.footer-title{color:var(--acc);font-weight:700}
+</style>
+</head>
+<body>
+
+<a class="back" href="#">← MENU</a>
+
+<!-- ═══════════ HEADER -->
+<header class="hdr">
+  <div class="hdr-bg"></div>
+  <div class="hdr-grid"></div>
+  <div class="hdr-content">
+    <div class="hdr-tier"><div class="tier-dot"></div>Hardware · OS · Boot · Filesystem</div>
+    <h1>Komputer<br><em>od środka</em><small>Architektura sprzętu, boot process krok po kroku, Windows & Linux</small></h1>
+    <p class="hdr-desc">Wszystko co musisz wiedzieć o tym jak działa komputer — od tranzystora przez CPU, RAM, dysk, BIOS/UEFI, bootloader, kernel aż po zalogowanego użytkownika. Plus pełna mapa folderów Windows i Linux.</p>
+    <div class="hdr-chips">
+      <span class="chip ca">● Hardware Architecture</span>
+      <span class="chip ch">CPU & Memory</span>
+      <span class="chip cg">Boot Process</span>
+      <span class="chip cw">Windows</span>
+      <span class="chip cl">Linux</span>
+      <span class="chip cr">Filesystems</span>
+      <span class="chip ct">Procesy & Kernel</span>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════ NAV -->
+<nav class="nav">
+  <a class="nav-a" href="#hardware">Sprzęt</a>
+  <a class="nav-a" href="#cpu">CPU</a>
+  <a class="nav-a" href="#memory">Pamięć</a>
+  <a class="nav-a" href="#storage">Dyski</a>
+  <a class="nav-a" href="#boot">Boot Process</a>
+  <a class="nav-a" href="#kernel">Kernel & OS</a>
+  <a class="nav-a" href="#processes">Procesy</a>
+  <a class="nav-a" href="#filesystem">Systemy Plików</a>
+  <a class="nav-a" href="#windows-dirs">Foldery Windows</a>
+  <a class="nav-a" href="#linux-dirs">Foldery Linux</a>
+  <a class="nav-a" href="#network-boot">Sieć & Boot</a>
+  <a class="nav-a" href="#troubleshoot">Diagnostyka</a>
+</nav>
+
+<!-- ═══════════ MAIN -->
+<main class="main">
+
+  <!-- ══ 01 HARDWARE ══ -->
+  <section class="chapter" id="hardware">
+    <div class="ch-head">
+      <div class="ch-num">01 / 12</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--hw)">Architektura Sprzętu</div>
+        <div class="ch-title">Z czego zbudowany jest komputer</div>
+        <div class="ch-desc">Komputer to hierarchia warstw abstrakcji — od tranzystorów przez bramki logiczne, mikrokod, ISA (Instruction Set Architecture) aż po system operacyjny. Każda warstwa ukrywa szczegóły warstwy poniżej.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="card">
+        <div class="card-h" style="color:var(--hw)">🔌 Główne komponenty PC</div>
+        <div class="card-b">
+          <div class="ritem">
+            <div class="ritem-key" style="color:var(--hw)">CPU</div>
+            <div class="ritem-val"><strong>Central Processing Unit</strong> — "mózg". Wykonuje instrukcje. Zawiera: rdzenie (cores), cache L1/L2/L3, kontroler pamięci, PCIe lanes, iGPU (często). Intel / AMD / ARM.</div>
+          </div>
+          <div class="ritem">
+            <div class="ritem-key" style="color:var(--acc)">RAM</div>
+            <div class="ritem-val"><strong>Random Access Memory</strong> — pamięć operacyjna. Ulotna (dane giną po wyłączeniu). DDR4/DDR5. Szeroka magistrala (64-bit per kanał). Bezpośrednio adresowalna przez CPU.</div>
+          </div>
+          <div class="ritem">
+            <div class="ritem-key" style="color:var(--green)">Motherboard</div>
+            <div class="ritem-val"><strong>Płyta główna</strong> — łączy wszystko. Chipset zarządza komunikacją. Socket CPU, sloty RAM, PCIe, SATA, M.2, USB, audio, LAN. BIOS/UEFI chip.</div>
+          </div>
+          <div class="ritem">
+            <div class="ritem-key" style="color:var(--orange)">GPU</div>
+            <div class="ritem-val"><strong>Graphics Processing Unit</strong> — tysiące małych rdzeni do obliczeń równoległych. VRAM (GDDR6). Połączony przez PCIe x16. Dedykowany (Nvidia/AMD) lub zintegrowany (Intel/AMD iGPU).</div>
+          </div>
+          <div class="ritem">
+            <div class="ritem-key" style="color:var(--teal)">Storage</div>
+            <div class="ritem-val"><strong>Dysk</strong> — HDD (talerze magnetyczne), SSD SATA, SSD NVMe (PCIe). NVMe przez M.2 slot = 7 GB/s+. Nieulotna (dane zostają po wyłączeniu).</div>
+          </div>
+          <div class="ritem">
+            <div class="ritem-key" style="color:var(--violet)">PSU</div>
+            <div class="ritem-val"><strong>Power Supply Unit</strong> — zamienia 230V AC na DC (3.3V, 5V, 12V). ATX standard. 80 PLUS certyfikaty = sprawność. Zły PSU = niestabilność/uszkodzenia.</div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card" style="margin-bottom:14px">
+          <div class="card-h" style="color:var(--hw)">🔗 Magistrale i komunikacja</div>
+          <div class="card-b" style="overflow-x:auto">
+            <table class="tbl">
+              <thead><tr><th>Magistrala</th><th>Zastosowanie</th><th>Przepustowość</th></tr></thead>
+              <tbody>
+                <tr><td><code>PCIe 5.0 x16</code></td><td>GPU, NVMe</td><td>~128 GB/s</td></tr>
+                <tr><td><code>PCIe 4.0 x4</code></td><td>NVMe SSD (M.2)</td><td>~8 GB/s</td></tr>
+                <tr><td><code>DDR5</code></td><td>RAM → CPU</td><td>~96 GB/s (dual ch.)</td></tr>
+                <tr><td><code>SATA III</code></td><td>HDD, SSD 2.5"</td><td>600 MB/s</td></tr>
+                <tr><td><code>USB 3.2 Gen2</code></td><td>Zewnętrzne urządzenia</td><td>10 Gbps</td></tr>
+                <tr><td><code>Thunderbolt 4</code></td><td>Zewnętrzne GPU, dyski</td><td>40 Gbps</td></tr>
+                <tr><td><code>I²C / SPI</code></td><td>Czujniki, BIOS chip</td><td>KB/s–MB/s</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-h" style="color:var(--hw)">🧮 Chipset — North/South Bridge (historycznie)</div>
+          <div class="card-b" style="font-size:.84rem;color:var(--tx2);line-height:1.85">
+            <p style="margin-bottom:10px"><strong style="color:var(--tx)">Dawniej:</strong> Northbridge (CPU ↔ RAM, GPU) + Southbridge (USB, SATA, audio, LAN).</p>
+            <p style="margin-bottom:10px"><strong style="color:var(--tx)">Dziś:</strong> Kontroler pamięci i PCIe są <strong>wewnątrz CPU</strong> (on-die). Chipset (PCH — Platform Controller Hub) obsługuje tylko wolniejsze peryferia (USB, SATA, audio). CPU i PCH komunikują przez DMI.</p>
+            <p>AMD: kontrolery wewnątrz CPU (Infinity Fabric łączy CCD i IOD). Intel: podobnie.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="gap16"></div>
+    <div class="alert al-hw">
+      <span class="alert-label">🔬 Od tranzystora do instrukcji</span>
+      <strong>Tranzystor</strong> (MOSFET, 3nm–7nm) → bramki logiczne (AND, OR, NOT, XOR) → przerzutniki/rejestry → ALU (Arithmetic Logic Unit) → rdzeń CPU → instrukcja. Nowoczesny CPU ma <strong>~50 miliardów tranzystorów</strong>. Intel i AMD używają TSMC i własnych fabryk. Tranzystory tak małe że zawierają kilka atomów krzemu.
+    </div>
+  </section>
+
+  <!-- ══ 02 CPU ══ -->
+  <section class="chapter" id="cpu">
+    <div class="ch-head">
+      <div class="ch-num">02 / 12</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--acc)">CPU — Procesor w szczegółach</div>
+        <div class="ch-title">Jak CPU wykonuje instrukcje</div>
+        <div class="ch-desc">Cykl fetch-decode-execute, pipeline, branch prediction, out-of-order execution, hyper-threading — to mechanizmy które sprawiają że nowoczesny CPU jest 1000x szybszy niż prosty model sugeruje. Każdy developer powinien to rozumieć.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--acc)"></div>Cykl CPU — Fetch → Decode → Execute</div></div>
+        <pre><span class="cm">Każda instrukcja przechodzi przez etapy:</span>
+
+<span class="go">1. FETCH</span>       <span class="cm">// Pobierz instrukcję z pamięci (cache L1i)</span>
+                <span class="cm">// PC (Program Counter) wskazuje adres</span>
+                <span class="cm">// PC++ po pobraniu</span>
+
+<span class="go">2. DECODE</span>      <span class="cm">// Zdekoduj opcode → mikrooperacje (µops)</span>
+                <span class="cm">// x86 → wewnętrznie RISC-like µops</span>
+
+<span class="go">3. DISPATCH</span>    <span class="cm">// Wyślij do odpowiedniej jednostki wykonawczej</span>
+                <span class="cm">// ALU, FPU, Load/Store unit, Branch unit</span>
+
+<span class="go">4. EXECUTE</span>     <span class="cm">// Wykonaj operację</span>
+                <span class="cm">// Out-of-order: kolejność może być zmieniona!</span>
+                <span class="cm">// Wynik zapisany tymczasowo (ROB)</span>
+
+<span class="go">5. WRITE-BACK</span>  <span class="cm">// Zapisz wynik do rejestru / cache</span>
+                <span class="cm">// In-order commit — zachowanie wyglądania sequential</span>
+
+<span class="cm">─── Pipeline — wiele instrukcji jednocześnie ──────────────</span>
+<span class="cm">Instrukcja 1:  F  D  E  W</span>
+<span class="cm">Instrukcja 2:     F  D  E  W</span>
+<span class="cm">Instrukcja 3:        F  D  E  W</span>
+<span class="cm">Instrukcja 4:           F  D  E  W</span>
+<span class="cm">→ 4 instrukcje "jednocześnie" w różnych etapach</span>
+
+<span class="cm">─── Branch Misprediction — kosztowne! ─────────────────────</span>
+<span class="cm">if (x &gt; 0) { ... }  // CPU spekuluje która gałąź</span>
+<span class="cm">Błędna spekulacja → flush pipeline → 15-20 cykli stracone</span>
+<span class="cm">Nowoczesne predyktory: 95%+ accuracy</span></pre>
+      </div>
+
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--acc)"></div>Cache hierarchia i latencje</div></div>
+        <pre><span class="cm">┌─────────────────────────────────────────────┐</span>
+<span class="cm">│  CPU Core                                   │</span>
+<span class="cm">│  ┌────────────┐  ┌─────────┐               │</span>
+<span class="cm">│  │ L1i Cache  │  │ L1d Cache│ ~32KB, 4 cykle│</span>
+<span class="cm">│  └────────────┘  └─────────┘               │</span>
+<span class="cm">│  ┌──────────────────────────┐              │</span>
+<span class="cm">│  │     L2 Cache             │ ~512KB, 12 cykli</span>
+<span class="cm">│  └──────────────────────────┘              │</span>
+<span class="cm">└─────────────────────────────────────────────┘</span>
+<span class="cm">┌─────────────────────────────────────────────┐</span>
+<span class="cm">│     L3 Cache (shared)      │ ~32MB, 40 cykli │</span>
+<span class="cm">└─────────────────────────────────────────────┘</span>
+<span class="cm">┌─────────────────────────────────────────────┐</span>
+<span class="cm">│     RAM (DRAM)             │ ~100ns, 100+ cykli</span>
+<span class="cm">└─────────────────────────────────────────────┘</span>
+<span class="cm">┌─────────────────────────────────────────────┐</span>
+<span class="cm">│     NVMe SSD               │ ~100µs = 100 000ns</span>
+<span class="cm">└─────────────────────────────────────────────┘</span>
+<span class="cm">┌─────────────────────────────────────────────┐</span>
+<span class="cm">│     HDD                    │ ~10ms = 10 000 000ns</span>
+<span class="cm">└─────────────────────────────────────────────┘</span>
+
+<span class="cm">Jeśli L1 = 1 sekunda, to:</span>
+<span class="cm">L2  = 5 sekund</span>
+<span class="cm">L3  = 40 sekund</span>
+<span class="cm">RAM = 6 minut</span>
+<span class="cm">SSD = 2.5 dni</span>
+<span class="cm">HDD = 3 miesiące</span></pre>
+      </div>
+    </div>
+
+    <div class="gap16"></div>
+    <div class="g3">
+      <div class="card">
+        <div class="card-h" style="color:var(--acc)">🧵 Hyper-Threading / SMT</div>
+        <div class="card-b" style="font-size:.84rem;color:var(--tx2);line-height:1.85">
+          <p style="margin-bottom:10px"><strong style="color:var(--tx)">Simultaneous Multi-Threading (SMT)</strong> — jeden fizyczny rdzeń wygląda jak dwa logiczne. Osobny zestaw rejestrów dla dwóch wątków, ale współdzielone jednostki wykonawcze i cache.</p>
+          <p style="margin-bottom:10px">Zysk: ~20–30% wyższa przepustowość gdy jeden wątek czeka (cache miss, I/O, branch stall). Drugi wątek wykorzystuje te bezczynne cykle.</p>
+          <p>Intel: Hyper-Threading (HT). AMD: SMT. Czasem wyłącza się dla bezpieczeństwa (Spectre/Meltdown).</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h" style="color:var(--acc)">⚡ SIMD — równoległe dane</div>
+        <div class="card-b" style="font-size:.84rem;color:var(--tx2);line-height:1.85">
+          <p style="margin-bottom:10px"><strong style="color:var(--tx)">Single Instruction, Multiple Data</strong> — jedna instrukcja operuje na wielu danych jednocześnie. SSE, AVX, AVX-512.</p>
+          <p style="margin-bottom:10px">AVX-512: 512-bit rejestr = 8 × double lub 16 × float operacji jednocześnie. Kluczowe dla: ML, kompresja, kryptografia, przetwarzanie multimediów.</p>
+          <p>Java: Kompilator JIT automatycznie wektoryzuje pętle (auto-vectorization). Ręcznie: Vector API (Panama).</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h" style="color:var(--acc)">🔒 Spectre & Meltdown</div>
+        <div class="card-b" style="font-size:.84rem;color:var(--tx2);line-height:1.85">
+          <p style="margin-bottom:10px"><strong style="color:var(--rose)">Speculative execution vulnerability</strong> — CPU spekulacyjnie wykonuje kod i zostawia ślady w cache. Atakujący może odczytać pamięć innych procesów przez timing attack.</p>
+          <p style="margin-bottom:10px"><strong style="color:var(--tx)">Mitygacje:</strong> KPTI (Kernel Page Table Isolation) — oddzielne tablice stron dla kernel/user. Retpoline — bezpieczne indirect jumps. Overhead: 5–30% dla I/O intensive workloads.</p>
+          <p>Procesory Intel mocniej dotknięte niż AMD. ARM też podatny.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 03 MEMORY ══ -->
+  <section class="chapter" id="memory">
+    <div class="ch-head">
+      <div class="ch-num">03 / 12</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--violet)">RAM & Pamięć Wirtualna</div>
+        <div class="ch-title">Jak działa pamięć — RAM, stronicowanie, swap</div>
+        <div class="ch-desc">RAM to nie tylko "miejsce na programy". System operacyjny tworzy wirtualną przestrzeń adresową dla każdego procesu, zarządza stronicowaniem (paging) i używa dysku jako rozszerzenia RAM (swap/page file).</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--violet)"></div>Pamięć wirtualna — jak działa</div></div>
+        <pre><span class="cm">Każdy proces widzi swoją WŁASNĄ przestrzeń adresową</span>
+<span class="cm">Proces nie ma bezpośredniego dostępu do fizycznego RAM</span>
+
+<span class="cm">Virtual Address Space (64-bit, 48 bity używane):</span>
+<span class="cm">0x0000 0000 0000 0000</span>
+<span class="go">│  Text segment       (kod programu, read-only)</span>
+<span class="go">│  Data segment       (zmienne globalne, statyczne)</span>
+<span class="go">│  BSS segment        (niezainicjalizowane globale)</span>
+<span class="go">│  Heap               (malloc/new → rośnie w górę ↑)</span>
+<span class="go">│  (free space)</span>
+<span class="go">│  Stack              (lokaln. zmienne, rośnie w dół ↓)</span>
+<span class="go">│  Kernel space       (tylko OS ma dostęp)</span>
+<span class="cm">0xFFFF FFFF FFFF FFFF</span>
+
+<span class="cm">─── Page Table — tłumaczenie wirtualny→fizyczny ───────────</span>
+<span class="cm">Virtual Page Number    │ Physical Frame Number</span>
+<span class="cm">0x7fff_dead_beef00     │→ 0x0000_0042_1234 (w RAM)</span>
+<span class="cm">0x7fff_dead_c000       │→ 0x0000_0000 (NOT PRESENT)</span>
+<span class="cm">                       │  → Page Fault! OS ładuje z dysku</span>
+
+<span class="cm">─── MMU (Memory Management Unit) ──────────────────────────</span>
+<span class="cm">Hardware w CPU które robi translację</span>
+<span class="cm">TLB (Translation Lookaside Buffer) = cache tablic stron</span>
+<span class="cm">TLB miss → page walk → 100+ cykli kary</span>
+<span class="cm">Strona = 4KB (domyślnie). Huge pages = 2MB lub 1GB</span></pre>
+      </div>
+
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--violet)"></div>RAM, SWAP, Page Fault</div></div>
+        <pre><span class="cm">─── DRAM — jak działa fizycznie ───────────────────────────</span>
+<span class="cm">Kondensatory (naładowany = 1, rozładowany = 0)</span>
+<span class="cm">Rozładowują się → REFRESH co ~64ms (aktywne!)</span>
+<span class="cm">Stąd DRAM = Dynamic RAM (vs SRAM w cache = statyczny)</span>
+<span class="cm">SRAM = szybszy, droższy (6 tranzystorów vs 1)</span>
+
+<span class="cm">─── DDR5 vs DDR4 ──────────────────────────────────────────</span>
+<span class="cm">DDR4: 2133–3200 MT/s, 1.2V, 64-bit bus</span>
+<span class="cm">DDR5: 4800–7200 MT/s, 1.1V, 2×32-bit (on-die ECC)</span>
+<span class="cm">ECC RAM: dodatkowy bit do korekcji błędów → serwery</span>
+
+<span class="cm">─── SWAP / Page File ──────────────────────────────────────</span>
+<span class="cm">Gdy RAM pełny → OS przenosi nieużywane strony na dysk</span>
+<span class="cm">Windows: pagefile.sys (domyślnie 1.5x RAM)</span>
+<span class="cm">Linux:   swap partition lub swapfile</span>
+<span class="cm">Page Fault = proces chce strony która jest na dysku</span>
+<span class="cm">  → OS ładuje stronę do RAM (może wyrzucić inną)</span>
+<span class="cm">  → proces wznawia → transparentnie dla procesu</span>
+
+<span class="cm">─── Page Fault types ──────────────────────────────────────</span>
+<span class="cm">Minor fault: strona w RAM, brak w tablicy → mapuj. Szybki.</span>
+<span class="cm">Major fault: strona na dysku → I/O. Wolny (ms!).</span>
+<span class="cm">Invalid: dostęp do niezaalokowanej strony → SIGSEGV</span>
+<span class="cm">Windows: Access Violation (0xC0000005)</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 04 STORAGE ══ -->
+  <section class="chapter" id="storage">
+    <div class="ch-head">
+      <div class="ch-num">04 / 12</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--teal)">Dyski — HDD, SSD, NVMe</div>
+        <div class="ch-title">Jak działają dyski i systemy plików</div>
+        <div class="ch-desc">HDD to wirujące talerze. SSD to komórki NAND flash. NVMe eliminuje warstwy pośrednie. Każdy typ ma inne właściwości i ograniczenia. RAID, partycje, MBR vs GPT — fundament każdego systemu.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--teal)"></div>HDD vs SSD vs NVMe — internals</div></div>
+        <pre><span class="cm">─── HDD (Hard Disk Drive) ─────────────────────────────────</span>
+<span class="cm">Talerze (platters) pokryte materiałem magnetycznym</span>
+<span class="cm">Głowica odczytuje/zapisuje przez zmianę polaryzacji</span>
+<span class="cm">Czas dostępu: seek time (głowica) + rotational latency</span>
+<span class="cm">Typowo: 5400–7200 RPM, seek ~3ms, latency ~4ms</span>
+<span class="cm">Sequential read: 150–200 MB/s. Random: BARDZO wolny</span>
+<span class="cm">Podatny na wstrząsy! Mechaniczny = awaryjny</span>
+
+<span class="cm">─── SSD SATA (2.5") ───────────────────────────────────────</span>
+<span class="cm">NAND Flash: komórki przechowują ładunek elektryczny</span>
+<span class="cm">SLC (1 bit) → MLC (2 bit) → TLC (3 bit) → QLC (4 bit)</span>
+<span class="cm">Więcej bitów = taniej, wolniej, mniej trwały</span>
+<span class="cm">Ograniczenia P/E cycles (program/erase): SLC 100k, TLC 3k</span>
+<span class="cm">Sequential: 550 MB/s (ograniczenie SATA)</span>
+
+<span class="cm">─── NVMe (Non-Volatile Memory Express) ────────────────────</span>
+<span class="cm">Protokół zaprojektowany dla flash (nie recycled SCSI/ATA)</span>
+<span class="cm">Przez PCIe 4.0 x4: 7000 MB/s sequential, 1M IOPS</span>
+<span class="cm">Niskie latencje: ~100µs vs ~100ms HDD</span>
+<span class="cm">Wear leveling: OS rozkłada zapisy równomiernie</span>
+<span class="cm">TRIM: OS informuje SSD które bloki są wolne</span>
+
+<span class="cm">─── Struktura dysku ───────────────────────────────────────</span>
+<span class="cm">Sektor = 512B (legacy) lub 4096B (4K Advanced Format)</span>
+<span class="cm">Cluster = N sektorów (unit alokacji systemu plików)</span>
+<span class="cm">Partition Table: MBR (max 2TB, 4 partycje) lub GPT (8ZB)</span></pre>
+      </div>
+
+      <div class="card">
+        <div class="card-h" style="color:var(--teal)">💾 MBR vs GPT</div>
+        <div class="card-b">
+          <div class="compare" style="border:none">
+            <div class="compare-col" style="border-right:1px solid var(--bd)">
+              <div class="compare-head" style="color:var(--amber)">MBR (Master Boot Record)</div>
+              <div class="compare-body">
+                <p style="margin-bottom:8px">Pierwszy sektor dysku (512B). Zawiera bootloader + partition table.</p>
+                <p style="margin-bottom:8px">Max 4 partycje podstawowe (extended hack → logical)</p>
+                <p style="margin-bottom:8px">Max 2TB dysk (32-bit LBA)</p>
+                <p style="margin-bottom:8px">Jeden punkt awarii — uszkodzony sektor = koniec</p>
+                <p>Legacy BIOS. Windows XP era.</p>
+              </div>
+            </div>
+            <div class="compare-col">
+              <div class="compare-head" style="color:var(--green)">GPT (GUID Partition Table)</div>
+              <div class="compare-body">
+                <p style="margin-bottom:8px">UEFI standard. Nagłówek + kopia zapasowa na końcu dysku.</p>
+                <p style="margin-bottom:8px">128 partycji (Windows domyślnie)</p>
+                <p style="margin-bottom:8px">Max 8 ZB (zettabytes)</p>
+                <p style="margin-bottom:8px">CRC32 checksums — wykrywa uszkodzenia</p>
+                <p>Wymagany dla UEFI boot. Każda partycja ma unikalny GUID.</p>
+              </div>
+            </div>
+          </div>
+          <div class="gap12"></div>
+          <div class="alert al-teal">
+            <span class="alert-label">RAID</span>
+            <strong>RAID 0</strong>: striping — szybkość, bez redundancji. <strong>RAID 1</strong>: mirror — kopia lustrzana. <strong>RAID 5</strong>: striping + parity (odtworzenie z jednej awarii, min 3 dyski). <strong>RAID 6</strong>: dwie parity (2 awarie). <strong>RAID 10</strong>: 1+0, mirror+stripe. Software RAID (mdadm w Linux, Storage Spaces w Windows) vs hardware RAID (controller).
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 05 BOOT PROCESS ══ -->
+  <section class="chapter" id="boot">
+    <div class="ch-head">
+      <div class="ch-num">05 / 12</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--green)">Boot Process — krok po kroku</div>
+        <div class="ch-title">Od naciśnięcia przycisku do zalogowanego użytkownika</div>
+        <div class="ch-desc">Uruchomienie komputera to sekwencja dziesiątek precyzyjnych kroków. UEFI/BIOS, POST, bootloader, kernel, init/systemd, login — każdy etap musi zakończyć się sukcesem. Znajomość tego procesu jest kluczowa dla diagnostyki problemów ze startem.</div>
+      </div>
+    </div>
+
+    <div class="card gap16" style="margin-bottom:16px">
+      <div class="card-h" style="color:var(--green)">🚀 Pełny Boot Process — wszystkie kroki</div>
+      <div class="card-b">
+        <div class="boot-flow">
+
+          <div class="boot-step">
+            <div class="boot-step-num" style="color:var(--green)">Krok 1<div style="position:absolute;right:-6px;top:20px;width:14px;height:14px;border-radius:50%;background:var(--bg);border:2px solid var(--green)"></div></div>
+            <div class="boot-step-body">
+              <div class="boot-step-title" style="color:var(--green)">Power On — napięcie stabilizuje się</div>
+              <div class="boot-step-desc">Naciśnięcie przycisku zamyka obwód. PSU podaje napięcia (12V, 5V, 3.3V). Kondensatory stabilizują napięcia (~200ms). PSU wysyła sygnał <strong>Power Good</strong> do płyty głównej. Bez Power Good — CPU nie startuje.</div>
+            </div>
+          </div>
+
+          <div class="boot-step">
+            <div class="boot-step-num" style="color:var(--green)">Krok 2<div style="position:absolute;right:-6px;top:20px;width:14px;height:14px;border-radius:50%;background:var(--bg);border:2px solid var(--green)"></div></div>
+            <div class="boot-step-body">
+              <div class="boot-step-title" style="color:var(--acc)">CPU Reset Vector — pierwszy kod</div>
+              <div class="boot-step-desc">CPU "budzi się" w trybie <strong>Real Mode</strong> (16-bit, 1MB pamięci). Rejestr CS:IP wskazuje na <strong>Reset Vector: 0xFFFF0</strong> (lub 0xFFFFFFF0 w UEFI). To jest ostatnie 16 bajtów 1MB przestrzeni — zawiera <code>JMP</code> do kodu BIOS/UEFI w ROM chipie.</div>
+            </div>
+          </div>
+
+          <div class="boot-step">
+            <div class="boot-step-num" style="color:var(--green)">Krok 3<div style="position:absolute;right:-6px;top:20px;width:14px;height:14px;border-radius:50%;background:var(--bg);border:2px solid var(--green)"></div></div>
+            <div class="boot-step-body">
+              <div class="boot-step-title" style="color:var(--violet)">POST — Power On Self Test</div>
+              <div class="boot-step-desc">BIOS/UEFI testuje sprzęt: <strong>CPU rejestry → Cache → RAM (memory test, sprawdza każdy bit) → Video card → Storage kontrolery → PCI/PCIe urządzenia</strong>. Błędy sygnalizowane przez kody dźwiękowe (POST beep codes) lub kody na małym wyświetlaczu płyty (POST debug LED). RAM nie działa → 3 beepy. GPU problem → inne beepy.</div>
+            </div>
+          </div>
+
+          <div class="boot-step">
+            <div class="boot-step-num" style="color:var(--green)">Krok 4<div style="position:absolute;right:-6px;top:20px;width:14px;height:14px;border-radius:50%;background:var(--bg);border:2px solid var(--green)"></div></div>
+            <div class="boot-step-body">
+              <div class="boot-step-title" style="color:var(--violet)">UEFI Initialization — DXE & BDS</div>
+              <div class="boot-step-desc">UEFI (nowoczesny BIOS) przechodzi przez fazy: <strong>SEC</strong> (Security, init cache jako RAM) → <strong>PEI</strong> (Pre-EFI Init, init RAM) → <strong>DXE</strong> (Driver eXecution Environment, ładuje sterowniki dla urządzeń) → <strong>BDS</strong> (Boot Device Selection, wyświetla menu, wybiera bootloader). UEFI ma własny bootloader w partycji ESP (EFI System Partition, FAT32, zwykle 100–500 MB).</div>
+            </div>
+          </div>
+
+          <div class="boot-step">
+            <div class="boot-step-num" style="color:var(--green)">Krok 5<div style="position:absolute;right:-6px;top:20px;width:14px;height:14px;border-radius:50%;background:var(--bg);border:2px solid var(--green)"></div></div>
+            <div class="boot-step-body">
+              <div class="boot-step-title" style="color:var(--amber)">Secure Boot (opcjonalnie)</div>
+              <div class="boot-step-desc">UEFI sprawdza podpis cyfrowy bootloadera używając certyfikatów przechowywanych w NVRAM (PK, KEK, db). Jeśli podpis nieważny → odmowa uruchomienia. Chroni przed bootkitami. <strong>Windows</strong>: wymaga Secure Boot od Windows 11. <strong>Linux</strong>: shim (podpisany przez Microsoft) → GRUB. Można wyłączyć w UEFI Setup.</div>
+            </div>
+          </div>
+
+          <div class="boot-step">
+            <div class="boot-step-num" style="color:var(--win)">Krok 6<div style="position:absolute;right:-6px;top:20px;width:14px;height:14px;border-radius:50%;background:var(--bg);border:2px solid var(--win)"></div></div>
+            <div class="boot-step-body">
+              <div class="boot-step-title" style="color:var(--win)">Bootloader — Windows: bootmgr / Linux: GRUB2</div>
+              <div class="boot-step-desc">
+                <strong style="color:var(--win)">Windows:</strong> <code>bootmgr</code> (w ESP lub MBR) → czyta <code>BCD</code> (Boot Configuration Data) → uruchamia <code>winload.efi</code> → ładuje kernel <code>ntoskrnl.exe</code>.<br><br>
+                <strong style="color:var(--linux)">Linux:</strong> <code>grub2</code> ładuje plik <code>grub.cfg</code> → wyświetla menu wyboru systemu → ładuje kernel (<code>vmlinuz</code>) i initial ramdisk (<code>initrd/initramfs</code>) do RAM → przekazuje sterowanie kernelowi.
+              </div>
+            </div>
+          </div>
+
+          <div class="boot-step">
+            <div class="boot-step-num" style="color:var(--acc)">Krok 7<div style="position:absolute;right:-6px;top:20px;width:14px;height:14px;border-radius:50%;background:var(--bg);border:2px solid var(--acc)"></div></div>
+            <div class="boot-step-body">
+              <div class="boot-step-title" style="color:var(--acc)">Kernel Init — przejście do Protected Mode</div>
+              <div class="boot-step-desc">Kernel startuje w <strong>Real Mode</strong> (16-bit), przełącza się na <strong>Protected Mode</strong> (32-bit) lub bezpośrednio <strong>Long Mode</strong> (64-bit). Inicjalizuje: <strong>GDT</strong> (Global Descriptor Table), <strong>IDT</strong> (Interrupt Descriptor Table), <strong>page tables</strong> (włącza paging), <strong>CPU features</strong> (wykrywa procesor, włącza NX bit, SMEP). Konfiguruje <strong>scheduler, memory allocator (buddy system)</strong>. Montuje initramfs jako tymczasowy root filesystem.</div>
+            </div>
+          </div>
+
+          <div class="boot-step">
+            <div class="boot-step-num" style="color:var(--acc)">Krok 8<div style="position:absolute;right:-6px;top:20px;width:14px;height:14px;border-radius:50%;background:var(--bg);border:2px solid var(--acc)"></div></div>
+            <div class="boot-step-body">
+              <div class="boot-step-title" style="color:var(--acc)">initramfs / initrd — tymczasowy root</div>
+              <div class="boot-step-desc">Mały filesystem w RAM zawierający sterowniki potrzebne do montowania prawdziwego roota (RAID, LVM, szyfrowanie LUKS, sterowniki NVMe). Kernel rozpakowuje initramfs → uruchamia <code>/init</code> (mały skrypt/program). Init ładuje moduły, konfiguruje storage, montuje prawdziwy root filesystem (<code>/dev/sda1</code> lub UUID). Następnie <code>pivot_root</code> lub <code>switch_root</code> — przełączenie na prawdziwy /.</div>
+            </div>
+          </div>
+
+          <div class="boot-step">
+            <div class="boot-step-num" style="color:var(--linux)">Krok 9<div style="position:absolute;right:-6px;top:20px;width:14px;height:14px;border-radius:50%;background:var(--bg);border:2px solid var(--linux)"></div></div>
+            <div class="boot-step-body">
+              <div class="boot-step-title" style="color:var(--linux)">PID 1 — systemd (Linux) / smss.exe (Windows)</div>
+              <div class="boot-step-desc">
+                <strong style="color:var(--linux)">Linux — systemd:</strong> Kernel uruchamia <code>/sbin/init</code> (lub <code>systemd</code>) jako PID 1. systemd czyta <strong>unit files</strong> (<code>/etc/systemd/system/</code>), tworzy dependency graph, uruchamia serwisy równolegle. Targets: <code>basic.target</code> → <code>multi-user.target</code> → <code>graphical.target</code>.<br><br>
+                <strong style="color:var(--win)">Windows — smss.exe:</strong> Session Manager Subsystem. Uruchamia <code>csrss.exe</code> (Win32 subsystem), <code>wininit.exe</code> (init services), <code>winlogon.exe</code> (logowanie). Dalej: <code>services.exe</code> (SCM — Service Control Manager) startuje wszystkie serwisy Windows.
+              </div>
+            </div>
+          </div>
+
+          <div class="boot-step">
+            <div class="boot-step-num" style="color:var(--acc)">Krok 10<div style="position:absolute;right:-6px;top:20px;width:14px;height:14px;border-radius:50%;background:var(--bg);border:2px solid var(--acc)"></div></div>
+            <div class="boot-step-body">
+              <div class="boot-step-title" style="color:var(--acc)">Sterowniki i usługi systemowe</div>
+              <div class="boot-step-desc">
+                <strong style="color:var(--linux)">Linux:</strong> udev wykrywa urządzenia, ładuje moduły jądra, tworzy pliki w <code>/dev/</code>. NetworkManager startuje sieć. D-Bus uruchamia bus komunikacji. PAM konfiguruje logowanie.<br><br>
+                <strong style="color:var(--win)">Windows:</strong> <code>services.exe</code> uruchamia serwisy: Plug&Play, Event Log, WMI, RPC, DCOM, Windows Update, Defender, NetworkManager. Sterowniki ładowane z <code>C:\Windows\System32\drivers\</code>.
+              </div>
+            </div>
+          </div>
+
+          <div class="boot-step">
+            <div class="boot-step-num" style="color:var(--acc)">Krok 11<div style="position:absolute;right:-6px;top:20px;width:14px;height:14px;border-radius:50%;background:var(--bg);border:2px solid var(--acc)"></div></div>
+            <div class="boot-step-body">
+              <div class="boot-step-title" style="color:var(--acc)">Display Manager / Winlogon — ekran logowania</div>
+              <div class="boot-step-desc">
+                <strong style="color:var(--linux)">Linux:</strong> GDM (GNOME), SDDM (KDE), LightDM — Display Manager uruchamia X.org lub Wayland, wyświetla ekran logowania, po zalogowaniu uruchamia środowisko (GNOME, KDE, XFCE).<br><br>
+                <strong style="color:var(--win)">Windows:</strong> <code>winlogon.exe</code> → LogonUI.exe wyświetla ekran logowania. Po zalogowaniu: <code>userinit.exe</code> → <code>explorer.exe</code> (shell — pasek zadań, pulpit).
+              </div>
+            </div>
+          </div>
+
+          <div class="boot-step">
+            <div class="boot-step-num" style="color:var(--green)">Krok 12<div style="position:absolute;right:-6px;top:20px;width:14px;height:14px;border-radius:50%;background:var(--bg);border:2px solid var(--green)"></div></div>
+            <div class="boot-step-body">
+              <div class="boot-step-title" style="color:var(--green)">✅ Zalogowany użytkownik — desktop gotowy</div>
+              <div class="boot-step-desc">User profile załadowany (<code>~/.bashrc</code>, <code>~/.profile</code> lub <code>HKCU</code> registry). Autostart programy uruchomione. <strong>Czas od Power On do Desktop: 5–30 sekund</strong> (SSD, nowoczesny CPU, dobrze skonfigurowany OS) lub 2–5 minut (HDD, wiele serwisów autostart, stary sprzęt).</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 06 KERNEL ══ -->
+  <section class="chapter" id="kernel">
+    <div class="ch-head">
+      <div class="ch-num">06 / 12</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--acc)">Kernel & Tryby CPU</div>
+        <div class="ch-title">Jądro systemu — kernel space vs user space</div>
+        <div class="ch-desc">Kernel to rdzeń systemu operacyjnego. Zarządza pamięcią, procesami, urządzeniami i bezpieczeństwem. Separacja kernel space / user space to fundament bezpieczeństwa nowoczesnych systemów.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--acc)"></div>Ring 0–3 — tryby procesora</div></div>
+        <pre><span class="cm">x86 definiuje 4 poziomy uprawnień (Rings):</span>
+
+<span class="go">Ring 0 — Kernel Mode</span>
+<span class="cm">  Pełny dostęp do sprzętu i pamięci</span>
+<span class="cm">  Wszystkie instrukcje dozwolone (in/out, cli, sti...)</span>
+<span class="cm">  Błąd tu = kernel panic (Linux) / BSOD (Windows)</span>
+<span class="cm">  Kod: jądro OS, sterowniki urządzeń</span>
+
+<span class="go">Ring 1, 2 — rzadko używane</span>
+<span class="cm">  Historycznie: OS drivers. Dziś praktycznie nieużywane.</span>
+<span class="cm">  Wirtualizacja: Ring 1 dla gościa OS (stary model)</span>
+
+<span class="go">Ring 3 — User Mode</span>
+<span class="cm">  Ograniczony dostęp. Nie może bezpośrednio dotknąć sprzętu.</span>
+<span class="cm">  Kod: Twoja aplikacja, przeglądarka, gra</span>
+<span class="cm">  Naruszenie → SIGSEGV / Access Violation</span>
+
+<span class="cm">─── System Call — przeprawa z Ring 3 → Ring 0 ──────────────</span>
+<span class="cm">Aplikacja chce otworzyć plik:</span>
+<span class="cm">  1. User space: open("file.txt") — biblioteka libc</span>
+<span class="cm">  2. libc → syscall instrukcja (nr syscall w RAX)</span>
+<span class="cm">  3. CPU przełącza się Ring 3 → Ring 0</span>
+<span class="cm">  4. Kernel: sprawdza uprawnienia, otwiera plik</span>
+<span class="cm">  5. Zwraca file descriptor do user space</span>
+<span class="cm">  6. CPU wraca Ring 0 → Ring 3</span>
+<span class="cm">  Koszt: ~1000 cykli CPU na jeden syscall</span></pre>
+      </div>
+
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--acc)"></div>Monolithic vs Microkernel vs Hybrid</div></div>
+        <pre><span class="cm">─── Monolithic Kernel (Linux) ─────────────────────────────</span>
+<span class="cm">Cały kernel w Ring 0: filesystem, drivers, network, MM</span>
+<span class="cm">Zalety: wydajność (brak context switch między komponentami)</span>
+<span class="cm">Wady: błąd w sterowniku = kernel crash</span>
+<span class="cm">Moduły (loadable kernel modules) dają elastyczność</span>
+<span class="cm">lsmod, modprobe, insmod — zarządzanie modułami</span>
+
+<span class="cm">─── Microkernel (L4, QNX, Mach) ──────────────────────────</span>
+<span class="cm">Kernel: tylko scheduling, IPC, basic MM</span>
+<span class="cm">Filesystem, drivers, network → osobne procesy (Ring 3)</span>
+<span class="cm">Zalety: izolacja, bezpieczeństwo, stabilność</span>
+<span class="cm">Wady: IPC overhead, wolniejszy</span>
+
+<span class="cm">─── Hybrid (Windows NT, macOS XNU) ───────────────────────</span>
+<span class="cm">Mieszanka: część serwisów w kernel, część jako procesy</span>
+<span class="cm">Windows: NT kernel + Win32 subsystem jako serwis</span>
+<span class="cm">macOS: Mach microkernel + BSD UNIX layer</span>
+
+<span class="cm">─── Interrupt — ważne zdarzenia ──────────────────────────</span>
+<span class="cm">Hardware: klawiatura, sieć, dysk → IRQ → IDT handler</span>
+<span class="cm">Software: syscall, page fault, divide-by-zero</span>
+<span class="cm">CPU przerywa aktualny wątek → kernel handler → powrót</span>
+<span class="cm">APIC (Advanced PIC) zarządza IRQ w wielordzeniowym CPU</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 07 PROCESSES ══ -->
+  <section class="chapter" id="processes">
+    <div class="ch-head">
+      <div class="ch-num">07 / 12</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--orange)">Procesy & Wątki</div>
+        <div class="ch-title">Jak OS zarządza procesami</div>
+        <div class="ch-desc">Każda uruchomiona aplikacja to jeden lub więcej procesów. Kernel zarządza harmonogramowaniem, priorytetami, komunikacją między procesami (IPC) i sygnałami. fork/exec to fundament Uniksa.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--orange)"></div>Stany procesu i cykl życia</div></div>
+        <pre><span class="cm">─── Stany procesu ─────────────────────────────────────────</span>
+<span class="go">NEW</span>      <span class="cm">→ Tworzony (fork/CreateProcess)</span>
+<span class="go">READY</span>    <span class="cm">→ Czeka na CPU (w kolejce schedulera)</span>
+<span class="go">RUNNING</span>  <span class="cm">→ Wykonywany na CPU</span>
+<span class="go">WAITING</span>  <span class="cm">→ Czeka na I/O, sygnał, mutex</span>
+<span class="go">ZOMBIE</span>   <span class="cm">→ Zakończony, czeka aż rodzic odczyta exit code</span>
+<span class="go">DEAD</span>     <span class="cm">→ Zasoby zwolnione</span>
+
+<span class="cm">─── fork/exec — Unix model tworzenia procesów ─────────────</span>
+<span class="cm">fork()   — tworzy kopię (clone) procesu rodzica</span>
+<span class="cm">           Child dostaje własną przestrzeń adresową</span>
+<span class="cm">           Copy-on-Write: fizyczna kopia tylko przy zapisie!</span>
+<span class="cm">exec()   — zastępuje kod procesu nowym programem</span>
+<span class="cm">           Ładuje nowy ELF, czyści stack/heap, startuje</span>
+
+<span class="cm">Shell uruchamia polecenie:</span>
+<span class="cm">  1. fork() → child process</span>
+<span class="cm">  2. child: exec("/bin/ls", args) → staje się ls</span>
+<span class="cm">  3. parent: wait() → czeka na zakończenie child</span>
+<span class="cm">  4. child kończy → zombi → parent zbiera exit code</span>
+
+<span class="cm">─── Windows model ─────────────────────────────────────────</span>
+<span class="cm">CreateProcess() — tworzy nowy proces + nowy wątek</span>
+<span class="cm">Brak fork() — zawsze nowy proces (bez dziedziczenia)</span>
+<span class="cm">Handle dziedziczenie przez SECURITY_ATTRIBUTES</span></pre>
+      </div>
+
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--orange)"></div>Scheduler, priorytety, IPC</div></div>
+        <pre><span class="cm">─── Scheduler — kto dostaje CPU ──────────────────────────</span>
+<span class="cm">Linux CFS (Completely Fair Scheduler):</span>
+<span class="cm">  vruntime — wirtualny czas pracy procesu</span>
+<span class="cm">  Red-black tree posortowany po vruntime</span>
+<span class="cm">  Zawsze uruchamia process z najmniejszym vruntime</span>
+<span class="cm">  nice (-20 do 19): -20 = wysoki priorytet, 19 = najniższy</span>
+
+<span class="cm">Windows Scheduler:</span>
+<span class="cm">  32 poziomy priorytetów (0–31)</span>
+<span class="cm">  Real-time (16–31) i Normal (0–15)</span>
+<span class="cm">  Priority boost: foreground app dostaje wyższy priorytet</span>
+<span class="cm">  preemptive: może przerwać proces w każdej chwili</span>
+
+<span class="cm">─── IPC — komunikacja między procesami ───────────────────</span>
+<span class="cm">Pipe:          │ ls | grep txt      unidirectional</span>
+<span class="cm">Named Pipe:    │ /tmp/mypipe        bidirectional, przez nazwę</span>
+<span class="cm">Shared Memory: │ mmap(MAP_SHARED)   najszybsze, ryzyko race</span>
+<span class="cm">Message Queue: │ mq_send/mq_receive kernel-buffered</span>
+<span class="cm">Socket:        │ AF_UNIX, AF_INET   między maszynami też</span>
+<span class="cm">Signal:        │ kill -9 PID        asynchroniczne zdarzenie</span>
+<span class="cm">Windows:       │ COM, DCOM, WCF, Named Pipes, Mailslots</span>
+
+<span class="cm">─── Sygnały Linux ─────────────────────────────────────────</span>
+<span class="cm">SIGKILL  (9)  → natychmiastowe zabicie (nie można blokować!)</span>
+<span class="cm">SIGTERM (15)  → prośba o zakończenie (można obsłużyć)</span>
+<span class="cm">SIGINT   (2)  → Ctrl+C z terminala</span>
+<span class="cm">SIGHUP   (1)  → terminal zamknięty / reload konfiguracji</span>
+<span class="cm">SIGSEGV (11)  → naruszenie pamięci (segmentation fault)</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 08 FILESYSTEM ══ -->
+  <section class="chapter" id="filesystem">
+    <div class="ch-head">
+      <div class="ch-num">08 / 12</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--amber)">Systemy Plików</div>
+        <div class="ch-title">NTFS, ext4, FAT32, ZFS — jak działają</div>
+        <div class="ch-desc">System plików to warstwa abstrakcji nad surowym dyskiem. Zarządza alokacją bloków, metadanymi plików, uprawnieniami, journaling i cache. Wybór systemu plików ma duży wpływ na wydajność i niezawodność.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="card">
+        <div class="card-h" style="color:var(--amber)">📋 Porównanie systemów plików</div>
+        <div class="card-b" style="overflow-x:auto">
+          <table class="tbl">
+            <thead><tr><th>FS</th><th>OS</th><th>Max plik</th><th>Max vol.</th><th>Journaling</th><th>Specjalne</th></tr></thead>
+            <tbody>
+              <tr><td><code>FAT32</code></td><td>Wszędzie</td><td>4 GB</td><td>2 TB</td><td>❌</td><td>Kompatybilność. USB, ESP partycja.</td></tr>
+              <tr><td><code>exFAT</code></td><td>Windows, macOS</td><td>16 EB</td><td>128 PB</td><td>❌</td><td>Duże pliki na wymiennych nośnikach.</td></tr>
+              <tr><td><code>NTFS</code></td><td>Windows</td><td>16 TB</td><td>256 TB</td><td>✅</td><td>ACL, VSS snapshots, kompresja, EFS.</td></tr>
+              <tr><td><code>ext4</code></td><td>Linux</td><td>16 TB</td><td>1 EB</td><td>✅</td><td>Extents, delay alloc. Standardowy Linux.</td></tr>
+              <tr><td><code>XFS</code></td><td>Linux</td><td>8 EB</td><td>8 EB</td><td>✅</td><td>Wysoka wydajność równoległa. RHEL default.</td></tr>
+              <tr><td><code>Btrfs</code></td><td>Linux</td><td>16 EB</td><td>16 EB</td><td>✅ COW</td><td>Snapshots, subvolumes, RAID, checksums.</td></tr>
+              <tr><td><code>ZFS</code></td><td>FreeBSD, Linux</td><td>16 EB</td><td>256 ZB</td><td>✅ COW</td><td>Pools, deduplikacja, end-to-end checksum.</td></tr>
+              <tr><td><code>APFS</code></td><td>macOS, iOS</td><td>8 EB</td><td>8 EB</td><td>✅ COW</td><td>Snapshots, encryption, clone files.</td></tr>
+              <tr><td><code>tmpfs</code></td><td>Linux</td><td>—</td><td>RAM</td><td>❌</td><td>RAM-based, /tmp, /dev/shm. Ulotny.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--amber)"></div>Jak FS przechowuje pliki — inode (Linux)</div></div>
+        <pre><span class="cm">─── inode — metadane pliku (ext4) ────────────────────────</span>
+<span class="cm">Plik = nazwa (w katalogu) + inode (metadane) + bloki danych</span>
+
+<span class="cm">inode zawiera:</span>
+<span class="cm">  typ pliku (regular, directory, symlink, device...)</span>
+<span class="cm">  uprawnienia (owner, group, mode: rwxrwxrwx)</span>
+<span class="cm">  właściciel (UID, GID)</span>
+<span class="cm">  rozmiar, atime, mtime, ctime</span>
+<span class="cm">  liczba hard linków</span>
+<span class="cm">  wskaźniki do bloków danych (extents w ext4)</span>
+
+<span class="cm">─── Hard link vs Symlink ──────────────────────────────────</span>
+<span class="cm">Hard link: inna nazwa wskazuje na TEN SAMY inode</span>
+<span class="cm">  ln /etc/hosts /tmp/myhosts</span>
+<span class="cm">  Plik istnieje dopóki jest choć jeden hard link</span>
+<span class="cm">  Nie może przekraczać granic filesystemu</span>
+
+<span class="cm">Symlink (soft link): osobny inode → zawiera ścieżkę</span>
+<span class="cm">  ln -s /etc/hosts /tmp/myhosts</span>
+<span class="cm">  Może wskazywać na inne filesystem, na katalogi</span>
+<span class="cm">  Dangling symlink jeśli cel usunięty</span>
+
+<span class="cm">─── Journaling — odporność na awarie ────────────────────</span>
+<span class="cm">Przed zapisem na dysk → zapisz do Journal (logu)</span>
+<span class="cm">Po awarii → odtwórz niezakończone operacje z Journal</span>
+<span class="cm">Modes: writeback (metadata only), ordered (domyślny), journal (all)</span>
+<span class="cm">COW (Copy-on-Write): Btrfs, ZFS — nowe dane na nowe bloki</span>
+<span class="cm">  Nigdy nie nadpisuje starych danych → atomowe snapshoty</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 09 WINDOWS DIRS ══ -->
+  <section class="chapter" id="windows-dirs">
+    <div class="ch-head">
+      <div class="ch-num">09 / 12</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--win)">Windows — Struktura Folderów</div>
+        <div class="ch-title">Najważniejsze foldery i pliki Windows</div>
+        <div class="ch-desc">Windows ukrywa przed użytkownikiem wiele kluczowych folderów i plików. Senior developer i każdy kto rozwiązuje problemy musi znać strukturę systemu — gdzie są sterowniki, logi, registry, konfiguracje i pliki systemowe.</div>
+      </div>
+    </div>
+
+    <div class="tree">
+<span class="tree-dir w">C:\</span>  <span class="tree-desc">— dysk systemowy Windows</span>
+│
+├── <span class="tree-dir w">Windows\</span>  <span class="tree-desc">— SERCE SYSTEMU. Nie rusz bez powodu.</span>
+│   ├── <span class="tree-dir">System32\</span>  <span class="tree-desc">— DLL i EXE systemu 64-bit (sic! historyczna nazwa)</span>
+│   │   ├── <span class="a">ntoskrnl.exe</span>  <span class="tree-desc">— kernel Windows (NT OS Kernel)</span>
+│   │   ├── <span class="a">hal.dll</span>  <span class="tree-desc">— Hardware Abstraction Layer</span>
+│   │   ├── <span class="a">kernel32.dll</span>  <span class="tree-desc">— podstawowe API Win32 (plik, pamięć, procesy)</span>
+│   │   ├── <span class="a">user32.dll</span>  <span class="tree-desc">— GUI: okna, wiadomości, klawiatura, mysz</span>
+│   │   ├── <span class="a">gdi32.dll</span>  <span class="tree-desc">— renderowanie grafiki 2D</span>
+│   │   ├── <span class="a">ntdll.dll</span>  <span class="tree-desc">— interfejs do kernel (syscalls), najniższy user-mode</span>
+│   │   ├── <span class="a">advapi32.dll</span>  <span class="tree-desc">— registry, security, services API</span>
+│   │   ├── <span class="a">winsock.dll</span>  <span class="tree-desc">— sieć (sockets)</span>
+│   │   ├── <span class="a">cmd.exe</span>  <span class="tree-desc">— konsola Windows</span>
+│   │   ├── <span class="a">svchost.exe</span>  <span class="tree-desc">— host dla serwisów Windows (wiele instancji)</span>
+│   │   ├── <span class="a">lsass.exe</span>  <span class="tree-desc">— Local Security Auth (hasła, Kerberos, NTLM)</span>
+│   │   ├── <span class="a">csrss.exe</span>  <span class="tree-desc">— Win32 subsystem, zarządza konsolami i wątkami</span>
+│   │   ├── <span class="a">winlogon.exe</span>  <span class="tree-desc">— proces logowania, Ctrl+Alt+Del</span>
+│   │   ├── <span class="a">taskmgr.exe</span>  <span class="tree-desc">— menadżer zadań</span>
+│   │   ├── <span class="a">regedit.exe</span>  <span class="tree-desc">— edytor rejestru</span>
+│   │   ├── <span class="a">mmc.exe</span>  <span class="tree-desc">— Microsoft Management Console</span>
+│   │   └── <span class="tree-dir">drivers\</span>  <span class="tree-desc">— sterowniki urządzeń (.sys pliki)</span>
+│   │       ├── <span class="a">ntfs.sys</span>  <span class="tree-desc">— sterownik systemu plików NTFS</span>
+│   │       ├── <span class="a">tcpip.sys</span>  <span class="tree-desc">— stos TCP/IP</span>
+│   │       └── <span class="a">*.sys</span>  <span class="tree-desc">— sterowniki GPU, USB, storage etc.</span>
+│   │
+│   ├── <span class="tree-dir">SysWOW64\</span>  <span class="tree-desc">— 32-bitowe DLL i EXE (emulacja x86 na x64)</span>
+│   │   └── <span class="a">*.dll</span>  <span class="tree-desc">— 32-bit wersje bibliotek (kernel32, user32...)</span>
+│   │
+│   ├── <span class="tree-dir">WinSxS\</span>  <span class="tree-desc">— Component Store, wiele wersji DLL side-by-side (DUŻY folder!)</span>
+│   ├── <span class="tree-dir">Temp\</span>  <span class="tree-desc">— tymczasowe pliki systemowe</span>
+│   ├── <span class="tree-dir">Logs\</span>  <span class="tree-desc">— logi systemowe (CBS.log, WindowsUpdate.log...)</span>
+│   ├── <span class="a">MEMORY.DMP</span>  <span class="tree-desc">— dump pamięci przy BSOD (kernel dump)</span>
+│   └── <span class="a">Minidump\*.dmp</span>  <span class="tree-desc">— mini dump przy BSOD — do analizy w WinDbg</span>
+│
+├── <span class="tree-dir w">Users\</span>
+│   ├── <span class="tree-dir">Public\</span>  <span class="tree-desc">— pliki dostępne dla wszystkich użytkowników</span>
+│   └── <span class="tree-dir">&lt;Username&gt;\</span>  <span class="tree-desc">— profil użytkownika</span>
+│       ├── <span class="tree-dir">AppData\</span>  <span class="tree-desc">— ukryty! dane aplikacji per użytkownik</span>
+│       │   ├── <span class="tree-dir">Local\</span>  <span class="tree-desc">— dane lokalne (duże pliki, cache, nie sync z chmurą)</span>
+│       │   │   ├── <span class="g">Temp\</span>  <span class="tree-desc">— pliki tymczasowe aplikacji — często bezpiecznie czyścić</span>
+│       │   │   └── <span class="g">Programs\</span>  <span class="tree-desc">— winget/msix user-install</span>
+│       │   ├── <span class="tree-dir">LocalLow\</span>  <span class="tree-desc">— dane sandbox/protected apps (IE, Flash)</span>
+│       │   └── <span class="tree-dir">Roaming\</span>  <span class="tree-desc">— dane do synchronizacji przez sieć (domenę)</span>
+│       │       ├── <span class="g">Microsoft\Windows\Start Menu\</span>  <span class="tree-desc">— skróty w menu Start</span>
+│       │       └── <span class="g">Microsoft\Windows\Recent\</span>  <span class="tree-desc">— ostatnio otwarte pliki</span>
+│       ├── <span class="g">Desktop\</span>
+│       ├── <span class="g">Documents\</span>
+│       └── <span class="g">Downloads\</span>
+│
+├── <span class="tree-dir w">Program Files\</span>  <span class="tree-desc">— aplikacje 64-bit zainstalowane systemowo</span>
+├── <span class="tree-dir w">Program Files (x86)\</span>  <span class="tree-desc">— aplikacje 32-bit (emulacja WoW64)</span>
+├── <span class="tree-dir w">ProgramData\</span>  <span class="tree-desc">— ukryty! dane aplikacji dla WSZYSTKICH użytkowników</span>
+│   └── <span class="a">Microsoft\Windows\Start Menu\</span>  <span class="tree-desc">— globalne skróty menu Start</span>
+│
+├── <span class="tree-dir">EFI\</span>  <span class="tree-desc">— ukryta partycja ESP (EFI System Partition)</span>
+│   └── <span class="a">Microsoft\Boot\bootmgfw.efi</span>  <span class="tree-desc">— Windows bootloader EFI</span>
+│
+├── <span class="a">pagefile.sys</span>  <span class="tree-desc">— SWAP / plik stronicowania (ukryty, systemowy)</span>
+├── <span class="a">hiberfil.sys</span>  <span class="tree-desc">— plik hibernacji (zawiera dump RAM, ukryty)</span>
+└── <span class="a">swapfile.sys</span>  <span class="tree-desc">— swap dla aplikacji UWP (Windows 10+)</span>
+    </div>
+
+    <div class="gap16"></div>
+    <div class="g2">
+      <div class="card">
+        <div class="card-h" style="color:var(--win)">🗝️ Registry — baza danych konfiguracji Windows</div>
+        <div class="card-b">
+          <div class="ritem">
+            <div class="ritem-key" style="color:var(--win)">HKEY_LOCAL_MACHINE</div>
+            <div class="ritem-val"><strong>HKLM</strong> — konfiguracja całego systemu. HARDWARE (wykryta przy boot), SAM (konta), SECURITY, SOFTWARE (zainstalowane programy), SYSTEM (usługi, sterowniki, konfiguracja boot).</div>
+          </div>
+          <div class="ritem">
+            <div class="ritem-key" style="color:var(--win)">HKEY_CURRENT_USER</div>
+            <div class="ritem-val"><strong>HKCU</strong> — ustawienia zalogowanego użytkownika. Podlega pod HKEY_USERS\SID. Wczytywane z <code>NTUSER.DAT</code> z profilu usera.</div>
+          </div>
+          <div class="ritem">
+            <div class="ritem-key" style="color:var(--win)">HKEY_CLASSES_ROOT</div>
+            <div class="ritem-val"><strong>HKCR</strong> — rozszerzenia plików, asocjacje, COM obiekty. Merge HKLM\SOFTWARE\Classes + HKCU\SOFTWARE\Classes.</div>
+          </div>
+          <div class="ritem">
+            <div class="ritem-key" style="color:var(--win)">HKEY_USERS</div>
+            <div class="ritem-val">Profile wszystkich zalogowanych i załadowanych użytkowników (SID jako klucz).</div>
+          </div>
+          <div class="ritem">
+            <div class="ritem-key" style="color:var(--win)">Pliki registry</div>
+            <div class="ritem-val"><code>C:\Windows\System32\config\SYSTEM</code>, <code>SOFTWARE</code>, <code>SAM</code>, <code>SECURITY</code>. User hive: <code>C:\Users\&lt;user&gt;\NTUSER.DAT</code>.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h" style="color:var(--win)">🛠️ Ważne narzędzia Windows</div>
+        <div class="card-b">
+          <div class="ritem">
+            <div class="ritem-key" style="color:var(--win)">eventvwr.msc</div>
+            <div class="ritem-val">Event Viewer — logi systemowe, aplikacji, security. Nieoceniony przy diagnostyce.</div>
+          </div>
+          <div class="ritem">
+            <div class="ritem-key" style="color:var(--win)">services.msc</div>
+            <div class="ritem-val">Lista i zarządzanie serwisami Windows. Autostart, manual, disabled.</div>
+          </div>
+          <div class="ritem">
+            <div class="ritem-key" style="color:var(--win)">msconfig</div>
+            <div class="ritem-val">Boot configuration, safe mode, selektywny start serwisów.</div>
+          </div>
+          <div class="ritem">
+            <div class="ritem-key" style="color:var(--win)">winver / msinfo32</div>
+            <div class="ritem-val">Wersja Windows, build number, info o sprzęcie i zainstalowanych sterownikach.</div>
+          </div>
+          <div class="ritem">
+            <div class="ritem-key" style="color:var(--win)">sfc /scannow</div>
+            <div class="ritem-val">System File Checker — sprawdza i naprawia uszkodzone pliki systemowe Windows.</div>
+          </div>
+          <div class="ritem">
+            <div class="ritem-key" style="color:var(--win)">DISM /Online /Cleanup-Image</div>
+            <div class="ritem-val">Deployment Image Servicing — naprawia Component Store (WinSxS). Gdy sfc nie pomaga.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 10 LINUX DIRS ══ -->
+  <section class="chapter" id="linux-dirs">
+    <div class="ch-head">
+      <div class="ch-num">10 / 12</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--linux)">Linux — Filesystem Hierarchy Standard</div>
+        <div class="ch-title">Struktura katalogów Linux — FHS</div>
+        <div class="ch-desc">Linux Filesystem Hierarchy Standard (FHS) definiuje gdzie co powinno być. "/" to korzeń wszystkiego. Każdy katalog ma ściśle określone przeznaczenie. Znajomość tej struktury jest podstawą pracy z Linuksem.</div>
+      </div>
+    </div>
+
+    <div class="tree">
+<span class="tree-dir l">/</span>  <span class="tree-desc">— root filesystem. Korzeń wszystkiego.</span>
+│
+├── <span class="tree-dir l">bin/</span>  <span class="tree-desc">— podstawowe binarne (ls, cp, mv, cat, bash). Dziś → symlink do /usr/bin</span>
+├── <span class="tree-dir l">sbin/</span>  <span class="tree-desc">— systemowe binary (mount, fdisk, fsck). Dziś → symlink do /usr/sbin</span>
+├── <span class="tree-dir l">lib/</span>  <span class="tree-desc">— biblioteki dla /bin i /sbin (libc.so, ld-linux.so). → /usr/lib</span>
+├── <span class="tree-dir l">lib64/</span>  <span class="tree-desc">— 64-bit biblioteki. → /usr/lib64</span>
+│
+├── <span class="tree-dir l">usr/</span>  <span class="tree-desc">— Unix System Resources. Główny katalog zainstalowanego oprogramowania.</span>
+│   ├── <span class="tree-dir">bin/</span>  <span class="tree-desc">— programy użytkownika (python3, git, vim, java, gcc...)</span>
+│   ├── <span class="tree-dir">sbin/</span>  <span class="tree-desc">— programy systemowe wymagające root (useradd, nginx, sshd)</span>
+│   ├── <span class="tree-dir">lib/</span>  <span class="tree-desc">— biblioteki współdzielone (.so pliki)</span>
+│   ├── <span class="tree-dir">lib64/</span>  <span class="tree-desc">— 64-bit .so</span>
+│   ├── <span class="tree-dir">local/</span>  <span class="tree-desc">— lokalnie kompilowane programy (make install → tutaj)</span>
+│   │   ├── <span class="g">bin/</span>  <span class="tree-desc">— lokalne pliki wykonywalne</span>
+│   │   ├── <span class="g">lib/</span>  <span class="tree-desc">— lokalne biblioteki</span>
+│   │   └── <span class="g">share/</span>  <span class="tree-desc">— lokalne dane współdzielone</span>
+│   ├── <span class="tree-dir">include/</span>  <span class="tree-desc">— nagłówki C/C++ (*.h) do kompilacji</span>
+│   ├── <span class="tree-dir">share/</span>  <span class="tree-desc">— dane architekturo-niezależne (man pages, icons, fonts)</span>
+│   │   └── <span class="g">man/</span>  <span class="tree-desc">— strony manualu (man 1 ls)</span>
+│   └── <span class="tree-dir">src/</span>  <span class="tree-desc">— kody źródłowe (opcjonalnie, np. linux kernel source)</span>
+│
+├── <span class="tree-dir l">etc/</span>  <span class="tree-desc">— KONFIGURACJE SYSTEMU. Editable Text Configuration.</span>
+│   ├── <span class="a">passwd</span>  <span class="tree-desc">— lista użytkowników (login:x:UID:GID:name:home:shell)</span>
+│   ├── <span class="a">shadow</span>  <span class="tree-desc">— zahashowane hasła (tylko root może czytać!)</span>
+│   ├── <span class="a">group</span>  <span class="tree-desc">— grupy użytkowników i ich członkowie</span>
+│   ├── <span class="a">sudoers</span>  <span class="tree-desc">— kto może używać sudo (edytuj tylko visudo!)</span>
+│   ├── <span class="a">hosts</span>  <span class="tree-desc">— lokalne mapowanie nazwy→IP (nadpisuje DNS)</span>
+│   ├── <span class="a">hostname</span>  <span class="tree-desc">— nazwa hosta maszyny</span>
+│   ├── <span class="a">resolv.conf</span>  <span class="tree-desc">— serwery DNS (nameserver 8.8.8.8)</span>
+│   ├── <span class="a">fstab</span>  <span class="tree-desc">— tabela montowania filesystemów przy boot</span>
+│   ├── <span class="a">crontab</span>  <span class="tree-desc">— systemowe zadania cron (użytkownik: crontab -e)</span>
+│   ├── <span class="a">os-release</span>  <span class="tree-desc">— informacja o dystrybucji (ID, VERSION)</span>
+│   ├── <span class="a">shells</span>  <span class="tree-desc">— lista dozwolonych shellów</span>
+│   ├── <span class="tree-dir">ssh/</span>  <span class="tree-desc">— konfiguracja serwera SSH (sshd_config)</span>
+│   ├── <span class="tree-dir">systemd/</span>  <span class="tree-desc">— unit files systemd (serwisy, timery, mounty)</span>
+│   │   └── <span class="g">system/</span>  <span class="tree-desc">— zainstalowane i lokalne unit files</span>
+│   ├── <span class="tree-dir">network/</span>  <span class="tree-desc">— lub NetworkManager/ — konfiguracja sieci</span>
+│   ├── <span class="tree-dir">cron.d/</span>  <span class="tree-desc">— pliki cron dla różnych aplikacji</span>
+│   ├── <span class="tree-dir">cron.daily/</span>  <span class="tree-desc">— skrypty uruchamiane codziennie</span>
+│   ├── <span class="tree-dir">apt/</span>  <span class="tree-desc">— konfiguracja apt (Debian/Ubuntu)</span>
+│   │   └── <span class="g">sources.list.d/</span>  <span class="tree-desc">— repozytoria pakietów</span>
+│   ├── <span class="tree-dir">nginx/</span>  <span class="tree-desc">— konfiguracja Nginx (sites-available, sites-enabled)</span>
+│   └── <span class="tree-dir">ssl/</span>  <span class="tree-desc">— certyfikaty SSL (certs/, private/)</span>
+│
+├── <span class="tree-dir l">home/</span>  <span class="tree-desc">— katalogi domowe użytkowników</span>
+│   └── <span class="tree-dir">&lt;username&gt;/</span>  <span class="tree-desc">— Twój home (~)</span>
+│       ├── <span class="a">.bashrc</span>  <span class="tree-desc">— konfiguracja bash (aliasy, funkcje) — interactive shell</span>
+│       ├── <span class="a">.bash_profile</span>  <span class="tree-desc">— uruchamiane przy login shell</span>
+│       ├── <span class="a">.profile</span>  <span class="tree-desc">— dla nie-bash shellów</span>
+│       ├── <span class="a">.bash_history</span>  <span class="tree-desc">— historia komend</span>
+│       ├── <span class="a">.ssh/</span>  <span class="tree-desc">— klucze SSH (authorized_keys, id_rsa, config)</span>
+│       ├── <span class="a">.gitconfig</span>  <span class="tree-desc">— konfiguracja git</span>
+│       └── <span class="a">.config/</span>  <span class="tree-desc">— konfiguracje aplikacji XDG (nowy standard)</span>
+│
+├── <span class="tree-dir l">root/</span>  <span class="tree-desc">— katalog domowy roota (nie /home/root!)</span>
+│
+├── <span class="tree-dir l">var/</span>  <span class="tree-desc">— Variable data. Dane które się zmieniają w runtime.</span>
+│   ├── <span class="tree-dir">log/</span>  <span class="tree-desc">— LOGI SYSTEMOWE — najważniejszy do diagnostyki</span>
+│   │   ├── <span class="r">syslog</span>  <span class="tree-desc">— główny log systemowy (Debian/Ubuntu)</span>
+│   │   ├── <span class="r">messages</span>  <span class="tree-desc">— główny log (RHEL/CentOS)</span>
+│   │   ├── <span class="r">auth.log</span>  <span class="tree-desc">— logowanie, sudo, SSH auth</span>
+│   │   ├── <span class="r">kern.log</span>  <span class="tree-desc">— komunikaty kernela</span>
+│   │   ├── <span class="r">dmesg</span>  <span class="tree-desc">— boot messages, hardware (też: dmesg komenda)</span>
+│   │   ├── <span class="r">nginx/</span>  <span class="tree-desc">— access.log, error.log</span>
+│   │   └── <span class="r">journal/</span>  <span class="tree-desc">— binarny log systemd (journalctl do czytania)</span>
+│   ├── <span class="tree-dir">cache/</span>  <span class="tree-desc">— cache aplikacji (apt cache, pip cache...)</span>
+│   │   └── <span class="g">apt/archives/</span>  <span class="tree-desc">— pobrane .deb pakiety</span>
+│   ├── <span class="tree-dir">lib/</span>  <span class="tree-desc">— trwałe dane aplikacji (bazy, state)</span>
+│   ├── <span class="tree-dir">run/</span>  <span class="tree-desc">— PID files, sockets (symlink → /run)</span>
+│   ├── <span class="tree-dir">spool/</span>  <span class="tree-desc">— kolejki (mail, print, cron jobs)</span>
+│   └── <span class="tree-dir">tmp/</span>  <span class="tree-desc">— tymczasowe (czyszczone rzadziej niż /tmp)</span>
+│
+├── <span class="tree-dir l">tmp/</span>  <span class="tree-desc">— Tymczasowe pliki. Czyszczone przy restarcie. /dev/shm = RAM.</span>
+│
+├── <span class="tree-dir l">proc/</span>  <span class="tree-desc">— Wirtualny FS. Interfejs do kernela i procesów.</span>
+│   ├── <span class="a">/proc/&lt;PID&gt;/</span>  <span class="tree-desc">— info o procesie: cmdline, status, maps, fd/, mem</span>
+│   ├── <span class="a">/proc/cpuinfo</span>  <span class="tree-desc">— informacje o procesorze (taktowanie, cores, cache)</span>
+│   ├── <span class="a">/proc/meminfo</span>  <span class="tree-desc">— stan pamięci RAM (MemTotal, MemFree, Cached...)</span>
+│   ├── <span class="a">/proc/mounts</span>  <span class="tree-desc">— aktualnie zamontowane filesystemy</span>
+│   ├── <span class="a">/proc/net/</span>  <span class="tree-desc">— statystyki sieci (tcp, udp, dev, arp)</span>
+│   ├── <span class="a">/proc/sys/</span>  <span class="tree-desc">— parametry kernela (sysctl) — edytowalne!</span>
+│   │   ├── <span class="g">kernel/hostname</span>  <span class="tree-desc">— nazwa hosta</span>
+│   │   ├── <span class="g">net/ipv4/ip_forward</span>  <span class="tree-desc">— routowanie IP (0/1)</span>
+│   │   └── <span class="g">vm/swappiness</span>  <span class="tree-desc">— agresywność swapowania (0-100)</span>
+│   ├── <span class="a">/proc/loadavg</span>  <span class="tree-desc">— load average (1,5,15 min)</span>
+│   └── <span class="a">/proc/version</span>  <span class="tree-desc">— wersja kernela Linux</span>
+│
+├── <span class="tree-dir l">sys/</span>  <span class="tree-desc">— sysfs. Wirtualny FS. Interfejs do urządzeń i sterowników.</span>
+│   ├── <span class="a">/sys/class/net/</span>  <span class="tree-desc">— interfejsy sieciowe (eth0, lo, wlan0)</span>
+│   ├── <span class="a">/sys/block/</span>  <span class="tree-desc">— dyski blokowe (sda, nvme0n1)</span>
+│   └── <span class="a">/sys/class/hwmon/</span>  <span class="tree-desc">— czujniki temperatury</span>
+│
+├── <span class="tree-dir l">dev/</span>  <span class="tree-desc">— Device files. Każde urządzenie = plik.</span>
+│   ├── <span class="a">sda, sda1</span>  <span class="tree-desc">— dysk SATA i jego partycja</span>
+│   ├── <span class="a">nvme0n1</span>  <span class="tree-desc">— dysk NVMe</span>
+│   ├── <span class="a">null</span>  <span class="tree-desc">— czarna dziura (> /dev/null = wyrzuć output)</span>
+│   ├── <span class="a">zero</span>  <span class="tree-desc">— nieskończone zera (do wypełniania dysków)</span>
+│   ├── <span class="a">random, urandom</span>  <span class="tree-desc">— losowe bajty (kryptografia)</span>
+│   ├── <span class="a">tty, pts/</span>  <span class="tree-desc">— terminale i pseudoterminale</span>
+│   └── <span class="a">shm/</span>  <span class="tree-desc">— współdzielona pamięć (tmpfs)</span>
+│
+├── <span class="tree-dir l">run/</span>  <span class="tree-desc">— Runtime data. PID files, sockets. tmpfs (czyste po restart).</span>
+│   ├── <span class="a">*.pid</span>  <span class="tree-desc">— PID uruchomionych demonów</span>
+│   └── <span class="a">systemd/</span>  <span class="tree-desc">— runtime state systemd</span>
+│
+├── <span class="tree-dir l">boot/</span>  <span class="tree-desc">— Pliki bootloadera i kernela</span>
+│   ├── <span class="a">vmlinuz-*</span>  <span class="tree-desc">— skompresowany kernel Linux</span>
+│   ├── <span class="a">initrd.img-*</span>  <span class="tree-desc">— initial ramdisk</span>
+│   ├── <span class="a">System.map-*</span>  <span class="tree-desc">— symbol table kernela</span>
+│   └── <span class="tree-dir">grub/</span>  <span class="tree-desc">— konfiguracja GRUB bootloadera</span>
+│       └── <span class="a">grub.cfg</span>  <span class="tree-desc">— WYGENEROWANY plik konfiguracji GRUB (nie edytuj ręcznie!)</span>
+│
+├── <span class="tree-dir l">mnt/</span>  <span class="tree-desc">— Tymczasowe punkty montowania (ręcznie: mount /dev/sdb1 /mnt)</span>
+├── <span class="tree-dir l">media/</span>  <span class="tree-desc">— Automontowane nośniki (USB, CD/DVD, przez udev)</span>
+├── <span class="tree-dir l">opt/</span>  <span class="tree-desc">— Opcjonalne oprogramowanie (Chrome, JDK, Oracle...)</span>
+├── <span class="tree-dir l">srv/</span>  <span class="tree-desc">— Dane serwowane (HTTP, FTP, samba)</span>
+└── <span class="tree-dir l">snap/</span>  <span class="tree-desc">— Snap packages (Ubuntu). Każda aplikacja izolowana.</span>
+    </div>
+
+    <div class="gap16"></div>
+    <div class="g3">
+      <div class="card">
+        <div class="card-h" style="color:var(--linux)">🔐 Uprawnienia Linux</div>
+        <div class="card-b">
+          <div class="code" style="border:none;border-radius:0;background:transparent">
+            <pre style="padding:0;font-size:.75rem"><span class="cm"># ls -la pokazuje uprawnienia:</span>
+<span class="go">-rwxr-xr-- 1 jan users 4096 Jan 1 bash_script</span>
+<span class="cm"> ↑↑↑↑↑↑↑↑↑</span>
+<span class="cm"> │└┤ └┤ └┤</span>
+<span class="cm"> │ │  │  └ other: r-- (4) = czytaj</span>
+<span class="cm"> │ │  └─── group: r-x (5) = czytaj+exec</span>
+<span class="cm"> │ └────── owner: rwx (7) = wszystko</span>
+<span class="cm"> └──────── typ: - = plik, d = katalog, l = symlink</span>
+
+<span class="cm"># chmod numerycznie:</span>
+chmod 755 script.sh   <span class="cm"># rwxr-xr-x</span>
+chmod 644 file.txt    <span class="cm"># rw-r--r--</span>
+chmod 600 private.key <span class="cm"># rw------- (tylko owner)</span>
+
+<span class="cm"># Specjalne bity:</span>
+<span class="cm"># setuid (4): exec z uprawnieniami właściciela</span>
+<span class="cm"># setgid (2): exec z uprawnieniami grupy</span>
+<span class="cm"># sticky (1): /tmp — tylko właściciel może usunąć swój plik</span>
+chmod 4755 /usr/bin/sudo  <span class="cm"># setuid!</span></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h" style="color:var(--linux)">📋 Ważne komendy diagnostyczne</div>
+        <div class="card-b">
+          <div class="code" style="border:none;border-radius:0;background:transparent">
+            <pre style="padding:0;font-size:.73rem">journalctl -xe      <span class="cm"># ostatnie logi systemd</span>
+journalctl -u nginx <span class="cm"># logi konkretnego serwisu</span>
+journalctl -f       <span class="cm"># follow (jak tail -f)</span>
+journalctl --since "1 hour ago"
+
+dmesg | tail -50    <span class="cm"># kernel messages</span>
+dmesg -T            <span class="cm"># z czytelnym czasem</span>
+
+systemctl status nginx
+systemctl list-units --failed
+systemctl list-timers
+
+top / htop          <span class="cm"># procesy i zasoby</span>
+iotop               <span class="cm"># I/O per proces</span>
+netstat -tulpn      <span class="cm"># otwarte porty</span>
+ss -tulpn           <span class="cm"># nowoczesne netstat</span>
+lsof -i :8080       <span class="cm"># kto używa portu</span>
+df -h               <span class="cm"># wolne miejsce na dysku</span>
+du -sh /var/log/*   <span class="cm"># rozmiar katalogów</span></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h" style="color:var(--linux)">📦 Pakiety — apt vs dnf vs pacman</div>
+        <div class="card-b">
+          <div class="code" style="border:none;border-radius:0;background:transparent">
+            <pre style="padding:0;font-size:.73rem"><span class="cm"># Debian/Ubuntu — apt</span>
+apt update && apt upgrade
+apt install nginx
+apt remove nginx
+apt autoremove
+dpkg -l | grep nginx
+
+<span class="cm"># RHEL/Fedora — dnf (lub yum)</span>
+dnf update
+dnf install nginx
+dnf remove nginx
+rpm -qa | grep nginx
+
+<span class="cm"># Arch Linux — pacman</span>
+pacman -Syu         <span class="cm"># sync + upgrade</span>
+pacman -S nginx
+pacman -R nginx
+pacman -Q | grep nginx
+
+<span class="cm"># Snap (Ubuntu) / Flatpak (universal)</span>
+snap install code --classic
+flatpak install flathub org.gimp.GIMP</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 11 NETWORK BOOT ══ -->
+  <section class="chapter" id="network-boot">
+    <div class="ch-head">
+      <div class="ch-num">11 / 12</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--teal)">Sieć & Network Stack</div>
+        <div class="ch-title">Jak OS obsługuje sieć — od karty do aplikacji</div>
+        <div class="ch-desc">Stos sieciowy to jeden z najważniejszych podsystemów OS. Od przerwania w karcie sieciowej przez DMA, protokoły TCP/IP, sockety aż do aplikacji — każda warstwa dodaje abstrakcję i funkcjonalność.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--teal)"></div>Pakiet sieciowy — droga przez system</div></div>
+        <pre><span class="cm">Pakiet TCP przychodzi na kartę sieciową (NIC):</span>
+
+<span class="go">1. NIC</span>  <span class="cm">→ DMA: kopia pakietu do RAM (ring buffer)</span>
+         <span class="cm">→ IRQ: przerwanie do CPU</span>
+
+<span class="go">2. Kernel driver</span>  <span class="cm">→ odbiera z ring buffer</span>
+                    <span class="cm">→ sk_buff (socket buffer) — struktura pakietu</span>
+
+<span class="go">3. Network stack (softirq)</span>
+   <span class="cm">→ Ethernet: sprawdź MAC, odrzuć obcy</span>
+   <span class="cm">→ IP: sprawdź IP, routing, TTL--</span>
+   <span class="cm">→ TCP: sprawdź porty, sequence numbers, checksum</span>
+   <span class="cm">→ Reassembly fragmentów (jeśli potrzeba)</span>
+
+<span class="go">4. Socket receive buffer</span>
+   <span class="cm">→ Dane trafiają do bufora socketa (SO_RCVBUF)</span>
+   <span class="cm">→ Jeśli bufor pełny → pakiet odrzucony (drop!)</span>
+
+<span class="go">5. Aplikacja</span>
+   <span class="cm">→ recv()/read() → syscall → dane z bufora → user space</span>
+
+<span class="cm">─── Ważne pliki konfiguracji sieci Linux ─────────────────</span>
+<span class="cm">/etc/network/interfaces    — Debian static config</span>
+<span class="cm">/etc/NetworkManager/       — GUI/nmcli config</span>
+<span class="cm">/etc/netplan/              — Ubuntu 18+ YAML config</span>
+<span class="cm">/proc/sys/net/ipv4/        — kernel network params</span>
+<span class="cm">/etc/sysctl.conf           — persistent sysctl params</span></pre>
+      </div>
+
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--teal)"></div>Wirtualizacja i kontenery — różnice</div></div>
+        <pre><span class="cm">─── Maszyna Wirtualna (VM) ───────────────────────────────</span>
+<span class="cm">Hypervisor (Type 1: VMware ESXi, Hyper-V, KVM)</span>
+<span class="cm">         (Type 2: VirtualBox, VMware Workstation)</span>
+<span class="cm">Guest OS: pełny kernel + własna pamięć + wirtualny sprzęt</span>
+<span class="cm">Izolacja: bardzo silna (osobny kernel)</span>
+<span class="cm">Overhead: ~10-15% CPU, GB pamięci per VM, wolny start</span>
+
+<span class="cm">─── Kontener (Docker, Podman) ────────────────────────────</span>
+<span class="cm">Współdzieli kernel hosta</span>
+<span class="cm">Izolacja przez: namespaces (PID, NET, MNT, UTS, IPC, USER)</span>
+<span class="cm">Limity przez: cgroups (CPU, RAM, I/O, network)</span>
+<span class="cm">Overhead: &lt;1%, MB pamięci, start &lt;1s</span>
+<span class="cm">Nie jest VM! Naruszenie kernel = host naruszony</span>
+
+<span class="cm">─── Linux Namespaces ──────────────────────────────────────</span>
+<span class="cm">PID  → kontener widzi tylko swoje procesy (PID 1 = init kontenera)</span>
+<span class="cm">NET  → osobny stos sieciowy, interfejsy, routing</span>
+<span class="cm">MNT  → osobny filesystem (overlay, bind mounts)</span>
+<span class="cm">UTS  → osobna nazwa hosta i domeny</span>
+<span class="cm">IPC  → izolacja shared memory, semaphores</span>
+<span class="cm">USER → mapowanie UID/GID (rootless containers)</span>
+
+<span class="cm">─── cgroups v2 ────────────────────────────────────────────</span>
+<span class="cm">/sys/fs/cgroup/         — hierarchia cgroup</span>
+<span class="cm">memory.limit_in_bytes   — limit RAM</span>
+<span class="cm">cpu.cfs_quota_us        — limit CPU</span>
+<span class="cm">blkio.throttle.*        — limit I/O dyskowego</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 12 TROUBLESHOOT ══ -->
+  <section class="chapter" id="troubleshoot">
+    <div class="ch-head">
+      <div class="ch-num">12 / 12</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--rose)">Diagnostyka & Troubleshooting</div>
+        <div class="ch-title">Diagnozowanie problemów — od BSOD do OOM</div>
+        <div class="ch-desc">Senior developer powinien umieć diagnozować problemy systemowe, czytać logi, analizować dump pamięci i rozumieć komunikaty o błędach. To umiejętność odróżniająca kogoś kto "instaluje" od kogoś kto "rozumie".</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="card">
+        <div class="card-h" style="color:var(--rose)">💀 Windows BSOD — co mówi Blue Screen</div>
+        <div class="card-b" style="font-size:.84rem;color:var(--tx2);line-height:1.85">
+          <div class="ritem">
+            <div class="ritem-key" style="color:var(--rose);min-width:220px">IRQL_NOT_LESS_OR_EQUAL</div>
+            <div class="ritem-val">Sterownik próbuje dostępu do niedostępnej pamięci przy wysokim poziomie IRQ. Uszkodzony/niezgodny sterownik.</div>
+          </div>
+          <div class="ritem">
+            <div class="ritem-key" style="color:var(--rose);min-width:220px">PAGE_FAULT_IN_NONPAGED_AREA</div>
+            <div class="ritem-val">Dostęp do strony pamięci która nie może być wyrzucona. Zepsuta RAM lub sterownik.</div>
+          </div>
+          <div class="ritem">
+            <div class="ritem-key" style="color:var(--rose);min-width:220px">MEMORY_MANAGEMENT</div>
+            <div class="ritem-val">Błąd zarządzania pamięcią. Zepsuta pamięć RAM → memtest86+</div>
+          </div>
+          <div class="ritem">
+            <div class="ritem-key" style="color:var(--rose);min-width:220px">CRITICAL_PROCESS_DIED</div>
+            <div class="ritem-val">Krytyczny proces systemowy (lsass, csrss) zakończył się nieoczekiwanie.</div>
+          </div>
+          <div class="ritem">
+            <div class="ritem-key" style="color:var(--rose);min-width:220px">DRIVER_IRQL_NOT_LESS_EQUAL</div>
+            <div class="ritem-val">Plik *.sys podany w komunikacie to winowajca. Zaktualizuj lub usuń ten sterownik.</div>
+          </div>
+          <div class="ritem">
+            <div class="ritem-key" style="color:var(--rose);min-width:220px">Analiza dumpów</div>
+            <div class="ritem-val">WinDbg (debugger Microsoft) → <code>!analyze -v</code> → pełna analiza. Minidumpy w <code>C:\Windows\Minidump\</code>. Online: <a href="#" style="color:var(--acc)">WinDbg Preview w Microsoft Store</a>.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h" style="color:var(--rose)">🐧 Linux Kernel Panic & OOM</div>
+        <div class="card-b" style="font-size:.84rem;color:var(--tx2);line-height:1.85">
+          <div class="ritem">
+            <div class="ritem-key" style="color:var(--rose);min-width:180px">Kernel Panic</div>
+            <div class="ritem-val">Odpowiednik BSOD. Sprawdź: <code>dmesg</code>, <code>/var/log/kern.log</code>. Przyczyny: uszkodzony moduł, null pointer, stack overflow w sterowniku.</div>
+          </div>
+          <div class="ritem">
+            <div class="ritem-key" style="color:var(--rose);min-width:180px">OOM Killer</div>
+            <div class="ritem-val">Out Of Memory Killer — kernel zabija procesy gdy brakuje RAM. Sprawdź: <code>dmesg | grep -i "out of memory"</code>. Pojawi się który PID i proces został zabity.</div>
+          </div>
+          <div class="ritem">
+            <div class="ritem-key" style="color:var(--rose);min-width:180px">Segfault</div>
+            <div class="ritem-val"><code>dmesg | grep segfault</code> — pokaże program i adres naruszenia. Wskaże crash jądra lub aplikacji.</div>
+          </div>
+          <div class="ritem">
+            <div class="ritem-key" style="color:var(--rose);min-width:180px">Dysk pełny</div>
+            <div class="ritem-val"><code>df -h</code> + <code>du -sh /var/log/*</code>. Typowi winowajcy: logi aplikacji bez rotacji, coredumps, Docker layers. <code>journalctl --vacuum-size=1G</code></div>
+          </div>
+          <div class="ritem">
+            <div class="ritem-key" style="color:var(--rose);min-width:180px">Zombie procesy</div>
+            <div class="ritem-val"><code>ps aux | grep Z</code>. Zombie = zakończony ale rodzic nie wywołał wait(). Nie zajmuje CPU/RAM. Zniknie gdy rodzic zostanie zabity.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="gap16"></div>
+    <div class="g4">
+      <div class="card">
+        <div class="card-h" style="color:var(--rose)">🔍 Boot nie startuje</div>
+        <div class="card-b" style="font-size:.82rem;color:var(--tx2);line-height:1.85">
+          <p><strong style="color:var(--tx)">Windows:</strong> Startup Repair → Automatic Repair → bootrec /fixmbr, /fixboot, /rebuildbcd</p>
+          <p style="margin-top:8px"><strong style="color:var(--tx)">Linux:</strong> Live USB → mount dysk → chroot → grub-install → update-grub</p>
+          <p style="margin-top:8px">Sprawdź kolejność boot w UEFI. Sprawdź czy dysk wykrywany.</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h" style="color:var(--rose)">🌡️ Przegrzewanie</div>
+        <div class="card-b" style="font-size:.82rem;color:var(--tx2);line-height:1.85">
+          <p><strong style="color:var(--tx)">Windows:</strong> HWMonitor, Core Temp. CPU throttle = spadek MHz w Task Manager.</p>
+          <p style="margin-top:8px"><strong style="color:var(--tx)">Linux:</strong> <code>sensors</code> (lm-sensors), <code>/sys/class/hwmon/</code>, <code>turbostat</code></p>
+          <p style="margin-top:8px">TDP throttle: CPU ogranicza moc gdy gorąco. Sprawdź pasta termalna, wentylatory.</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h" style="color:var(--rose)">💾 Dysk umiera</div>
+        <div class="card-b" style="font-size:.82rem;color:var(--tx2);line-height:1.85">
+          <p><strong style="color:var(--tx)">SMART:</strong> <code>smartctl -a /dev/sda</code>. Patrz na: Reallocated_Sector_Ct, Pending_Sectors, Uncorrectable_Sectors. Niezerowe = problem!</p>
+          <p style="margin-top:8px"><strong style="color:var(--tx)">Windows:</strong> CrystalDiskInfo. <strong>Linux:</strong> smartmontools, nvme-cli</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h" style="color:var(--rose)">🧠 RAM test</div>
+        <div class="card-b" style="font-size:.82rem;color:var(--tx2);line-height:1.85">
+          <p><strong style="color:var(--tx)">memtest86+</strong> — bootowalne narzędzie. Testuj pełną noc. Jeden błąd = zepsuta kość.</p>
+          <p style="margin-top:8px"><strong style="color:var(--tx)">Windows:</strong> mdsched.exe (Memory Diagnostic). Mniej dokładny niż memtest86+.</p>
+          <p style="margin-top:8px">ECC RAM: automatyczna korekcja jednobitowych błędów w serwerach.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="gap24"></div>
+    <div class="strip" style="border-color:var(--acc);background:rgba(56,189,248,.04)">
+      <div class="strip-icon">💻</div>
+      <div>
+        <strong>Komputer to abstrakcja na abstrakcji na abstrakcji.</strong> Tworzysz obiekt w Java → JIT kompiluje do x86 → CPU dekoduje do µops → tranzystory przełączają stan → elektrony przemieszczają się przez krzem. Każda warstwa ukrywa ogromną złożoność i pozwala skupić się na problemie wyżej. Im niżej schodzisz, tym bliżej fizyki — ale też tym więcej władzy i zrozumienia zyskujesz. Senior developer nie musi znać fizyki tranzystorów, ale powinien rozumieć przynajmniej dwie warstwy poniżej swojej codziennej pracy.
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div><span class="footer-title">Komputer od środka</span> · Hardware · Boot Process · Windows & Linux Filesystem · 2026</div>
+  <div>12 rozdziałów · Architektura, Boot krok po kroku, FHS, Diagnostyka</div>
+</footer>
+
+</body>
+</html>

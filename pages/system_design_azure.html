@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>System Design &amp; Azure — Kompletna Wiedza</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ffffff;--s1:#f8f9fa;--s2:#f1f3f5;--s3:#e9ecef;
+  --bd:#dee2e6;--bd2:#ced4da;--tx:#1a1a2e;--tx2:#495057;--mt:#6c757d;
+  --k1:#f97316;--k2:#ea6c0a;
+  --green:#16a34a;--teal:#0d9488;--violet:#7c3aed;--rose:#e11d48;
+  --amber:#d97706;--pink:#c026d3;--sky:#0284c7;--orange:#ea580c;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;line-height:1.65;overflow-x:hidden}
+.back{position:fixed;top:22px;left:22px;z-index:9999;background:rgba(255,255,255,.95);backdrop-filter:blur(14px);border:1px solid var(--bd2);border-radius:40px;padding:10px 20px;display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--tx2);font-family:'IBM Plex Mono',monospace;font-size:.72rem;font-weight:500;letter-spacing:1px;transition:all .25s}
+.back:hover{color:var(--k1);border-color:var(--k1)}
+.hdr{min-height:500px;padding:110px 80px 80px;position:relative;overflow:hidden;display:flex;align-items:flex-end}
+.hdr-bg{position:absolute;inset:0;background:var(--s1)}
+.hdr-bg::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 55% at 3% 100%,rgba(129,140,248,.13) 0%,transparent 55%),radial-gradient(ellipse 50% 65% at 97% 5%,rgba(56,189,248,.09) 0%,transparent 50%),radial-gradient(ellipse 45% 50% at 50% 50%,rgba(167,139,250,.05) 0%,transparent 60%)}
+.hdr-grid{position:absolute;inset:0;background-image:linear-gradient(var(--bd) 1px,transparent 1px),linear-gradient(90deg,var(--bd) 1px,transparent 1px);background-size:48px 48px;opacity:.13;mask-image:radial-gradient(ellipse 85% 90% at 50% 50%,black,transparent)}
+.hdr-content{position:relative;max-width:1400px;width:100%}
+.hdr-tier{display:inline-flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:.65rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--k1);margin-bottom:28px;padding:7px 16px;border:1px solid rgba(129,140,248,.35);border-radius:4px;background:rgba(129,140,248,.07)}
+.tier-dot{width:6px;height:6px;border-radius:50%;background:var(--k1);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+h1{font-size:clamp(2.6rem,6vw,5.5rem);font-weight:800;line-height:.9;letter-spacing:-4px;margin-bottom:28px}
+h1 em{font-style:normal;background:linear-gradient(135deg,var(--k1),var(--sky));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+h1 small{display:block;font-size:.36em;letter-spacing:-1px;color:var(--tx2);font-weight:500;margin-top:14px;-webkit-text-fill-color:var(--tx2)}
+.hdr-desc{font-size:1rem;color:var(--tx2);max-width:680px;line-height:1.9}
+.hdr-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.chip{font-family:'IBM Plex Mono',monospace;font-size:.63rem;font-weight:600;letter-spacing:.5px;padding:5px 12px;border-radius:3px;border:1px solid}
+.ck{color:var(--k1);border-color:rgba(129,140,248,.4);background:rgba(129,140,248,.07)}
+.cg{color:var(--green);border-color:rgba(74,222,128,.35);background:rgba(74,222,128,.05)}
+.ct{color:var(--teal);border-color:rgba(45,212,191,.35);background:rgba(45,212,191,.05)}
+.cv{color:var(--violet);border-color:rgba(167,139,250,.35);background:rgba(167,139,250,.07)}
+.cr{color:var(--rose);border-color:rgba(251,113,133,.35);background:rgba(251,113,133,.05)}
+.ca{color:var(--amber);border-color:rgba(251,191,36,.35);background:rgba(251,191,36,.05)}
+.co{color:var(--orange);border-color:rgba(251,146,60,.35);background:rgba(251,146,60,.05)}
+.cs{color:var(--sky);border-color:rgba(56,189,248,.35);background:rgba(56,189,248,.05)}
+.nav{position:sticky;top:0;z-index:300;background:rgba(255,255,255,.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--bd);display:flex;overflow-x:auto;scrollbar-width:none;padding:0 80px}
+.nav::-webkit-scrollbar{display:none}
+.nav-a{color:var(--mt);text-decoration:none;font-family:'IBM Plex Mono',monospace;font-size:.63rem;font-weight:600;letter-spacing:.5px;padding:14px 12px;white-space:nowrap;border-bottom:2px solid transparent;transition:all .18s}
+.nav-a:hover{color:var(--k1);border-bottom-color:var(--k1)}
+.main{max-width:1400px;margin:0 auto;padding:80px 24px 160px}
+.chapter{margin-bottom:100px;animation:fadeUp .5s ease backwards}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.chapter:nth-child(1){animation-delay:.04s}.chapter:nth-child(2){animation-delay:.08s}
+.chapter:nth-child(3){animation-delay:.12s}.chapter:nth-child(4){animation-delay:.16s}
+.chapter:nth-child(5){animation-delay:.20s}.chapter:nth-child(6){animation-delay:.24s}
+.chapter:nth-child(7){animation-delay:.28s}.chapter:nth-child(8){animation-delay:.32s}
+.chapter:nth-child(9){animation-delay:.36s}.chapter:nth-child(10){animation-delay:.40s}
+.chapter:nth-child(11){animation-delay:.44s}
+.ch-head{display:flex;align-items:flex-start;gap:22px;margin-bottom:36px;padding-bottom:28px;border-bottom:1px solid var(--bd)}
+.ch-num{font-family:'IBM Plex Mono',monospace;font-size:.62rem;font-weight:700;letter-spacing:3px;color:var(--mt);padding-top:6px;white-space:nowrap}
+.ch-info{flex:1}
+.ch-cat{font-family:'IBM Plex Mono',monospace;font-size:.58rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:6px}
+.ch-title{font-size:1.9rem;font-weight:800;letter-spacing:-1px;line-height:1.1;margin-bottom:10px}
+.ch-desc{font-size:.9rem;color:var(--tx2);max-width:840px;line-height:1.9}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:1100px){.g4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:900px){.g2,.g3,.g4{grid-template-columns:1fr}.hdr{padding:80px 24px 56px}.nav{padding:0 16px}h1{font-size:2.6rem;letter-spacing:-2px}}
+.card{background:var(--s1);border:1px solid var(--bd);border-radius:8px;overflow:hidden;transition:border-color .2s,box-shadow .2s}
+.card:hover{border-color:var(--bd2);box-shadow:0 6px 28px rgba(0,0,0,.5)}
+.card-h{padding:11px 18px;font-family:'IBM Plex Mono',monospace;font-size:.66rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:8px}
+.card-b{padding:18px}
+.code{background:#f4f4f5;border:1px solid var(--bd);border-radius:8px;overflow:hidden}
+.cbar{background:var(--s1);border-bottom:1px solid var(--bd);padding:9px 16px;font-family:'IBM Plex Mono',monospace;font-size:.64rem;color:var(--mt);display:flex;align-items:center;gap:7px}
+.fdot{width:7px;height:7px;border-radius:50%}
+pre{padding:20px;font-family:'IBM Plex Mono',monospace;font-size:.77rem;line-height:1.75;overflow-x:auto;color:#374151}
+.kw{color:#c678dd}.cls{color:#e5c07b}.fn{color:#61afef}.str{color:#98c379}
+.cm{color:#1e3040;font-style:italic}.num{color:#d19a66}.ann{color:#e06c75}
+.prop{color:#a5b4fc}
+.alert{padding:16px 20px;border-radius:6px;border-left:3px solid;font-size:.87rem;line-height:1.85;color:var(--tx2)}
+.alert strong{color:var(--tx)}
+.alert-label{font-family:'IBM Plex Mono',monospace;font-size:.58rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;display:block;margin-bottom:6px}
+.al-k{background:rgba(129,140,248,.05);border-color:var(--k1)}.al-k .alert-label{color:var(--k1)}
+.al-green{background:rgba(74,222,128,.05);border-color:var(--green)}.al-green .alert-label{color:var(--green)}
+.al-rose{background:rgba(251,113,133,.05);border-color:var(--rose)}.al-rose .alert-label{color:var(--rose)}
+.al-violet{background:rgba(167,139,250,.05);border-color:var(--violet)}.al-violet .alert-label{color:var(--violet)}
+.al-teal{background:rgba(45,212,191,.05);border-color:var(--teal)}.al-teal .alert-label{color:var(--teal)}
+.al-amber{background:rgba(251,191,36,.05);border-color:var(--amber)}.al-amber .alert-label{color:var(--amber)}
+.al-orange{background:rgba(251,146,60,.05);border-color:var(--orange)}.al-orange .alert-label{color:var(--orange)}
+.al-sky{background:rgba(56,189,248,.05);border-color:var(--sky)}.al-sky .alert-label{color:var(--sky)}
+.tbl{width:100%;border-collapse:collapse;font-size:.84rem}
+.tbl th{background:var(--s2);color:var(--tx2);font-family:'IBM Plex Mono',monospace;font-size:.63rem;letter-spacing:2px;text-transform:uppercase;font-weight:700;padding:11px 16px;text-align:left;border-bottom:1px solid var(--bd)}
+.tbl td{padding:11px 16px;border-bottom:1px solid var(--bd);color:var(--tx2);vertical-align:top;line-height:1.75}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:var(--s2);color:var(--tx)}
+.tbl code{font-family:'IBM Plex Mono',monospace;font-size:.76rem;color:var(--k2);background:rgba(129,140,248,.1);padding:2px 7px;border-radius:3px}
+.ritem{display:flex;gap:16px;padding:12px 0;border-bottom:1px solid var(--bd);align-items:flex-start}
+.ritem:last-child{border-bottom:none}
+.ritem-key{font-family:'IBM Plex Mono',monospace;font-size:.76rem;white-space:nowrap;padding-top:2px;min-width:170px;flex-shrink:0}
+.ritem-val{font-size:.85rem;color:var(--tx2);line-height:1.75}
+.ritem-val code{font-family:'IBM Plex Mono',monospace;font-size:.76rem;color:var(--k2);background:rgba(129,140,248,.1);padding:1px 6px;border-radius:3px}
+.ritem-val strong{color:var(--tx)}
+.strip{border:1px solid var(--bd);border-radius:8px;padding:18px 22px;font-size:.87rem;color:var(--tx2);line-height:1.85;display:flex;gap:16px;align-items:flex-start}
+.strip-icon{font-size:1.3rem;flex-shrink:0;padding-top:2px}
+.strip strong{color:var(--tx)}
+.gap8{margin-top:8px}.gap12{margin-top:12px}.gap16{margin-top:16px}.gap24{margin-top:24px}
+.footer{border-top:1px solid var(--bd);background:var(--s1);padding:36px 80px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;font-family:'IBM Plex Mono',monospace;font-size:.68rem;color:var(--mt)}
+.footer-title{color:var(--k1);font-weight:700}
+.arch-box{background:var(--s2);border:1px solid var(--bd2);border-radius:6px;padding:16px 18px;font-family:'IBM Plex Mono',monospace;font-size:.72rem;line-height:1.9}
+.az-tag{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:.62rem;font-weight:700;padding:3px 9px;border-radius:3px;background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.3);color:var(--sky);margin:2px}
+.flow-row{display:flex;align-items:center;gap:8px;margin:5px 0;flex-wrap:wrap}
+.fbox{padding:6px 12px;border-radius:4px;font-size:.68rem;font-weight:700;white-space:nowrap}
+.farr{color:var(--mt);font-size:.9rem}
+</style>
+</head>
+<body>
+<a class="back" href="#">← MENU</a>
+<header class="hdr">
+  <div class="hdr-bg"></div><div class="hdr-grid"></div>
+  <div class="hdr-content">
+    <div class="hdr-tier"><div class="tier-dot"></div> System Design · Azure · Distributed Systems</div>
+    <h1><em>System Design</em><small>Load Balancing · Sharding · CAP · Backpressure · Case Studies na Azure</small></h1>
+    <p class="hdr-desc">Kluczowe koncepty projektowania systemów rozproszonych — od teorii do konkretnych implementacji na Azure. Load balancing, rate limiting, sharding, consistent hashing, caching, CAP theorem, backpressure i kompletne case studies.</p>
+    <div class="hdr-chips">
+      <span class="chip ck">● Load Balancing</span>
+      <span class="chip ca">Rate Limiting</span>
+      <span class="chip cg">Sharding</span>
+      <span class="chip ct">Consistent Hashing</span>
+      <span class="chip cv">CAP Theorem</span>
+      <span class="chip cr">Backpressure</span>
+      <span class="chip cs">Caching</span>
+      <span class="chip co">Case Studies Azure</span>
+    </div>
+  </div>
+</header>
+<nav class="nav">
+  <a class="nav-a" href="#load-balancing">Load Balancing</a>
+  <a class="nav-a" href="#rate-limiting">Rate Limiting</a>
+  <a class="nav-a" href="#sharding">Sharding &amp; Partitioning</a>
+  <a class="nav-a" href="#consistent-hashing">Consistent Hashing</a>
+  <a class="nav-a" href="#caching">Caching Strategies</a>
+  <a class="nav-a" href="#cap">CAP Theorem</a>
+  <a class="nav-a" href="#backpressure">Backpressure</a>
+  <a class="nav-a" href="#azure-services">Azure Services Map</a>
+  <a class="nav-a" href="#case-url-shortener">Case: URL Shortener</a>
+  <a class="nav-a" href="#case-ecommerce">Case: E-commerce</a>
+  <a class="nav-a" href="#case-chat">Case: Chat System</a>
+</nav>
+<main class="main">
+
+<!-- ══ 01 LOAD BALANCING ══ -->
+<section class="chapter" id="load-balancing">
+  <div class="ch-head">
+    <div class="ch-num">01 / 11</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--k1)">Load Balancing</div>
+      <div class="ch-title">Strategie load balancingu — algorytmy i warstwy</div>
+      <div class="ch-desc">Load balancer dystrybuuje ruch między instancjami serwisu. Działa na warstwie L4 (TCP/UDP) lub L7 (HTTP). Algorytm wyboru serwera ma ogromne znaczenie przy różnych profilach ruchu i typach workloadów.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-h" style="color:var(--k1)">⚖️ Algorytmy load balancingu</div>
+      <div class="card-b">
+        <div class="ritem"><div class="ritem-key" style="color:var(--k1)">Round Robin</div><div class="ritem-val">Każdy request do kolejnego serwera po kolei. Prosto, równomiernie — ale ignoruje rzeczywiste obciążenie. <strong>Kiedy:</strong> jednородne requesty, podobny czas odpowiedzi.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--k1)">Weighted Round Robin</div><div class="ritem-val">Jak Round Robin, ale serwery dostają proporcjonalnie więcej requestów wg wagi. <strong>Kiedy:</strong> heterogeniczne serwery (różna moc obliczeniowa).</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--k1)">Least Connections</div><div class="ritem-val">Request trafia do serwera z najmniejszą liczbą aktywnych połączeń. <strong>Kiedy:</strong> long-lived connections (WebSocket, SSE), różny czas przetwarzania requestów.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--k1)">Least Response Time</div><div class="ritem-val">Połączenie aktywnych połączeń + najniższy avg response time. Najbardziej dynamiczny. <strong>Kiedy:</strong> zróżnicowane latencje serwerów (różne lokalizacje, sprzęt).</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--k1)">IP Hash</div><div class="ritem-val"><code>hash(client_IP) % N</code> — ten sam klient zawsze do tego samego serwera (sticky sessions bez cookie). <strong>Problem:</strong> nierówny rozkład jeśli dużo ruchu z jednego IP (NAT, proxy).</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--k1)">Random</div><div class="ritem-val">Losowy wybór. Statystycznie równomierny przy dużej liczbie requestów. Prosty do implementacji, brak state.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--k1)">Power of Two Choices</div><div class="ritem-val">Losuj 2 serwery, wybierz mniej obciążony. Lepszy niż czysty random, prostszy niż pełny Least Connections. Używany przez Nginx i NGINX Plus.</div></div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-h" style="color:var(--k1)">🌐 L4 vs L7 Load Balancer</div>
+        <div class="card-b" style="font-size:.84rem">
+          <table class="tbl">
+            <tr><th>Cecha</th><th>L4 (Transport)</th><th>L7 (Application)</th></tr>
+            <tr><td>Protokół</td><td>TCP/UDP</td><td>HTTP/HTTPS/gRPC/WebSocket</td></tr>
+            <tr><td>Routing</td><td>IP + Port</td><td>URL path, headers, cookies, body</td></tr>
+            <tr><td>Latencja</td><td><strong style="color:var(--green)">Niższa</strong></td><td>Wyższa (parsuje HTTP)</td></tr>
+            <tr><td>TLS termination</td><td>Passthrough</td><td><strong style="color:var(--green)">✅ Offload TLS</strong></td></tr>
+            <tr><td>Sticky sessions</td><td>IP Hash tylko</td><td><strong style="color:var(--green)">Cookie-based</strong></td></tr>
+            <tr><td>Health checks</td><td>TCP ping</td><td><strong style="color:var(--green)">HTTP /health endpoint</strong></td></tr>
+            <tr><td>Azure</td><td>Azure Load Balancer</td><td><strong style="color:var(--sky)">Azure Application Gateway</strong></td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="gap12"></div>
+      <div class="arch-box">
+        <div style="font-size:.65rem;color:var(--k1);font-weight:700;letter-spacing:2px;margin-bottom:12px">LOAD BALANCING NA AZURE</div>
+        <div class="flow-row">
+          <div class="fbox" style="background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.3);color:var(--sky)">Internet</div>
+          <span class="farr">→</span>
+          <div class="fbox" style="background:rgba(129,140,248,.1);border:1px solid rgba(129,140,248,.3);color:var(--k1)">Azure Front Door<br><span style="font-size:.6rem;font-weight:400;color:var(--tx2)">Global anycast, CDN, WAF</span></div>
+          <span class="farr">→</span>
+          <div class="fbox" style="background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.3);color:var(--green)">App Gateway<br><span style="font-size:.6rem;font-weight:400;color:var(--tx2)">L7, SSL offload, WAF</span></div>
+        </div>
+        <div style="text-align:center;color:var(--mt);margin:4px 0">↓</div>
+        <div class="flow-row">
+          <div class="fbox" style="background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.3);color:var(--amber)">AKS / App Service</div>
+          <span class="farr">|</span>
+          <div class="fbox" style="background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.3);color:var(--amber)">AKS / App Service</div>
+          <span class="farr">|</span>
+          <div class="fbox" style="background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.3);color:var(--amber)">AKS / App Service</div>
+        </div>
+        <div style="margin-top:10px;font-size:.68rem;color:var(--tx2)">
+          <strong style="color:var(--tx)">Azure Traffic Manager</strong> — DNS-based global routing (Latency/Priority/Weighted/Geographic)<br>
+          <strong style="color:var(--tx)">Azure Load Balancer</strong> — L4, internal lub public, high throughput, low latency
+        </div>
+      </div>
+      <div class="gap12"></div>
+      <div class="alert al-k">
+        <span class="alert-label">Health Checks — kluczowe</span>
+        LB musi wiedzieć które instancje są zdrowe. <strong>Active probe</strong>: LB odpytuje <code>/health</code> co N sekund. <strong>Passive</strong>: monitoruje błędy na prawdziwym ruchu. Zawsze oddzielaj liveness od readiness — LB powinna używać readiness (czy gotowy na ruch), nie liveness (czy żyje).
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 02 RATE LIMITING ══ -->
+<section class="chapter" id="rate-limiting">
+  <div class="ch-head">
+    <div class="ch-num">02 / 11</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--amber)">Rate Limiting</div>
+      <div class="ch-title">Algorytmy rate limitingu — Token Bucket, Sliding Window i inne</div>
+      <div class="ch-desc">Rate limiting chroni system przed przeciążeniem i nadużyciami. Różne algorytmy mają różne trade-offy — burst handling, pamięć, dokładność. Na Azure: API Management, Application Gateway WAF, custom implementacja z Redis.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--amber)"></div> Algorytmy rate limiting — porównanie i implementacja</div>
+      <pre><span class="cm">// ══ 1. TOKEN BUCKET — najpopularniejszy ══════════════════════</span>
+<span class="cm">// Wiaderko N tokenów, refill M tokenów/sekundę.</span>
+<span class="cm">// Request = pobierz token. Brak tokenów = odrzuć (429).</span>
+<span class="cm">// Zaleta: burst do pojemności bucket. Wada: wymaga persystencji stanu.</span>
+
+<span class="cm">// Implementacja Redis (Lua — atomowe!)</span>
+<span class="kw">local</span> key       = KEYS[1]
+<span class="kw">local</span> capacity  = tonumber(ARGV[1])  <span class="cm">-- max tokens</span>
+<span class="kw">local</span> refill    = tonumber(ARGV[2])  <span class="cm">-- tokens/second</span>
+<span class="kw">local</span> now       = tonumber(ARGV[3])  <span class="cm">-- current timestamp ms</span>
+<span class="kw">local</span> requested = tonumber(ARGV[4])  <span class="cm">-- tokens requested</span>
+
+<span class="kw">local</span> state = redis.call(<span class="str">'HMGET'</span>, key, <span class="str">'tokens'</span>, <span class="str">'last_refill'</span>)
+<span class="kw">local</span> tokens     = tonumber(state[1]) <span class="kw">or</span> capacity
+<span class="kw">local</span> last_refill = tonumber(state[2]) <span class="kw">or</span> now
+
+<span class="cm">-- Przelicz tokens od ostatniego refill</span>
+<span class="kw">local</span> elapsed = (now - last_refill) / <span class="num">1000</span>
+tokens = math.min(capacity, tokens + elapsed * refill)
+
+<span class="kw">if</span> tokens >= requested <span class="kw">then</span>
+  tokens = tokens - requested
+  redis.call(<span class="str">'HMSET'</span>, key, <span class="str">'tokens'</span>, tokens, <span class="str">'last_refill'</span>, now)
+  redis.call(<span class="str">'EXPIRE'</span>, key, <span class="num">60</span>)
+  <span class="kw">return</span> <span class="num">1</span>  <span class="cm">-- allowed</span>
+<span class="kw">end</span>
+<span class="kw">return</span> <span class="num">0</span>    <span class="cm">-- rejected</span>
+
+<span class="cm">// ══ 2. LEAKY BUCKET — stały output rate ══════════════════════</span>
+<span class="cm">// Jak wiaderko z dziurą — niezależnie od input, output stały.</span>
+<span class="cm">// Żadnego bursta — wygładza ruch. Używany w sieci (QoS).</span>
+<span class="cm">// Zaleta: przewidywalny output. Wada: odrzuca burst nawet jeśli idle.</span>
+
+<span class="cm">// ══ 3. FIXED WINDOW COUNTER — prosty ══════════════════════════</span>
+<span class="cm">// Licznik per okno czasowe (np. minuta).</span>
+<span class="cm">// Problem: boundary burst — 100 req w :59, 100 req w :01 = 200 w 2 sek</span>
+key = <span class="str">"rate:"</span> + userId + <span class="str">":"</span> + (timestamp / 60000)
+count = redis.INCR(key)
+<span class="kw">if</span> count == 1: redis.EXPIRE(key, 60)
+<span class="kw">return</span> count &lt;= limit
+
+<span class="cm">// ══ 4. SLIDING WINDOW LOG — dokładny, drogi ═══════════════════</span>
+<span class="cm">// Pamiętaj timestamp każdego requestu. Odrzuć starsze niż window.</span>
+<span class="cm">// Zaleta: brak boundary burst. Wada: O(n) pamięci per user.</span>
+redis.ZREMRANGEBYSCORE(key, 0, now - 60000)
+redis.ZADD(key, now, requestId)
+<span class="kw">return</span> redis.ZCARD(key) &lt;= limit
+
+<span class="cm">// ══ 5. SLIDING WINDOW COUNTER — najlepszy balans ══════════════</span>
+<span class="cm">// Aproksymacja sliding window używając tylko 2 liczników.</span>
+<span class="cm">// current_window_count + (prev_window_count × overlap%)</span>
+<span class="kw">long</span> prevWindowMs = (nowMs / windowMs - 1) * windowMs;
+<span class="kw">double</span> overlap = <span class="num">1.0</span> - (nowMs - windowMs) / (double) windowMs;
+<span class="kw">double</span> approxCount = prevCount * overlap + currentCount;
+<span class="kw">return</span> approxCount &lt; limit;</pre>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-h" style="color:var(--amber)">📊 Porównanie algorytmów</div>
+        <div class="card-b" style="font-size:.84rem">
+          <table class="tbl">
+            <tr><th>Algorytm</th><th>Burst</th><th>Pamięć</th><th>Dokładność</th><th>Użycie</th></tr>
+            <tr><td><strong style="color:var(--green)">Token Bucket</strong></td><td>✅ do capacity</td><td>O(1)</td><td>Wysoka</td><td>API rate limit (standard)</td></tr>
+            <tr><td><strong>Leaky Bucket</strong></td><td>❌</td><td>O(1)</td><td>Wysoka</td><td>Network QoS, smooth output</td></tr>
+            <tr><td><strong>Fixed Window</strong></td><td>❌ boundary</td><td>O(1)</td><td>Niska</td><td>Proste systemy</td></tr>
+            <tr><td><strong style="color:var(--rose)">Sliding Log</strong></td><td>✅</td><td>O(n) ⚠️</td><td>Idealna</td><td>Niski ruch, wysoka precyzja</td></tr>
+            <tr><td><strong style="color:var(--green)">Sliding Counter</strong></td><td>✅</td><td>O(1)</td><td>~99%</td><td>Produkcja (Cloudflare, Redis)</td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="gap12"></div>
+      <div class="card">
+        <div class="card-h" style="color:var(--amber)">🔵 Rate Limiting na Azure</div>
+        <div class="card-b" style="font-size:.83rem;color:var(--tx2);line-height:1.85">
+          <p><strong style="color:var(--tx)">Azure API Management (APIM)</strong> — wbudowany rate limiting przez policies:</p>
+          <pre style="padding:10px;font-size:.72rem;margin:8px 0">
+&lt;<span class="fn">rate-limit-by-key</span>
+  calls=<span class="str">"100"</span>
+  renewal-period=<span class="str">"60"</span>
+  counter-key=<span class="str">"@(context.Subscription.Id)"</span>
+  increment-condition=<span class="str">"@(context.Response.StatusCode >= 200)"</span> /&gt;
+
+&lt;<span class="fn">quota-by-key</span>
+  calls=<span class="str">"10000"</span>
+  renewal-period=<span class="str">"86400"</span>
+  counter-key=<span class="str">"@(context.Subscription.Id)"</span> /&gt;</pre>
+          <p><strong style="color:var(--tx)">Application Gateway WAF</strong> — rate limiting per IP na warstwie L7, Custom Rules.</p>
+          <p style="margin-top:8px"><strong style="color:var(--tx)">Custom z Redis Cache (Azure)</strong> — Token Bucket / Sliding Window w kodzie aplikacji + Azure Cache for Redis.</p>
+          <p style="margin-top:8px">⚠️ <strong>Distributed rate limiting:</strong> przy wielu instancjach serwisu potrzebujesz centralnego store (Redis). Lokalne liczniki per instancja = każda instancja ma własny limit, nie globalny.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 03 SHARDING & PARTITIONING ══ -->
+<section class="chapter" id="sharding">
+  <div class="ch-head">
+    <div class="ch-num">03 / 11</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--green)">Sharding &amp; Partitioning</div>
+      <div class="ch-title">Horizontal partitioning, sharding strategies i Azure Cosmos DB</div>
+      <div class="ch-desc"><strong>Partitioning</strong> = dzielenie danych wewnątrz jednej bazy. <strong>Sharding</strong> = rozdzielenie danych na wiele niezależnych baz/nodów (horizontal scaling). Kluczowa decyzja: jak wybierać shard — hash, range, directory, geographic.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-h" style="color:var(--green)">🗂️ Strategie partycjonowania</div>
+      <div class="card-b">
+        <div class="ritem"><div class="ritem-key" style="color:var(--green)">Hash Partitioning</div><div class="ritem-val"><code>shard = hash(key) % N</code>. Równomierny rozkład danych. <strong>Problem:</strong> dodanie nowego shardu = re-hash wszystkich danych (rozwiązanie: consistent hashing). <strong>Kiedy:</strong> równomierny dostęp, brak range queries po kluczu shardującym.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--green)">Range Partitioning</div><div class="ritem-val">Zakresy wartości → shard (A-M → shard1, N-Z → shard2). <strong>Zaleta:</strong> range queries na jednym shardzie. <strong>Problem:</strong> hotspot jeśli dane nie są równomiernie rozłożone (np. "A" dużo popularniejsze niż "Z"). Używany w Cassandra (partition key), HBase.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--green)">Directory Partitioning</div><div class="ritem-val">Lookup service (mapa klucz → shard). Elastyczne re-sharding bez downtime. <strong>Problem:</strong> lookup service = single point of failure, dodatkowy hop. Używany w Flickr, Pinterest.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--green)">Geographic</div><div class="ritem-val">Dane użytkowników europejskich → EU shard, US → US shard. Niskie latencje, compliance (GDPR). <strong>Problem:</strong> nierówny rozkład jeśli regiony różnej wielkości.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--green)">Vertical Partitioning</div><div class="ritem-val">Kolumny zamiast wierszy — różne tabele/bazy dla różnych domen. Np. tabela User: kolumny podstawowe w PostgreSQL, zdjęcia profilowe w Blob Storage. Normalizacja vs denormalizacja.</div></div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-h" style="color:var(--green)">⚠️ Problemy shardingu</div>
+        <div class="card-b" style="font-size:.83rem;color:var(--tx2);line-height:1.85">
+          <table class="tbl">
+            <tr><th>Problem</th><th>Opis</th><th>Rozwiązanie</th></tr>
+            <tr><td><strong style="color:var(--rose)">Hotspot / Hot Key</strong></td><td>Jeden shard dostaje 90% ruchu (np. celebrity user)</td><td>Hash key + salt, sub-sharding popular keys, caching</td></tr>
+            <tr><td><strong style="color:var(--rose)">Cross-shard queries</strong></td><td>JOIN-y między shardami = bardzo wolne</td><td>Denormalizacja, scatter-gather, application-side join</td></tr>
+            <tr><td><strong style="color:var(--rose)">Cross-shard transactions</strong></td><td>ACID przez wiele shardów wymaga 2PC</td><td>Projektuj klucz shardujący by unikać cross-shard tx, saga pattern</td></tr>
+            <tr><td><strong style="color:var(--rose)">Re-sharding</strong></td><td>Zmiana liczby shardów = przeniesienie danych</td><td>Consistent hashing, over-provisioning shardów</td></tr>
+            <tr><td><strong style="color:var(--rose)">Uneven distribution</strong></td><td>Shard skew — różne rozmiary shardów</td><td>Lepszy klucz shardujący, virtual nodes (vnodes)</td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="gap12"></div>
+      <div class="arch-box">
+        <div style="font-size:.65rem;color:var(--green);font-weight:700;letter-spacing:2px;margin-bottom:10px">AZURE COSMOS DB — PARTITIONING</div>
+        <div style="font-size:.79rem;color:var(--tx2);line-height:1.9">
+          <p>Cosmos DB automatycznie sharduję dane po <strong>partition key</strong>. Każda partycja logiczna max <strong>20 GB</strong>. Partycja fizyczna = zestaw partycji logicznych.</p>
+          <div style="margin:10px 0;padding:10px;background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.2);border-radius:4px;font-size:.75rem">
+            <p style="color:var(--green);font-weight:700">✅ Dobry Partition Key:</p>
+            <p>• Wysoka kardynalność (userId, orderId, deviceId)</p>
+            <p>• Równomierny rozkład requestów i danych</p>
+            <p>• Większość queries zawiera partition key w WHERE</p>
+            <p>• Unikaj "hot" kluczy (daty, status z kilkoma wartościami)</p>
+          </div>
+          <div style="margin-top:8px;padding:10px;background:rgba(251,113,133,.05);border:1px solid rgba(251,113,133,.2);border-radius:4px;font-size:.75rem">
+            <p style="color:var(--rose);font-weight:700">❌ Zły Partition Key:</p>
+            <p>• <code>/date</code> — hotspot na dzisiejszą datę</p>
+            <p>• <code>/status</code> — tylko kilka wartości ("active", "inactive")</p>
+            <p>• <code>/region</code> — nierówny rozkład (Europa > Antarktyda)</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 04 CONSISTENT HASHING ══ -->
+<section class="chapter" id="consistent-hashing">
+  <div class="ch-head">
+    <div class="ch-num">04 / 11</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--teal)">Consistent Hashing</div>
+      <div class="ch-title">Consistent Hashing — ring, virtual nodes, re-balancing</div>
+      <div class="ch-desc">Problem klasycznego <code>hash(key) % N</code>: dodanie/usunięcie jednego serwera zmienia przypisanie <em>prawie wszystkich</em> kluczy. Consistent hashing rozwiązuje to — zmiana N remapuje tylko <code>K/N</code> kluczy (K=liczba kluczy). Używany w Cassandra, DynamoDB, Redis Cluster, CDN.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-h" style="color:var(--teal)">🔄 Jak działa Consistent Hashing</div>
+      <div class="card-b" style="font-size:.83rem;color:var(--tx2);line-height:1.9">
+        <p><strong style="color:var(--tx)">Ring (pierścień)</strong> — wyobraź sobie hash space [0, 2³²) jako okrąg. Serwery są umieszczone w punktach pierścienia (przez hash ich adresu/nazwy). Klucz hashowany → punkt na pierścieniu → przejdź clockwise → pierwszy serwer = serwer dla tego klucza.</p>
+        <div style="margin:12px 0;padding:12px;background:var(--s2);border:1px solid var(--bd2);border-radius:5px;font-family:'IBM Plex Mono',monospace;font-size:.72rem">
+          <div style="color:var(--teal);font-weight:700;margin-bottom:8px">RING — przykład</div>
+          <div style="color:var(--tx2)">
+            [0 ─── S1:1a2b ─── S2:3c4d ─── S3:8e9f ─── 2³²]<br>
+            key="user:42" → hash → 2f1e → pierwsza S? = <span style="color:var(--teal)">S3</span><br>
+            key="order:1" → hash → 1b3c → pierwsza S? = <span style="color:var(--teal)">S2</span>
+          </div>
+        </div>
+        <p><strong style="color:var(--tx)">Dodanie serwera S4</strong> — tylko klucze między S3 a S4 są przenoszone. Reszta bez zmian.</p>
+        <p style="margin-top:8px"><strong style="color:var(--tx)">Usunięcie serwera S2</strong> — tylko klucze S2 przechodzą do S3. Reszta bez zmian.</p>
+        <p style="margin-top:8px"><strong style="color:var(--tx)">Virtual Nodes (vnodes)</strong> — każdy fizyczny serwer ma N pozycji na pierścieniu (np. 150 vnodes). Efekt: bardziej równomierny rozkład, naturalny load balancing gdy serwery mają różną pojemność (silniejszy serwer = więcej vnodes).</p>
+      </div>
+    </div>
+    <div>
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--teal)"></div> Consistent Hashing — implementacja Java</div>
+        <pre><span class="kw">public class</span> <span class="cls">ConsistentHashRing</span>&lt;<span class="cls">T</span>&gt; {
+    <span class="kw">private final</span> <span class="cls">TreeMap</span>&lt;<span class="cls">Integer</span>, <span class="cls">T</span>&gt; ring = <span class="kw">new</span> <span class="cls">TreeMap</span>&lt;&gt;();
+    <span class="kw">private final int</span> virtualNodes;
+
+    <span class="kw">public</span> <span class="fn">ConsistentHashRing</span>(<span class="kw">int</span> virtualNodes) {
+        <span class="kw">this</span>.virtualNodes = virtualNodes;
+    }
+
+    <span class="kw">public void</span> <span class="fn">addNode</span>(<span class="cls">T</span> node) {
+        <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; virtualNodes; i++) {
+            <span class="kw">int</span> hash = <span class="fn">hash</span>(node.toString() + <span class="str">"#"</span> + i);
+            ring.<span class="fn">put</span>(hash, node);
+        }
+    }
+
+    <span class="kw">public void</span> <span class="fn">removeNode</span>(<span class="cls">T</span> node) {
+        <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; virtualNodes; i++) {
+            ring.<span class="fn">remove</span>(<span class="fn">hash</span>(node.toString() + <span class="str">"#"</span> + i));
+        }
+    }
+
+    <span class="kw">public</span> <span class="cls">T</span> <span class="fn">getNode</span>(<span class="cls">String</span> key) {
+        <span class="kw">if</span> (ring.<span class="fn">isEmpty</span>()) <span class="kw">return null</span>;
+        <span class="kw">int</span> hash = <span class="fn">hash</span>(key);
+        <span class="cm">// Pierwsza pozycja na pierścieniu >= hash</span>
+        <span class="cls">Map.Entry</span>&lt;<span class="cls">Integer</span>, <span class="cls">T</span>&gt; entry = ring.<span class="fn">ceilingEntry</span>(hash);
+        <span class="cm">// Jeśli nie ma (koniec pierścienia) → wróć do początku</span>
+        <span class="kw">return</span> entry != <span class="kw">null</span> ? entry.<span class="fn">getValue</span>()
+                              : ring.<span class="fn">firstEntry</span>().<span class="fn">getValue</span>();
+    }
+
+    <span class="kw">private int</span> <span class="fn">hash</span>(<span class="cls">String</span> key) {
+        <span class="cm">// MurmurHash lub FNV — lepszy rozkład niż Java hashCode()</span>
+        <span class="kw">return</span> <span class="cls">MurmurHash3</span>.<span class="fn">murmurhash3_x86_32</span>(
+            key.<span class="fn">getBytes</span>(), <span class="num">0</span>, key.<span class="fn">length</span>(), <span class="num">42</span>);
+    }
+}
+
+<span class="cm">// Użycie:</span>
+<span class="cls">ConsistentHashRing</span>&lt;<span class="cls">String</span>&gt; ring =
+    <span class="kw">new</span> <span class="cls">ConsistentHashRing</span>&lt;&gt;(<span class="num">150</span>); <span class="cm">// 150 virtual nodes</span>
+ring.<span class="fn">addNode</span>(<span class="str">"redis-node-1:6379"</span>);
+ring.<span class="fn">addNode</span>(<span class="str">"redis-node-2:6379"</span>);
+ring.<span class="fn">addNode</span>(<span class="str">"redis-node-3:6379"</span>);
+
+<span class="cls">String</span> node = ring.<span class="fn">getNode</span>(<span class="str">"user:12345"</span>);
+<span class="cm">// → "redis-node-2:6379" (deterministic)</span></pre>
+      </div>
+      <div class="gap12"></div>
+      <div class="alert al-teal">
+        <span class="alert-label">Consistent Hashing — gdzie używany</span>
+        <strong>Redis Cluster</strong> — 16384 slotów, każdy slot to "vnode". <strong>Cassandra</strong> — token ring, virtual nodes. <strong>Apache Kafka</strong> — partition assignment do brokerów. <strong>CDN (Akamai, Cloudflare)</strong> — wybór edge node dla żądania. <strong>Memcached</strong> — klienty wybierają serwer przez CH (libketama).
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 05 CACHING STRATEGIES ══ -->
+<section class="chapter" id="caching">
+  <div class="ch-head">
+    <div class="ch-num">05 / 11</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--violet)">Caching Strategies</div>
+      <div class="ch-title">Cache patterns w głąb — CDN, multi-tier, cache coherence</div>
+      <div class="ch-desc">Caching redukuje latencję i obciążenie bazy. Różne warstwy (CDN → Application Cache → DB cache) rozwiązują różne problemy. Kluczowe wyzwania: spójność, thundering herd, cache poisoning.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-h" style="color:var(--violet)">🏛️ Warstwy cache i strategie</div>
+      <div class="card-b">
+        <div class="ritem"><div class="ritem-key" style="color:var(--violet)">Cache-Aside (Lazy)</div><div class="ritem-val">Aplikacja sprawdza cache → miss → pobiera z DB → zapisuje do cache. <strong>Zalety:</strong> proste, cache tylko to co czytane. <strong>Wada:</strong> pierwsze żądanie zawsze cache miss, ryzyko stampede. Domyślny wybór.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--violet)">Read-Through</div><div class="ritem-val">Cache layer (np. Ehcache, NCache) automatycznie ładuje z DB przy miss — aplikacja zawsze czyta tylko z cache. Prostsze API, ale cache musi znać strukturę danych.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--violet)">Write-Through</div><div class="ritem-val">Zapis do cache I DB synchronicznie. Cache zawsze aktualny. <strong>Wada:</strong> wyższa write latency, cache zapełnia się danymi które mogą nie być czytane (write-heavy workloads). Używaj gdy read/write ratio jest zrównoważony.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--violet)">Write-Behind (Write-Back)</div><div class="ritem-val">Zapis do cache, asynchronicznie do DB. Super szybkie zapisy. <strong>Ryzyko:</strong> utrata danych przy awarii cache przed flush do DB. Używaj dla non-critical data (view counters, sessions).</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--violet)">Refresh-Ahead</div><div class="ritem-val">Cache aktywnie odświeża klucze <em>przed</em> ich wygaśnięciem (gdy TTL zbliża się do końca). Eliminuje cache miss dla popularnych kluczy. Implementacja: background job który refetchuje hot keys.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--violet)">CDN (Edge Cache)</div><div class="ritem-val">Statyczne i semi-statyczne zasoby (CSS, JS, images, API responses) na edge nodach globalnie. Azure Front Door / Azure CDN. Cache-Control headers sterują TTL. Origin shield = CDN chroni origin przed stampede.</div></div>
+      </div>
+    </div>
+    <div>
+      <div class="arch-box">
+        <div style="font-size:.65rem;color:var(--violet);font-weight:700;letter-spacing:2px;margin-bottom:12px">MULTI-TIER CACHE — AZURE</div>
+        <div class="flow-row">
+          <div class="fbox" style="background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.3);color:var(--sky)">Client Browser<br><span style="font-size:.6rem;color:var(--tx2)">HTTP Cache (Cache-Control)</span></div>
+          <span class="farr">→</span>
+          <div class="fbox" style="background:rgba(129,140,248,.1);border:1px solid rgba(129,140,248,.3);color:var(--k1)">Azure Front Door<br><span style="font-size:.6rem;color:var(--tx2)">CDN Edge + WAF</span></div>
+        </div>
+        <div style="text-align:center;color:var(--mt);margin:4px 0">↓ cache miss</div>
+        <div class="flow-row">
+          <div class="fbox" style="background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.3);color:var(--violet)">App Service / AKS<br><span style="font-size:.6rem;color:var(--tx2)">In-process L1 cache (Caffeine)</span></div>
+          <span class="farr">→</span>
+          <div class="fbox" style="background:rgba(251,113,133,.1);border:1px solid rgba(251,113,133,.3);color:var(--rose)">Azure Cache for Redis<br><span style="font-size:.6rem;color:var(--tx2)">Shared L2 cache</span></div>
+        </div>
+        <div style="text-align:center;color:var(--mt);margin:4px 0">↓ cache miss</div>
+        <div class="flow-row">
+          <div class="fbox" style="background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.3);color:var(--green)">Azure SQL / Cosmos DB<br><span style="font-size:.6rem;color:var(--tx2)">Source of truth</span></div>
+        </div>
+        <div style="margin-top:12px;font-size:.72rem;color:var(--tx2)">
+          <strong style="color:var(--tx)">L1 (in-process Caffeine)</strong>: &lt;1ms, brak network, per-instance (stale przy wielu instancjach)<br>
+          <strong style="color:var(--tx)">L2 (Redis)</strong>: 1-2ms, shared między instancjami, TTL-based invalidation
+        </div>
+      </div>
+      <div class="gap12"></div>
+      <div class="card">
+        <div class="card-h" style="color:var(--violet)">🌩️ Thundering Herd + Cache Stampede</div>
+        <div class="card-b" style="font-size:.83rem;color:var(--tx2);line-height:1.85">
+          <p><strong style="color:var(--rose)">Problem:</strong> popularny klucz wygasa → setki requestów jednocześnie → cache miss → wszystkie uderzają w DB → DB overwhelmed → latencja rośnie → więcej timeoutów → kaskada.</p>
+          <div class="gap8"></div>
+          <p><strong style="color:var(--green)">Rozwiązania:</strong></p>
+          <p>• <strong>Mutex/Locking</strong> — tylko jeden request odświeża, reszta czeka (lub zwraca stale)</p>
+          <p>• <strong>Probabilistic early expiration</strong> — losowo odśwież przed TTL (<em>XFetch</em> algorithm)</p>
+          <p>• <strong>Stale-while-revalidate</strong> — serwuj starą wartość podczas odświeżania w tle</p>
+          <p>• <strong>TTL jitter</strong> — TTL = base ± random(0, 60s) — rozrzuć wygasanie w czasie</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 06 CAP THEOREM ══ -->
+<section class="chapter" id="cap">
+  <div class="ch-head">
+    <div class="ch-num">06 / 11</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--rose)">CAP Theorem</div>
+      <div class="ch-title">CAP Theorem głębiej — PACELC, Consistency Levels, real-world</div>
+      <div class="ch-desc">CAP mówi: rozproszony system może gwarantować najwyżej <strong>2 z 3</strong>: Consistency, Availability, Partition Tolerance. Ale partition tolerance jest niezbędna w każdej sieci → realny wybór: <strong>CP vs AP</strong>. PACELC idzie dalej — co gdy partycji NIE ma?</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-h" style="color:var(--rose)">🔺 CAP — co naprawdę oznacza</div>
+      <div class="card-b">
+        <div class="ritem"><div class="ritem-key" style="color:var(--rose)">Consistency (C)</div><div class="ritem-val">Każdy odczyt zwraca <strong>najnowszy zapis</strong> lub błąd. Nie "stare dane". W praktyce: linearizability — każda operacja wygląda jakby była atomowa i natychmiastowa.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--rose)">Availability (A)</div><div class="ritem-val">Każde żądanie <strong>zawsze dostaje odpowiedź</strong> (nie timeout/error) — choć może być nieaktualna. 100% dostępność nodów które działają.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--rose)">Partition Tolerance (P)</div><div class="ritem-val">System działa mimo <strong>utraty sieci między nodami</strong> (network partition). W praktyce: <em>musisz</em> wybrać P, bo partycje sieciowe są nieuniknione. Wybierasz CP lub AP.</div></div>
+        <div style="margin-top:14px;background:var(--s2);border:1px solid var(--bd2);border-radius:5px;padding:12px">
+          <div style="font-size:.65rem;color:var(--rose);font-weight:700;letter-spacing:2px;margin-bottom:8px">PACELC — rozszerzenie CAP</div>
+          <div style="font-size:.82rem;color:var(--tx2);line-height:1.85">
+            <p><strong style="color:var(--tx)">When Partition:</strong> C lub A (jak CAP)</p>
+            <p><strong style="color:var(--tx)">Else (normalnie):</strong> Latency vs Consistency</p>
+            <p style="margin-top:6px">Przykład: DynamoDB = PA/EL (gdy partycja: dostępny; normalnie: niska latencja kosztem spójności)</p>
+            <p>PostgreSQL = PC/EC (gdy partycja: spójny; normalnie: spójny kosztem latencji)</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-h" style="color:var(--rose)">🗃️ Systemy — gdzie leżą na spektrum CAP</div>
+        <div class="card-b" style="font-size:.84rem">
+          <table class="tbl">
+            <tr><th>System</th><th>Typ</th><th>Co poświęca</th></tr>
+            <tr><td><strong>PostgreSQL, MySQL</strong></td><td>CP</td><td>Availability przy partycji (master niedostępny → brak write)</td></tr>
+            <tr><td><strong>Redis (single)</strong></td><td>CP</td><td>Availability (master failover ≈ kilka sekund bez write)</td></tr>
+            <tr><td><strong>Cassandra, DynamoDB</strong></td><td>AP</td><td>Consistency (serwuje stale data podczas partycji)</td></tr>
+            <tr><td><strong>MongoDB</strong></td><td>CP (default) / AP (config)</td><td>Konfigurowalny przez concern levels</td></tr>
+            <tr><td><strong>Kafka</strong></td><td>CP (acks=all)</td><td>Availability (block na ISR nie ma kworum)</td></tr>
+            <tr><td><strong>Zookeeper / etcd</strong></td><td>CP</td><td>Availability (odmawia odpowiedzi jeśli brak kworum)</td></tr>
+            <tr><td><strong>Azure Cosmos DB</strong></td><td>Konfigurowalny (5 modeli)</td><td>Zależy od wybranego consistency level</td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="gap12"></div>
+      <div class="card">
+        <div class="card-h" style="color:var(--rose)">🌀 Consistency Levels — spektrum</div>
+        <div class="card-b" style="font-size:.83rem;color:var(--tx2);line-height:1.85">
+          <table class="tbl">
+            <tr><th>Level</th><th>Gwarancja</th><th>Azure Cosmos DB</th></tr>
+            <tr><td><strong style="color:var(--green)">Strong</strong></td><td>Zawsze najnowszy odczyt, linearizable</td><td>Strong consistency</td></tr>
+            <tr><td><strong style="color:var(--teal)">Bounded Staleness</strong></td><td>Stale max K wersji lub T sekund</td><td>Bounded Staleness</td></tr>
+            <tr><td><strong style="color:var(--amber)">Session</strong></td><td>Monotonic reads/writes w sesji klienta</td><td>Session (domyślny)</td></tr>
+            <tr><td><strong style="color:var(--orange)">Consistent Prefix</strong></td><td>Nigdy nie widzisz out-of-order writes</td><td>Consistent Prefix</td></tr>
+            <tr><td><strong style="color:var(--rose)">Eventual</strong></td><td>Kiedyś spójny, niskie latencje</td><td>Eventual</td></tr>
+          </table>
+          <p style="margin-top:10px">Cassandra: <code>ONE, QUORUM, ALL</code> per zapytanie. DynamoDB: <code>Eventual / Strong</code> per odczyt.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="gap16"></div>
+  <div class="alert al-rose">
+    <span class="alert-label">CAP w praktyce — real-world nuances</span>
+    CAP to model akademicki — rzeczywistość jest bardziej skomplikowana. <strong>Consistency nie jest binarna</strong> — jest spektrum. <strong>Availability nie jest binarna</strong> — SLA 99.99% to nie 100%. <strong>Network partitions nie zdarzają się codziennie</strong> — ważniejszy jest PACELC (latency vs consistency w normalnym działaniu). Przy projektowaniu systemu pytaj: "Jakie dane mogę serwować stale? Gdzie wymagam linearizability?" — np. saldo bankowe wymaga strong consistency, feed social media może być eventual.
+  </div>
+</section>
+
+<!-- ══ 07 BACKPRESSURE ══ -->
+<section class="chapter" id="backpressure">
+  <div class="ch-head">
+    <div class="ch-num">07 / 11</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--orange)">Backpressure Patterns</div>
+      <div class="ch-title">Backpressure — kontrola przepływu w systemach rozproszonych</div>
+      <div class="ch-desc"><strong>Backpressure</strong> to mechanizm sygnalizacji do producenta by zwolnił gdy konsument nie nadąża. Bez backpressure: producent wysyła szybciej niż konsument przetwarza → przepełnienie buforów → OOM → crash. Zarządzanie przepływem na każdej warstwie stosu.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-h" style="color:var(--orange)">🔧 Wzorce backpressure</div>
+      <div class="card-b">
+        <div class="ritem"><div class="ritem-key" style="color:var(--orange)">Load Shedding</div><div class="ritem-val">Celowe <strong>odrzucanie requestów</strong> gdy system jest przeciążony. Zwróć 503 z nagłówkiem <code>Retry-After</code>. Lepsze niż degradacja całego systemu. Priorytetyzuj — odrzucaj mniej ważne requesty (batch, low-priority), zachowaj capacity dla krytycznych.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--orange)">Queue-based Leveling</div><div class="ritem-val">Bufor między producentem a konsumentem — kolejka (Azure Service Bus, Kafka). Producent: szybko pisze do kolejki. Konsument: przetwarza we własnym tempie. Kolejka = elastyczny bufor na spiki. <strong>Monitoruj głębokość kolejki!</strong></div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--orange)">Circuit Breaker</div><div class="ritem-val">Wzorzec ochronny — gdy dependency zaczyna failować powyżej threshold, circuit breaker "otwiera się" i zwraca fast-fail (nie czeka na timeout). Po czasie próbuje ponownie (half-open). Resilience4j, Polly (.NET). <strong>Zapobiega kaskadowym awariom.</strong></div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--orange)">Bulkhead</div><div class="ritem-val">Izolacja zasobów per serwis — każda zależność ma własną pulę threadów/połączeń. Awaria jednego nie zajmuje zasobów całego systemu (jak grodzie na statku). Resilience4j: <code>@Bulkhead</code>.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--orange)">Reactive Streams</div><div class="ritem-val">Protokół backpressure między publisherem a subscriberem. Publisher produkuje tyle ile subscriber żąda (<code>request(n)</code>). Project Reactor (Spring WebFlux), RxJava. <strong>Operator</strong> <code>onBackpressureDrop</code>, <code>onBackpressureBuffer</code>, <code>onBackpressureLatest</code>.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--orange)">Throttling</div><div class="ritem-val">Ogranicz liczbę jednoczesnych żądań do downstream serwisu. <code>Semaphore(maxConcurrent)</code> lub rate limiter. Różnica od rate limiting: rate limiting = prędkość w czasie, throttling = równoległość.</div></div>
+      </div>
+    </div>
+    <div>
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--orange)"></div> Backpressure — Resilience4j + Spring WebFlux</div>
+        <pre><span class="cm">// ══ Circuit Breaker — Resilience4j ═══════════════════════════</span>
+<span class="ann">@CircuitBreaker</span>(name = <span class="str">"paymentService"</span>, fallbackMethod = <span class="str">"paymentFallback"</span>)
+<span class="ann">@TimeLimiter</span>(name = <span class="str">"paymentService"</span>)
+<span class="ann">@Retry</span>(name = <span class="str">"paymentService"</span>)
+<span class="kw">public</span> <span class="cls">Mono</span>&lt;<span class="cls">PaymentResult</span>&gt; <span class="fn">processPayment</span>(<span class="cls">PaymentRequest</span> req) {
+    <span class="kw">return</span> paymentClient.<span class="fn">process</span>(req);
+}
+
+<span class="kw">private</span> <span class="cls">Mono</span>&lt;<span class="cls">PaymentResult</span>&gt; <span class="fn">paymentFallback</span>(
+        <span class="cls">PaymentRequest</span> req, <span class="cls">Throwable</span> ex) {
+    <span class="cm">// Circuit open lub timeout → kolejkuj do retry później</span>
+    <span class="fn">queueForRetry</span>(req);
+    <span class="kw">return</span> <span class="cls">Mono</span>.<span class="fn">just</span>(<span class="cls">PaymentResult</span>.<span class="fn">queued</span>(req.<span class="fn">getId</span>()));
+}
+
+<span class="cm">// application.yml — konfiguracja Circuit Breaker:</span>
+<span class="cm">// resilience4j.circuitbreaker.instances.paymentService:</span>
+<span class="cm">//   slidingWindowType: COUNT_BASED</span>
+<span class="cm">//   slidingWindowSize: 10</span>
+<span class="cm">//   failureRateThreshold: 50     # 50% błędów → OPEN</span>
+<span class="cm">//   waitDurationInOpenState: 30s</span>
+<span class="cm">//   permittedCallsInHalfOpenState: 3</span>
+
+<span class="cm">// ══ Reactive Backpressure — Spring WebFlux ════════════════════</span>
+<span class="cls">Flux</span>&lt;<span class="cls">Order</span>&gt; orderStream = kafka.<span class="fn">receive</span>()
+    .<span class="fn">limitRate</span>(<span class="num">100</span>)              <span class="cm">// request(100) od razu, potem po 75%</span>
+    .<span class="fn">onBackpressureBuffer</span>(<span class="num">1000</span>, <span class="cm">// bufor 1000 elementów</span>
+        dropped -&gt; log.<span class="fn">warn</span>(<span class="str">"Dropped: {}"</span>, dropped),
+        <span class="cls">BufferOverflowStrategy</span>.<span class="ann">DROP_OLDEST</span>)
+    .<span class="fn">flatMap</span>(order -&gt; <span class="fn">processOrder</span>(order), <span class="num">10</span>)  <span class="cm">// max 10 równolegle</span>
+    .<span class="fn">retryWhen</span>(<span class="cls">Retry</span>.<span class="fn">backoff</span>(<span class="num">3</span>, <span class="cls">Duration</span>.<span class="fn">ofSeconds</span>(<span class="num">1</span>))
+        .<span class="fn">maxBackoff</span>(<span class="cls">Duration</span>.<span class="fn">ofSeconds</span>(<span class="num">30</span>)));
+
+<span class="cm">// ══ Bulkhead — izolacja thread pool ══════════════════════════</span>
+<span class="ann">@Bulkhead</span>(name = <span class="str">"inventoryService"</span>,
+          type = <span class="cls">Bulkhead.Type</span>.<span class="ann">THREADPOOL</span>,
+          fallbackMethod = <span class="str">"inventoryFallback"</span>)
+<span class="kw">public</span> <span class="cls">CompletableFuture</span>&lt;<span class="cls">StockLevel</span>&gt; <span class="fn">checkStock</span>(<span class="kw">long</span> productId) {
+    <span class="kw">return</span> inventoryClient.<span class="fn">getStock</span>(productId);
+}
+<span class="cm">// inventoryService.maxConcurrentCalls=20, maxWaitDuration=100ms</span>
+
+<span class="cm">// ══ Queue-based backpressure — Azure Service Bus ══════════════</span>
+<span class="cm">// Producer: szybki zapis do kolejki</span>
+<span class="cm">// Consumer: MaxConcurrentCalls = 5 (max 5 messages jednocześnie)</span>
+<span class="cm">// PeekLock: wiadomość "zarezerwowana" → acknowledge po przetworzeniu</span>
+<span class="cm">// MaxDeliveryCount: 10 prób → Dead Letter Queue</span></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 08 AZURE SERVICES MAP ══ -->
+<section class="chapter" id="azure-services">
+  <div class="ch-head">
+    <div class="ch-num">08 / 11</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--sky)">Azure Services</div>
+      <div class="ch-title">Mapa serwisów Azure — co kiedy używać</div>
+      <div class="ch-desc">Azure oferuje dziesiątki serwisów. Kluczowe: wiedzieć <em>który serwis rozwiązuje który problem</em> i jakie są trade-offy. Poniżej mapa kategorii z wyborem serwisu per use case.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-h" style="color:var(--sky)">☁️ Azure — mapa serwisów per kategoria</div>
+      <div class="card-b" style="font-size:.83rem">
+        <table class="tbl">
+          <tr><th>Kategoria</th><th>Serwis</th><th>Kiedy</th></tr>
+          <tr><td><strong style="color:var(--sky)">Compute</strong></td><td><code>AKS</code>, <code>App Service</code>, <code>Container Apps</code>, <code>Functions</code>, <code>VM Scale Sets</code></td><td>AKS=K8s workloads, App Service=PaaS web, Functions=serverless event-driven</td></tr>
+          <tr><td><strong style="color:var(--sky)">Relational DB</strong></td><td><code>Azure SQL</code>, <code>PostgreSQL Flexible</code>, <code>MySQL Flexible</code></td><td>SQL=MS stack, PostgreSQL=open-source, obie: geo-replication, HA</td></tr>
+          <tr><td><strong style="color:var(--sky)">NoSQL</strong></td><td><code>Cosmos DB</code>, <code>Table Storage</code></td><td>Cosmos=global multi-model, Table=proste key-value cheap</td></tr>
+          <tr><td><strong style="color:var(--sky)">Cache</strong></td><td><code>Azure Cache for Redis</code></td><td>Redis Enterprise tier=Redis modules (RediSearch, RedisJSON)</td></tr>
+          <tr><td><strong style="color:var(--sky)">Messaging</strong></td><td><code>Service Bus</code>, <code>Event Hubs</code>, <code>Event Grid</code>, <code>Storage Queues</code></td><td>Service Bus=enterprise queue, Event Hubs=streaming/Kafka, Event Grid=event routing, Storage Queue=prosty, tani</td></tr>
+          <tr><td><strong style="color:var(--sky)">Storage</strong></td><td><code>Blob Storage</code>, <code>Data Lake Gen2</code>, <code>Files</code>, <code>Disk</code></td><td>Blob=obiekty, Data Lake=analytics, Files=NFS/SMB share</td></tr>
+          <tr><td><strong style="color:var(--sky)">Networking</strong></td><td><code>Front Door</code>, <code>Application Gateway</code>, <code>Load Balancer</code>, <code>Traffic Manager</code>, <code>API Management</code></td><td>patrz load balancing rozdział</td></tr>
+          <tr><td><strong style="color:var(--sky)">Security</strong></td><td><code>Key Vault</code>, <code>Managed Identity</code>, <code>Entra ID</code>, <code>Defender</code></td><td>Key Vault=sekrety/certy, MI=bez credentials w kodzie</td></tr>
+          <tr><td><strong style="color:var(--sky)">Monitoring</strong></td><td><code>Azure Monitor</code>, <code>Application Insights</code>, <code>Log Analytics</code></td><td>AppInsights=APM dla aplikacji, Log Analytics=centralne logi</td></tr>
+          <tr><td><strong style="color:var(--sky)">Search</strong></td><td><code>Azure AI Search</code> (Cognitive Search)</td><td>Full-text search, semantic search, facets — managed Elasticsearch/Lucene</td></tr>
+          <tr><td><strong style="color:var(--sky)">CDN</strong></td><td><code>Azure Front Door</code>, <code>Azure CDN</code></td><td>Front Door=anycast+WAF+LB+CDN w jednym, CDN=classic CDN tańszy</td></tr>
+        </table>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-h" style="color:var(--sky)">📨 Messaging — Service Bus vs Event Hubs vs Event Grid</div>
+        <div class="card-b" style="font-size:.84rem">
+          <table class="tbl">
+            <tr><th></th><th>Service Bus</th><th>Event Hubs</th><th>Event Grid</th></tr>
+            <tr><td>Typ</td><td>Enterprise Queue/Topic</td><td>Event Streaming</td><td>Event Router</td></tr>
+            <tr><td>Model</td><td>Pull (PeekLock)</td><td>Pull (partycje)</td><td>Push (webhook)</td></tr>
+            <tr><td>Ordering</td><td>✅ per session</td><td>✅ per partycja</td><td>❌</td></tr>
+            <tr><td>Dead Letter</td><td><strong style="color:var(--green)">✅ wbudowany</strong></td><td>❌ (ręcznie)</td><td>✅</td></tr>
+            <tr><td>Retention</td><td>max 14 dni</td><td>max 90 dni</td><td>24h retry</td></tr>
+            <tr><td>Kafka compat.</td><td>❌</td><td><strong style="color:var(--green)">✅</strong></td><td>❌</td></tr>
+            <tr><td>Throughput</td><td>~10k msg/s</td><td>Miliony/s</td><td>~10M event/s</td></tr>
+            <tr><td>Użycie</td><td>Microservices messaging, saga</td><td>Telemetria, logi, IoT</td><td>Azure-internal events (Blob created etc.)</td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="gap12"></div>
+      <div class="alert al-sky">
+        <span class="alert-label">Managed Identity — zero credentials</span>
+        Na Azure <strong>nigdy nie przechowuj connection strings ani kluczy API w kodzie lub konfiguracji</strong>. Używaj <strong>Managed Identity</strong>:<br>
+        1. Włącz System-Assigned MI na App Service / AKS<br>
+        2. Nadaj MI uprawnienia (RBAC) do Redis, SQL, Key Vault, Service Bus<br>
+        3. W kodzie: <code>new DefaultAzureCredential()</code> — automatycznie używa MI<br>
+        Zero rotacji kluczy, zero sekretu do zarządzania. Standard na Azure.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 09 CASE: URL SHORTENER ══ -->
+<section class="chapter" id="case-url-shortener">
+  <div class="ch-head">
+    <div class="ch-num">09 / 11</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--green)">Case Study — Azure</div>
+      <div class="ch-title">URL Shortener na Azure — jak projektować krok po kroku</div>
+      <div class="ch-desc">Klasyczny system design interview case. Projektujemy od wymagań przez skalę do konkretnej architektury Azure. <strong>Metodologia:</strong> wymagania → estymacja skali → API → dane → high-level design → głębokie dive → bottlenecks.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-h" style="color:var(--green)">📋 Wymagania i estymacja skali</div>
+      <div class="card-b" style="font-size:.83rem;color:var(--tx2);line-height:1.85">
+        <p><strong style="color:var(--tx)">Funkcjonalne:</strong></p>
+        <p>• Utwórz krótki URL (shortcode 7 znaków) dla długiego URL</p>
+        <p>• Redirect: krótki URL → oryginalny URL</p>
+        <p>• TTL dla URLi (opcjonalnie)</p>
+        <p>• Statystyki kliknięć (opcjonalnie)</p>
+        <div class="gap8"></div>
+        <p><strong style="color:var(--tx)">Niefunkcjonalne:</strong></p>
+        <p>• Wysoka dostępność (99.99%) — redirect musi działać zawsze</p>
+        <p>• Niska latencja redirect &lt;10ms</p>
+        <p>• Redirect 10x częstszy niż create</p>
+        <div class="gap8"></div>
+        <p><strong style="color:var(--tx)">Estymacja:</strong></p>
+        <p>• 100M create/dzień = ~1160 req/s</p>
+        <p>• 1B redirect/dzień = ~11600 req/s</p>
+        <p>• Storage: 100M × 500 bytes = ~50 GB/dzień (tylko URLe)</p>
+        <p>• Read-heavy (10:1) → cache jest kluczowy</p>
+      </div>
+    </div>
+    <div class="arch-box">
+      <div style="font-size:.65rem;color:var(--green);font-weight:700;letter-spacing:2px;margin-bottom:12px">ARCHITEKTURA — URL SHORTENER NA AZURE</div>
+      <div class="flow-row">
+        <div class="fbox" style="background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.3);color:var(--sky)">Client</div>
+        <span class="farr">→</span>
+        <div class="fbox" style="background:rgba(129,140,248,.1);border:1px solid rgba(129,140,248,.3);color:var(--k1)">Azure Front Door<br><span style="font-size:.6rem;color:var(--tx2)">CDN + anycast</span></div>
+        <span class="farr">→</span>
+        <div class="fbox" style="background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.3);color:var(--green)">App Service / AKS<br><span style="font-size:.6rem;color:var(--tx2)">Redirect Service</span></div>
+      </div>
+      <div style="margin:6px 0 6px 140px;color:var(--mt)">↓ cache miss</div>
+      <div class="flow-row" style="margin-left:80px">
+        <div class="fbox" style="background:rgba(251,113,133,.1);border:1px solid rgba(251,113,133,.3);color:var(--rose)">Azure Cache for Redis<br><span style="font-size:.6rem;color:var(--tx2)">shortcode → longURL, TTL 24h</span></div>
+        <span class="farr">miss→</span>
+        <div class="fbox" style="background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.3);color:var(--amber)">Azure Cosmos DB<br><span style="font-size:.6rem;color:var(--tx2)">/id = shortcode</span></div>
+      </div>
+      <div style="margin-top:12px;border-top:1px solid var(--bd);padding-top:10px;font-size:.75rem;color:var(--tx2)">
+        <p><strong style="color:var(--tx)">Generowanie shortcode:</strong> Base62 z auto-increment ID (Azure SQL Sequence lub Cosmos DB auto-id). Alternatywa: random 7 znaków + sprawdzenie unikalności.</p>
+        <p style="margin-top:6px"><strong style="color:var(--tx)">Redirect flow:</strong> shortcode → Redis (hit: 301/302 redirect &lt;1ms) → miss → Cosmos DB → Redis (write-through) → redirect</p>
+        <p style="margin-top:6px"><strong style="color:var(--tx)">301 vs 302:</strong> 301 (Permanent) — przeglądarka cache'uje, mniej serwerów hits ale brak analytics. 302 (Temporary) — każde kliknięcie przez serwer → lepsza analityka. Wybierz 302 jeśli chcesz stats.</p>
+        <p style="margin-top:6px"><strong style="color:var(--tx)">Analytics (async):</strong> Redirect Service → Azure Event Hubs → Azure Stream Analytics → Azure SQL / Cosmos DB dla stats</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 10 CASE: E-COMMERCE ══ -->
+<section class="chapter" id="case-ecommerce">
+  <div class="ch-head">
+    <div class="ch-num">10 / 11</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--violet)">Case Study — Azure</div>
+      <div class="ch-title">E-commerce Platform — microservices, inventory, orders na Azure</div>
+      <div class="ch-desc">E-commerce to klasyczny system z wieloma domenami i złożonymi wymaganiami: product catalog (read-heavy), inventory (strong consistency, race conditions), orders (transakcje, saga), payments (external integration, idempotency).</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="arch-box">
+      <div style="font-size:.65rem;color:var(--violet);font-weight:700;letter-spacing:2px;margin-bottom:12px">ARCHITEKTURA — E-COMMERCE NA AZURE</div>
+
+      <div style="font-size:.7rem;color:var(--tx2);margin-bottom:8px">INGRESS LAYER</div>
+      <div class="flow-row">
+        <div class="fbox" style="background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.3);color:var(--sky)">Azure Front Door<br><span style="font-size:.6rem">CDN + WAF + Global LB</span></div>
+        <span class="farr">→</span>
+        <div class="fbox" style="background:rgba(129,140,248,.1);border:1px solid rgba(129,140,248,.3);color:var(--k1)">Azure API Management<br><span style="font-size:.6rem">Auth, Rate Limit, Routing</span></div>
+      </div>
+
+      <div style="font-size:.7rem;color:var(--tx2);margin:10px 0 6px">MICROSERVICES (AKS)</div>
+      <div class="flow-row">
+        <div class="fbox" style="background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.3);color:var(--green)">Product Service<br><span style="font-size:.6rem">READ-HEAVY</span></div>
+        <div class="fbox" style="background:rgba(251,113,133,.1);border:1px solid rgba(251,113,133,.3);color:var(--rose)">Inventory Service<br><span style="font-size:.6rem">STRONG CONSISTENCY</span></div>
+        <div class="fbox" style="background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.3);color:var(--violet)">Order Service<br><span style="font-size:.6rem">SAGA ORCHESTRATOR</span></div>
+        <div class="fbox" style="background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.3);color:var(--amber)">Payment Service<br><span style="font-size:.6rem">IDEMPOTENT</span></div>
+      </div>
+
+      <div style="font-size:.7rem;color:var(--tx2);margin:10px 0 6px">ASYNC COMMUNICATION</div>
+      <div class="flow-row">
+        <div class="fbox" style="background:rgba(251,146,60,.1);border:1px solid rgba(251,146,60,.3);color:var(--orange)">Azure Service Bus<br><span style="font-size:.6rem">OrderCreated, PaymentProcessed<br>InventoryReserved events</span></div>
+      </div>
+
+      <div style="font-size:.7rem;color:var(--tx2);margin:10px 0 6px">DATA STORES</div>
+      <div class="flow-row">
+        <div class="fbox" style="background:rgba(45,212,191,.1);border:1px solid rgba(45,212,191,.3);color:var(--teal)">Cosmos DB<br><span style="font-size:.6rem">Products, Sessions</span></div>
+        <div class="fbox" style="background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.3);color:var(--green)">PostgreSQL Flexible<br><span style="font-size:.6rem">Orders, Inventory</span></div>
+        <div class="fbox" style="background:rgba(251,113,133,.1);border:1px solid rgba(251,113,133,.3);color:var(--rose)">Azure Cache for Redis<br><span style="font-size:.6rem">Product cache, Sessions</span></div>
+        <div class="fbox" style="background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.3);color:var(--sky)">Blob Storage<br><span style="font-size:.6rem">Product Images</span></div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-h" style="color:var(--violet)">🔑 Kluczowe decyzje projektowe</div>
+        <div class="card-b" style="font-size:.83rem;color:var(--tx2);line-height:1.9">
+          <p><strong style="color:var(--green)">Product Catalog (read-heavy):</strong></p>
+          <p>Cosmos DB z Redis cache. Cache-aside z 1h TTL. Azure CDN dla obrazów produktów. CQRS: osobne modele dla read/write — denormalizowany widok dla listy produktów (bez JOIN-ów).</p>
+          <div class="gap8"></div>
+          <p><strong style="color:var(--rose)">Inventory (strong consistency):</strong></p>
+          <p>PostgreSQL z <code>SELECT ... FOR UPDATE</code> lub optimistic locking (version column). Nigdy nie aktualizuj stock w cache — zawsze przez DB z rowlock. Redis tylko do "last seen stock" display, nie do rezerwacji.</p>
+          <div class="gap8"></div>
+          <p><strong style="color:var(--violet)">Order Saga (distributed transaction):</strong></p>
+          <p>Choreography lub Orchestration saga przez Service Bus. Kompensujące transakcje: OrderCreated → ReserveInventory (fail → ReleaseInventory) → ProcessPayment (fail → RefundPayment) → ShipOrder. Outbox pattern dla atomowości DB + Service Bus.</p>
+          <div class="gap8"></div>
+          <p><strong style="color:var(--amber)">Payment (idempotency):</strong></p>
+          <p>Każde żądanie ma idempotency key. PostgreSQL: <code>ON CONFLICT (idempotency_key) DO NOTHING</code>. Webhook od procesora płatności: verify signature, process once (Redis check), return 200 always.</p>
+          <div class="gap8"></div>
+          <p><strong style="color:var(--sky)">Flash Sale (spik 10000x):</strong></p>
+          <p>Rate limiting per user (APIM), pre-warm Redis cache produktów, inventory reservation w Redis DECR (atomic) + eventual sync do DB, queue-based leveling przez Service Bus dla zamówień.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 11 CASE: CHAT SYSTEM ══ -->
+<section class="chapter" id="case-chat">
+  <div class="ch-head">
+    <div class="ch-num">11 / 11</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--teal)">Case Study — Azure</div>
+      <div class="ch-title">System czatu real-time — WebSocket, fanout, message history na Azure</div>
+      <div class="ch-desc">Chat system to klasyczny problem real-time komunikacji. Kluczowe wyzwania: <strong>WebSocket routing</strong> (sticky sessions vs pub/sub), <strong>message fanout</strong> (wysyłanie do N odbiorców), <strong>historia wiadomości</strong> (storage, pagination, search).</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="arch-box">
+      <div style="font-size:.65rem;color:var(--teal);font-weight:700;letter-spacing:2px;margin-bottom:12px">ARCHITEKTURA — CHAT SYSTEM NA AZURE</div>
+
+      <div class="flow-row">
+        <div class="fbox" style="background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.3);color:var(--sky)">Mobile/Web Client</div>
+        <span class="farr">→</span>
+        <div class="fbox" style="background:rgba(129,140,248,.1);border:1px solid rgba(129,140,248,.3);color:var(--k1)">Azure SignalR Service<br><span style="font-size:.6rem">Managed WebSocket<br>hub, skalowanie auto</span></div>
+        <span class="farr">←→</span>
+        <div class="fbox" style="background:rgba(45,212,191,.1);border:1px solid rgba(45,212,191,.3);color:var(--teal)">Chat Service (AKS)<br><span style="font-size:.6rem">REST API + SignalR Hub</span></div>
+      </div>
+
+      <div style="margin:8px 0 6px;font-size:.7rem;color:var(--tx2)">MESSAGE FLOW</div>
+      <div class="flow-row">
+        <div class="fbox" style="background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.3);color:var(--green)">Receive Message<br><span style="font-size:.6rem">validate, persist</span></div>
+        <span class="farr">→</span>
+        <div class="fbox" style="background:rgba(251,146,60,.1);border:1px solid rgba(251,146,60,.3);color:var(--orange)">Azure Service Bus<br><span style="font-size:.6rem">message.new topic</span></div>
+        <span class="farr">→</span>
+        <div class="fbox" style="background:rgba(45,212,191,.1);border:1px solid rgba(45,212,191,.3);color:var(--teal)">Fanout Service<br><span style="font-size:.6rem">push to SignalR groups</span></div>
+      </div>
+
+      <div style="margin:8px 0 6px;font-size:.7rem;color:var(--tx2)">DATA STORES</div>
+      <div class="flow-row">
+        <div class="fbox" style="background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.3);color:var(--amber)">Cosmos DB<br><span style="font-size:.6rem">Messages, Rooms<br>partition=roomId</span></div>
+        <div class="fbox" style="background:rgba(251,113,133,.1);border:1px solid rgba(251,113,133,.3);color:var(--rose)">Azure Cache for Redis<br><span style="font-size:.6rem">Online presence<br>Recent messages</span></div>
+        <div class="fbox" style="background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.3);color:var(--sky)">Azure AI Search<br><span style="font-size:.6rem">Full-text message search</span></div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-h" style="color:var(--teal)">💬 Kluczowe decyzje projektowe</div>
+        <div class="card-b" style="font-size:.83rem;color:var(--tx2);line-height:1.85">
+          <p><strong style="color:var(--teal)">Azure SignalR Service zamiast własnych WebSocketów:</strong></p>
+          <p>Managed WebSocket infrastructure — obsługuje sticky sessions automatycznie. Chat Service jest stateless. Skaluje do milionów połączeń. Integruje z AKS przez backplane (Redis lub built-in).</p>
+          <div class="gap8"></div>
+          <p><strong style="color:var(--amber)">Message Storage — Cosmos DB z partition po roomId:</strong></p>
+          <p>Każda wiadomość: <code>{id, roomId, senderId, content, timestamp}</code>. Partition key = <code>roomId</code> — wszystkie wiadomości pokoju na tym samym shardzie → fast pagination. TTL na stare wiadomości (>1 rok do archiwum Blob Storage).</p>
+          <div class="gap8"></div>
+          <p><strong style="color:var(--rose)">Presence (online/offline) — Redis:</strong></p>
+          <p><code>SET presence:userId 1 EX 30</code> — heartbeat co 15s. <code>KEYS presence:*</code>? Nie — użyj Bloom Filter lub Sorted Set ze score=timestamp. Subskrybenci Pub/Sub dostają notyfikację o zmianie statusu.</p>
+          <div class="gap8"></div>
+          <p><strong style="color:var(--violet)">Fanout do dużych pokojów (10k+ użytkowników):</strong></p>
+          <p>Nie push do każdego WebSocket synchronicznie. Użyj SignalR Groups — Azure SignalR Service obsługuje broadcast do grup. Dla very large rooms (100k+): hierarchiczny fanout z pośrednimi węzłami lub pull-based (klient polluje nowe wiadomości).</p>
+          <div class="gap8"></div>
+          <p><strong style="color:var(--sky)">Wiadomości offline / push notifications:</strong></p>
+          <p>Sprawdź status presence w Redis. Jeśli offline → Azure Notification Hubs (Firebase/APNs push) lub email. Watermark per user per room — "last read message id" → badge count = nowsze wiadomości od watermark.</p>
+        </div>
+      </div>
+      <div class="gap12"></div>
+      <div class="alert al-teal">
+        <span class="alert-label">System Design Interview — framework</span>
+        <strong>1. Wymagania (5 min)</strong> — funkcjonalne i niefunkcjonalne. Pytaj o scale, availability, consistency.<br>
+        <strong>2. Estymacja (3 min)</strong> — req/s, storage/dzień, bandwidth. Identyfikuj czy read-heavy czy write-heavy.<br>
+        <strong>3. High-level design (10 min)</strong> — główne komponenty, API, model danych.<br>
+        <strong>4. Deep dive (15 min)</strong> — bottlenecks, sharding, caching, edge cases.<br>
+        <strong>5. Bottlenecks (5 min)</strong> — single point of failure, hotspots, jak skalować dalej.<br>
+        Zawsze pytaj prowadzącego o priorytety — nie możesz zaprojektować wszystkiego w 45 min.
+      </div>
+    </div>
+  </div>
+  <div class="gap16"></div>
+  <div class="strip" style="border-color:var(--k1);background:rgba(129,140,248,.04)">
+    <div class="strip-icon">🏆</div>
+    <div><strong>Senior z System Design:</strong> Nie ma "jednej poprawnej odpowiedzi" — są trade-offy. Zawsze pytasz o wymagania zanim projektujesz. Znasz CAP i wiesz że to nie binary — to spektrum z PACELC. Consistent hashing to nie akademicka teoria — to Redis Cluster, Cassandra, CDN. Backpressure to nie opcja — to obowiązek gdy systemy się komunikują. Na Azure: Managed Identity zamiast connection strings, Event Hubs dla streamingu, Service Bus dla enterprise messaging, Cosmos DB gdy potrzebujesz global distribution. I najważniejsze: <strong>projektuj dla prostoty — złożoność dodawaj tylko gdy skalą tego wymaga</strong>.</div>
+  </div>
+</section>
+
+</main>
+<footer class="footer">
+  <div><span class="footer-title">System Design &amp; Azure</span> — Kompendium Senior Java Developer</div>
+  <div>Load Balancing · Rate Limiting · Sharding · Consistent Hashing · CAP · Backpressure · Azure · Case Studies</div>
+</footer>
+</body>
+</html>

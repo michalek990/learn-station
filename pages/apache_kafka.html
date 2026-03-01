@@ -1,0 +1,1618 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apache Kafka — Kompletna Wiedza</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ffffff;--s1:#f8f9fa;--s2:#f1f3f5;--s3:#e9ecef;
+  --bd:#dee2e6;--bd2:#ced4da;--tx:#1a1a2e;--tx2:#495057;--mt:#6c757d;
+  --k1:#f97316;--k2:#ea6c0a;
+  --green:#16a34a;--teal:#0d9488;--violet:#7c3aed;--rose:#e11d48;
+  --amber:#d97706;--pink:#c026d3;--sky:#0284c7;--orange:#ea580c;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;line-height:1.65;overflow-x:hidden}
+.back{position:fixed;top:22px;left:22px;z-index:9999;background:rgba(255,255,255,.95);backdrop-filter:blur(14px);border:1px solid var(--bd2);border-radius:40px;padding:10px 20px;display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--tx2);font-family:'IBM Plex Mono',monospace;font-size:.72rem;font-weight:500;letter-spacing:1px;transition:all .25s}
+.back:hover{color:var(--k1);border-color:var(--k1)}
+.hdr{min-height:500px;padding:110px 80px 80px;position:relative;overflow:hidden;display:flex;align-items:flex-end}
+.hdr-bg{position:absolute;inset:0;background:var(--s1)}
+.hdr-bg::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 55% at 3% 100%,rgba(255,107,43,.13) 0%,transparent 55%),radial-gradient(ellipse 50% 65% at 97% 5%,rgba(56,189,248,.09) 0%,transparent 50%),radial-gradient(ellipse 45% 50% at 50% 50%,rgba(255,140,80,.04) 0%,transparent 60%)}
+.hdr-grid{position:absolute;inset:0;background-image:linear-gradient(var(--bd) 1px,transparent 1px),linear-gradient(90deg,var(--bd) 1px,transparent 1px);background-size:48px 48px;opacity:.13;mask-image:radial-gradient(ellipse 85% 90% at 50% 50%,black,transparent)}
+.hdr-content{position:relative;max-width:1400px;width:100%}
+.hdr-tier{display:inline-flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:.65rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--k1);margin-bottom:28px;padding:7px 16px;border:1px solid rgba(255,107,43,.35);border-radius:4px;background:rgba(255,107,43,.07)}
+.tier-dot{width:6px;height:6px;border-radius:50%;background:var(--k1);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+h1{font-size:clamp(2.8rem,7vw,6rem);font-weight:800;line-height:.9;letter-spacing:-4px;margin-bottom:28px}
+h1 em{font-style:normal;background:linear-gradient(135deg,var(--k1),var(--amber));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+h1 small{display:block;font-size:.36em;letter-spacing:-1px;color:var(--tx2);font-weight:500;margin-top:14px;-webkit-text-fill-color:var(--tx2)}
+.hdr-desc{font-size:1rem;color:var(--tx2);max-width:680px;line-height:1.9}
+.hdr-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.chip{font-family:'IBM Plex Mono',monospace;font-size:.63rem;font-weight:600;letter-spacing:.5px;padding:5px 12px;border-radius:3px;border:1px solid}
+.ck{color:var(--k1);border-color:rgba(255,107,43,.4);background:rgba(255,107,43,.07)}
+.cg{color:var(--green);border-color:rgba(74,222,128,.35);background:rgba(74,222,128,.05)}
+.ct{color:var(--teal);border-color:rgba(45,212,191,.35);background:rgba(45,212,191,.05)}
+.cv{color:var(--violet);border-color:rgba(167,139,250,.35);background:rgba(167,139,250,.07)}
+.cr{color:var(--rose);border-color:rgba(251,113,133,.35);background:rgba(251,113,133,.05)}
+.ca{color:var(--amber);border-color:rgba(251,191,36,.35);background:rgba(251,191,36,.05)}
+.co{color:var(--orange);border-color:rgba(251,146,60,.35);background:rgba(251,146,60,.05)}
+.cs{color:var(--sky);border-color:rgba(56,189,248,.35);background:rgba(56,189,248,.05)}
+.nav{position:sticky;top:0;z-index:300;background:rgba(255,255,255,.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--bd);display:flex;overflow-x:auto;scrollbar-width:none;padding:0 80px}
+.nav::-webkit-scrollbar{display:none}
+.nav-a{color:var(--mt);text-decoration:none;font-family:'IBM Plex Mono',monospace;font-size:.63rem;font-weight:600;letter-spacing:.5px;padding:14px 12px;white-space:nowrap;border-bottom:2px solid transparent;transition:all .18s}
+.nav-a:hover{color:var(--k1);border-bottom-color:var(--k1)}
+.main{max-width:1400px;margin:0 auto;padding:80px 24px 160px}
+.chapter{margin-bottom:100px;animation:fadeUp .5s ease backwards}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.chapter:nth-child(1){animation-delay:.04s}.chapter:nth-child(2){animation-delay:.08s}
+.chapter:nth-child(3){animation-delay:.12s}.chapter:nth-child(4){animation-delay:.16s}
+.chapter:nth-child(5){animation-delay:.20s}.chapter:nth-child(6){animation-delay:.24s}
+.chapter:nth-child(7){animation-delay:.28s}.chapter:nth-child(8){animation-delay:.32s}
+.chapter:nth-child(9){animation-delay:.36s}.chapter:nth-child(10){animation-delay:.40s}
+.chapter:nth-child(11){animation-delay:.44s}.chapter:nth-child(12){animation-delay:.48s}
+.chapter:nth-child(13){animation-delay:.52s}
+.ch-head{display:flex;align-items:flex-start;gap:22px;margin-bottom:36px;padding-bottom:28px;border-bottom:1px solid var(--bd)}
+.ch-num{font-family:'IBM Plex Mono',monospace;font-size:.62rem;font-weight:700;letter-spacing:3px;color:var(--mt);padding-top:6px;white-space:nowrap}
+.ch-info{flex:1}
+.ch-cat{font-family:'IBM Plex Mono',monospace;font-size:.58rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:6px}
+.ch-title{font-size:1.9rem;font-weight:800;letter-spacing:-1px;line-height:1.1;margin-bottom:10px}
+.ch-desc{font-size:.9rem;color:var(--tx2);max-width:840px;line-height:1.9}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:1100px){.g4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:900px){.g2,.g3,.g4{grid-template-columns:1fr}.hdr{padding:80px 24px 56px}.nav{padding:0 16px}h1{font-size:2.8rem;letter-spacing:-2px}}
+.card{background:var(--s1);border:1px solid var(--bd);border-radius:8px;overflow:hidden;transition:border-color .2s,box-shadow .2s}
+.card:hover{border-color:var(--bd2);box-shadow:0 6px 28px rgba(0,0,0,.5)}
+.card-h{padding:11px 18px;font-family:'IBM Plex Mono',monospace;font-size:.66rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:8px}
+.card-b{padding:18px}
+.code{background:#f4f4f5;border:1px solid var(--bd);border-radius:8px;overflow:hidden}
+.cbar{background:var(--s1);border-bottom:1px solid var(--bd);padding:9px 16px;font-family:'IBM Plex Mono',monospace;font-size:.64rem;color:var(--mt);display:flex;align-items:center;gap:7px}
+.fdot{width:7px;height:7px;border-radius:50%}
+pre{padding:20px;font-family:'IBM Plex Mono',monospace;font-size:.77rem;line-height:1.75;overflow-x:auto;color:#374151}
+.kw{color:#c678dd}.cls{color:#e5c07b}.fn{color:#61afef}.str{color:#98c379}
+.cm{color:#1e3040;font-style:italic}.num{color:#d19a66}.ann{color:#e06c75}
+.ifc{color:#56b6c2}.tp{color:#e5c07b}.prop{color:#ff8c50}
+.alert{padding:16px 20px;border-radius:6px;border-left:3px solid;font-size:.87rem;line-height:1.85;color:var(--tx2)}
+.alert strong{color:var(--tx)}
+.alert-label{font-family:'IBM Plex Mono',monospace;font-size:.58rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;display:block;margin-bottom:6px}
+.al-k{background:rgba(255,107,43,.05);border-color:var(--k1)}.al-k .alert-label{color:var(--k1)}
+.al-green{background:rgba(74,222,128,.05);border-color:var(--green)}.al-green .alert-label{color:var(--green)}
+.al-rose{background:rgba(251,113,133,.05);border-color:var(--rose)}.al-rose .alert-label{color:var(--rose)}
+.al-violet{background:rgba(167,139,250,.05);border-color:var(--violet)}.al-violet .alert-label{color:var(--violet)}
+.al-teal{background:rgba(45,212,191,.05);border-color:var(--teal)}.al-teal .alert-label{color:var(--teal)}
+.al-amber{background:rgba(251,191,36,.05);border-color:var(--amber)}.al-amber .alert-label{color:var(--amber)}
+.al-orange{background:rgba(251,146,60,.05);border-color:var(--orange)}.al-orange .alert-label{color:var(--orange)}
+.al-sky{background:rgba(56,189,248,.05);border-color:var(--sky)}.al-sky .alert-label{color:var(--sky)}
+.tbl{width:100%;border-collapse:collapse;font-size:.84rem}
+.tbl th{background:var(--s2);color:var(--tx2);font-family:'IBM Plex Mono',monospace;font-size:.63rem;letter-spacing:2px;text-transform:uppercase;font-weight:700;padding:11px 16px;text-align:left;border-bottom:1px solid var(--bd)}
+.tbl td{padding:11px 16px;border-bottom:1px solid var(--bd);color:var(--tx2);vertical-align:top;line-height:1.75}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:var(--s2);color:var(--tx)}
+.tbl code{font-family:'IBM Plex Mono',monospace;font-size:.76rem;color:var(--k2);background:rgba(255,107,43,.1);padding:2px 7px;border-radius:3px}
+.ritem{display:flex;gap:16px;padding:12px 0;border-bottom:1px solid var(--bd);align-items:flex-start}
+.ritem:last-child{border-bottom:none}
+.ritem-key{font-family:'IBM Plex Mono',monospace;font-size:.76rem;white-space:nowrap;padding-top:2px;min-width:170px;flex-shrink:0}
+.ritem-val{font-size:.85rem;color:var(--tx2);line-height:1.75}
+.ritem-val code{font-family:'IBM Plex Mono',monospace;font-size:.76rem;color:var(--k2);background:rgba(255,107,43,.1);padding:1px 6px;border-radius:3px}
+.ritem-val strong{color:var(--tx)}
+.strip{border:1px solid var(--bd);border-radius:8px;padding:18px 22px;font-size:.87rem;color:var(--tx2);line-height:1.85;display:flex;gap:16px;align-items:flex-start}
+.strip-icon{font-size:1.3rem;flex-shrink:0;padding-top:2px}
+.strip strong{color:var(--tx)}
+.gap8{margin-top:8px}.gap12{margin-top:12px}.gap16{margin-top:16px}.gap24{margin-top:24px}
+.footer{border-top:1px solid var(--bd);background:var(--s1);padding:36px 80px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;font-family:'IBM Plex Mono',monospace;font-size:.68rem;color:var(--mt)}
+.footer-title{color:var(--k1);font-weight:700}
+/* Kafka-specific: architecture diagram */
+.arch-box{background:var(--s2);border:1px solid var(--bd2);border-radius:6px;padding:14px 18px;font-family:'IBM Plex Mono',monospace;font-size:.74rem;line-height:1.9}
+.arch-row{display:flex;align-items:center;gap:10px;margin:4px 0}
+.arch-label{color:var(--tx2);min-width:120px;font-size:.7rem}
+.arch-arrow{color:var(--mt)}
+.broker-box{display:inline-flex;flex-direction:column;gap:4px;padding:8px 12px;border-radius:5px;border:1px solid rgba(255,107,43,.3);background:rgba(255,107,43,.05);font-size:.7rem}
+.partition-row{display:flex;gap:4px;margin-top:6px}
+.part{width:32px;height:22px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:.6rem;font-weight:700}
+.part-leader{background:rgba(255,107,43,.25);border:1px solid rgba(255,107,43,.6);color:var(--k1)}
+.part-replica{background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.3);color:var(--sky)}
+</style>
+</head>
+<body>
+<a class="back" href="#">← MENU</a>
+<header class="hdr">
+  <div class="hdr-bg"></div><div class="hdr-grid"></div>
+  <div class="hdr-content">
+    <div class="hdr-tier"><div class="tier-dot"></div> Apache Kafka · Event Streaming Platform</div>
+    <h1><em>Apache Kafka</em><small>Kompletna wiedza — od architektury do produkcji</small></h1>
+    <p class="hdr-desc">Wszystko o Apache Kafka — architektura brokera, topics i partycje, producers i consumers, consumer groups, gwarancje dostarczania, konfiguracja, Kafka Streams, Schema Registry, Spring Kafka, monitoring i dobre praktyki produkcyjne.</p>
+    <div class="hdr-chips">
+      <span class="chip ck">● Core Architecture</span>
+      <span class="chip ca">Topics &amp; Partitions</span>
+      <span class="chip cg">Producers</span>
+      <span class="chip ct">Consumers</span>
+      <span class="chip cv">Kafka Streams</span>
+      <span class="chip cr">Schema Registry</span>
+      <span class="chip cs">Spring Kafka</span>
+      <span class="chip co">Monitoring &amp; Ops</span>
+    </div>
+  </div>
+</header>
+<nav class="nav">
+  <a class="nav-a" href="#architecture">Architektura</a>
+  <a class="nav-a" href="#topics-partitions">Topics &amp; Partycje</a>
+  <a class="nav-a" href="#producers">Producers</a>
+  <a class="nav-a" href="#consumers">Consumers</a>
+  <a class="nav-a" href="#delivery">Gwarancje dostarczania</a>
+  <a class="nav-a" href="#spring-kafka">Spring Kafka</a>
+  <a class="nav-a" href="#kafka-streams">Kafka Streams</a>
+  <a class="nav-a" href="#schema-registry">Schema Registry</a>
+  <a class="nav-a" href="#config">Konfiguracja</a>
+  <a class="nav-a" href="#patterns">Wzorce &amp; Pułapki</a>
+  <a class="nav-a" href="#monitoring">Monitoring</a>
+  <a class="nav-a" href="#kafka-vs">Kafka vs Inne</a>
+  <a class="nav-a" href="#production">Produkcja</a>
+</nav>
+<main class="main">
+
+<!-- ══ 01 ARCHITECTURE ══ -->
+<section class="chapter" id="architecture">
+  <div class="ch-head">
+    <div class="ch-num">01 / 13</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--k1)">Apache Kafka — Fundament</div>
+      <div class="ch-title">Architektura — czym jest Kafka i jak działa</div>
+      <div class="ch-desc">Kafka to <strong>rozproszony, persystentny log zdarzeń</strong> — nie kolejka. Wiadomości są trzymane na dysku i mogą być odczytane wielokrotnie przez wielu konsumentów niezależnie. Zaprojektowana dla milionów wiadomości/sekundę przy niskiej latencji.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-h" style="color:var(--k1)">🏗️ Kluczowe komponenty</div>
+      <div class="card-b">
+        <div class="ritem"><div class="ritem-key" style="color:var(--k1)">Broker</div><div class="ritem-val">Serwer Kafka — przechowuje dane, obsługuje producentów i konsumentów. Klaster = N brokerów.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--k1)">Topic</div><div class="ritem-val">Logiczny kanał komunikacji. Producenci piszą, konsumenci czytają. Podzielony na partycje.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--k1)">Partition</div><div class="ritem-val">Fizyczna jednostka topicu na dysku brokera. Wiadomości append-only, niezmienne. Ordering gwarantowany TYLKO wewnątrz partycji.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--k1)">Offset</div><div class="ritem-val">Numer kolejny wiadomości w partycji (0, 1, 2...). Consumer commituje offset — zapamiętuje postęp.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--k1)">Replica</div><div class="ritem-val">Kopia partycji na innym brokerze. Leader obsługuje I/O, follower replikuje.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--k1)">ZooKeeper / KRaft</div><div class="ritem-val">ZooKeeper: metadata i koordynacja (legacy). KRaft (Kafka 3.3+): Kafka zarządza sobą samodzielnie — rekomendowane.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--k1)">Producer</div><div class="ritem-val">Klient wysyłający wiadomości do topicu.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--k1)">Consumer</div><div class="ritem-val">Klient czytający wiadomości z topicu. Grupowany w Consumer Groups.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--k1)">Consumer Group</div><div class="ritem-val">Grupa konsumentów przetwarzających topic równolegle. Każda partycja → jeden consumer w grupie.</div></div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-h" style="color:var(--k1)">📐 Jak Kafka różni się od kolejki</div>
+        <div class="card-b" style="font-size:.84rem;color:var(--tx2);line-height:1.85">
+          <table class="tbl">
+            <tr><th>Cecha</th><th>Tradycyjna kolejka</th><th>Apache Kafka</th></tr>
+            <tr><td>Przechowywanie</td><td>Do skonsumowania</td><td><strong style="color:var(--k1)">Persystentny log</strong> (retention)</td></tr>
+            <tr><td>Wielokrotny odczyt</td><td>❌ Wiadomość znika</td><td><strong style="color:var(--green)">✅ Dowolna liczba razy</strong></td></tr>
+            <tr><td>Wielu konsumentów</td><td>Competing consumers</td><td><strong style="color:var(--green)">✅ Niezależne grupy</strong></td></tr>
+            <tr><td>Replay</td><td>❌ Niemożliwy</td><td><strong style="color:var(--green)">✅ Od dowolnego offsetu</strong></td></tr>
+            <tr><td>Ordering</td><td>FIFO (przeważnie)</td><td>W obrębie partycji</td></tr>
+            <tr><td>Throughput</td><td>Tysiące/s</td><td><strong style="color:var(--green)">Miliony/s</strong></td></tr>
+            <tr><td>Opóźnienie</td><td>Niskie (&lt;1ms)</td><td>Niskie (ms)</td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="gap12"></div>
+      <div class="arch-box">
+        <div style="font-size:.65rem;color:var(--k1);font-weight:700;letter-spacing:2px;margin-bottom:10px">ARCHITEKTURA KLASTRA KAFKA</div>
+        <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap">
+          <div class="broker-box">
+            <span style="color:var(--k1);font-size:.65rem;font-weight:700">BROKER 1 (Leader)</span>
+            <div class="partition-row">
+              <div class="part part-leader">P0</div>
+              <div class="part part-replica">P1</div>
+              <div class="part part-replica">P2</div>
+            </div>
+          </div>
+          <div class="broker-box">
+            <span style="color:var(--sky);font-size:.65rem;font-weight:700">BROKER 2</span>
+            <div class="partition-row">
+              <div class="part part-replica">P0</div>
+              <div class="part part-leader">P1</div>
+              <div class="part part-replica">P2</div>
+            </div>
+          </div>
+          <div class="broker-box">
+            <span style="color:var(--teal);font-size:.65rem;font-weight:700">BROKER 3</span>
+            <div class="partition-row">
+              <div class="part part-replica">P0</div>
+              <div class="part part-replica">P1</div>
+              <div class="part part-leader">P2</div>
+            </div>
+          </div>
+        </div>
+        <div style="font-size:.65rem;color:var(--tx2);margin-top:6px">
+          <span style="color:var(--k1)">■</span> Leader partition &nbsp;&nbsp;
+          <span style="color:var(--sky)">■</span> Replica partition &nbsp;&nbsp;
+          RF=3 → wytrzymuje 2 awarie brokerów
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="gap16"></div>
+  <div class="alert al-k">
+    <span class="alert-label">Kafka jako Log — kluczowa metafora</span>
+    Myśl o Kafce jak o <strong>commit logu bazy danych</strong> — append-only, immutable, ordered. Różnica: ten log jest dostępny sieciowo dla setek klientów jednocześnie, ma konfigurowalny retention i można go czytać od dowolnego miejsca. To zmienia wszystko w designie systemów.
+  </div>
+</section>
+
+<!-- ══ 02 TOPICS & PARTITIONS ══ -->
+<section class="chapter" id="topics-partitions">
+  <div class="ch-head">
+    <div class="ch-num">02 / 13</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--amber)">Tematy i Partycje</div>
+      <div class="ch-title">Topics, Partitions, Offsets, Replication — fundament danych</div>
+      <div class="ch-desc">Topic to logiczny kanał. Partition to fizyczny log na dysku. Razem tworzą fundament skalowalności i durability Kafki. Liczba partycji determinuje maksymalną równoległość konsumpcji.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--amber)"></div> Zarządzanie topicami — CLI i AdminClient</div>
+      <pre><span class="cm"># ── CLI — tworzenie i zarządzanie topicami ────────────────────</span>
+<span class="cm"># Utwórz topic</span>
+kafka-topics.sh --bootstrap-server localhost:9092 \
+  --create --topic orders \
+  --partitions 6 \
+  --replication-factor 3 \
+  --config retention.ms=604800000 \
+  --config min.insync.replicas=2
+
+<span class="cm"># Listuj topici</span>
+kafka-topics.sh --bootstrap-server localhost:9092 --list
+
+<span class="cm"># Szczegóły topicu — partycje, liderzy, repliki</span>
+kafka-topics.sh --bootstrap-server localhost:9092 \
+  --describe --topic orders
+
+<span class="cm"># Zmiana konfiguracji</span>
+kafka-configs.sh --bootstrap-server localhost:9092 \
+  --entity-type topics --entity-name orders \
+  --alter --add-config retention.ms=86400000
+
+<span class="cm"># Zwiększenie liczby partycji (zmniejszenie niemożliwe!)</span>
+kafka-topics.sh --bootstrap-server localhost:9092 \
+  --alter --topic orders --partitions 12</pre>
+    </div>
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--amber)"></div> AdminClient — Java API</div>
+      <pre><span class="cm">// Programowe tworzenie topicu (np. przy starcie aplikacji)</span>
+<span class="ann">@Bean</span>
+<span class="kw">public</span> <span class="cls">NewTopic</span> <span class="fn">ordersTopic</span>() {
+  <span class="kw">return</span> <span class="cls">TopicBuilder</span>.<span class="fn">name</span>(<span class="str">"orders"</span>)
+      .<span class="fn">partitions</span>(<span class="num">6</span>)
+      .<span class="fn">replicas</span>(<span class="num">3</span>)
+      .<span class="fn">config</span>(<span class="cls">TopicConfig</span>.<span class="ann">RETENTION_MS_CONFIG</span>, <span class="str">"604800000"</span>)
+      .<span class="fn">config</span>(<span class="cls">TopicConfig</span>.<span class="ann">MIN_IN_SYNC_REPLICAS_CONFIG</span>, <span class="str">"2"</span>)
+      .<span class="fn">compact</span>() <span class="cm">// lub .delete() — domyślna polityka usuwania</span>
+      .<span class="fn">build</span>();
+}
+
+<span class="cm">// Konfiguracje retention:</span>
+<span class="cm">// retention.ms       = jak długo (ms), -1 = forever</span>
+<span class="cm">// retention.bytes    = max rozmiar partycji, -1 = unlimited</span>
+<span class="cm">// cleanup.policy     = delete (domyślna) | compact</span>
+
+<span class="cm">// Log Compaction — zachowuje tylko ostatnią wartość per klucz</span>
+<span class="cm">// Idealne dla: snapshots stanu, konfiguracje, user profiles</span>
+<span class="cm">// Wiadomości z null value (tombstone) = usunięcie klucza</span>
+
+<span class="cm">// Strategia partycjonowania:</span>
+<span class="cm">// Key = null → Round Robin (domyślnie równomierne)</span>
+<span class="cm">// Key = "orderId" → hash(key) % partitions</span>
+<span class="cm">//   → gwarancja: ten sam klucz → ta sama partycja</span>
+<span class="cm">//   → ordering per klucz!</span>
+<span class="cm">// Custom Partitioner → własna logika rozdziału</span></pre>
+    </div>
+  </div>
+  <div class="gap16"></div>
+  <div class="g4">
+    <div class="card">
+      <div class="card-h" style="color:var(--amber)">📏 Ile partycji?</div>
+      <div class="card-b" style="font-size:.82rem;color:var(--tx2);line-height:1.85">
+        <p><strong style="color:var(--tx)">Zasada:</strong> liczba partycji = max planowana liczba konsumentów w grupie</p>
+        <p style="margin-top:8px">Zbyt mało → ograniczona równoległość</p>
+        <p>Zbyt wiele → overhead metadanych, więcej file handles, wolniejszy leader election</p>
+        <p style="margin-top:8px"><strong style="color:var(--k1)">Praktyka:</strong> zacznij od 6-12, skaluj w górę</p>
+        <p style="margin-top:6px">⚠️ Nie możesz zmniejszyć liczby partycji!</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--teal)">🔁 Replication Factor</div>
+      <div class="card-b" style="font-size:.82rem;color:var(--tx2);line-height:1.85">
+        <p><strong style="color:var(--tx)">RF = N</strong> → wytrzymuje N-1 awarii brokerów</p>
+        <p style="margin-top:8px"><strong>RF=1</strong> → dev, testy (brak durability)</p>
+        <p><strong>RF=2</strong> → wytrzymuje 1 awarię (minimum prod)</p>
+        <p><strong>RF=3</strong> → standard produkcyjny ✅</p>
+        <p style="margin-top:8px"><code>min.insync.replicas=2</code> + <code>acks=all</code> = bezpieczne</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--violet)">📦 Rozmiar wiadomości</div>
+      <div class="card-b" style="font-size:.82rem;color:var(--tx2);line-height:1.85">
+        <p><strong style="color:var(--tx)">Domyślny max:</strong> <code>1 MB</code></p>
+        <p style="margin-top:8px"><code>message.max.bytes</code> — broker</p>
+        <p><code>max.request.size</code> — producer</p>
+        <p><code>fetch.max.bytes</code> — consumer</p>
+        <p style="margin-top:8px"><strong>Praktyka:</strong> trzymaj wiadomości małe (&lt;1MB). Duże payloady → external storage + referencja w Kafce (Claim Check Pattern).</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--rose)">⏱️ Retention</div>
+      <div class="card-b" style="font-size:.82rem;color:var(--tx2);line-height:1.85">
+        <p><strong style="color:var(--tx)">retention.ms</strong> — czas życia (domyślnie 7 dni)</p>
+        <p style="margin-top:6px"><strong>retention.bytes</strong> — max rozmiar log per partycja</p>
+        <p style="margin-top:6px"><strong>Log Compaction</strong> — zachowuje tylko ostatnią wartość dla danego klucza. Używaj dla state stores, cache invalidation.</p>
+        <p style="margin-top:6px"><strong>Tombstone</strong> — wiadomość z <code>value=null</code> → usuwa klucz z compacted topic</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 03 PRODUCERS ══ -->
+<section class="chapter" id="producers">
+  <div class="ch-head">
+    <div class="ch-num">03 / 13</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--green)">Producers</div>
+      <div class="ch-title">Producer API — wysyłanie wiadomości, konfiguracja, batching</div>
+      <div class="ch-desc">Producer odpowiada za wysyłanie wiadomości do Kafki. Kluczowe parametry: acks (gwarancja zapisu), batching (wydajność), kompresja, retries i idempotencja. Błędna konfiguracja może skutkować utratą danych lub duplikatami.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--green)"></div> Producer — konfiguracja i wysyłka</div>
+      <pre><span class="cm">// ── Konfiguracja Producenta ───────────────────────────────────</span>
+<span class="cls">Properties</span> props = <span class="kw">new</span> <span class="fn">Properties</span>();
+props.<span class="fn">put</span>(<span class="cls">ProducerConfig</span>.<span class="ann">BOOTSTRAP_SERVERS_CONFIG</span>,
+         <span class="str">"kafka1:9092,kafka2:9092,kafka3:9092"</span>);
+
+<span class="cm">// Serializery</span>
+props.<span class="fn">put</span>(<span class="cls">ProducerConfig</span>.<span class="ann">KEY_SERIALIZER_CLASS_CONFIG</span>,
+         <span class="cls">StringSerializer</span>.<span class="kw">class</span>);
+props.<span class="fn">put</span>(<span class="cls">ProducerConfig</span>.<span class="ann">VALUE_SERIALIZER_CLASS_CONFIG</span>,
+         <span class="cls">JsonSerializer</span>.<span class="kw">class</span>);
+
+<span class="cm">// ── Gwarancje dostarczania ────────────────────────────────────</span>
+<span class="cm">// acks=0 → fire and forget — najszybszy, ryzyko utraty</span>
+<span class="cm">// acks=1 → leader potwierdza — domyślny, możliwa utrata przy failover</span>
+<span class="cm">// acks=all → wszystkie ISR potwierdzają — najbezpieczniejszy</span>
+props.<span class="fn">put</span>(<span class="cls">ProducerConfig</span>.<span class="ann">ACKS_CONFIG</span>, <span class="str">"all"</span>);
+
+<span class="cm">// ── Idempotencja — exactly-once na poziomie producenta ────────</span>
+<span class="cm">// Zapobiega duplikatom przy retry (sieć może dostarczyć 2x)</span>
+props.<span class="fn">put</span>(<span class="cls">ProducerConfig</span>.<span class="ann">ENABLE_IDEMPOTENCE_CONFIG</span>, <span class="kw">true</span>);
+<span class="cm">// Wymaga: acks=all, retries>0, max.in.flight.requests.per.connection≤5</span>
+
+<span class="cm">// ── Batching — wydajność ──────────────────────────────────────</span>
+<span class="cm">// linger.ms: ile czekać na wypełnienie batcha (domyślnie 0!)</span>
+props.<span class="fn">put</span>(<span class="cls">ProducerConfig</span>.<span class="ann">LINGER_MS_CONFIG</span>, <span class="num">5</span>);
+<span class="cm">// batch.size: max rozmiar batcha w bajtach</span>
+props.<span class="fn">put</span>(<span class="cls">ProducerConfig</span>.<span class="ann">BATCH_SIZE_CONFIG</span>, <span class="num">32768</span>); <span class="cm">// 32KB</span>
+<span class="cm">// buffer.memory: łączna pamięć dla buforów producenta</span>
+props.<span class="fn">put</span>(<span class="cls">ProducerConfig</span>.<span class="ann">BUFFER_MEMORY_CONFIG</span>, <span class="num">33554432</span>);
+
+<span class="cm">// ── Kompresja ─────────────────────────────────────────────────</span>
+<span class="cm">// snappy: dobry balans CPU/kompresja (rekomendowany)</span>
+<span class="cm">// lz4: najszybszy, mniejsza kompresja</span>
+<span class="cm">// gzip: najlepsza kompresja, drogi CPU</span>
+<span class="cm">// zstd: najlepszy (Kafka 2.1+), rekomendowany dla nowych projektów</span>
+props.<span class="fn">put</span>(<span class="cls">ProducerConfig</span>.<span class="ann">COMPRESSION_TYPE_CONFIG</span>, <span class="str">"snappy"</span>);
+
+<span class="cm">// ── Retry ─────────────────────────────────────────────────────</span>
+props.<span class="fn">put</span>(<span class="cls">ProducerConfig</span>.<span class="ann">RETRIES_CONFIG</span>, <span class="cls">Integer</span>.<span class="ann">MAX_VALUE</span>);
+props.<span class="fn">put</span>(<span class="cls">ProducerConfig</span>.<span class="ann">RETRY_BACKOFF_MS_CONFIG</span>, <span class="num">100</span>);
+props.<span class="fn">put</span>(<span class="cls">ProducerConfig</span>.<span class="ann">DELIVERY_TIMEOUT_MS_CONFIG</span>, <span class="num">120000</span>); <span class="cm">// 2min</span></pre>
+    </div>
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--green)"></div> Producer — wysyłka sync/async/transakcje</div>
+      <pre><span class="cls">KafkaProducer</span>&lt;<span class="tp">String</span>, <span class="cls">OrderEvent</span>&gt; producer =
+    <span class="kw">new</span> <span class="fn">KafkaProducer</span>&lt;&gt;(props);
+
+<span class="cm">// ── Async (zalecana dla throughput) ──────────────────────────</span>
+<span class="cls">ProducerRecord</span>&lt;<span class="tp">String</span>, <span class="cls">OrderEvent</span>&gt; record =
+    <span class="kw">new</span> <span class="fn">ProducerRecord</span>&lt;&gt;(
+        <span class="str">"orders"</span>,          <span class="cm">// topic</span>
+        <span class="str">"order-123"</span>,        <span class="cm">// key → determinuje partycję</span>
+        <span class="kw">new</span> <span class="fn">OrderEvent</span>(...)  <span class="cm">// value</span>
+    );
+
+producer.<span class="fn">send</span>(record, (metadata, exception) -> {
+  <span class="kw">if</span> (exception != <span class="kw">null</span>) {
+    log.<span class="fn">error</span>(<span class="str">"Send failed: {}"</span>, exception.<span class="fn">getMessage</span>());
+    <span class="cm">// alert, DLQ, retry logic</span>
+  } <span class="kw">else</span> {
+    log.<span class="fn">debug</span>(<span class="str">"Sent to partition={} offset={}"</span>,
+        metadata.<span class="fn">partition</span>(), metadata.<span class="fn">offset</span>());
+  }
+});
+
+<span class="cm">// ── Sync (gdy potrzebujesz potwierdzenia przed kontynuacją) ──</span>
+<span class="cls">RecordMetadata</span> meta = producer.<span class="fn">send</span>(record).<span class="fn">get</span>(); <span class="cm">// blokuje!</span>
+
+<span class="cm">// ── Transakcyjny Producer — exactly-once semantics ────────────</span>
+props.<span class="fn">put</span>(<span class="cls">ProducerConfig</span>.<span class="ann">TRANSACTIONAL_ID_CONFIG</span>, <span class="str">"order-producer-1"</span>);
+<span class="cls">KafkaProducer</span>&lt;<span class="tp">String</span>, <span class="cls">OrderEvent</span>&gt; txProducer = <span class="kw">new</span> <span class="fn">KafkaProducer</span>&lt;&gt;(props);
+txProducer.<span class="fn">initTransactions</span>();
+
+<span class="kw">try</span> {
+  txProducer.<span class="fn">beginTransaction</span>();
+  txProducer.<span class="fn">send</span>(<span class="kw">new</span> <span class="fn">ProducerRecord</span>&lt;&gt;(<span class="str">"orders"</span>, event1));
+  txProducer.<span class="fn">send</span>(<span class="kw">new</span> <span class="fn">ProducerRecord</span>&lt;&gt;(<span class="str">"payments"</span>, event2));
+  txProducer.<span class="fn">commitTransaction</span>(); <span class="cm">// atomowo oba topici</span>
+} <span class="kw">catch</span> (<span class="cls">Exception</span> e) {
+  txProducer.<span class="fn">abortTransaction</span>(); <span class="cm">// rollback</span>
+  <span class="kw">throw</span> e;
+} <span class="kw">finally</span> {
+  txProducer.<span class="fn">close</span>();
+}
+
+<span class="cm">// Custom Partitioner</span>
+<span class="kw">public class</span> <span class="cls">PriorityPartitioner</span> <span class="kw">implements</span> <span class="ifc">Partitioner</span> {
+  <span class="kw">public int</span> <span class="fn">partition</span>(<span class="tp">String</span> topic, <span class="cls">Object</span> key, <span class="kw">byte</span>[] keyBytes,
+      <span class="cls">Object</span> value, <span class="kw">byte</span>[] valueBytes, <span class="cls">Cluster</span> cluster) {
+    <span class="cm">// VIP orders → partition 0, reszta → hash-based</span>
+    <span class="kw">if</span> (value <span class="kw">instanceof</span> <span class="cls">OrderEvent</span> e && e.<span class="fn">isVip</span>())
+      <span class="kw">return</span> <span class="num">0</span>;
+    <span class="kw">return</span> <span class="cls">Utils</span>.<span class="fn">abs</span>(<span class="cls">Utils</span>.<span class="fn">murmur2</span>(keyBytes)) %
+           cluster.<span class="fn">partitionCountForTopic</span>(topic);
+  }
+}</pre>
+    </div>
+  </div>
+  <div class="gap16"></div>
+  <div class="alert al-green">
+    <span class="alert-label">Producer — złota konfiguracja produkcyjna</span>
+    <code>acks=all</code> + <code>enable.idempotence=true</code> + <code>retries=Integer.MAX_VALUE</code> + <code>max.in.flight.requests.per.connection=5</code> + <code>linger.ms=5</code> + <code>compression.type=snappy</code>. To daje: durability, brak duplikatów, dobry throughput.
+  </div>
+</section>
+
+<!-- ══ 04 CONSUMERS ══ -->
+<section class="chapter" id="consumers">
+  <div class="ch-head">
+    <div class="ch-num">04 / 13</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--teal)">Consumers i Consumer Groups</div>
+      <div class="ch-title">Consumer API, offset management, rebalancing, lag</div>
+      <div class="ch-desc">Consumer czyta z Kafki. Consumer Group umożliwia równoległe przetwarzanie — partycje są rozdzielane między instancje. Kluczowe: offset commit strategia, obsługa rebalance, unikanie consumer lag.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--teal)"></div> Consumer — konfiguracja i pętla przetwarzania</div>
+      <pre><span class="cls">Properties</span> props = <span class="kw">new</span> <span class="fn">Properties</span>();
+props.<span class="fn">put</span>(<span class="cls">ConsumerConfig</span>.<span class="ann">BOOTSTRAP_SERVERS_CONFIG</span>, <span class="str">"kafka:9092"</span>);
+props.<span class="fn">put</span>(<span class="cls">ConsumerConfig</span>.<span class="ann">GROUP_ID_CONFIG</span>, <span class="str">"order-processor"</span>);
+props.<span class="fn">put</span>(<span class="cls">ConsumerConfig</span>.<span class="ann">KEY_DESERIALIZER_CLASS_CONFIG</span>,
+         <span class="cls">StringDeserializer</span>.<span class="kw">class</span>);
+props.<span class="fn">put</span>(<span class="cls">ConsumerConfig</span>.<span class="ann">VALUE_DESERIALIZER_CLASS_CONFIG</span>,
+         <span class="cls">JsonDeserializer</span>.<span class="kw">class</span>);
+
+<span class="cm">// ── Offset management ─────────────────────────────────────────</span>
+<span class="cm">// auto.offset.reset: co zrobić gdy brak commita dla tej grupy</span>
+<span class="cm">// earliest → od początku logu (replay!)</span>
+<span class="cm">// latest   → tylko nowe wiadomości (domyślnie)</span>
+<span class="cm">// none     → throw exception jeśli brak offset</span>
+props.<span class="fn">put</span>(<span class="cls">ConsumerConfig</span>.<span class="ann">AUTO_OFFSET_RESET_CONFIG</span>, <span class="str">"earliest"</span>);
+
+<span class="cm">// ZAWSZE wyłącz auto-commit! Manualna kontrola = lepsza</span>
+props.<span class="fn">put</span>(<span class="cls">ConsumerConfig</span>.<span class="ann">ENABLE_AUTO_COMMIT_CONFIG</span>, <span class="kw">false</span>);
+
+<span class="cm">// ── Tuning wydajności ─────────────────────────────────────────</span>
+<span class="cm">// max.poll.records: max rekordów per poll() — default 500</span>
+props.<span class="fn">put</span>(<span class="cls">ConsumerConfig</span>.<span class="ann">MAX_POLL_RECORDS_CONFIG</span>, <span class="num">100</span>);
+<span class="cm">// max.poll.interval.ms: max czas między poll() — default 5min</span>
+<span class="cm">// Jeśli przetwarzanie trwa dłużej → rebalance! Ustaw realistycznie</span>
+props.<span class="fn">put</span>(<span class="cls">ConsumerConfig</span>.<span class="ann">MAX_POLL_INTERVAL_MS_CONFIG</span>, <span class="num">300000</span>);
+<span class="cm">// session.timeout.ms: heartbeat timeout — default 45s</span>
+props.<span class="fn">put</span>(<span class="cls">ConsumerConfig</span>.<span class="ann">SESSION_TIMEOUT_MS_CONFIG</span>, <span class="num">45000</span>);
+
+<span class="cls">KafkaConsumer</span>&lt;<span class="tp">String</span>, <span class="cls">OrderEvent</span>&gt; consumer = <span class="kw">new</span> <span class="fn">KafkaConsumer</span>&lt;&gt;(props);
+consumer.<span class="fn">subscribe</span>(<span class="cls">List</span>.<span class="fn">of</span>(<span class="str">"orders"</span>));
+
+<span class="kw">while</span> (<span class="kw">true</span>) {
+  <span class="cls">ConsumerRecords</span>&lt;<span class="tp">String</span>, <span class="cls">OrderEvent</span>&gt; records =
+      consumer.<span class="fn">poll</span>(<span class="cls">Duration</span>.<span class="fn">ofMillis</span>(<span class="num">1000</span>));
+
+  <span class="kw">for</span> (<span class="cls">ConsumerRecord</span>&lt;<span class="tp">String</span>, <span class="cls">OrderEvent</span>&gt; record : records) {
+    <span class="kw">try</span> {
+      <span class="fn">processOrder</span>(record.<span class="fn">value</span>());
+      <span class="cm">// commit per-partition z precyzyjnym offsetem</span>
+      consumer.<span class="fn">commitSync</span>(<span class="cls">Map</span>.<span class="fn">of</span>(
+          <span class="kw">new</span> <span class="fn">TopicPartition</span>(record.<span class="fn">topic</span>(), record.<span class="fn">partition</span>()),
+          <span class="kw">new</span> <span class="fn">OffsetAndMetadata</span>(record.<span class="fn">offset</span>() + <span class="num">1</span>)
+      ));
+    } <span class="kw">catch</span> (<span class="cls">RetryableException</span> e) {
+      <span class="cm">// nie commituj → zostanie przetworzone ponownie</span>
+      <span class="kw">break</span>;
+    }
+  }
+}</pre>
+    </div>
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--teal)"></div> Rebalance Listener i Seek</div>
+      <pre><span class="cm">// ── ConsumerRebalanceListener — obsługa rebalance ─────────────</span>
+<span class="cm">// Rebalance = partycje są na nowo przydzielane między konsumentów</span>
+<span class="cm">// Powody: nowy konsument dołącza, odpada, zmiana partycji topicu</span>
+<span class="cm">// Podczas rebalance: przetwarzanie ZATRZYMANE dla całej grupy!</span>
+
+consumer.<span class="fn">subscribe</span>(<span class="cls">List</span>.<span class="fn">of</span>(<span class="str">"orders"</span>), <span class="kw">new</span> <span class="cls">ConsumerRebalanceListener</span>() {
+  <span class="ann">@Override</span>
+  <span class="kw">public void</span> <span class="fn">onPartitionsRevoked</span>(<span class="cls">Collection</span>&lt;<span class="cls">TopicPartition</span>&gt; partitions) {
+    <span class="cm">// Wywołane PRZED rebalance — zapisz postęp!</span>
+    log.<span class="fn">info</span>(<span class="str">"Partitions revoked: {}"</span>, partitions);
+    consumer.<span class="fn">commitSync</span>(currentOffsets); <span class="cm">// commit przed oddaniem</span>
+  }
+  <span class="ann">@Override</span>
+  <span class="kw">public void</span> <span class="fn">onPartitionsAssigned</span>(<span class="cls">Collection</span>&lt;<span class="cls">TopicPartition</span>&gt; partitions) {
+    <span class="cm">// Wywołane PO rebalance — można inicjalizować stan</span>
+    log.<span class="fn">info</span>(<span class="str">"Partitions assigned: {}"</span>, partitions);
+  }
+});
+
+<span class="cm">// ── Seek — czytaj od konkretnego offsetu ──────────────────────</span>
+consumer.<span class="fn">subscribe</span>(<span class="cls">List</span>.<span class="fn">of</span>(<span class="str">"orders"</span>));
+consumer.<span class="fn">poll</span>(<span class="cls">Duration</span>.<span class="fn">ofMillis</span>(<span class="num">0</span>)); <span class="cm">// trigger assignment</span>
+
+<span class="cm">// Cofnij do początku (replay!)</span>
+consumer.<span class="fn">seekToBeginning</span>(consumer.<span class="fn">assignment</span>());
+
+<span class="cm">// Skocz na koniec (pomiń historię)</span>
+consumer.<span class="fn">seekToEnd</span>(consumer.<span class="fn">assignment</span>());
+
+<span class="cm">// Precyzyjny seek do offsetu</span>
+consumer.<span class="fn">seek</span>(<span class="kw">new</span> <span class="fn">TopicPartition</span>(<span class="str">"orders"</span>, <span class="num">0</span>), <span class="num">1000L</span>);
+
+<span class="cm">// Seek do czasu (np. ostatnie 24h)</span>
+<span class="tp">Map</span>&lt;<span class="cls">TopicPartition</span>, <span class="tp">Long</span>&gt; timestamps = consumer.<span class="fn">assignment</span>().<span class="fn">stream</span>()
+    .<span class="fn">collect</span>(<span class="cls">Collectors</span>.<span class="fn">toMap</span>(tp -> tp,
+        tp -> <span class="cls">System</span>.<span class="fn">currentTimeMillis</span>() - <span class="num">86400000L</span>));
+consumer.<span class="fn">offsetsForTimes</span>(timestamps).<span class="fn">forEach</span>((tp, oam) -> {
+  <span class="kw">if</span> (oam != <span class="kw">null</span>) consumer.<span class="fn">seek</span>(tp, oam.<span class="fn">offset</span>());
+});
+
+<span class="cm">// ── Sprawdzenie consumer lag z kodu ───────────────────────────</span>
+<span class="tp">Map</span>&lt;<span class="cls">TopicPartition</span>, <span class="tp">Long</span>&gt; endOffsets =
+    consumer.<span class="fn">endOffsets</span>(consumer.<span class="fn">assignment</span>());
+consumer.<span class="fn">assignment</span>().<span class="fn">forEach</span>(tp -> {
+  <span class="kw">long</span> lag = endOffsets.<span class="fn">get</span>(tp) -
+             consumer.<span class="fn">position</span>(tp);
+  log.<span class="fn">info</span>(<span class="str">"Partition {} lag: {}"</span>, tp, lag);
+});</pre>
+    </div>
+  </div>
+  <div class="gap16"></div>
+  <div class="g3">
+    <div class="alert al-teal">
+      <span class="alert-label">Consumer Group — jak działa skalowanie</span>
+      <strong>1 partition → max 1 consumer w grupie</strong>. 6 partycji + 6 konsumentów = pełna równoległość. 6 partycji + 8 konsumentów = 2 konsumentów bezczynnych. Zawsze <code>partitions ≥ max_consumers</code>.
+    </div>
+    <div class="alert al-amber">
+      <span class="alert-label">Stop-the-world Rebalance</span>
+      Klasyczny rebalance zatrzymuje całą grupę. Unikaj częstych rebalance: stabilny <code>group.instance.id</code> (Static Membership), <code>session.timeout.ms</code> ≥ max GC pause, <code>max.poll.interval.ms</code> &gt; max czas przetwarzania.
+    </div>
+    <div class="alert al-rose">
+      <span class="alert-label">Commit Strategy — at-least-once</span>
+      Commituj <strong>po</strong> przetworzeniu (manual commit). Commituj <strong>przed</strong> → at-most-once (możliwa utrata). Zawsze projektuj consumer jako idempotentny — Kafka może dostarczyć wiadomość więcej niż raz!
+    </div>
+  </div>
+</section>
+
+<!-- ══ 05 DELIVERY GUARANTEES ══ -->
+<section class="chapter" id="delivery">
+  <div class="ch-head">
+    <div class="ch-num">05 / 13</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--violet)">Gwarancje dostarczania</div>
+      <div class="ch-title">At-most-once, At-least-once, Exactly-once</div>
+      <div class="ch-desc">Trzy poziomy gwarancji dostarczania wiadomości. Wybór zależy od wymagań biznesowych — każdy wiąże się z kompromisem między pewnością a wydajnością. Exactly-once to najdroższe i najtrudniejsze.</div>
+    </div>
+  </div>
+  <div class="g3">
+    <div class="card">
+      <div class="card-h" style="color:var(--rose)">💨 At-most-once (najwyżej raz)</div>
+      <div class="card-b" style="font-size:.84rem;color:var(--tx2);line-height:1.85">
+        <p><strong style="color:var(--tx)">Wiadomość może zostać utracona, nigdy zduplikowana.</strong></p>
+        <p style="margin-top:10px">Producer: <code>acks=0</code> lub <code>acks=1</code></p>
+        <p>Consumer: commit <strong>przed</strong> przetworzeniem</p>
+        <div class="gap12"></div>
+        <div class="alert al-rose">
+          <span class="alert-label">Kiedy używać</span>
+          Metryki, logi, analytics gdzie utrata kilku wiadomości jest akceptowalna. Najwyższy throughput.
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--amber)">🔁 At-least-once (przynajmniej raz)</div>
+      <div class="card-b" style="font-size:.84rem;color:var(--tx2);line-height:1.85">
+        <p><strong style="color:var(--tx)">Wiadomość zostanie dostarczona, ale może być duplikat.</strong></p>
+        <p style="margin-top:10px">Producer: <code>acks=all</code> + retries</p>
+        <p>Consumer: commit <strong>po</strong> przetworzeniu (manual)</p>
+        <p style="margin-top:8px">Duplikaty możliwe gdy: producer retry po sieci, consumer crashuje po przetworzeniu ale przed commitem</p>
+        <div class="gap12"></div>
+        <div class="alert al-amber">
+          <span class="alert-label">Kiedy używać</span>
+          <strong>Standard dla większości systemów.</strong> Wymagany: <strong>idempotentny consumer</strong> po stronie aplikacji.
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--green)">✅ Exactly-once (dokładnie raz)</div>
+      <div class="card-b" style="font-size:.84rem;color:var(--tx2);line-height:1.85">
+        <p><strong style="color:var(--tx)">Wiadomość przetworzona dokładnie raz. Najtrudniejsze.</strong></p>
+        <p style="margin-top:10px">Producer: <code>enable.idempotence=true</code> + <code>transactional.id</code></p>
+        <p>Consumer: <code>isolation.level=read_committed</code></p>
+        <p style="margin-top:8px">Kafka Streams: EOS włączone przez <code>processing.guarantee=exactly_once_v2</code></p>
+        <div class="gap12"></div>
+        <div class="alert al-green">
+          <span class="alert-label">Kiedy używać</span>
+          Finanse, płatności, deduplikacja przy agregacjach. Duży overhead — używaj świadomie.
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="gap16"></div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--violet)"></div> Idempotentny Consumer — wzorce implementacji</div>
+      <pre><span class="cm">// At-least-once + Idempotent Consumer = efektywne exactly-once</span>
+<span class="cm">// bez overhead transakcji Kafki</span>
+
+<span class="cm">// ── Wzorzec 1: klucz idempotencji w bazie ─────────────────────</span>
+<span class="ann">@Service</span>
+<span class="kw">public class</span> <span class="cls">IdempotentOrderProcessor</span> {
+  <span class="kw">private final</span> <span class="cls">ProcessedEventRepo</span> processedEvents;
+  <span class="kw">private final</span> <span class="cls">OrderService</span> orderService;
+
+  <span class="ann">@Transactional</span>
+  <span class="kw">public void</span> <span class="fn">process</span>(<span class="cls">OrderPlacedEvent</span> event, <span class="tp">String</span> eventId) {
+    <span class="cm">// eventId = topic + partition + offset → unikalny klucz</span>
+    <span class="kw">if</span> (processedEvents.<span class="fn">existsById</span>(eventId)) {
+      log.<span class="fn">warn</span>(<span class="str">"Duplicate event {}, skipping"</span>, eventId);
+      <span class="kw">return</span>;
+    }
+    orderService.<span class="fn">processOrder</span>(event);
+    processedEvents.<span class="fn">save</span>(<span class="kw">new</span> <span class="fn">ProcessedEvent</span>(eventId));
+  }
+}
+
+<span class="cm">// ── Wzorzec 2: upsert zamiast insert ──────────────────────────</span>
+<span class="cm">// SQL UPSERT jest naturalnie idempotentny</span>
+<span class="cm">// INSERT INTO orders ... ON CONFLICT (order_id) DO UPDATE ...</span>
+
+<span class="cm">// ── Wzorzec 3: wersjonowanie / optimistic locking ─────────────</span>
+<span class="kw">public void</span> <span class="fn">updateOrderStatus</span>(<span class="tp">String</span> orderId, <span class="tp">String</span> status, <span class="kw">long</span> version) {
+  <span class="kw">int</span> updated = orderRepo.<span class="fn">updateStatusIfVersion</span>(orderId, status, version);
+  <span class="kw">if</span> (updated == <span class="num">0</span>) {
+    log.<span class="fn">info</span>(<span class="str">"Stale event or duplicate, ignoring"</span>);
+  }
+}
+<span class="cm">// UPDATE orders SET status=? WHERE id=? AND version=?</span>
+
+<span class="cm">// ── Eventowy eventId z nagłówków Kafki ───────────────────────</span>
+<span class="ann">@KafkaListener</span>(topics = <span class="str">"orders"</span>)
+<span class="kw">public void</span> <span class="fn">handle</span>(
+    <span class="ann">@Payload</span> <span class="cls">OrderPlacedEvent</span> event,
+    <span class="ann">@Header</span>(<span class="cls">KafkaHeaders</span>.<span class="ann">RECEIVED_TOPIC</span>) <span class="tp">String</span> topic,
+    <span class="ann">@Header</span>(<span class="cls">KafkaHeaders</span>.<span class="ann">RECEIVED_PARTITION</span>) <span class="kw">int</span> partition,
+    <span class="ann">@Header</span>(<span class="cls">KafkaHeaders</span>.<span class="ann">OFFSET</span>) <span class="kw">long</span> offset) {
+  <span class="tp">String</span> eventId = topic + <span class="str">"-"</span> + partition + <span class="str">"-"</span> + offset;
+  <span class="fn">process</span>(event, eventId);
+}</pre>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--violet)">📊 Porównanie gwarancji</div>
+      <div class="card-b">
+        <table class="tbl">
+          <tr><th>Gwarancja</th><th>Utrata</th><th>Duplikat</th><th>Wydajność</th><th>Złożoność</th></tr>
+          <tr><td><strong style="color:var(--rose)">At-most-once</strong></td><td>❌ Możliwa</td><td>✅ Niemożliwy</td><td>⚡ Najwyższa</td><td>🟢 Prosta</td></tr>
+          <tr><td><strong style="color:var(--amber)">At-least-once</strong></td><td>✅ Niemożliwa</td><td>❌ Możliwy</td><td>⚡ Wysoka</td><td>🟡 Średnia</td></tr>
+          <tr><td><strong style="color:var(--green)">Exactly-once (EOS)</strong></td><td>✅ Niemożliwa</td><td>✅ Niemożliwy</td><td>🐌 Niska</td><td>🔴 Wysoka</td></tr>
+          <tr><td><strong style="color:var(--teal)">At-least-once + Idempotent</strong></td><td>✅ Niemożliwa</td><td>✅ Obsługiwany</td><td>⚡ Wysoka</td><td>🟡 Średnia</td></tr>
+        </table>
+        <div class="gap12"></div>
+        <div class="alert al-violet">
+          <span class="alert-label">Rekomendacja</span>
+          <strong>90% przypadków:</strong> At-least-once + idempotentny consumer. Prosto, wydajnie, bezpiecznie. EOS tylko gdy idempotencja po stronie aplikacji jest niemożliwa.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 06 SPRING KAFKA ══ -->
+<section class="chapter" id="spring-kafka">
+  <div class="ch-head">
+    <div class="ch-num">06 / 13</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--sky)">Spring Kafka</div>
+      <div class="ch-title">Spring Kafka — pełna integracja z Spring Boot</div>
+      <div class="ch-desc">Spring Kafka opakowuje Kafka Client w idiomatyczny Spring. KafkaTemplate dla producentów, @KafkaListener dla konsumentów, KafkaListenerContainerFactory dla zaawansowanej konfiguracji. Pełna integracja z @Transactional.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--sky)"></div> application.yml — Spring Kafka konfiguracja</div>
+      <pre><span class="cm"># ── application.yml — kompletna konfiguracja ─────────────────</span>
+<span class="prop">spring:</span>
+  <span class="prop">kafka:</span>
+    <span class="prop">bootstrap-servers:</span> <span class="str">kafka1:9092,kafka2:9092,kafka3:9092</span>
+
+    <span class="prop">producer:</span>
+      <span class="prop">key-serializer:</span> <span class="str">org.apache.kafka.common.serialization.StringSerializer</span>
+      <span class="prop">value-serializer:</span> <span class="str">org.springframework.kafka.support.serializer.JsonSerializer</span>
+      <span class="prop">acks:</span> <span class="str">all</span>
+      <span class="prop">retries:</span> <span class="num">2147483647</span>
+      <span class="prop">properties:</span>
+        <span class="prop">enable.idempotence:</span> <span class="kw">true</span>
+        <span class="prop">max.in.flight.requests.per.connection:</span> <span class="num">5</span>
+        <span class="prop">compression.type:</span> <span class="str">snappy</span>
+        <span class="prop">linger.ms:</span> <span class="num">5</span>
+        <span class="prop">batch.size:</span> <span class="num">32768</span>
+
+    <span class="prop">consumer:</span>
+      <span class="prop">group-id:</span> <span class="str">order-service</span>
+      <span class="prop">auto-offset-reset:</span> <span class="str">earliest</span>
+      <span class="prop">enable-auto-commit:</span> <span class="kw">false</span>
+      <span class="prop">key-deserializer:</span> <span class="str">org.apache.kafka.common.serialization.StringDeserializer</span>
+      <span class="prop">value-deserializer:</span> <span class="str">org.springframework.kafka.support.serializer.JsonDeserializer</span>
+      <span class="prop">properties:</span>
+        <span class="prop">spring.json.trusted.packages:</span> <span class="str">"com.example.events"</span>
+        <span class="prop">spring.json.use.type.headers:</span> <span class="kw">false</span>
+        <span class="prop">max.poll.records:</span> <span class="num">100</span>
+        <span class="prop">max.poll.interval.ms:</span> <span class="num">300000</span>
+
+    <span class="prop">listener:</span>
+      <span class="prop">ack-mode:</span> <span class="str">MANUAL_IMMEDIATE</span>
+      <span class="prop">concurrency:</span> <span class="num">3</span>   <span class="cm"># threads per listener = partitions/threads</span>
+      <span class="prop">missing-topics-fatal:</span> <span class="kw">false</span></pre>
+    </div>
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--sky)"></div> KafkaTemplate — wysyłanie wiadomości</div>
+      <pre><span class="cm">// ── KafkaTemplate — podstawowa wysyłka ───────────────────────</span>
+<span class="ann">@Service</span>
+<span class="kw">public class</span> <span class="cls">OrderEventProducer</span> {
+  <span class="kw">private final</span> <span class="cls">KafkaTemplate</span>&lt;<span class="tp">String</span>, <span class="cls">OrderEvent</span>&gt; kafkaTemplate;
+
+  <span class="cm">// Async — fire and remember (callback)</span>
+  <span class="kw">public void</span> <span class="fn">sendAsync</span>(<span class="cls">OrderEvent</span> event) {
+    kafkaTemplate.<span class="fn">send</span>(<span class="str">"orders"</span>, event.orderId(), event)
+        .<span class="fn">whenComplete</span>((result, ex) -> {
+          <span class="kw">if</span> (ex != <span class="kw">null</span>) {
+            log.<span class="fn">error</span>(<span class="str">"Kafka send error: {}"</span>, ex.<span class="fn">getMessage</span>());
+            <span class="cm">// fallback: outbox, retry queue, alert</span>
+          } <span class="kw">else</span> {
+            <span class="cls">RecordMetadata</span> meta = result.<span class="fn">getRecordMetadata</span>();
+            log.<span class="fn">debug</span>(<span class="str">"Sent topic={} partition={} offset={}"</span>,
+                meta.<span class="fn">topic</span>(), meta.<span class="fn">partition</span>(), meta.<span class="fn">offset</span>());
+          }
+        });
+  }
+
+  <span class="cm">// Z nagłówkami (headers)</span>
+  <span class="kw">public void</span> <span class="fn">sendWithHeaders</span>(<span class="cls">OrderEvent</span> event) {
+    <span class="cls">ProducerRecord</span>&lt;<span class="tp">String</span>, <span class="cls">OrderEvent</span>&gt; record =
+        <span class="kw">new</span> <span class="fn">ProducerRecord</span>&lt;&gt;(<span class="str">"orders"</span>, event.orderId(), event);
+    record.<span class="fn">headers</span>()
+        .<span class="fn">add</span>(<span class="str">"eventType"</span>, <span class="str">"OrderPlaced"</span>.<span class="fn">getBytes</span>())
+        .<span class="fn">add</span>(<span class="str">"version"</span>, <span class="str">"1"</span>.<span class="fn">getBytes</span>())
+        .<span class="fn">add</span>(<span class="str">"correlationId"</span>, <span class="cls">UUID</span>.<span class="fn">randomUUID</span>().<span class="fn">toString</span>().<span class="fn">getBytes</span>());
+    kafkaTemplate.<span class="fn">send</span>(record);
+  }
+
+  <span class="cm">// Wysyłka do konkretnej partycji</span>
+  <span class="kw">public void</span> <span class="fn">sendToPartition</span>(<span class="cls">OrderEvent</span> event, <span class="kw">int</span> partition) {
+    kafkaTemplate.<span class="fn">send</span>(<span class="str">"orders"</span>, partition, event.orderId(), event);
+  }
+}
+
+<span class="cm">// ── Transactional KafkaTemplate ──────────────────────────────</span>
+<span class="ann">@Service</span>
+<span class="kw">public class</span> <span class="cls">TransactionalOrderService</span> {
+  <span class="kw">private final</span> <span class="cls">KafkaTemplate</span>&lt;<span class="tp">String</span>, <span class="cls">Object</span>&gt; kafkaTemplate;
+  <span class="kw">private final</span> <span class="cls">OrderRepository</span> orderRepo;
+
+  <span class="ann">@Transactional</span>(<span class="str">"kafkaTransactionManager"</span>)
+  <span class="kw">public void</span> <span class="fn">placeOrder</span>(<span class="cls">Order</span> order) {
+    orderRepo.<span class="fn">save</span>(order);
+    kafkaTemplate.<span class="fn">send</span>(<span class="str">"orders"</span>, <span class="kw">new</span> <span class="fn">OrderPlacedEvent</span>(order));
+    kafkaTemplate.<span class="fn">send</span>(<span class="str">"audit"</span>, <span class="kw">new</span> <span class="fn">AuditEvent</span>(<span class="str">"order.placed"</span>, order));
+    <span class="cm">// oba topici w jednej transakcji!</span>
+  }
+}</pre>
+    </div>
+  </div>
+  <div class="gap16"></div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--sky)"></div> @KafkaListener — zaawansowane użycie</div>
+      <pre><span class="ann">@Component</span>
+<span class="kw">public class</span> <span class="cls">OrderEventConsumer</span> {
+
+  <span class="cm">// ── Podstawowy listener ───────────────────────────────────────</span>
+  <span class="ann">@KafkaListener</span>(
+      topics = <span class="str">"orders"</span>,
+      groupId = <span class="str">"order-processor"</span>,
+      concurrency = <span class="str">"3"</span>  <span class="cm">// 3 wątki = 3 partycje naraz</span>
+  )
+  <span class="kw">public void</span> <span class="fn">handleOrder</span>(
+      <span class="ann">@Payload</span> <span class="cls">OrderPlacedEvent</span> event,
+      <span class="ann">@Header</span>(<span class="cls">KafkaHeaders</span>.<span class="ann">RECEIVED_KEY</span>) <span class="tp">String</span> key,
+      <span class="ann">@Header</span>(<span class="cls">KafkaHeaders</span>.<span class="ann">OFFSET</span>) <span class="kw">long</span> offset,
+      <span class="ann">@Header</span>(<span class="cls">KafkaHeaders</span>.<span class="ann">RECEIVED_PARTITION</span>) <span class="kw">int</span> partition,
+      <span class="cls">Acknowledgment</span> ack) {
+    <span class="kw">try</span> {
+      orderService.<span class="fn">process</span>(event);
+      ack.<span class="fn">acknowledge</span>(); <span class="cm">// commit offset</span>
+    } <span class="kw">catch</span> (<span class="cls">Exception</span> e) {
+      log.<span class="fn">error</span>(<span class="str">"Processing failed: {}"</span>, e.<span class="fn">getMessage</span>());
+      <span class="cm">// nie acknowledge → retry lub DLQ (patrz ErrorHandler)</span>
+      <span class="kw">throw</span> e;
+    }
+  }
+
+  <span class="cm">// ── Batch listener — przetwarza wiele naraz ────────────────────</span>
+  <span class="ann">@KafkaListener</span>(topics = <span class="str">"bulk-events"</span>, containerFactory = <span class="str">"batchFactory"</span>)
+  <span class="kw">public void</span> <span class="fn">handleBatch</span>(
+      <span class="tp">List</span>&lt;<span class="cls">ConsumerRecord</span>&lt;<span class="tp">String</span>, <span class="cls">BulkEvent</span>&gt;&gt; records,
+      <span class="cls">Acknowledgment</span> ack) {
+    log.<span class="fn">info</span>(<span class="str">"Processing batch of {} records"</span>, records.<span class="fn">size</span>());
+    <span class="kw">try</span> {
+      <span class="tp">List</span>&lt;<span class="cls">BulkEvent</span>&gt; events = records.<span class="fn">stream</span>()
+          .<span class="fn">map</span>(<span class="cls">ConsumerRecord</span>::<span class="fn">value</span>).<span class="fn">toList</span>();
+      bulkService.<span class="fn">processAll</span>(events);
+      ack.<span class="fn">acknowledge</span>();
+    } <span class="kw">catch</span> (<span class="cls">Exception</span> e) {
+      <span class="cm">// obsłuż częściowe błędy w batchu</span>
+      <span class="kw">throw</span> e;
+    }
+  }
+
+  <span class="cm">// ── Filter messages — tylko VIP orders ───────────────────────</span>
+  <span class="ann">@KafkaListener</span>(topics = <span class="str">"orders"</span>, containerFactory = <span class="str">"filteredFactory"</span>)
+  <span class="kw">public void</span> <span class="fn">handleVipOrder</span>(<span class="cls">OrderPlacedEvent</span> event) {
+    <span class="cm">// containerFactory ma ustawiony RecordFilterStrategy</span>
+    vipOrderService.<span class="fn">process</span>(event);
+  }
+}</pre>
+    </div>
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--sky)"></div> Error Handler, Retry, Dead Letter Queue</div>
+      <pre><span class="cm">// ── DefaultErrorHandler z exponential backoff i DLQ ──────────</span>
+<span class="ann">@Configuration</span>
+<span class="kw">public class</span> <span class="cls">KafkaErrorConfig</span> {
+
+  <span class="ann">@Bean</span>
+  <span class="kw">public</span> <span class="cls">DefaultErrorHandler</span> <span class="fn">errorHandler</span>(
+      <span class="cls">KafkaTemplate</span>&lt;<span class="cls">Object</span>, <span class="cls">Object</span>&gt; kafkaTemplate) {
+
+    <span class="cm">// Dead Letter Publisher — prześlij do .DLT topic</span>
+    <span class="cls">DeadLetterPublishingRecoverer</span> recoverer =
+        <span class="kw">new</span> <span class="fn">DeadLetterPublishingRecoverer</span>(kafkaTemplate,
+            (rec, ex) -> <span class="kw">new</span> <span class="fn">TopicPartition</span>(
+                rec.<span class="fn">topic</span>() + <span class="str">".DLT"</span>, rec.<span class="fn">partition</span>()));
+
+    <span class="cm">// Exponential backoff: 1s, 2s, 4s, 8s, 16s</span>
+    <span class="cls">ExponentialBackOffWithMaxRetries</span> backOff =
+        <span class="kw">new</span> <span class="fn">ExponentialBackOffWithMaxRetries</span>(<span class="num">5</span>);
+    backOff.<span class="fn">setInitialInterval</span>(<span class="num">1000L</span>);
+    backOff.<span class="fn">setMultiplier</span>(<span class="num">2.0</span>);
+    backOff.<span class="fn">setMaxInterval</span>(<span class="num">16000L</span>);
+
+    <span class="cls">DefaultErrorHandler</span> handler =
+        <span class="kw">new</span> <span class="fn">DefaultErrorHandler</span>(recoverer, backOff);
+
+    <span class="cm">// Nie retryuj dla błędów które zawsze failują</span>
+    handler.<span class="fn">addNotRetryableExceptions</span>(
+        <span class="cls">ValidationException</span>.<span class="kw">class</span>,
+        <span class="cls">JsonParseException</span>.<span class="kw">class</span>
+    );
+    <span class="kw">return</span> handler;
+  }
+
+  <span class="cm">// ── DLT Consumer — obsługuj martwe wiadomości ─────────────────</span>
+  <span class="ann">@KafkaListener</span>(topics = <span class="str">"orders.DLT"</span>, groupId = <span class="str">"dlt-processor"</span>)
+  <span class="kw">public void</span> <span class="fn">handleDLT</span>(
+      <span class="ann">@Payload</span> <span class="kw">byte</span>[] message,
+      <span class="ann">@Header</span>(<span class="cls">KafkaHeaders</span>.<span class="ann">DLT_ORIGINAL_TOPIC</span>) <span class="tp">String</span> originalTopic,
+      <span class="ann">@Header</span>(<span class="cls">KafkaHeaders</span>.<span class="ann">DLT_EXCEPTION_MESSAGE</span>) <span class="tp">String</span> errorMsg) {
+    log.<span class="fn">error</span>(<span class="str">"DLT from {}: {}"</span>, originalTopic, errorMsg);
+    <span class="cm">// alert, manual review, zapis do tabeli</span>
+    dltRepository.<span class="fn">save</span>(<span class="kw">new</span> <span class="fn">DeadMessage</span>(originalTopic, message, errorMsg));
+    alertService.<span class="fn">notifyDLT</span>(originalTopic, errorMsg);
+  }
+}</pre>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 07 KAFKA STREAMS ══ -->
+<section class="chapter" id="kafka-streams">
+  <div class="ch-head">
+    <div class="ch-num">07 / 13</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--violet)">Kafka Streams</div>
+      <div class="ch-title">Stream processing — transformacje, agregacje, okna czasowe</div>
+      <div class="ch-desc">Kafka Streams to biblioteka do przetwarzania strumieni danych wbudowana w Kafkę. Działa jako normalna aplikacja Java — bez klastra Spark/Flink. Topology = sieć Source → Processor → Sink. State stores = lokalny RocksDB.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--violet)"></div> Kafka Streams — podstawowe operacje</div>
+      <pre><span class="ann">@Configuration</span>
+<span class="kw">public class</span> <span class="cls">OrderStreamTopology</span> {
+
+  <span class="ann">@Bean</span>
+  <span class="kw">public</span> <span class="cls">KStream</span>&lt;<span class="tp">String</span>, <span class="cls">OrderEvent</span>&gt; <span class="fn">ordersStream</span>(<span class="cls">StreamsBuilder</span> builder) {
+
+    <span class="cls">KStream</span>&lt;<span class="tp">String</span>, <span class="cls">OrderEvent</span>&gt; orders =
+        builder.<span class="fn">stream</span>(<span class="str">"orders"</span>);
+
+    <span class="cm">// ── Filter — tylko duże zamówienia ────────────────────────</span>
+    <span class="cls">KStream</span>&lt;<span class="tp">String</span>, <span class="cls">OrderEvent</span>&gt; bigOrders = orders
+        .<span class="fn">filter</span>((key, order) -> order.<span class="fn">getTotal</span>().<span class="fn">compareTo</span>(
+            <span class="kw">new</span> <span class="fn">BigDecimal</span>(<span class="str">"1000"</span>)) > <span class="num">0</span>);
+
+    <span class="cm">// ── Map — transformuj wartość ─────────────────────────────</span>
+    <span class="cls">KStream</span>&lt;<span class="tp">String</span>, <span class="cls">OrderNotification</span>&gt; notifications = orders
+        .<span class="fn">mapValues</span>(order -> <span class="kw">new</span> <span class="fn">OrderNotification</span>(
+            order.<span class="fn">getId</span>(),
+            order.<span class="fn">getCustomerEmail</span>(),
+            <span class="str">"Twoje zamówienie: "</span> + order.<span class="fn">getTotal</span>()
+        ));
+
+    <span class="cm">// ── Branch — rozgałęzienie strumienia ─────────────────────</span>
+    <span class="cls">Map</span>&lt;<span class="tp">String</span>, <span class="cls">KStream</span>&lt;<span class="tp">String</span>, <span class="cls">OrderEvent</span>&gt;&gt; branches =
+        orders.<span class="fn">split</span>(<span class="cls">Named</span>.<span class="fn">as</span>(<span class="str">"branch-"</span>))
+            .<span class="fn">branch</span>((<span class="cls">Named</span>.<span class="fn">as</span>(<span class="str">"vip"</span>),
+                (key, order) -> order.<span class="fn">isVip</span>()))
+            .<span class="fn">branch</span>((<span class="cls">Named</span>.<span class="fn">as</span>(<span class="str">"regular"</span>),
+                (key, order) -> !order.<span class="fn">isVip</span>()))
+            .<span class="fn">noDefaultBranch</span>();
+
+    branches.<span class="fn">get</span>(<span class="str">"branch-vip"</span>).<span class="fn">to</span>(<span class="str">"orders-vip"</span>);
+    branches.<span class="fn">get</span>(<span class="str">"branch-regular"</span>).<span class="fn">to</span>(<span class="str">"orders-regular"</span>);
+
+    <span class="cm">// ── Merge — łącz strumienie ───────────────────────────────</span>
+    <span class="cls">KStream</span>&lt;<span class="tp">String</span>, <span class="cls">OrderEvent</span>&gt; domestic = builder.<span class="fn">stream</span>(<span class="str">"orders-pl"</span>);
+    <span class="cls">KStream</span>&lt;<span class="tp">String</span>, <span class="cls">OrderEvent</span>&gt; foreign  = builder.<span class="fn">stream</span>(<span class="str">"orders-intl"</span>);
+    <span class="cls">KStream</span>&lt;<span class="tp">String</span>, <span class="cls">OrderEvent</span>&gt; all = domestic.<span class="fn">merge</span>(foreign);
+
+    <span class="cm">// ── To topic — wyślij wynik ───────────────────────────────</span>
+    notifications.<span class="fn">to</span>(<span class="str">"order-notifications"</span>);
+    <span class="kw">return</span> bigOrders;
+  }
+}</pre>
+    </div>
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--violet)"></div> KTable, Aggregacje, Okna czasowe</div>
+      <pre><span class="ann">@Bean</span>
+<span class="kw">public</span> <span class="cls">KTable</span>&lt;<span class="tp">String</span>, <span class="cls">OrderStats</span>&gt; <span class="fn">orderStats</span>(<span class="cls">StreamsBuilder</span> builder) {
+
+  <span class="cm">// ── KTable — zmaterializowany widok (klucz → ostatnia wartość)</span>
+  <span class="cls">KTable</span>&lt;<span class="tp">String</span>, <span class="cls">UserProfile</span>&gt; users =
+      builder.<span class="fn">table</span>(<span class="str">"user-profiles"</span>,
+          <span class="cls">Materialized</span>.<span class="fn">as</span>(<span class="str">"users-store"</span>));
+
+  <span class="cm">// ── Stream-Table Join — wzbogać event o dane z tabeli ────────</span>
+  <span class="cls">KStream</span>&lt;<span class="tp">String</span>, <span class="cls">EnrichedOrder</span>&gt; enriched =
+      builder.<span class="fn">stream</span>&lt;<span class="tp">String</span>, <span class="cls">OrderEvent</span>&gt;(<span class="str">"orders"</span>)
+          .<span class="fn">join</span>(users,
+              (order, user) -> <span class="kw">new</span> <span class="fn">EnrichedOrder</span>(order, user),
+              <span class="cls">Joined</span>.<span class="fn">with</span>(<span class="cls">Serdes</span>.<span class="fn">String</span>(),
+                  <span class="cls">JsonSerde</span>.<span class="fn">of</span>(<span class="cls">OrderEvent</span>.<span class="kw">class</span>),
+                  <span class="cls">JsonSerde</span>.<span class="fn">of</span>(<span class="cls">UserProfile</span>.<span class="kw">class</span>)));
+
+  <span class="cm">// ── Agregacja z oknem czasowym ────────────────────────────────</span>
+  <span class="cm">// Zlicz zamówienia per klient w oknie 1h</span>
+  <span class="cls">KTable</span>&lt;<span class="cls">Windowed</span>&lt;<span class="tp">String</span>&gt;, <span class="tp">Long</span>&gt; ordersPerHour =
+      builder.<span class="fn">stream</span>&lt;<span class="tp">String</span>, <span class="cls">OrderEvent</span>&gt;(<span class="str">"orders"</span>)
+          .<span class="fn">groupByKey</span>()
+          .<span class="fn">windowedBy</span>(<span class="cls">TimeWindows</span>
+              .<span class="fn">ofSizeWithNoGrace</span>(<span class="cls">Duration</span>.<span class="fn">ofHours</span>(<span class="num">1</span>)))
+          .<span class="fn">count</span>(<span class="cls">Materialized</span>.<span class="fn">as</span>(<span class="str">"orders-per-hour"</span>));
+
+  <span class="cm">// ── Sumowanie wartości zamówień per customer ──────────────────</span>
+  <span class="cls">KTable</span>&lt;<span class="tp">String</span>, <span class="cls">BigDecimal</span>&gt; totalPerCustomer =
+      builder.<span class="fn">stream</span>&lt;<span class="tp">String</span>, <span class="cls">OrderEvent</span>&gt;(<span class="str">"orders"</span>)
+          .<span class="fn">groupBy</span>((key, order) -> order.<span class="fn">getCustomerId</span>())
+          .<span class="fn">aggregate</span>(
+              <span class="cls">BigDecimal</span>::<span class="kw">new</span>,  <span class="cm">// initializer</span>
+              (customerId, order, total) ->
+                  total.<span class="fn">add</span>(order.<span class="fn">getTotal</span>()),  <span class="cm">// add</span>
+              (customerId, order, total) ->
+                  total.<span class="fn">subtract</span>(order.<span class="fn">getTotal</span>()), <span class="cm">// subtract (tombstone)</span>
+              <span class="cls">Materialized</span>.<span class="fn">with</span>(<span class="cls">Serdes</span>.<span class="fn">String</span>(), <span class="cls">BigDecimalSerde</span>.<span class="fn">INSTANCE</span>)
+          );
+
+  <span class="cm">// ── State Store — query ze strony aplikacji ───────────────────</span>
+  <span class="cm">// ReadOnlyKeyValueStore&lt;String, BigDecimal&gt; store =</span>
+  <span class="cm">//   streams.store("total-per-customer", QueryableStoreTypes.keyValueStore());</span>
+  <span class="cm">// BigDecimal total = store.get("customer-123");</span>
+
+  <span class="kw">return</span> totalPerCustomer;
+}</pre>
+    </div>
+  </div>
+  <div class="gap16"></div>
+  <div class="g4">
+    <div class="alert al-violet">
+      <span class="alert-label">Typy okien</span>
+      <strong>Tumbling:</strong> stałe, niepokrywające się (1h, 2h...). <strong>Hopping:</strong> pokrywające się (1h co 15min). <strong>Session:</strong> grupuje aktywność z przerwami. <strong>Sliding:</strong> ciągłe okno o stałej długości.
+    </div>
+    <div class="alert al-teal">
+      <span class="alert-label">State Stores</span>
+      Lokalny RocksDB per partycja. Persystentny (przeżywa restart). Dostępny przez Interactive Queries. Changelog topic w Kafce = backup state store.
+    </div>
+    <div class="alert al-amber">
+      <span class="alert-label">Stream vs Table</span>
+      <strong>KStream:</strong> każda wiadomość = nowe zdarzenie. <strong>KTable:</strong> każda wiadomość = update stanu per klucz (tylko ostatnia wartość). KGlobalTable = replicated table na wszystkich instancjach.
+    </div>
+    <div class="alert al-sky">
+      <span class="alert-label">Kiedy Streams, kiedy Consumer</span>
+      Streams: transformacje, joins, agregacje w locie. Consumer: proste przetwarzanie event-by-event, integracja z zewnętrznymi systemami, złożona logika biznesowa.
+    </div>
+  </div>
+</section>
+
+<!-- ══ 08 SCHEMA REGISTRY ══ -->
+<section class="chapter" id="schema-registry">
+  <div class="ch-head">
+    <div class="ch-num">08 / 13</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--rose)">Schema Registry</div>
+      <div class="ch-title">Schema Registry — ewolucja schematów, Avro, Protobuf</div>
+      <div class="ch-desc">Schema Registry (Confluent) zarządza schematami wiadomości — zapewnia kompatybilność producenta i konsumenta przy ewolucji schematów. Wiadomość = mały magic bytes ID + binary payload. Zero problemu z deserializacją.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--rose)"></div> Avro + Schema Registry — konfiguracja</div>
+      <pre><span class="cm">// ── Schemat Avro (orders.avsc) ─────────────────────────────────</span>
+<span class="cm">// {</span>
+<span class="cm">//   "type": "record",</span>
+<span class="cm">//   "name": "OrderPlacedEvent",</span>
+<span class="cm">//   "namespace": "com.example.events",</span>
+<span class="cm">//   "fields": [</span>
+<span class="cm">//     {"name": "orderId",    "type": "string"},</span>
+<span class="cm">//     {"name": "customerId", "type": "string"},</span>
+<span class="cm">//     {"name": "total",      "type": "double"},</span>
+<span class="cm">//     {"name": "currency",   "type": "string", "default": "PLN"},</span>
+<span class="cm">//     {"name": "email",      "type": ["null","string"], "default": null}</span>
+<span class="cm">//   ]</span>
+<span class="cm">// }</span>
+
+<span class="cm">// ── Spring Boot konfiguracja z Schema Registry ────────────────</span>
+<span class="cm">// spring.kafka.producer.value-serializer:</span>
+<span class="cm">//   io.confluent.kafka.serializers.KafkaAvroSerializer</span>
+<span class="cm">// spring.kafka.consumer.value-deserializer:</span>
+<span class="cm">//   io.confluent.kafka.serializers.KafkaAvroDeserializer</span>
+<span class="cm">// spring.kafka.properties:</span>
+<span class="cm">//   schema.registry.url: http://schema-registry:8081</span>
+<span class="cm">//   specific.avro.reader: true</span>
+
+<span class="cm">// ── Kompatybilność schematów ──────────────────────────────────</span>
+<span class="cm">// BACKWARD (domyślna): nowy schema odczyta stare dane</span>
+<span class="cm">//   → dodawaj pola z default, usuwaj pola</span>
+<span class="cm">// FORWARD: stary schema odczyta nowe dane</span>
+<span class="cm">//   → usuwaj pola z default, dodawaj pola</span>
+<span class="cm">// FULL: BACKWARD + FORWARD jednocześnie</span>
+<span class="cm">// NONE: brak sprawdzania (niebezpieczne!)</span>
+
+<span class="cm">// ── REST API Schema Registry ──────────────────────────────────</span>
+<span class="cm"># Listuj schematy</span>
+<span class="cm"># GET http://schema-registry:8081/subjects</span>
+
+<span class="cm"># Pobierz schemat</span>
+<span class="cm"># GET http://schema-registry:8081/subjects/orders-value/versions/latest</span>
+
+<span class="cm"># Sprawdź kompatybilność</span>
+<span class="cm"># POST http://schema-registry:8081/compatibility/subjects/orders-value/versions/latest</span>
+
+<span class="cm">// ── Producer z Avro ───────────────────────────────────────────</span>
+<span class="cls">OrderPlacedEvent</span> event = <span class="cls">OrderPlacedEvent</span>.<span class="fn">newBuilder</span>()
+    .<span class="fn">setOrderId</span>(<span class="str">"order-123"</span>)
+    .<span class="fn">setCustomerId</span>(<span class="str">"customer-456"</span>)
+    .<span class="fn">setTotal</span>(<span class="num">299.99</span>)
+    .<span class="fn">setCurrency</span>(<span class="str">"PLN"</span>)
+    .<span class="fn">build</span>();
+
+kafkaTemplate.<span class="fn">send</span>(<span class="str">"orders"</span>, event.getOrderId().<span class="fn">toString</span>(), event);</pre>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--rose)">📋 Avro vs Protobuf vs JSON</div>
+      <div class="card-b">
+        <table class="tbl">
+          <tr><th>Format</th><th>Rozmiar</th><th>Schema</th><th>Języki</th><th>Kiedy</th></tr>
+          <tr><td><strong style="color:var(--rose)">Avro</strong></td><td>Mały (binary)</td><td>Schema Registry</td><td>Wiele</td><td>Kafka + Schema Registry, Java-centric</td></tr>
+          <tr><td><strong style="color:var(--violet)">Protobuf</strong></td><td>Najmniejszy</td><td>.proto file</td><td>Najszersza</td><td>gRPC, wielojęzyczny, best binary</td></tr>
+          <tr><td><strong style="color:var(--amber)">JSON</strong></td><td>Duży</td><td>JSON Schema</td><td>Wszystkie</td><td>Debug, dev, public API, prostota</td></tr>
+        </table>
+        <div class="gap12"></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--rose)">Tip: JSON w dev</div><div class="ritem-val">Zacznij od JSON (łatwy debug), migruj do Avro gdy throughput staje się problemem. JsonSerializer Springa jest wystarczający dla większości projektów.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--rose)">Subject naming</div><div class="ritem-val"><code>TopicNameStrategy</code> (domyślna): <code>orders-value</code>. <code>RecordNameStrategy</code>: schema per typ rekordu — wiele typów w jednym topicu.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--rose)">Schema evolution</div><div class="ritem-val">Zawsze dodawaj nowe pola z <code>default</code>. Nigdy nie zmieniaj type ani name istniejących pól. Stary consumer nie posypie się na nowej wiadomości.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 09 CONFIGURATION ══ -->
+<section class="chapter" id="config">
+  <div class="ch-head">
+    <div class="ch-num">09 / 13</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--amber)">Konfiguracja</div>
+      <div class="ch-title">Kluczowe parametry brokera, producenta i konsumenta</div>
+      <div class="ch-desc">Prawidłowa konfiguracja to różnica między systemem który działa a systemem który traci dane lub ma wąskie gardła. Zestawienie najważniejszych parametrów z wyjaśnieniami.</div>
+    </div>
+  </div>
+  <div class="g3">
+    <div class="card">
+      <div class="card-h" style="color:var(--amber)">⚙️ Broker — kluczowe parametry</div>
+      <div class="card-b" style="font-size:.82rem">
+        <div class="ritem"><div class="ritem-key" style="color:var(--amber)">num.partitions</div><div class="ritem-val">Domyślna liczba partycji dla nowych topicow. Ustaw 6+.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--amber)">default.replication.factor</div><div class="ritem-val">Domyślny RF. Prod: 3.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--amber)">min.insync.replicas</div><div class="ritem-val">Min repliki ISR dla acks=all. Prod: 2.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--amber)">log.retention.hours</div><div class="ritem-val">Domyślny retention. 168 (7 dni).</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--amber)">log.segment.bytes</div><div class="ritem-val">Rozmiar segmentu logu. 1GB domyślnie.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--amber)">auto.create.topics.enable</div><div class="ritem-val">Wyłącz na prod! <code>false</code>.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--amber)">unclean.leader.election</div><div class="ritem-val"><code>false</code> — nie wybieraj out-of-sync repliki jako leadera (utrata danych).</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--amber)">num.io.threads</div><div class="ritem-val">Wątki I/O dla dysku. 8 domyślnie, dostosuj do dysków.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--amber)">socket.send.buffer.bytes</div><div class="ritem-val">Send buffer TCP. Zwiększ dla high throughput.</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--green)">📤 Producer — kluczowe parametry</div>
+      <div class="card-b" style="font-size:.82rem">
+        <div class="ritem"><div class="ritem-key" style="color:var(--green)">acks</div><div class="ritem-val"><code>0</code>/`1`/`all`. Prod: <code>all</code>.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--green)">enable.idempotence</div><div class="ritem-val"><code>true</code> — brak duplikatów przy retry.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--green)">retries</div><div class="ritem-val"><code>Integer.MAX_VALUE</code> z <code>delivery.timeout.ms</code>.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--green)">delivery.timeout.ms</div><div class="ritem-val">120000 (2min) — całkowity timeout retry.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--green)">linger.ms</div><div class="ritem-val">0-100ms — czas oczekiwania na batch. <code>5</code> to dobry balans.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--green)">batch.size</div><div class="ritem-val">16384 (16KB) domyślnie. Zwiększ do 32-64KB dla throughput.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--green)">compression.type</div><div class="ritem-val"><code>none</code>/<code>gzip</code>/<code>snappy</code>/<code>lz4</code>/<code>zstd</code>. Prod: <code>snappy</code>.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--green)">max.in.flight.requests</div><div class="ritem-val">5 dla idempotence, 1 dla strict ordering.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--green)">request.timeout.ms</div><div class="ritem-val">30000 — timeout jednego żądania do brokera.</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--teal)">📥 Consumer — kluczowe parametry</div>
+      <div class="card-b" style="font-size:.82rem">
+        <div class="ritem"><div class="ritem-key" style="color:var(--teal)">group.id</div><div class="ritem-val">Unikalny per aplikacja. Różne grupy = niezależny odczyt.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--teal)">auto.offset.reset</div><div class="ritem-val"><code>earliest</code>/<code>latest</code>/<code>none</code>. Prod: <code>earliest</code> (nie pomiń).</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--teal)">enable.auto.commit</div><div class="ritem-val"><code>false</code>! Zawsze manual commit.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--teal)">max.poll.records</div><div class="ritem-val">500 domyślnie. Zmniejsz jeśli przetwarzanie wolne.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--teal)">max.poll.interval.ms</div><div class="ritem-val">300000 (5min). Czas między poll() — ustaw > max czas przetwarzania!</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--teal)">session.timeout.ms</div><div class="ritem-val">45000. Max czas bez heartbeat → removed from group.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--teal)">heartbeat.interval.ms</div><div class="ritem-val">3000. &lt; session.timeout.ms / 3.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--teal)">fetch.min.bytes</div><div class="ritem-val">1 domyślnie. Zwiększ dla batching po stronie consumer.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--teal)">isolation.level</div><div class="ritem-val"><code>read_committed</code> dla EOS, <code>read_uncommitted</code> domyślnie.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 10 PATTERNS ══ -->
+<section class="chapter" id="patterns">
+  <div class="ch-head">
+    <div class="ch-num">10 / 13</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--orange)">Wzorce i Pułapki</div>
+      <div class="ch-title">Dobre praktyki, wzorce projektowe i typowe błędy</div>
+      <div class="ch-desc">Zestawienie wzorców które działają w produkcji oraz pułapek które kosztują wiele godzin debugowania. Każdy wzorzec to lekcja wyniesiona z realnych incydentów produkcyjnych.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-h" style="color:var(--green)">✅ Dobre praktyki</div>
+      <div class="card-b" style="font-size:.84rem;color:var(--tx2);line-height:1.85">
+        <div class="ritem"><div class="ritem-key" style="color:var(--green)">Naming topicow</div><div class="ritem-val">Konwencja: <code>domain.entity.event-type</code>, np. <code>orders.order.placed</code>, <code>payments.payment.failed</code>. Unikaj nazw per-serwis.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--green)">Jeden typ eventu per topic</div><div class="ritem-val">Łatwiejszy schema management i monitoring. Alternatywnie: jeden topic per subdomena z discriminator field.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--green)">Klucz wiadomości</div><div class="ritem-val">Zawsze używaj klucza dla ordering per entity (orderId, customerId). <code>null</code> key = round-robin = brak ordering.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--green)">Transactional Outbox</div><div class="ritem-val">Atomowy zapis do DB i Kafki. DB → outbox table → CDC (Debezium) → Kafka. Brak podwójnego zapisu.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--green)">Idempotent consumers</div><div class="ritem-val">Zawsze zakładaj że wiadomość przyjdzie więcej niż raz. Projektuj logikę jako idempotentną.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--green)">DLQ per topic</div><div class="ritem-val">Każdy topic powinien mieć odpowiadający <code>.DLT</code> topic. Monitoruj DLT — to alarm systemu.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--green)">Claim Check Pattern</div><div class="ritem-val">Duży payload → zapisz w S3/blob storage, wyślij w Kafce tylko referencję (URL + metadata).</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--green)">Consumer group per service</div><div class="ritem-val">Każdy mikroserwis = osobna consumer group. Niezależne offsety, replay, skalowanie.</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--rose)">💀 Typowe błędy i pułapki</div>
+      <div class="card-b" style="font-size:.84rem;color:var(--tx2);line-height:1.85">
+        <div class="ritem"><div class="ritem-key" style="color:var(--rose)">auto.commit=true</div><div class="ritem-val">Offset commitowany automatycznie co 5s — utrata wiadomości przy crashu między commit a przetworzeniem. <strong>Zawsze false!</strong></div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--rose)">Zbyt długie przetwarzanie</div><div class="ritem-val"><code>max.poll.interval.ms</code> przekroczony → consumer kick z grupy → rebalance → spowolnienie całej grupy.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--rose)">Zmiana klucza partycji</div><div class="ritem-val">Zmiana klucza = inne partycje = ordering naruszony! Raz ustalony klucz = niezmienialny dla danego topicu.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--rose)">Nie monitorujesz DLT</div><div class="ritem-val">Wiadomości lądują w DLT i nikt nie widzi. System "działa" ale dane giną. Monitoruj lag DLT aktywnie.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--rose)">Zbyt mało partycji</div><div class="ritem-val">Nie możesz skalować konsumentów powyżej liczby partycji. Zawsze planuj z 2x zapasem.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--rose)">Brak Idempotencji</div><div class="ritem-val">Duplikaty w DB, podwójne płatności, podwójne emaile. At-least-once bez idempotencji = katastrofa.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--rose)">auto.create.topics=true</div><div class="ritem-val">Literówka w nazwie topicu tworzy nowy topic. Wyłącz na produkcji!</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--rose)">Brak kompresji</div><div class="ritem-val">JSON bez kompresji = ogromny narzut. Snappy daje 3-5x mniejszy rozmiar przy niskim CPU.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="gap16"></div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--orange)"></div> Transactional Outbox z Debezium CDC</div>
+      <pre><span class="cm">// Problem: jak atomowo zapisać do DB i Kafki?</span>
+<span class="cm">// Rozwiązanie: Outbox Table + Debezium CDC (Change Data Capture)</span>
+
+<span class="cm">// ── 1. Tabela outbox w PostgreSQL ─────────────────────────────</span>
+<span class="cm">// CREATE TABLE outbox (</span>
+<span class="cm">//   id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),</span>
+<span class="cm">//   aggregate_type VARCHAR(255) NOT NULL,  -- "Order"</span>
+<span class="cm">//   aggregate_id   VARCHAR(255) NOT NULL,  -- "order-123"</span>
+<span class="cm">//   type           VARCHAR(255) NOT NULL,  -- "OrderPlaced"</span>
+<span class="cm">//   payload        JSONB        NOT NULL,</span>
+<span class="cm">//   created_at     TIMESTAMPTZ  DEFAULT NOW()</span>
+<span class="cm">// );</span>
+
+<span class="cm">// ── 2. Zapis w jednej transakcji ─────────────────────────────</span>
+<span class="ann">@Transactional</span>
+<span class="kw">public</span> <span class="cls">OrderId</span> <span class="fn">placeOrder</span>(<span class="cls">PlaceOrderCommand</span> cmd) {
+  <span class="cls">Order</span> order = <span class="cls">Order</span>.<span class="fn">create</span>(cmd);
+  orderRepo.<span class="fn">save</span>(order);           <span class="cm">// zapis do tabeli orders</span>
+  outboxRepo.<span class="fn">save</span>(<span class="cls">OutboxEntry</span>.<span class="fn">of</span>( <span class="cm">// zapis do tabeli outbox</span>
+      <span class="str">"Order"</span>, order.<span class="fn">getId</span>().<span class="fn">getValue</span>(),
+      <span class="str">"OrderPlaced"</span>,
+      objectMapper.<span class="fn">writeValueAsString</span>(order)
+  ));
+  <span class="kw">return</span> order.<span class="fn">getId</span>();
+  <span class="cm">// COMMIT → oba zapisy atomowe</span>
+}
+
+<span class="cm">// ── 3. Debezium Connector (konfiguracja JSON) ─────────────────</span>
+<span class="cm">// {</span>
+<span class="cm">//   "connector.class": "io.debezium.connector.postgresql.PostgresConnector",</span>
+<span class="cm">//   "database.hostname": "postgres",</span>
+<span class="cm">//   "database.dbname": "orders_db",</span>
+<span class="cm">//   "table.include.list": "public.outbox",</span>
+<span class="cm">//   "transforms": "outbox",</span>
+<span class="cm">//   "transforms.outbox.type": "io.debezium.transforms.outbox.EventRouter",</span>
+<span class="cm">//   "transforms.outbox.route.topic.replacement": "${routedByValue}"</span>
+<span class="cm">// }</span>
+<span class="cm">// Debezium czyta WAL → wysyła do Kafki automatycznie</span>
+<span class="cm">// aggregate_type → topic name, payload → message value</span>
+<span class="cm">// Brak pollingu! Zero opóźnień!</span></pre>
+    </div>
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--orange)"></div> Event-Driven Saga z Kafka Choreography</div>
+      <pre><span class="cm">// Saga: PlaceOrder → Payment → Inventory → Shipping</span>
+<span class="cm">// Choreography: każdy serwis reaguje na event i publikuje następny</span>
+
+<span class="cm">// ── Order Service ─────────────────────────────────────────────</span>
+<span class="ann">@KafkaListener</span>(topics = <span class="str">"payment.processed"</span>)
+<span class="kw">public void</span> <span class="fn">onPaymentProcessed</span>(<span class="cls">PaymentProcessedEvent</span> e) {
+  <span class="kw">if</span> (e.<span class="fn">isSuccess</span>()) {
+    orderService.<span class="fn">confirmPayment</span>(e.<span class="fn">getOrderId</span>());
+    <span class="cm">// Saga kontynuuje — inventory zareaguje na OrderConfirmed</span>
+    kafkaTemplate.<span class="fn">send</span>(<span class="str">"order.confirmed"</span>,
+        <span class="kw">new</span> <span class="fn">OrderConfirmedEvent</span>(e.<span class="fn">getOrderId</span>()));
+  } <span class="kw">else</span> {
+    <span class="cm">// Kompensacja — anuluj zamówienie</span>
+    orderService.<span class="fn">cancelOrder</span>(e.<span class="fn">getOrderId</span>(), e.<span class="fn">getFailureReason</span>());
+    kafkaTemplate.<span class="fn">send</span>(<span class="str">"order.cancelled"</span>,
+        <span class="kw">new</span> <span class="fn">OrderCancelledEvent</span>(e.<span class="fn">getOrderId</span>(), e.<span class="fn">getFailureReason</span>()));
+  }
+}
+
+<span class="cm">// ── Payment Service ───────────────────────────────────────────</span>
+<span class="ann">@KafkaListener</span>(topics = <span class="str">"order.placed"</span>)
+<span class="kw">public void</span> <span class="fn">onOrderPlaced</span>(<span class="cls">OrderPlacedEvent</span> e) {
+  <span class="kw">try</span> {
+    paymentService.<span class="fn">charge</span>(e.<span class="fn">getCustomerId</span>(), e.<span class="fn">getTotal</span>());
+    kafkaTemplate.<span class="fn">send</span>(<span class="str">"payment.processed"</span>,
+        <span class="cls">PaymentProcessedEvent</span>.<span class="fn">success</span>(e.<span class="fn">getOrderId</span>()));
+  } <span class="kw">catch</span> (<span class="cls">InsufficientFundsException</span> ex) {
+    kafkaTemplate.<span class="fn">send</span>(<span class="str">"payment.processed"</span>,
+        <span class="cls">PaymentProcessedEvent</span>.<span class="fn">failure</span>(e.<span class="fn">getOrderId</span>(), <span class="str">"INSUFFICIENT_FUNDS"</span>));
+  }
+}
+
+<span class="cm">// Topics map:</span>
+<span class="cm">// order.placed → payment.processed → order.confirmed</span>
+<span class="cm">//                    ↓ (failure)         ↓</span>
+<span class="cm">// order.cancelled ←──┘           inventory.reserved</span>
+<span class="cm">//                                       ↓</span>
+<span class="cm">//                               shipping.scheduled</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 11 MONITORING ══ -->
+<section class="chapter" id="monitoring">
+  <div class="ch-head">
+    <div class="ch-num">11 / 13</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--sky)">Monitoring i Observability</div>
+      <div class="ch-title">Metryki, Consumer Lag, JMX, Grafana Dashboards</div>
+      <div class="ch-desc">Bez monitoringu Kafka to czarna skrzynka. Kluczowe metryki: consumer lag, throughput, latencja, ISR count, under-replicated partitions. Stack: JMX → Prometheus → Grafana lub Confluent Control Center.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-h" style="color:var(--sky)">📊 Kluczowe metryki Kafki</div>
+      <div class="card-b" style="font-size:.84rem;color:var(--tx2);line-height:1.85">
+        <div style="margin-bottom:10px;padding:10px;background:rgba(251,113,133,.05);border:1px solid rgba(251,113,133,.2);border-radius:5px">
+          <strong style="color:var(--rose)">🚨 Alarmowe — reaguj natychmiast</strong>
+        </div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--rose)">consumer lag</div><div class="ritem-val"><strong>Najważniejsza metryka!</strong> Opóźnienie per partycja. Rosnący lag = consumer nie nadąża. Alert gdy &gt; threshold.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--rose)">under.replicated.partitions</div><div class="ritem-val">Partycje z mniejszą liczbą ISR niż RF. Wartość &gt; 0 = problem z replikacją! Alert natychmiast.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--rose)">offline.partitions.count</div><div class="ritem-val">Partycje bez leadera. 0 zawsze! &gt;0 = krytyczny błąd.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--rose)">active.controller.count</div><div class="ritem-val">Musi być dokładnie 1 w klastrze. 0 lub &gt;1 = problem.</div></div>
+        <div style="margin:10px 0 6px;padding:10px;background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.2);border-radius:5px">
+          <strong style="color:var(--amber)">📈 Wydajnościowe — monitoruj trend</strong>
+        </div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--amber)">bytes.in/out.per.sec</div><div class="ritem-val">Throughput brokera. Planuj capacity.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--amber)">messages.in.per.sec</div><div class="ritem-val">Liczba wiadomości/s przychodzących.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--amber)">produce.request.latency</div><div class="ritem-val">Latencja zapisu. P99 &lt; 100ms.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--amber)">fetch.request.latency</div><div class="ritem-val">Latencja odczytu przez consumers.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--amber)">network.processor.avg.idle</div><div class="ritem-val">&gt; 30% idle = OK. Mniej = wąskie gardło sieci.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--amber)">request.handler.avg.idle</div><div class="ritem-val">&gt; 30% idle = OK. Mniej = przeciążony broker.</div></div>
+      </div>
+    </div>
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--sky)"></div> Monitoring — CLI, Prometheus, Spring Actuator</div>
+      <pre><span class="cm"># ── Consumer Lag — CLI ────────────────────────────────────────</span>
+<span class="cm"># Lista grup konsumentów</span>
+kafka-consumer-groups.sh \
+  --bootstrap-server kafka:9092 --list
+
+<span class="cm"># Szczegółowy lag per partycja</span>
+kafka-consumer-groups.sh \
+  --bootstrap-server kafka:9092 \
+  --describe --group order-processor
+
+<span class="cm"># Output:</span>
+<span class="cm"># TOPIC   PARTITION  CURRENT-OFFSET  LOG-END-OFFSET  LAG</span>
+<span class="cm"># orders  0          1000            1050            50</span>
+<span class="cm"># orders  1          2000            2000            0</span>
+<span class="cm"># orders  2          1500            1600            100</span>
+
+<span class="cm"># Reset offset (np. replay)</span>
+kafka-consumer-groups.sh \
+  --bootstrap-server kafka:9092 \
+  --group order-processor \
+  --topic orders \
+  --reset-offsets --to-earliest \
+  --execute
+
+<span class="cm"># ── Prometheus JMX Exporter ───────────────────────────────────</span>
+<span class="cm"># Dodaj do KAFKA_OPTS w broker startup:</span>
+<span class="cm"># -javaagent:/opt/kafka/jmx_prometheus.jar=9999:/opt/kafka/kafka-jmx.yml</span>
+
+<span class="cm"># ── Ważne reguły Prometheus alertów ──────────────────────────</span>
+<span class="cm"># Consumer Lag alert</span>
+<span class="cm"># - alert: HighConsumerLag</span>
+<span class="cm">#   expr: kafka_consumer_lag > 10000</span>
+<span class="cm">#   for: 5m</span>
+<span class="cm">#   labels: { severity: warning }</span>
+
+<span class="cm"># Under-replicated partitions</span>
+<span class="cm"># - alert: UnderReplicatedPartitions</span>
+<span class="cm">#   expr: kafka_server_replicamanager_underreplicatedpartitions > 0</span>
+<span class="cm">#   for: 1m</span>
+<span class="cm">#   labels: { severity: critical }</span>
+
+<span class="cm">// ── Spring Boot Actuator metryki Kafki ───────────────────────</span>
+<span class="cm">// spring.kafka.consumer.properties.client.id = order-consumer</span>
+<span class="cm">// Automatyczne metryki w /actuator/metrics:</span>
+<span class="cm">// kafka.consumer.fetch.manager.records.lag (per partition!)</span>
+<span class="cm">// kafka.consumer.coordinator.commit.rate</span>
+<span class="cm">// kafka.producer.record.send.rate</span>
+<span class="cm">// kafka.producer.record.error.rate</span>
+
+<span class="cm">// Sprawdź lag z AdminClient w kodzie:</span>
+<span class="kw">try</span> (<span class="cls">AdminClient</span> admin = <span class="cls">AdminClient</span>.<span class="fn">create</span>(props)) {
+  <span class="tp">Map</span>&lt;<span class="cls">TopicPartition</span>, <span class="cls">OffsetAndMetadata</span>&gt; committed =
+      admin.<span class="fn">listConsumerGroupOffsets</span>(<span class="str">"order-processor"</span>)
+          .<span class="fn">partitionsToOffsetAndMetadata</span>().<span class="fn">get</span>();
+
+  <span class="tp">Map</span>&lt;<span class="cls">TopicPartition</span>, <span class="cls">ListOffsetsResult</span>.<span class="cls">ListOffsetsResultInfo</span>&gt; endOffsets =
+      admin.<span class="fn">listOffsets</span>(<span class="cm">/* ... */</span>).<span class="fn">all</span>().<span class="fn">get</span>();
+
+  committed.<span class="fn">forEach</span>((tp, oam) -> {
+    <span class="kw">long</span> lag = endOffsets.<span class="fn">get</span>(tp).<span class="fn">offset</span>() - oam.<span class="fn">offset</span>();
+    metrics.<span class="fn">gauge</span>(<span class="str">"kafka.consumer.lag"</span>, lag,
+        <span class="str">"partition"</span>, tp.<span class="fn">toString</span>());
+  });
+}</pre>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 12 KAFKA VS ══ -->
+<section class="chapter" id="kafka-vs">
+  <div class="ch-head">
+    <div class="ch-num">12 / 13</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--teal)">Porównania</div>
+      <div class="ch-title">Kafka vs RabbitMQ vs AWS SQS vs Pulsar</div>
+      <div class="ch-desc">Każde narzędzie ma swoje miejsce. Kafka to nie zawsze właściwy wybór. Porównanie głównych platform messagingowych pomaga wybrać właściwe narzędzie do konkretnego problemu.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-h" style="color:var(--teal)">📊 Porównanie platform messagingowych</div>
+      <div class="card-b">
+        <table class="tbl">
+          <tr><th>Cecha</th><th style="color:var(--k1)">Kafka</th><th style="color:var(--violet)">RabbitMQ</th><th style="color:var(--amber)">AWS SQS</th><th style="color:var(--teal)">Pulsar</th></tr>
+          <tr><td>Model</td><td>Log streaming</td><td>Message broker</td><td>Queue (managed)</td><td>Log streaming</td></tr>
+          <tr><td>Retention</td><td><strong style="color:var(--green)">Długi (dni/wieczny)</strong></td><td>Do skonsumowania</td><td>Do 14 dni</td><td>Długi (tiered)</td></tr>
+          <tr><td>Replay</td><td><strong style="color:var(--green)">✅ Nativny</strong></td><td>❌</td><td>❌</td><td>✅</td></tr>
+          <tr><td>Ordering</td><td>Per partycja</td><td>Per queue</td><td>FIFO queue option</td><td>Per partycja</td></tr>
+          <tr><td>Throughput</td><td><strong style="color:var(--green)">Mln/s</strong></td><td>Tysiące/s</td><td>Tysiące/s</td><td>Mln/s</td></tr>
+          <tr><td>Latencja</td><td>ms</td><td>&lt;1ms</td><td>~100ms</td><td>ms</td></tr>
+          <tr><td>Routing</td><td>Prosty (key)</td><td><strong style="color:var(--green)">Exchanges (rich)</strong></td><td>Prosty</td><td>Prosty</td></tr>
+          <tr><td>Ops złożoność</td><td>Wysoka</td><td>Średnia</td><td><strong style="color:var(--green)">Niska (managed)</strong></td><td>Wyższa</td></tr>
+          <tr><td>Multi-tenant</td><td>Słabe</td><td>Virtual hosts</td><td>Per account</td><td><strong style="color:var(--green)">Native</strong></td></tr>
+          <tr><td>Kiedy wybrać</td><td>Event streaming, big data, microservices</td><td>Task queues, routing, priority</td><td>AWS ecosystem, low ops</td><td>Kafka + multi-tenant + geo-replication</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--teal)">🎯 Decision Tree — kiedy Kafka?</div>
+      <div class="card-b" style="font-size:.84rem;color:var(--tx2);line-height:1.85">
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="background:rgba(74,222,128,.06);border:1px solid rgba(74,222,128,.2);border-radius:5px;padding:12px">
+            <strong style="color:var(--green)">✅ Wybierz Kafka gdy:</strong>
+            <p style="margin-top:6px;font-size:.81rem">Miliony wiadomości/s, event sourcing, wielu niezależnych konsumentów tego samego strumienia, replay historii danych, Kafka Streams processing, integracja z Flink/Spark, event-driven microservices, audit log.</p>
+          </div>
+          <div style="background:rgba(167,139,250,.06);border:1px solid rgba(167,139,250,.2);border-radius:5px;padding:12px">
+            <strong style="color:var(--violet)">✅ Wybierz RabbitMQ gdy:</strong>
+            <p style="margin-top:6px;font-size:.81rem">Task queues (worker pattern), złożony routing (exchanges, binding), TTL per wiadomość, priority queues, request-reply pattern, mały/średni wolumen, niska latencja krytyczna.</p>
+          </div>
+          <div style="background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.2);border-radius:5px;padding:12px">
+            <strong style="color:var(--amber)">✅ Wybierz AWS SQS/SNS gdy:</strong>
+            <p style="margin-top:6px;font-size:.81rem">Jesteś na AWS, chcesz zero ops, fan-out (SNS→SQS), krótkie retention wystarczy, wolumen do kilkudziesięciu tysiąc/s.</p>
+          </div>
+          <div style="background:rgba(251,113,133,.05);border:1px solid rgba(251,113,133,.2);border-radius:5px;padding:12px">
+            <strong style="color:var(--rose)">❌ Nie wybieraj Kafki gdy:</strong>
+            <p style="margin-top:6px;font-size:.81rem">Mały team bez Kafka experience, prosty use case (task queue), potrzebujesz sub-ms latencji, chcesz managed service bez konfiguracji, niski wolumen wiadomości.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 13 PRODUCTION ══ -->
+<section class="chapter" id="production">
+  <div class="ch-head">
+    <div class="ch-num">13 / 13</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--orange)">Produkcja</div>
+      <div class="ch-title">KRaft, security, capacity planning, troubleshooting</div>
+      <div class="ch-desc">Ostatni rozdział zbiera wszystko co potrzebne do uruchomienia Kafki na produkcji — nowy tryb KRaft (bez ZooKeepera), security (SSL, SASL), capacity planning i diagnostyka problemów.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-h" style="color:var(--orange)">🛡️ Security — SSL + SASL</div>
+      <div class="card-b" style="font-size:.84rem;color:var(--tx2);line-height:1.85">
+        <div class="ritem"><div class="ritem-key" style="color:var(--orange)">SSL/TLS</div><div class="ritem-val">Szyfrowanie komunikacji broker↔klient i broker↔broker. Konfiguracja: <code>security.protocol=SSL</code>, keystore i truststore.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--orange)">SASL/PLAIN</div><div class="ritem-val">Autentykacja username/password. Wymaga SSL w tle! Prosty, ale hasła w konfiguracji.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--orange)">SASL/SCRAM</div><div class="ritem-val">Bezpieczniejszy — hasła hashowane. Rekomendowane zamiast PLAIN.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--orange)">SASL/GSSAPI</div><div class="ritem-val">Kerberos. Enterprise środowiska z istniejącym Kerberosem.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--orange)">ACL</div><div class="ritem-val">Kontrola dostępu per topic per użytkownik. <code>kafka-acls.sh --add --allow-principal</code>. Read/Write/Describe per topic.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--orange)">Kafka klient</div><div class="ritem-val"><code>security.protocol=SASL_SSL</code>, <code>sasl.mechanism=SCRAM-SHA-512</code>, <code>sasl.jaas.config</code> z credentials.</div></div>
+        <div class="gap12"></div>
+        <div class="alert al-orange">
+          <span class="alert-label">Minimum na produkcji</span>
+          SSL + SASL/SCRAM + ACL dla każdego serwisu z tylko potrzebnymi uprawnieniami. Zero <code>PLAINTEXT</code> listenerów dostępnych z zewnątrz.
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--orange)">⚡ KRaft — Kafka bez ZooKeepera</div>
+      <div class="card-b" style="font-size:.84rem;color:var(--tx2);line-height:1.85">
+        <p><strong style="color:var(--tx)">KRaft = Kafka Raft Metadata mode</strong> — Kafka 3.3+ GA. ZooKeeper EOL w Kafka 4.0.</p>
+        <div class="gap8"></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--orange)">Zalety KRaft</div><div class="ritem-val">Brak ZooKeepera = mniej serwerów do zarządzania. Szybszy startup, szybszy controller failover (ms vs s). Więcej partycji per klaster.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--orange)">Architektura</div><div class="ritem-val">Brokers mają nową rolę: <strong>controller</strong> (Raft quorum) lub <strong>broker</strong> lub obie. Controller = metadata log.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--orange)">Migracja</div><div class="ritem-val">Nowe klastry → KRaft od razu. Istniejące → narzędzie migracji <code>kafka-storage.sh</code>.</div></div>
+        <div class="gap12"></div>
+        <div style="background:rgba(251,146,60,.05);border:1px solid rgba(251,146,60,.2);border-radius:5px;padding:12px;font-size:.81rem">
+          <strong style="color:var(--orange)">Capacity Planning — zasady kciuka</strong>
+          <p style="margin-top:6px">• 1 broker = 30-50 MB/s write throughput (HDD) lub 250 MB/s (SSD)</p>
+          <p>• Dysk: (throughput × retention × RF) / num_brokers</p>
+          <p>• Partycje per broker: max 4000 (Kafka 2.x), 200k+ (KRaft)</p>
+          <p>• RAM: JVM heap 6GB + OS page cache 32GB+ (ważniejszy!)</p>
+          <p>• CPU: mało potrzebuje, chyba że heavy compression</p>
+          <p>• Sieć: 10 GbE dla high-throughput klastrów</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="gap16"></div>
+  <div class="g3">
+    <div class="code" style="grid-column: span 2">
+      <div class="cbar"><div class="fdot" style="background:var(--orange)"></div> Troubleshooting — diagnostyka typowych problemów</div>
+      <pre><span class="cm"># ══ Diagnoza Consumer Lag ════════════════════════════════════</span>
+kafka-consumer-groups.sh --bootstrap-server kafka:9092 \
+  --describe --group order-processor --verbose
+<span class="cm"># Jeśli lag rośnie: skaluj consumers (max do liczby partycji)</span>
+<span class="cm"># lub zmniejsz max.poll.records + uprzośnij przetwarzanie</span>
+
+<span class="cm"># ══ Diagnoza Under-Replicated Partitions ═════════════════════</span>
+kafka-topics.sh --bootstrap-server kafka:9092 \
+  --describe --under-replicated-partitions
+<span class="cm"># Możliwe przyczyny: broker down, zbyt wolna replikacja</span>
+<span class="cm"># Sprawdź: replica.lag.time.max.ms i network bandwidth</span>
+
+<span class="cm"># ══ Log Dirs — sprawdź rozmiar na dysku ══════════════════════</span>
+kafka-log-dirs.sh --bootstrap-server kafka:9092 \
+  --topic-list orders --describe
+
+<span class="cm"># ══ Performance Test — ile wiadomości/s możesz wysłać ════════</span>
+kafka-producer-perf-test.sh \
+  --topic test-perf \
+  --num-records 1000000 \
+  --record-size 1000 \
+  --throughput -1 \
+  --producer-props bootstrap.servers=kafka:9092
+
+<span class="cm"># ══ Consumer Performance Test ════════════════════════════════</span>
+kafka-consumer-perf-test.sh \
+  --bootstrap-server kafka:9092 \
+  --topic test-perf \
+  --messages 1000000
+
+<span class="cm"># ══ Dump wiadomości z topicu (debug) ════════════════════════</span>
+kafka-console-consumer.sh \
+  --bootstrap-server kafka:9092 \
+  --topic orders \
+  --from-beginning \
+  --max-messages 10 \
+  --property print.key=true \
+  --property print.offset=true
+
+<span class="cm"># ══ Preferred Replica Election (równoważ liderów) ═════════════</span>
+kafka-leader-election.sh --bootstrap-server kafka:9092 \
+  --election-type PREFERRED --all-topic-partitions</pre>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--orange)">🔧 Quick Troubleshooting Checklist</div>
+      <div class="card-b" style="font-size:.82rem;color:var(--tx2);line-height:1.75">
+        <p><strong style="color:var(--rose)">🔴 Consumer nie przetwarza:</strong></p>
+        <p>→ Sprawdź lag: <code>kafka-consumer-groups.sh --describe</code></p>
+        <p>→ Sprawdź logi consumer (rebalance? exception?)</p>
+        <p>→ Czy <code>max.poll.interval.ms</code> nie jest przekroczony?</p>
+        <p>→ DLT pełny? Consumer utknął na błędnej wiadomości?</p>
+        <div class="gap8"></div>
+        <p><strong style="color:var(--amber)">🟡 Wysokie latencje:</strong></p>
+        <p>→ <code>linger.ms</code> zbyt duże u producenta?</p>
+        <p>→ Czy broker nie jest przeciążony? (request.handler.idle)</p>
+        <p>→ Under-replicated partitions?</p>
+        <div class="gap8"></div>
+        <p><strong style="color:var(--amber)">🟡 Producent nie może połączyć:</strong></p>
+        <p>→ <code>bootstrap.servers</code> poprawny?</p>
+        <p>→ Firewall blokuje port 9092?</p>
+        <p>→ SSL/SASL poprawnie skonfigurowany?</p>
+        <div class="gap8"></div>
+        <p><strong style="color:var(--green)">🟢 Zwiększenie throughput:</strong></p>
+        <p>→ Zwiększ partycje + consumers</p>
+        <p>→ Włącz compression (<code>snappy</code>)</p>
+        <p>→ Zwiększ <code>batch.size</code> + <code>linger.ms</code></p>
+        <p>→ Batch consumer + paralel processing</p>
+      </div>
+    </div>
+  </div>
+  <div class="gap16"></div>
+  <div class="strip" style="border-color:var(--k1);background:rgba(255,107,43,.04)">
+    <div class="strip-icon">🏆</div>
+    <div><strong>Senior z Kafką:</strong> Rozumiesz że Kafka to log, nie kolejka — i jakie to ma konsekwencje. Wiesz kiedy at-least-once + idempotent consumer zamiast EOS. Outbox Pattern to twój standard dla atomowości. Zawsze monitorujesz consumer lag i under-replicated partitions. Używasz klucza wiadomości świadomie dla orderingu. DLT per topic to obowiązek. I najważniejsze — wiesz kiedy <strong>nie używać Kafki</strong>.</div>
+  </div>
+</section>
+
+</main>
+<footer class="footer">
+  <div><span class="footer-title">Apache Kafka</span> — Kompendium Senior Java Developer</div>
+  <div>Core · Producers · Consumers · Streams · Schema Registry · Monitoring · Production</div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sieci — Protokoły</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Unbounded:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ffffff;--s1:#f8f9fa;--s2:#f1f3f5;--s3:#e9ecef;
+  --bd:#dee2e6;--bd2:#ced4da;--tx:#1a1a2e;--tx2:#495057;--mt:#6c757d;
+  --k1:#f97316;--k2:#ea6c0a;
+  --green:#16a34a;--teal:#0d9488;--violet:#7c3aed;--rose:#e11d48;
+  --amber:#d97706;--pink:#c026d3;--sky:#0284c7;--orange:#ea580c;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--tx);font-family:'JetBrains Mono',monospace}
+
+.hdr{padding:60px 48px 0;background:linear-gradient(180deg,rgba(88,166,255,0.04) 0%,transparent 100%);border-bottom:1px solid var(--bd)}
+.hdr-eye{font-size:0.65rem;letter-spacing:3px;color:var(--b);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.hdr-eye::before{content:'';width:20px;height:1px;background:var(--b)}
+h1{font-family:'Unbounded',sans-serif;font-size:clamp(2.5rem,7vw,5.5rem);font-weight:900;line-height:1;letter-spacing:-2px;margin-bottom:24px;color:var(--tx)}
+h1 .a{color:var(--b)}
+.hdr-tags{display:flex;flex-wrap:wrap;gap:8px;padding:24px 0;border-top:1px solid var(--bd)}
+.tag{font-size:0.6rem;letter-spacing:2px;text-transform:uppercase;padding:4px 10px;border-radius:20px;border:1px solid;font-weight:700}
+.tb{color:var(--b);border-color:rgba(88,166,255,0.3)}
+.tg{color:var(--g);border-color:rgba(63,185,80,0.3)}
+.to{color:var(--o);border-color:rgba(240,136,62,0.3)}
+.tp{color:var(--p);border-color:rgba(188,140,255,0.3)}
+.ty{color:var(--y);border-color:rgba(227,179,65,0.3)}
+
+.nav{background:rgba(7,9,15,0.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:0 48px;display:flex;overflow-x:auto;position:sticky;top:0;z-index:100}
+.nav a{color:var(--mt);text-decoration:none;font-size:0.65rem;letter-spacing:1px;padding:13px 12px;white-space:nowrap;border-bottom:2px solid transparent;transition:all .2s}
+.nav a:hover{color:var(--b);border-bottom-color:var(--b)}
+
+.main{max-width:1240px;margin:0 auto;padding:48px 24px 100px}
+
+.sec{margin-bottom:72px;animation:up .5s ease backwards}
+@keyframes up{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.sec:nth-child(1){animation-delay:.05s}.sec:nth-child(2){animation-delay:.1s}.sec:nth-child(3){animation-delay:.15s}
+
+.sec-tag{font-size:0.6rem;letter-spacing:3px;text-transform:uppercase;margin-bottom:8px}
+.sec-title{font-family:'Unbounded',sans-serif;font-size:1.8rem;font-weight:700;letter-spacing:-1px;margin-bottom:8px}
+.sec-desc{font-size:0.78rem;color:var(--mt);margin-bottom:28px;max-width:620px;line-height:1.8}
+.sec-line{height:1px;background:linear-gradient(90deg,var(--bd2),transparent);margin-bottom:28px}
+
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:900px){.g2,.g3{grid-template-columns:1fr}.hdr,.nav{padding-left:20px;padding-right:20px}.main{padding:28px 16px 80px}}
+
+.card{background:var(--s1);border:1px solid var(--bd);border-radius:10px;overflow:hidden}
+.cl{padding:11px 16px;font-size:0.62rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:6px}
+.cb{color:var(--b);background:var(--bg-b)}.cg{color:var(--g);background:var(--bg-g)}
+.co{color:var(--o);background:var(--bg-o)}.cr{color:var(--r);background:var(--bg-r)}
+.cp{color:var(--p);background:var(--bg-p)}.cy{color:var(--y);background:var(--bg-y)}
+
+.code{background:#010409;border-radius:8px;overflow:hidden}
+.cbar{background:#0d1117;padding:8px 14px;font-size:0.6rem;color:var(--dm);display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd)}
+.dots{display:flex;gap:5px}.dot{width:7px;height:7px;border-radius:50%}
+pre{padding:18px;font-family:'JetBrains Mono',monospace;font-size:0.76rem;line-height:1.8;overflow-x:auto;color:#374151}
+.kw{color:var(--b);font-weight:700}.val{color:var(--o)}.str{color:var(--g)}
+.cmt{color:var(--dm);font-style:italic}.h1{color:var(--b)}.h2{color:var(--g)}
+.h3{color:var(--o)}.h4{color:var(--p)}.h5{color:var(--y)}.dim{color:var(--dm)}
+
+.t{width:100%;border-collapse:collapse;font-size:0.75rem}
+.t th{background:var(--s2);color:var(--mt);padding:9px 14px;text-align:left;font-size:0.6rem;letter-spacing:2px;text-transform:uppercase;border-bottom:1px solid var(--bd);font-weight:700}
+.t td{padding:9px 14px;border-bottom:1px solid var(--bd);color:var(--mt);vertical-align:top;line-height:1.6}
+.t tr:last-child td{border-bottom:none}.t tr:hover td{background:var(--s2)}
+.t td:first-child{color:var(--b);font-weight:700}
+
+.alert{border-left:3px solid;padding:12px 16px;border-radius:0 6px 6px 0;font-size:0.77rem;line-height:1.75;color:var(--mt);margin:12px 0}
+.alert strong{color:var(--tx);display:block;margin-bottom:3px}
+.alert.b{border-color:var(--b);background:var(--bg-b)}.alert.g{border-color:var(--g);background:var(--bg-g)}
+.alert.o{border-color:var(--o);background:var(--bg-o)}.alert.r{border-color:var(--r);background:var(--bg-r)}
+.alert.y{border-color:var(--y);background:var(--bg-y)}
+
+.diag{background:#010409;border-radius:8px;padding:20px;font-family:'JetBrains Mono',monospace;font-size:0.74rem;line-height:2;color:var(--dm);overflow-x:auto}
+.diag .h1{color:var(--b);font-weight:700}.diag .h2{color:var(--g)}.diag .h3{color:var(--o)}
+.diag .h4{color:var(--p)}.diag .h5{color:var(--y)}.diag .hw{color:var(--tx)}
+code{font-family:'JetBrains Mono',monospace;font-size:.82em;background:var(--s2);border:1px solid var(--bd2);border-radius:3px;padding:1px 5px;color:var(--b)}
+
+/* HTTP STATUS */
+.status-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;padding:16px}
+.status-item{border-radius:6px;padding:10px 12px;border:1px solid var(--bd)}
+.status-code{font-size:1.1rem;font-weight:700;font-family:'Unbounded',sans-serif}
+.status-text{font-size:0.65rem;color:var(--mt);margin-top:2px}
+.s2xx .status-code{color:var(--g)}.s2xx{background:var(--bg-g)}
+.s3xx .status-code{color:var(--b)}.s3xx{background:var(--bg-b)}
+.s4xx .status-code{color:var(--o)}.s4xx{background:var(--bg-o)}
+.s5xx .status-code{color:var(--r)}.s5xx{background:var(--bg-r)}
+
+/* TLS HANDSHAKE */
+.tls-steps{display:flex;flex-direction:column;gap:0}
+.tls-step{display:flex;align-items:flex-start;gap:12px;padding:12px 16px;border-bottom:1px solid var(--bd)}
+.tls-step:last-child{border-bottom:none}
+.tls-dir{font-size:0.65rem;color:var(--mt);flex-shrink:0;width:80px;text-align:center;padding-top:2px}
+.tls-arrow{font-size:1.1rem;flex-shrink:0;width:24px;text-align:center}
+.tls-body{flex:1}
+.tls-name{font-weight:700;font-size:0.78rem;color:var(--tx);margin-bottom:2px}
+.tls-desc{font-size:0.7rem;color:var(--mt);line-height:1.6}
+
+/* VPN TUNNEL */
+.vpn-viz{display:flex;align-items:center;gap:0;padding:20px;overflow-x:auto}
+.vpn-node{background:var(--s2);border:1px solid var(--bd2);border-radius:8px;padding:12px 16px;text-align:center;min-width:100px;flex-shrink:0}
+.vpn-node-title{font-size:0.7rem;font-weight:700;color:var(--tx);margin-bottom:4px}
+.vpn-node-ip{font-size:0.62rem;color:var(--b)}
+.vpn-line{flex:1;min-width:40px;height:2px;position:relative;display:flex;align-items:center}
+.vpn-line-inner{width:100%;height:2px}
+.vpn-line-label{position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-size:0.6rem;white-space:nowrap}
+.vpn-enc{background:linear-gradient(90deg,var(--b),var(--p));height:3px}
+.vpn-plain{background:var(--bd2)}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-eye">// protokoły sieciowe</div>
+  <h1>Sieci<br><span class="a">Protokoły</span></h1>
+  <div class="hdr-tags">
+    <span class="tag tb">HTTP/2/3</span>
+    <span class="tag tg">HTTPS / TLS</span>
+    <span class="tag to">TCP handshake</span>
+    <span class="tag tp">UDP</span>
+    <span class="tag ty">VPN / WireGuard</span>
+  </div>
+</div>
+
+<nav class="nav">
+  <a href="#http">HTTP</a>
+  <a href="#http2">HTTP/2 i /3</a>
+  <a href="#tls">HTTPS / TLS</a>
+  <a href="#tcp">TCP handshake</a>
+  <a href="#udp">TCP vs UDP</a>
+  <a href="#vpn">VPN</a>
+  <a href="#other">Inne protokoły</a>
+</nav>
+
+<main class="main">
+
+<!-- HTTP -->
+<section class="sec" id="http">
+  <div class="sec-tag" style="color:var(--b)">01 — warstwa aplikacji</div>
+  <div class="sec-title">HTTP — HyperText Transfer Protocol</div>
+  <p class="sec-desc">Protokół tekstowy request-response. Klient pyta, serwer odpowiada. Każde żądanie jest niezależne (bezstanowe) — serwer nie pamięta poprzednich requestów.</p>
+  <div class="sec-line"></div>
+
+  <div class="g2">
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="code">
+        <div class="cbar"><div class="dots"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div></div><span>budowa żądania HTTP</span></div>
+        <pre><span class="cmt">── Request ──────────────────────────────</span>
+<span class="kw">GET</span> /api/users/5 <span class="h1">HTTP/1.1</span>
+<span class="h2">Host:</span> api.example.com
+<span class="h2">Authorization:</span> Bearer eyJhbGc...
+<span class="h2">Accept:</span> application/json
+<span class="h2">Content-Type:</span> application/json
+<span class="cmt">(pusta linia)</span>
+<span class="dim">{ "name": "Jan" }   ← ciało (body)</span>
+
+<span class="cmt">── Response ─────────────────────────────</span>
+<span class="h1">HTTP/1.1</span> <span class="h2">200</span> OK
+<span class="h2">Content-Type:</span> application/json
+<span class="h2">Content-Length:</span> 45
+<span class="h2">Cache-Control:</span> max-age=3600
+<span class="cmt">(pusta linia)</span>
+<span class="str">{ "id": 5, "name": "Jan" }</span></pre>
+      </div>
+
+      <div class="card">
+        <div class="cl cb">🔧 Metody HTTP</div>
+        <table class="t">
+          <tr><th>Metoda</th><th>Opis</th><th>Idempotentna?</th></tr>
+          <tr><td>GET</td><td>Pobierz zasób. Brak body. Cacheable.</td><td style="color:var(--g)">✅ tak</td></tr>
+          <tr><td>POST</td><td>Utwórz zasób lub wykonaj akcję.</td><td style="color:var(--r)">❌ nie</td></tr>
+          <tr><td>PUT</td><td>Zastąp cały zasób.</td><td style="color:var(--g)">✅ tak</td></tr>
+          <tr><td>PATCH</td><td>Częściowa aktualizacja.</td><td style="color:var(--o)">⚠️ zależy</td></tr>
+          <tr><td>DELETE</td><td>Usuń zasób.</td><td style="color:var(--g)">✅ tak</td></tr>
+          <tr><td>HEAD</td><td>Jak GET ale bez body. Sprawdź nagłówki.</td><td style="color:var(--g)">✅ tak</td></tr>
+          <tr><td>OPTIONS</td><td>Jakie metody obsługuje? CORS preflight.</td><td style="color:var(--g)">✅ tak</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <div class="cl cg">📊 Kody statusu HTTP</div>
+        <div class="status-grid">
+          <div class="status-item s2xx"><div class="status-code">200</div><div class="status-text">OK</div></div>
+          <div class="status-item s2xx"><div class="status-code">201</div><div class="status-text">Created</div></div>
+          <div class="status-item s2xx"><div class="status-code">204</div><div class="status-text">No Content</div></div>
+          <div class="status-item s3xx"><div class="status-code">301</div><div class="status-text">Moved Permanently</div></div>
+          <div class="status-item s3xx"><div class="status-code">302</div><div class="status-text">Found (tymczasowy)</div></div>
+          <div class="status-item s3xx"><div class="status-code">304</div><div class="status-text">Not Modified (cache)</div></div>
+          <div class="status-item s4xx"><div class="status-code">400</div><div class="status-text">Bad Request</div></div>
+          <div class="status-item s4xx"><div class="status-code">401</div><div class="status-text">Unauthorized</div></div>
+          <div class="status-item s4xx"><div class="status-code">403</div><div class="status-text">Forbidden</div></div>
+          <div class="status-item s4xx"><div class="status-code">404</div><div class="status-text">Not Found</div></div>
+          <div class="status-item s4xx"><div class="status-code">409</div><div class="status-text">Conflict</div></div>
+          <div class="status-item s4xx"><div class="status-code">422</div><div class="status-text">Unprocessable</div></div>
+          <div class="status-item s4xx"><div class="status-code">429</div><div class="status-text">Too Many Requests</div></div>
+          <div class="status-item s5xx"><div class="status-code">500</div><div class="status-text">Server Error</div></div>
+          <div class="status-item s5xx"><div class="status-code">502</div><div class="status-text">Bad Gateway</div></div>
+          <div class="status-item s5xx"><div class="status-code">503</div><div class="status-text">Unavailable</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HTTP/2 HTTP/3 -->
+<section class="sec" id="http2">
+  <div class="sec-tag" style="color:var(--g)">02 — ewolucja protokołu</div>
+  <div class="sec-title">HTTP/1.1 vs HTTP/2 vs HTTP/3</div>
+  <p class="sec-desc">Każda wersja rozwiązuje problemy wydajnościowe poprzedniej. HTTP/2 dodał multiplexing, HTTP/3 zamienił TCP na QUIC.</p>
+  <div class="sec-line"></div>
+
+  <div class="g3">
+    <div class="card">
+      <div class="cl co">HTTP/1.1</div>
+      <div style="padding:16px">
+        <div class="diag" style="font-size:0.7rem">
+<span class="h3">Jedno żądanie na raz</span>
+Request 1 → Response 1
+Request 2 → Response 2
+Request 3 → Response 3
+
+Przeglądarka otwiera
+<span class="h3">6 połączeń</span> do jednego hosta
+żeby działać równolegle.
+
+Tekstowy. Nagłówki bez
+kompresji (te same nagłówki
+powtarzane w kółko).
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="cl cb">HTTP/2</div>
+      <div style="padding:16px">
+        <div class="diag" style="font-size:0.7rem">
+<span class="h1">Multiplexing!</span>
+Req 1 ┐
+Req 2 ├──► jedno połączenie TCP
+Req 3 ┘
+
+Resp 2 ┐
+Resp 1 ├──► w dowolnej kolejności
+Resp 3 ┘
+
+<span class="h2">Kompresja nagłówków</span> (HPACK)
+<span class="h2">Binarny</span> (nie tekstowy)
+Server Push (server wysyła
+zasoby zanim poproszą)
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="cl cg">HTTP/3</div>
+      <div style="padding:16px">
+        <div class="diag" style="font-size:0.7rem">
+Zamiast TCP używa <span class="h2">QUIC</span>
+(zbudowany na UDP!)
+
+<span class="h2">QUIC = UDP + niezawodność</span>
+         <span class="dim">+ TLS 1.3 wbudowane</span>
+
+Rozwiązuje <span class="h3">head-of-line blocking</span>
+na poziomie transportu.
+
+<span class="h2">0-RTT</span> lub <span class="h2">1-RTT</span> handshake
+(szybsze połączenie)
+
+Działa lepiej na wolnych
+sieciach i mobile.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert b" style="margin-top:8px">
+    <strong>Head-of-line blocking:</strong> W HTTP/1.1 jeden wolny request blokuje kolejne. W HTTP/2 naprawiono to dla HTTP, ale TCP nadal blokuje jak zgubi pakiet. HTTP/3 (QUIC) naprawia problem na poziomie transportu — utrata pakietu jednego strumienia nie blokuje pozostałych.
+  </div>
+</section>
+
+<!-- TLS -->
+<section class="sec" id="tls">
+  <div class="sec-tag" style="color:var(--p)">03 — szyfrowanie</div>
+  <div class="sec-title">HTTPS i TLS — szyfrowanie połączenia</div>
+  <p class="sec-desc">TLS (Transport Layer Security) szyfruje komunikację HTTP. Zapewnia: szyfrowanie (nikt nie czyta), integralność (nikt nie zmienia), uwierzytelnienie serwera (wiesz z kim rozmawiasz).</p>
+  <div class="sec-line"></div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="cl cp">🤝 TLS 1.3 Handshake</div>
+      <div class="tls-steps">
+        <div class="tls-step">
+          <div class="tls-dir" style="color:var(--b)">Klient →</div>
+          <div class="tls-arrow">→</div>
+          <div class="tls-body">
+            <div class="tls-name">ClientHello</div>
+            <div class="tls-desc">Obsługiwane wersje TLS, algorytmy szyfrowania, klucz publiczny Diffie-Hellman, losowe dane.</div>
+          </div>
+        </div>
+        <div class="tls-step">
+          <div class="tls-dir" style="color:var(--g)">← Serwer</div>
+          <div class="tls-arrow">←</div>
+          <div class="tls-body">
+            <div class="tls-name">ServerHello + certyfikat</div>
+            <div class="tls-desc">Wybrany algorytm, klucz DH serwera, certyfikat (łańcuch do Root CA), podpis.</div>
+          </div>
+        </div>
+        <div class="tls-step">
+          <div class="tls-dir" style="color:var(--b)">Klient →</div>
+          <div class="tls-arrow">→</div>
+          <div class="tls-body">
+            <div class="tls-name">Weryfikacja certyfikatu</div>
+            <div class="tls-desc">Klient sprawdza czy certyfikat jest podpisany przez zaufane CA (wbudowane w OS/przeglądarkę). Jeśli tak — generuje session keys z kluczy DH.</div>
+          </div>
+        </div>
+        <div class="tls-step" style="border:none">
+          <div class="tls-dir" style="color:var(--y)">↔ Oba</div>
+          <div class="tls-arrow">↔</div>
+          <div class="tls-body">
+            <div class="tls-name">Finished — szyfrowana komunikacja</div>
+            <div class="tls-desc">Obaj mają te same klucze sesji. Całość trwała 1 round-trip (TLS 1.3). Od teraz HTTP jest szyfrowany.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="card">
+        <div class="cl cb">🔗 Łańcuch zaufania certyfikatów</div>
+        <div style="padding:16px">
+          <div class="diag">
+<span class="h5">Root CA</span>          <span class="dim">← zaufany, wbudowany w OS</span>
+  <span class="dim">│ podpisuje</span>
+  <span class="dim">▼</span>
+<span class="h3">Intermediate CA</span>   <span class="dim">← np. DigiCert SHA2</span>
+  <span class="dim">│ podpisuje</span>
+  <span class="dim">▼</span>
+<span class="h1">Twój certyfikat</span>   <span class="dim">← example.com</span>
+
+Przeglądarka weryfikuje łańcuch od dołu.
+Jak trafi na zaufany Root CA → zielona kłódka 🔒
+Jak coś się nie zgadza → <span class="h4">ostrzeżenie!</span>
+
+<span class="h2">Let's Encrypt</span> = darmowy, automatyczny CA
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cl cg">🛡️ HSTS — wymuszenie HTTPS</div>
+        <div style="padding:14px 16px;font-size:0.75rem;color:var(--mt);line-height:1.8">
+          Nagłówek odpowiedzi:<br>
+          <code>Strict-Transport-Security: max-age=31536000; includeSubDomains; preload</code><br><br>
+          Mówi przeglądarce: <em>"Zawsze używaj HTTPS dla tej domeny, nawet jeśli użytkownik wpisze http://."</em><br><br>
+          <code>preload</code> = wpisz domenę do listy w przeglądarce — HTTPS zawsze, nawet przy pierwszej wizycie.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TCP HANDSHAKE -->
+<section class="sec" id="tcp">
+  <div class="sec-tag" style="color:var(--o)">04 — warstwa transportowa</div>
+  <div class="sec-title">TCP — nawiązywanie połączenia</div>
+  <p class="sec-desc">Przed wysłaniem jakichkolwiek danych TCP wykonuje 3-etapowy handshake. Zapewnia niezawodność: numerowanie bajtów, potwierdzenia, retransmisje, kontrola przepływu.</p>
+  <div class="sec-line"></div>
+
+  <div class="g2">
+    <div>
+      <div class="card">
+        <div class="cl co">🤝 Three-way handshake (SYN → SYN-ACK → ACK)</div>
+        <div style="padding:16px">
+          <div class="diag">
+<span class="h1">KLIENT</span>                        <span class="h2">SERWER</span>
+
+<span class="dim">──── SYN (seq=100) ──────────────────►</span>
+<span class="h3">"Chcę się połączyć,</span>
+<span class="h3"> mój numer to 100"</span>
+
+<span class="dim">◄─── SYN-ACK (seq=200, ack=101) ─────</span>
+                       <span class="h3">"Ok! Mój numer to 200,</span>
+                        <span class="h3">potwierdzam twoje 100+1"</span>
+
+<span class="dim">──── ACK (ack=201) ──────────────────►</span>
+<span class="h3">"Potwierdzam twoje 200+1"</span>
+
+<span class="h2">══ Połączenie nawiązane! ══</span>
+<span class="dim">──── dane: GET /index.html ──────────►</span>
+<span class="dim">◄─── dane: HTTP/1.1 200 OK ──────────</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px">
+        <div class="cl co">👋 Zamknięcie — four-way handshake</div>
+        <div style="padding:16px">
+          <div class="diag" style="font-size:0.72rem">
+<span class="h1">Klient</span>: FIN <span class="dim">──────────────────────────►</span>
+         <span class="dim">◄─────────────────────────</span> ACK  <span class="h2">:Serwer</span>
+         <span class="dim">◄─────────────────────────</span> FIN  <span class="h2">:Serwer</span>
+<span class="h1">Klient</span>: ACK <span class="dim">──────────────────────────►</span>
+
+Stan <span class="h3">TIME_WAIT</span> — klient czeka 2×MSL (~2min)
+żeby upewnić się że ostatni ACK dotarł.
+Dlatego nie możesz od razu zbindować
+tego samego portu → użyj <span class="h4">SO_REUSEADDR</span>!
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <div class="cl cb">🚩 Flagi TCP</div>
+        <table class="t">
+          <tr><th>Flaga</th><th>Znaczenie</th></tr>
+          <tr><td>SYN</td><td>Synchronize — nawiązanie połączenia</td></tr>
+          <tr><td>ACK</td><td>Acknowledge — potwierdzenie odbioru</td></tr>
+          <tr><td>FIN</td><td>Finish — zakończenie połączenia (graceful)</td></tr>
+          <tr><td>RST</td><td>Reset — brutalne zerwanie (błąd)</td></tr>
+          <tr><td>PSH</td><td>Push — wyślij dane od razu, bez buforowania</td></tr>
+          <tr><td>URG</td><td>Urgent — pilne dane (rzadko używane)</td></tr>
+        </table>
+      </div>
+
+      <div class="card" style="margin-top:16px">
+        <div class="cl cg">📊 Kontrola przepływu — Sliding Window</div>
+        <div style="padding:16px">
+          <div class="diag" style="font-size:0.71rem">
+Odbiorca mówi ile może przyjąć:
+<span class="h2">Window Size = 65535 bajtów</span>
+
+Nadawca nie może wysłać więcej
+niż rozmiar okna bez ACK.
+
+<span class="h1">Slow Start</span>: zacznij od małego okna,
+podwajaj po każdym ACK.
+
+<span class="h3">Utrata pakietu</span>: zmniejsz okno o połowę.
+
+Algorytmy: <span class="h4">Reno, CUBIC, BBR</span>
+BBR (Google) = najnowszy, najlepszy
+dla dużych opóźnień.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TCP vs UDP -->
+<section class="sec" id="udp">
+  <div class="sec-tag" style="color:var(--y)">05 — transport</div>
+  <div class="sec-title">TCP vs UDP</div>
+  <p class="sec-desc">Dwa protokoły transportowe. TCP zapewnia niezawodność kosztem latencji. UDP jest szybki ale nie gwarantuje dostarczenia.</p>
+  <div class="sec-line"></div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="cl cb">TCP — niezawodny</div>
+      <table class="t">
+        <tr><th>Cecha</th><th>Wartość</th></tr>
+        <tr><td>Połączenie</td><td>Tak (handshake przed danymi)</td></tr>
+        <tr><td>Kolejność</td><td>Gwarantowana (numery sekwencji)</td></tr>
+        <tr><td>Dostarczenie</td><td>Gwarantowane (ACK + retransmisja)</td></tr>
+        <tr><td>Kontrola przepływu</td><td>Tak (sliding window)</td></tr>
+        <tr><td>Kontrola przeciążenia</td><td>Tak (slow start, CUBIC)</td></tr>
+        <tr><td>Narzut</td><td>Większy (nagłówek 20+ bajtów)</td></tr>
+        <tr><td>Kiedy używać</td><td>HTTP, e-mail, FTP, SSH, bazy danych — wszędzie gdzie liczy się kompletność</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="cl cy">UDP — szybki</div>
+      <table class="t">
+        <tr><th>Cecha</th><th>Wartość</th></tr>
+        <tr><td>Połączenie</td><td>Brak (bezpołączeniowy)</td></tr>
+        <tr><td>Kolejność</td><td>Nie gwarantowana</td></tr>
+        <tr><td>Dostarczenie</td><td>Nie gwarantowane (best effort)</td></tr>
+        <tr><td>Kontrola przepływu</td><td>Brak</td></tr>
+        <tr><td>Kontrola przeciążenia</td><td>Brak</td></tr>
+        <tr><td>Narzut</td><td>Mały (nagłówek 8 bajtów)</td></tr>
+        <tr><td>Kiedy używać</td><td>DNS, VoIP, gry online, streaming, QUIC/HTTP3 — gdzie ważna latencja</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="alert y" style="margin-top:12px">
+    <strong>QUIC = UDP + własna niezawodność + TLS 1.3</strong>
+    Zamiast polegać na TCP, Google zbudował QUIC na UDP i zaimplementował własną kontrolę przepływu i szyfrowanie. Zysk: szybszy handshake (0-RTT), brak head-of-line blocking na poziomie transportu. To jest fundament HTTP/3.
+  </div>
+</section>
+
+<!-- VPN -->
+<section class="sec" id="vpn">
+  <div class="sec-tag" style="color:var(--g)">06 — tunelowanie</div>
+  <div class="sec-title">VPN — Virtual Private Network</div>
+  <p class="sec-desc">VPN tworzy szyfrowany tunel między urządzeniami. Twój ruch internetowy wychodzi przez serwer VPN — zmienia się widoczny IP i szyfruje dane w drodze.</p>
+  <div class="sec-line"></div>
+
+  <div class="g2">
+    <div>
+      <div class="card">
+        <div class="cl cg">🔐 Jak działa tunel VPN — enkapsulacja</div>
+        <div style="padding:16px">
+          <div class="diag">
+<span class="h3">BEZ VPN:</span>
+<span class="dim">Ty ──────────── widoczny ruch ──────────► Google</span>
+<span class="h4">192.168.1.5</span>   każdy router widzi treść   <span class="h1">142.250.x.x</span>
+
+<span class="h2">Z VPN — paczka w paczce:</span>
+┌────────────────────────────────┐
+│ IP dst: <span class="h2">5.5.5.5</span> (serwer VPN)   │  ← zewnętrzna
+│ 🔐 SZYFROWANE                  │
+│ ┌──────────────────────────┐   │
+│ │ IP dst: <span class="h1">142.250.x.x</span>      │   │  ← wewnętrzna
+│ │ GET /search?q=...        │   │
+│ └──────────────────────────┘   │
+└────────────────────────────────┘
+
+Serwer VPN odpakuje, wyśle do Google
+ze <span class="h2">swojego IP</span>. Google widzi IP VPN, nie Twój.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="card">
+        <div class="cl cb">⚡ WireGuard — nowoczesny VPN</div>
+        <div style="padding:14px 16px">
+          <div class="diag" style="font-size:0.71rem">
+Dlaczego WireGuard > OpenVPN?
+
+<span class="h2">~4000 linii kodu</span> vs ~70000 (OpenVPN)
+Mniejszy = łatwiejszy do audytu bezpieczeństwa
+
+<span class="h2">ChaCha20</span> szyfrowanie + <span class="h2">Curve25519</span> DH
+<span class="h2">UDP</span> (nie TCP) = mniej narzutu
+
+Brak negocjacji algorytmów —
+jeden zestaw kryptograficzny, bez słabszych.
+
+Działa nawet jak zmieniasz sieć
+(WiFi → 4G) bez zrywania tunelu.
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cl co">🆚 VPN vs SSH — różnica</div>
+        <table class="t">
+          <tr><th></th><th>VPN</th><th>SSH</th></tr>
+          <tr><td>Co daje</td><td>Wirtualna sieć (warstwa 3)</td><td>Terminal / tunel</td></tr>
+          <tr><td>Dostęp</td><td>Do całej sieci zdalnej</td><td>Do terminala serwera</td></tr>
+          <tr><td>IP</td><td>Dostajesz IP w tamtej sieci</td><td>Nie zmienia Twojego IP</td></tr>
+          <tr><td>Typowe użycie</td><td>Sieć firmowa, prywatność</td><td>Zarządzanie serwerem</td></tr>
+          <tr><td>Razem?</td><td colspan="2">Tak! VPN daje bezpieczny tunel, SSH przez VPN dla dodatkowej warstwy.</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INNE PROTOKOŁY -->
+<section class="sec" id="other">
+  <div class="sec-tag" style="color:var(--p)">07 — przegląd</div>
+  <div class="sec-title">Inne protokoły warte znajomości</div>
+  <div class="sec-line"></div>
+
+  <div class="g3">
+    <div class="card">
+      <div class="cl cp">WebSocket</div>
+      <div style="padding:14px 16px;font-size:0.75rem;color:var(--mt);line-height:1.8">
+        Pełnodupleksowy kanał na istniejącym połączeniu TCP. Zaczyna od HTTP Upgrade:<br>
+        <code>Upgrade: websocket</code><br>
+        Serwer odpowiada <code>101 Switching Protocols</code>.<br><br>
+        Używaj do: czatów, powiadomień real-time, gier, live dashboardów. Alternatywa: <strong>SSE</strong> (Server-Sent Events) — jednostronne serwer→klient, prostsze.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="cl cg">SSH</div>
+      <div style="padding:14px 16px;font-size:0.75rem;color:var(--mt);line-height:1.8">
+        Szyfrowany zdalny dostęp (port 22). Klucze asymetryczne: generujesz parę (<code>ssh-keygen</code>), klucz publiczny wrzucasz na serwer do <code>~/.ssh/authorized_keys</code>.<br><br>
+        <strong>SSH tunneling</strong>:<br>
+        <code>ssh -L 3306:localhost:3306 user@serwer</code><br>
+        Lokalny port 3306 → przez SSH → port 3306 na serwerze.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="cl cb">gRPC</div>
+      <div style="padding:14px 16px;font-size:0.75rem;color:var(--mt);line-height:1.8">
+        Nowoczesny RPC od Google. Binarny (Protocol Buffers), HTTP/2, ze schemą kontraktu (<code>.proto</code> pliki).<br><br>
+        Zamiast JSON wysyłasz skompresowane binarne dane — 5-10x mniejsze i szybsze od REST/JSON. Popularny w mikroserwisach. Wymaga code generation z <code>.proto</code>.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="cl cy">SMTP / IMAP / POP3</div>
+      <div style="padding:14px 16px;font-size:0.75rem;color:var(--mt);line-height:1.8">
+        <strong>SMTP</strong> (25/587) — wysyłanie poczty.<br>
+        <strong>IMAP</strong> (143/993) — odbieranie z synchronizacją (mail zostaje na serwerze).<br>
+        <strong>POP3</strong> (110/995) — pobieranie i kasowanie z serwera.<br><br>
+        <strong>SPF, DKIM, DMARC</strong> — rekordy DNS które chronią przed podszywaniem się pod Twoją domenę w e-mailach.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="cl co">DHCP</div>
+      <div style="padding:14px 16px;font-size:0.75rem;color:var(--mt);line-height:1.8">
+        Automatyczne przydzielanie IP. Twój komputer broadcastuje "Hej, potrzebuję IP!" → Router odpowiada "Masz 192.168.1.47, brama to .1, DNS to 8.8.8.8".<br><br>
+        DORA: <strong>D</strong>iscover → <strong>O</strong>ffer → <strong>R</strong>equest → <strong>A</strong>ck. Lease time — IP jest "pożyczone" na określony czas.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="cl cr">ICMP — ping i traceroute</div>
+      <div style="padding:14px 16px">
+        <div class="code">
+          <div class="cbar"><div class="dots"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div></div><span>diagnostyka</span></div>
+          <pre style="font-size:0.7rem"><span class="cmt"># Test osiągalności</span>
+<span class="kw">ping</span> google.com
+
+<span class="cmt"># Każdy hop po drodze</span>
+<span class="kw">traceroute</span> google.com
+
+<span class="cmt"># Aktywne połączenia</span>
+<span class="kw">ss</span> -tlnp
+
+<span class="cmt"># Przechwytuj pakiety</span>
+<span class="kw">tcpdump</span> -i eth0 port 80</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+</body>
+</html>
