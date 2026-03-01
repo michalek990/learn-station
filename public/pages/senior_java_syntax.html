@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Senior Java — Składnia, Triki & Pułapki</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f7fa;--s1:#ffffff;--s2:#f0f2f5;--s3:#e8ebef;
+  --bd:#dde1e8;--bd2:#c8cdd7;--tx:#1a2332;--tx2:#4a6080;--mt:#7a96b0;
+  --k1:#0d9488;--k2:#0f766e;
+  --green:#16a34a;--teal:#0d9488;--violet:#7c3aed;--rose:#e11d48;
+  --amber:#d97706;--pink:#c026d3;--sky:#0284c7;--orange:#ea580c;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;line-height:1.65;overflow-x:hidden}
+.back{position:fixed;top:22px;left:22px;z-index:9999;background:rgba(255,255,255,.95);backdrop-filter:blur(14px);border:1px solid var(--bd2);border-radius:40px;padding:10px 20px;display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--tx2);font-family:'IBM Plex Mono',monospace;font-size:.72rem;font-weight:500;letter-spacing:1px;transition:all .25s;box-shadow:0 2px 12px rgba(0,0,0,.08)}
+.back:hover{color:var(--violet);border-color:var(--violet)}
+.hdr{min-height:500px;padding:110px 80px 80px;position:relative;overflow:hidden;display:flex;align-items:flex-end}
+.hdr-bg{position:absolute;inset:0;background:linear-gradient(160deg,#f3eeff 0%,#fef9ec 50%,#fff0f3 100%)}
+.hdr-bg::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 55% at 3% 100%,rgba(124,58,237,.09) 0%,transparent 55%),radial-gradient(ellipse 50% 65% at 97% 5%,rgba(217,119,6,.07) 0%,transparent 50%),radial-gradient(ellipse 45% 50% at 50% 50%,rgba(225,29,72,.04) 0%,transparent 60%)}
+.hdr-grid{position:absolute;inset:0;background-image:linear-gradient(var(--bd) 1px,transparent 1px),linear-gradient(90deg,var(--bd) 1px,transparent 1px);background-size:48px 48px;opacity:.4;mask-image:radial-gradient(ellipse 85% 90% at 50% 50%,black,transparent)}
+.hdr-content{position:relative;max-width:1400px;width:100%}
+.hdr-tier{display:inline-flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:.65rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--violet);margin-bottom:28px;padding:7px 16px;border:1px solid rgba(124,58,237,.35);border-radius:4px;background:rgba(124,58,237,.07)}
+.tier-dot{width:6px;height:6px;border-radius:50%;background:var(--violet);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+h1{font-size:clamp(2.6rem,6vw,5.5rem);font-weight:800;line-height:.9;letter-spacing:-4px;margin-bottom:28px;color:var(--tx)}
+h1 em{font-style:normal;background:linear-gradient(135deg,var(--violet),var(--amber));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+h1 small{display:block;font-size:.36em;letter-spacing:-1px;color:var(--tx2);font-weight:500;margin-top:14px;-webkit-text-fill-color:var(--tx2)}
+.hdr-desc{font-size:1rem;color:var(--tx2);max-width:680px;line-height:1.9}
+.hdr-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.chip{font-family:'IBM Plex Mono',monospace;font-size:.63rem;font-weight:600;letter-spacing:.5px;padding:5px 12px;border-radius:3px;border:1px solid}
+.ck{color:var(--k1);border-color:rgba(13,148,136,.4);background:rgba(13,148,136,.08)}
+.cg{color:var(--green);border-color:rgba(22,163,74,.35);background:rgba(22,163,74,.06)}
+.ct{color:var(--teal);border-color:rgba(13,148,136,.35);background:rgba(13,148,136,.06)}
+.cv{color:var(--violet);border-color:rgba(124,58,237,.35);background:rgba(124,58,237,.06)}
+.cr{color:var(--rose);border-color:rgba(225,29,72,.35);background:rgba(225,29,72,.06)}
+.ca{color:var(--amber);border-color:rgba(217,119,6,.35);background:rgba(217,119,6,.06)}
+.co{color:var(--orange);border-color:rgba(234,88,12,.35);background:rgba(234,88,12,.06)}
+.cs{color:var(--sky);border-color:rgba(2,132,199,.35);background:rgba(2,132,199,.06)}
+.nav{position:sticky;top:0;z-index:300;background:rgba(255,255,255,.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--bd);display:flex;overflow-x:auto;scrollbar-width:none;padding:0 80px;box-shadow:0 1px 8px rgba(0,0,0,.06)}
+.nav::-webkit-scrollbar{display:none}
+.nav-a{color:var(--mt);text-decoration:none;font-family:'IBM Plex Mono',monospace;font-size:.63rem;font-weight:600;letter-spacing:.5px;padding:14px 12px;white-space:nowrap;border-bottom:2px solid transparent;transition:all .18s}
+.nav-a:hover{color:var(--violet);border-bottom-color:var(--violet)}
+.main{max-width:1400px;margin:0 auto;padding:80px 24px 160px}
+.chapter{margin-bottom:100px;animation:fadeUp .5s ease backwards}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.chapter:nth-child(1){animation-delay:.04s}.chapter:nth-child(2){animation-delay:.08s}
+.chapter:nth-child(3){animation-delay:.12s}.chapter:nth-child(4){animation-delay:.16s}
+.chapter:nth-child(5){animation-delay:.20s}.chapter:nth-child(6){animation-delay:.24s}
+.chapter:nth-child(7){animation-delay:.28s}.chapter:nth-child(8){animation-delay:.32s}
+.chapter:nth-child(9){animation-delay:.36s}.chapter:nth-child(10){animation-delay:.40s}
+.chapter:nth-child(11){animation-delay:.44s}
+.ch-head{display:flex;align-items:flex-start;gap:22px;margin-bottom:36px;padding-bottom:28px;border-bottom:1px solid var(--bd)}
+.ch-num{font-family:'IBM Plex Mono',monospace;font-size:.62rem;font-weight:700;letter-spacing:3px;color:var(--mt);padding-top:6px;white-space:nowrap}
+.ch-info{flex:1}
+.ch-cat{font-family:'IBM Plex Mono',monospace;font-size:.58rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:6px}
+.ch-title{font-size:1.9rem;font-weight:800;letter-spacing:-1px;line-height:1.1;margin-bottom:10px;color:var(--tx)}
+.ch-desc{font-size:.9rem;color:var(--tx2);max-width:840px;line-height:1.9}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:1100px){.g4{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:900px){.g2,.g3,.g4{grid-template-columns:1fr}.hdr{padding:80px 24px 56px}.nav{padding:0 16px}h1{font-size:2.6rem;letter-spacing:-2px}}
+.card{background:var(--s1);border:1px solid var(--bd);border-radius:8px;overflow:hidden;transition:border-color .2s,box-shadow .2s}
+.card:hover{border-color:var(--bd2);box-shadow:0 6px 28px rgba(0,0,0,.10)}
+.card-h{padding:11px 18px;font-family:'IBM Plex Mono',monospace;font-size:.66rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:8px;background:var(--s2)}
+.card-b{padding:18px}
+.code{background:#f8f9fb;border:1px solid var(--bd);border-radius:8px;overflow:hidden;margin-bottom:0}
+.cbar{background:var(--s2);border-bottom:1px solid var(--bd);padding:9px 16px;font-family:'IBM Plex Mono',monospace;font-size:.64rem;color:var(--mt);display:flex;align-items:center;gap:7px}
+.fdot{width:7px;height:7px;border-radius:50%}
+pre{padding:20px;font-family:'IBM Plex Mono',monospace;font-size:.77rem;line-height:1.75;overflow-x:auto;color:#3a5068}
+.kw{color:#7c3aed}.cls{color:#b45309}.fn{color:#0369a1}.str{color:#15803d}
+.cm{color:#94a3b8;font-style:italic}.num{color:#c2410c}.ann{color:#be185d}
+.prop{color:#0f766e}.op{color:#0369a1}
+.alert{padding:16px 20px;border-radius:6px;border-left:3px solid;font-size:.87rem;line-height:1.85;color:var(--tx2)}
+.alert strong{color:var(--tx)}
+.alert-label{font-family:'IBM Plex Mono',monospace;font-size:.58rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;display:block;margin-bottom:6px}
+.al-k{background:rgba(13,148,136,.06);border-color:var(--k1)}.al-k .alert-label{color:var(--k1)}
+.al-green{background:rgba(22,163,74,.06);border-color:var(--green)}.al-green .alert-label{color:var(--green)}
+.al-rose{background:rgba(225,29,72,.06);border-color:var(--rose)}.al-rose .alert-label{color:var(--rose)}
+.al-violet{background:rgba(124,58,237,.06);border-color:var(--violet)}.al-violet .alert-label{color:var(--violet)}
+.al-amber{background:rgba(217,119,6,.06);border-color:var(--amber)}.al-amber .alert-label{color:var(--amber)}
+.al-orange{background:rgba(234,88,12,.06);border-color:var(--orange)}.al-orange .alert-label{color:var(--orange)}
+.al-sky{background:rgba(2,132,199,.06);border-color:var(--sky)}.al-sky .alert-label{color:var(--sky)}
+.tbl{width:100%;border-collapse:collapse;font-size:.84rem}
+.tbl th{background:var(--s2);color:var(--tx2);font-family:'IBM Plex Mono',monospace;font-size:.63rem;letter-spacing:2px;text-transform:uppercase;font-weight:700;padding:11px 16px;text-align:left;border-bottom:1px solid var(--bd)}
+.tbl td{padding:11px 16px;border-bottom:1px solid var(--bd);color:var(--tx2);vertical-align:top;line-height:1.75}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:var(--s2);color:var(--tx)}
+.tbl code{font-family:'IBM Plex Mono',monospace;font-size:.76rem;color:var(--k2);background:rgba(13,148,136,.10);padding:2px 7px;border-radius:3px}
+.ritem{display:flex;gap:16px;padding:12px 0;border-bottom:1px solid var(--bd);align-items:flex-start}
+.ritem:last-child{border-bottom:none}
+.ritem-key{font-family:'IBM Plex Mono',monospace;font-size:.76rem;white-space:nowrap;padding-top:2px;min-width:180px;flex-shrink:0}
+.ritem-val{font-size:.85rem;color:var(--tx2);line-height:1.75}
+.ritem-val code{font-family:'IBM Plex Mono',monospace;font-size:.76rem;color:var(--k2);background:rgba(13,148,136,.10);padding:1px 6px;border-radius:3px}
+.ritem-val strong{color:var(--tx)}
+.strip{border:1px solid var(--bd);border-radius:8px;padding:18px 22px;font-size:.87rem;color:var(--tx2);line-height:1.85;display:flex;gap:16px;align-items:flex-start;background:var(--s1)}
+.strip-icon{font-size:1.3rem;flex-shrink:0;padding-top:2px}
+.strip strong{color:var(--tx)}
+.gap8{margin-top:8px}.gap12{margin-top:12px}.gap16{margin-top:16px}.gap24{margin-top:24px}
+.footer{border-top:1px solid var(--bd);background:var(--s1);padding:36px 80px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;font-family:'IBM Plex Mono',monospace;font-size:.68rem;color:var(--mt)}
+.footer-title{color:var(--violet);font-weight:700}
+.badge{display:inline-flex;align-items:center;gap:4px;font-family:'IBM Plex Mono',monospace;font-size:.62rem;font-weight:700;padding:2px 9px;border-radius:3px}
+.badge-green{background:rgba(22,163,74,.12);color:var(--green);border:1px solid rgba(22,163,74,.3)}
+.badge-rose{background:rgba(225,29,72,.10);color:var(--rose);border:1px solid rgba(225,29,72,.3)}
+.badge-amber{background:rgba(217,119,6,.10);color:var(--amber);border:1px solid rgba(217,119,6,.3)}
+.badge-sky{background:rgba(2,132,199,.10);color:var(--sky);border:1px solid rgba(2,132,199,.3)}
+.badge-violet{background:rgba(124,58,237,.10);color:var(--violet);border:1px solid rgba(124,58,237,.3)}
+.output-box{background:var(--s2);border:1px solid var(--bd);border-radius:5px;padding:12px 16px;font-family:'IBM Plex Mono',monospace;font-size:.78rem;color:var(--green);margin-top:8px}
+.output-box .label{color:var(--mt);font-size:.65rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px}
+.output-box .wrong{color:var(--rose)}
+.output-box .note{color:var(--amber)}
+</style>
+</head>
+<body>
+<a class="back" href="#">← MENU</a>
+<header class="hdr">
+  <div class="hdr-bg"></div><div class="hdr-grid"></div>
+  <div class="hdr-content">
+    <div class="hdr-tier"><div class="tier-dot"></div> Java · Syntax Traps · Interview Code</div>
+    <h1><em>Java Tricky Code</em><small>Wszystkie pułapki składni które pojawiają się na rozmowach kwalifikacyjnych</small></h1>
+    <p class="hdr-desc">Nie teoria — konkretny kod. Każdy przykład pokazuje co Java <em>faktycznie</em> zwróci i dlaczego. Autoboxing, integer cache, string pool, operator precedence, overloading vs overriding, generics erasure i wiele więcej.</p>
+    <div class="hdr-chips">
+      <span class="chip cv">● Typy & Operatory</span>
+      <span class="chip ca">Autoboxing</span>
+      <span class="chip cr">String Pool</span>
+      <span class="chip cg">Generics</span>
+      <span class="chip cs">Lambdy & Streams</span>
+      <span class="chip ck">Concurrency</span>
+      <span class="chip co">OOP Pułapki</span>
+      <span class="chip ct">Switch & Patterns</span>
+    </div>
+  </div>
+</header>
+<nav class="nav">
+  <a class="nav-a" href="#primitives">Typy & Operatory</a>
+  <a class="nav-a" href="#autoboxing">Autoboxing</a>
+  <a class="nav-a" href="#strings">String Pool</a>
+  <a class="nav-a" href="#oop">OOP & Polymorphism</a>
+  <a class="nav-a" href="#generics">Generics</a>
+  <a class="nav-a" href="#exceptions">Exceptions</a>
+  <a class="nav-a" href="#lambdas">Lambdy & Streams</a>
+  <a class="nav-a" href="#concurrency">Concurrency</a>
+  <a class="nav-a" href="#collections">Collections</a>
+  <a class="nav-a" href="#modern">Java 17–21</a>
+</nav>
+<main class="main">
+
+<!-- ══ 01 TYPY & OPERATORY ══ -->
+<section class="chapter" id="primitives">
+  <div class="ch-head">
+    <div class="ch-num">01 / 10</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--violet)">Typy Primitywne & Operatory</div>
+      <div class="ch-title">Integer overflow, rzutowanie, kolejność operatorów</div>
+      <div class="ch-desc">Najbardziej podstawowe pułapki — wyniki które są "oczywiste" ale Java zwraca coś innego. Overflow, integer division, pre/post increment, bitwise ops.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--violet)"></div> Overflow, casting, integer arithmetic</div>
+      <pre><span class="cm">// ══ OVERFLOW ══════════════════════════════════════</span>
+<span class="kw">int</span> max = <span class="cls">Integer</span>.MAX_VALUE;   <span class="cm">// 2147483647</span>
+<span class="cls">System</span>.out.<span class="fn">println</span>(max + <span class="num">1</span>);    <span class="cm">// ➜ -2147483648 (wraparound!)</span>
+<span class="cls">System</span>.out.<span class="fn">println</span>(max * <span class="num">2</span>);    <span class="cm">// ➜ -2 (overflow)</span>
+
+<span class="kw">long</span> result = <span class="num">1_000_000</span> * <span class="num">1_000_000</span>;  <span class="cm">// ➜ -727379968 !!!!</span>
+<span class="kw">long</span> ok     = <span class="num">1_000_000L</span> * <span class="num">1_000_000</span>; <span class="cm">// ➜ 1000000000000 (L suffix!)</span>
+
+<span class="cm">// ══ INTEGER DIVISION ══════════════════════════════</span>
+<span class="cls">System</span>.out.<span class="fn">println</span>(<span class="num">5</span> / <span class="num">2</span>);     <span class="cm">// ➜ 2 (nie 2.5!)</span>
+<span class="cls">System</span>.out.<span class="fn">println</span>(<span class="num">5</span> / <span class="num">2.0</span>);   <span class="cm">// ➜ 2.5</span>
+<span class="cls">System</span>.out.<span class="fn">println</span>(<span class="num">5.0</span> / <span class="num">2</span>);   <span class="cm">// ➜ 2.5</span>
+<span class="cls">System</span>.out.<span class="fn">println</span>(<span class="num">-7</span> / <span class="num">2</span>);    <span class="cm">// ➜ -3 (truncation toward zero)</span>
+<span class="cls">System</span>.out.<span class="fn">println</span>(<span class="num">-7</span> % <span class="num">2</span>);    <span class="cm">// ➜ -1 (sign = sign of dividend)</span>
+
+<span class="cm">// ══ PRE vs POST INCREMENT ═════════════════════════</span>
+<span class="kw">int</span> a = <span class="num">5</span>;
+<span class="kw">int</span> b = a++;   <span class="cm">// b=5, a=6</span>
+<span class="kw">int</span> c = ++a;   <span class="cm">// c=7, a=7</span>
+<span class="kw">int</span> d = a++ + ++a;  <span class="cm">// d = 7 + 9 = 16, a=9</span>
+
+<span class="cm">// ══ CASTING PUŁAPKI ═══════════════════════════════</span>
+<span class="kw">byte</span> x = (<span class="kw">byte</span>) <span class="num">200</span>;   <span class="cm">// ➜ -56 (200 - 256)</span>
+<span class="kw">byte</span> y = (<span class="kw">byte</span>) <span class="num">300</span>;   <span class="cm">// ➜ 44  (300 - 256)</span>
+<span class="kw">int</span>  z = (<span class="kw">int</span>) <span class="num">9.9</span>;    <span class="cm">// ➜ 9   (truncation, nie rounding)</span>
+<span class="kw">char</span> ch = (<span class="kw">char</span>) <span class="num">65</span>;   <span class="cm">// ➜ 'A'</span>
+<span class="kw">int</span>  n = (<span class="kw">int</span>) <span class="str">'A'</span>;    <span class="cm">// ➜ 65</span>
+
+<span class="cm">// ══ BITWISE ═══════════════════════════════════════</span>
+<span class="cls">System</span>.out.<span class="fn">println</span>(<span class="num">5</span> &amp; <span class="num">3</span>);    <span class="cm">// ➜ 1  (0101 &amp; 0011 = 0001)</span>
+<span class="cls">System</span>.out.<span class="fn">println</span>(<span class="num">5</span> | <span class="num">3</span>);    <span class="cm">// ➜ 7  (0101 | 0011 = 0111)</span>
+<span class="cls">System</span>.out.<span class="fn">println</span>(<span class="num">5</span> ^ <span class="num">3</span>);    <span class="cm">// ➜ 6  (0101 ^ 0011 = 0110)</span>
+<span class="cls">System</span>.out.<span class="fn">println</span>(<span class="num">5</span> &lt;&lt; <span class="num">1</span>);   <span class="cm">// ➜ 10 (multiply by 2)</span>
+<span class="cls">System</span>.out.<span class="fn">println</span>(-<span class="num">1</span> >> <span class="num">1</span>);  <span class="cm">// ➜ -1 (arithmetic shift, sign preserved)</span>
+<span class="cls">System</span>.out.<span class="fn">println</span>(-<span class="num">1</span> >>> <span class="num">1</span>); <span class="cm">// ➜ 2147483647 (logical shift, zero fill)</span>
+
+<span class="cm">// ══ CONDITIONAL OPERATOR TRAP ══════════════════════</span>
+<span class="cls">Object</span> o = <span class="kw">true</span> ? <span class="kw">new</span> <span class="cls">Integer</span>(<span class="num">1</span>) : <span class="num">2.0</span>;
+<span class="cm">// typ: double! ternary unboxuje Integer do int, promuje do double</span>
+<span class="cm">// potem autoboxuje do Double → o instanceof Double == true !</span></pre>
+    </div>
+    <div>
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--violet)"></div> char w wyrażeniach — klasyczna pułapka</div>
+        <pre><span class="cm">// char jest numeryczny — promuje się do int w wyrażeniach</span>
+<span class="kw">char</span> c1 = <span class="str">'a'</span>;
+<span class="kw">char</span> c2 = <span class="str">'b'</span>;
+<span class="cm">// System.out.println(c1 + c2);  ➜ 195 (97 + 98) NIE "ab"!</span>
+<span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">""</span> + c1 + c2);  <span class="cm">// ➜ "ab" (String concat)</span>
+<span class="cls">System</span>.out.<span class="fn">println</span>(c1 + <span class="str">""</span> + c2);  <span class="cm">// ➜ "ab"</span>
+<span class="cls">System</span>.out.<span class="fn">println</span>((<span class="kw">char</span>)(c1 + <span class="num">1</span>)); <span class="cm">// ➜ 'b'</span>
+
+<span class="cm">// String concatenation evaluation order</span>
+<span class="kw">int</span> i = <span class="num">1</span>, j = <span class="num">2</span>;
+<span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"sum: "</span> + i + j);   <span class="cm">// ➜ "sum: 12" (left-to-right)</span>
+<span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"sum: "</span> + (i + j)); <span class="cm">// ➜ "sum: 3"</span>
+<span class="cls">System</span>.out.<span class="fn">println</span>(i + j + <span class="str">" sum"</span>);   <span class="cm">// ➜ "3 sum" (i+j=3 first!)</span></pre>
+      </div>
+      <div class="gap12"></div>
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--violet)"></div> Operator precedence — najczęstsze błędy</div>
+        <pre><span class="cm">// && ma wyższy precedence niż ||</span>
+<span class="kw">boolean</span> r = <span class="kw">true</span> || <span class="kw">false</span> &amp;&amp; <span class="kw">false</span>;
+<span class="cm">// = true || (false && false) = true || false = true</span>
+
+<span class="cm">// Short-circuit evaluation</span>
+<span class="kw">int</span> x = <span class="num">0</span>;
+<span class="kw">boolean</span> b = (x != <span class="num">0</span>) &amp;&amp; (<span class="num">10</span>/x > <span class="num">1</span>); <span class="cm">// ➜ false (nie ArithmeticException)</span>
+<span class="kw">boolean</span> c = (<span class="kw">true</span>)  || (<span class="num">1</span>/<span class="num">0</span> > <span class="num">0</span>);   <span class="cm">// ➜ true  (nie ArithmeticException)</span>
+
+<span class="cm">// Bitwise & vs &&  — BRAK short-circuit!</span>
+<span class="kw">boolean</span> d = (<span class="kw">false</span>) &amp; (++x > <span class="num">0</span>);  <span class="cm">// x = 1 (side effect wykonany!)</span>
+<span class="kw">boolean</span> e = (<span class="kw">false</span>) &amp;&amp; (++x > <span class="num">0</span>); <span class="cm">// x = 1 (nie zmienił się!)</span>
+
+<span class="cm">// Compound assignment z rzutowaniem</span>
+<span class="kw">byte</span> bb = <span class="num">10</span>;
+bb += <span class="num">5</span>;    <span class="cm">// OK — += zawiera implicit cast: bb = (byte)(bb + 5)</span>
+<span class="cm">// bb = bb + 5;  // BŁĄD kompilacji! bb + 5 = int, trzeba cast</span></pre>
+      </div>
+      <div class="gap12"></div>
+      <div class="alert al-violet">
+        <span class="alert-label">Klasyczne pytanie: co wydrukuje?</span>
+        <code>System.out.println(1 + 2 + "3" + 4 + 5)</code> → <strong>"3345"</strong>. Ewaluacja lewa→prawa: 1+2=3, 3+"3"="33", "33"+4="334", "334"+5="3345".
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 02 AUTOBOXING ══ -->
+<section class="chapter" id="autoboxing">
+  <div class="ch-head">
+    <div class="ch-num">02 / 10</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--amber)">Autoboxing & Integer Cache</div>
+      <div class="ch-title">Integer cache -128..127, NullPointerException, == vs equals</div>
+      <div class="ch-desc">Autoboxing to mechanizm automatycznej konwersji między prymitywami a ich wrapperami. Ukrywa pułapki: Integer cache powoduje że == działa tylko dla małych liczb, unboxing null = NPE.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--amber)"></div> Integer Cache — pułapka na rozmowach</div>
+      <pre><span class="cm">// JVM cache'uje Integer od -128 do 127</span>
+<span class="cls">Integer</span> a = <span class="num">127</span>;
+<span class="cls">Integer</span> b = <span class="num">127</span>;
+<span class="cls">System</span>.out.<span class="fn">println</span>(a == b);        <span class="cm">// ➜ true  (ten sam obiekt z cache)</span>
+
+<span class="cls">Integer</span> c = <span class="num">128</span>;
+<span class="cls">Integer</span> d = <span class="num">128</span>;
+<span class="cls">System</span>.out.<span class="fn">println</span>(c == d);        <span class="cm">// ➜ false (nowe obiekty!)</span>
+<span class="cls">System</span>.out.<span class="fn">println</span>(c.<span class="fn">equals</span>(d));   <span class="cm">// ➜ true  (zawsze używaj equals)</span>
+
+<span class="cm">// Long, Short, Byte, Character też mają cache (-128..127)</span>
+<span class="cls">Long</span> l1 = <span class="num">100L</span>, l2 = <span class="num">100L</span>;
+<span class="cls">System</span>.out.<span class="fn">println</span>(l1 == l2);      <span class="cm">// ➜ true</span>
+
+<span class="cm">// Mieszanie typów — unboxing</span>
+<span class="cls">Integer</span> x = <span class="num">10</span>;
+<span class="kw">int</span>     y = <span class="num">10</span>;
+<span class="cls">System</span>.out.<span class="fn">println</span>(x == y);        <span class="cm">// ➜ true (x unboxed to int)</span>
+
+<span class="cls">Integer</span> p = <span class="num">200</span>;
+<span class="cls">Integer</span> q = <span class="num">200</span>;
+<span class="cls">System</span>.out.<span class="fn">println</span>(p == q);        <span class="cm">// ➜ false</span>
+<span class="cls">System</span>.out.<span class="fn">println</span>(p == (q + <span class="num">0</span>));  <span class="cm">// ➜ true! q+0 unboxuje q do int → unboxuje p</span>
+
+<span class="cm">// NPE z unboxing</span>
+<span class="cls">Integer</span> nullInt = <span class="kw">null</span>;
+<span class="kw">int</span>     val = nullInt;  <span class="cm">// NullPointerException przy unboxing!</span>
+
+<span class="cm">// Subtelna pułapka w wyrażeniach warunkowych</span>
+<span class="cls">Integer</span> n = <span class="kw">null</span>;
+<span class="kw">int</span> result = n != <span class="kw">null</span> ? n : <span class="num">0</span>;  <span class="cm">// OK</span>
+<span class="kw">int</span> trap   = <span class="kw">true</span> ? n : <span class="num">0</span>;        <span class="cm">// NPE! 0 wymusza int → unboxing n=null</span></pre>
+    </div>
+    <div>
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--amber)"></div> Autoboxing w kolekcjach i switch</div>
+        <pre><span class="cm">// Autoboxing w operacjach arytmetycznych na kolekcjach</span>
+<span class="cls">List</span>&lt;<span class="cls">Integer</span>&gt; list = <span class="kw">new</span> <span class="cls">ArrayList</span>&lt;&gt;();
+list.<span class="fn">add</span>(<span class="num">1</span>); list.<span class="fn">add</span>(<span class="num">2</span>); list.<span class="fn">add</span>(<span class="num">3</span>);
+
+<span class="cm">// remove(int index) vs remove(Object o) — overload!</span>
+list.<span class="fn">remove</span>(<span class="num">1</span>);            <span class="cm">// ➜ usuwa INDEX 1, pozostaje [1,3]</span>
+list.<span class="fn">remove</span>(<span class="cls">Integer</span>.<span class="fn">valueOf</span>(<span class="num">1</span>)); <span class="cm">// ➜ usuwa WARTOŚĆ 1</span>
+
+<span class="cm">// Switch z Integer — unboxing NPE risk</span>
+<span class="cls">Integer</span> val = <span class="kw">null</span>;
+<span class="kw">switch</span> (val) {  <span class="cm">// ➜ NullPointerException! (unboxing null)</span>
+  <span class="kw">case</span> <span class="num">1</span>: <span class="kw">break</span>;
+}
+
+<span class="cm">// Performance pułapka — autoboxing w pętli</span>
+<span class="cls">Long</span> sum = <span class="num">0L</span>;
+<span class="kw">for</span> (<span class="kw">long</span> i = <span class="num">0</span>; i &lt; <span class="num">1_000_000</span>; i++) {
+  sum += i;  <span class="cm">// unbox + add + box przy każdej iteracji!</span>
+}             <span class="cm">// milion zbędnych obiektów Long → GC pressure</span>
+
+<span class="cm">// Prawidłowo:</span>
+<span class="kw">long</span> sumOk = <span class="num">0L</span>;
+<span class="kw">for</span> (<span class="kw">long</span> i = <span class="num">0</span>; i &lt; <span class="num">1_000_000</span>; i++) {
+  sumOk += i;
+}</pre>
+      </div>
+      <div class="gap12"></div>
+      <div class="alert al-amber">
+        <span class="alert-label">Zasada: nigdy == dla wrapperów</span>
+        Jedyny bezpieczny wyjątek: porównanie z <code>null</code> (<code>x == null</code>). Wszędzie indziej: <strong>equals()</strong> dla wartości, <strong>Objects.equals(a, b)</strong> gdy któryś może być null. Pamiętaj że <code>Boolean.TRUE == Boolean.TRUE</code> działa (cache), ale nie polegaj na tym.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 03 STRING POOL ══ -->
+<section class="chapter" id="strings">
+  <div class="ch-head">
+    <div class="ch-num">03 / 10</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--rose)">String Pool & Immutability</div>
+      <div class="ch-title">String pool, intern(), immutability, StringBuilder vs StringBuffer</div>
+      <div class="ch-desc">String w Javie jest immutable i interned. Literały idą do string pool (PermGen → Metaspace od Java 8). <code>new String()</code> tworzy nowy obiekt poza poolem. To generuje klasyczne pytania na rozmowach.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--rose)"></div> String pool — == vs equals, intern()</div>
+      <pre><span class="cm">// Literały → String Pool (współdzielone)</span>
+<span class="cls">String</span> s1 = <span class="str">"hello"</span>;
+<span class="cls">String</span> s2 = <span class="str">"hello"</span>;
+<span class="cls">System</span>.out.<span class="fn">println</span>(s1 == s2);       <span class="cm">// ➜ true  (ten sam obiekt z pool)</span>
+<span class="cls">System</span>.out.<span class="fn">println</span>(s1.<span class="fn">equals</span>(s2));  <span class="cm">// ➜ true</span>
+
+<span class="cm">// new String() → poza poolem</span>
+<span class="cls">String</span> s3 = <span class="kw">new</span> <span class="cls">String</span>(<span class="str">"hello"</span>);
+<span class="cls">System</span>.out.<span class="fn">println</span>(s1 == s3);       <span class="cm">// ➜ false (różne obiekty)</span>
+<span class="cls">System</span>.out.<span class="fn">println</span>(s1.<span class="fn">equals</span>(s3));  <span class="cm">// ➜ true</span>
+
+<span class="cm">// intern() — wróć do pool</span>
+<span class="cls">String</span> s4 = s3.<span class="fn">intern</span>();
+<span class="cls">System</span>.out.<span class="fn">println</span>(s1 == s4);       <span class="cm">// ➜ true!</span>
+
+<span class="cm">// Concatenacja compile-time (stałe) → pool</span>
+<span class="cls">String</span> s5 = <span class="str">"hel"</span> + <span class="str">"lo"</span>;           <span class="cm">// compile-time → "hello" w pool</span>
+<span class="cls">System</span>.out.<span class="fn">println</span>(s1 == s5);       <span class="cm">// ➜ true!</span>
+
+<span class="cm">// Concatenacja runtime → nowy obiekt (poza pool)</span>
+<span class="cls">String</span> part = <span class="str">"hel"</span>;
+<span class="cls">String</span> s6 = part + <span class="str">"lo"</span>;            <span class="cm">// runtime → nowy obiekt</span>
+<span class="cls">System</span>.out.<span class="fn">println</span>(s1 == s6);       <span class="cm">// ➜ false!</span>
+
+<span class="cm">// final String → compile-time constant!</span>
+<span class="kw">final</span> <span class="cls">String</span> fp = <span class="str">"hel"</span>;
+<span class="cls">String</span> s7 = fp + <span class="str">"lo"</span>;              <span class="cm">// compile-time (final!)</span>
+<span class="cls">System</span>.out.<span class="fn">println</span>(s1 == s7);       <span class="cm">// ➜ true!</span></pre>
+    </div>
+    <div>
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--rose)"></div> Immutability, StringBuilder, pułapki metod</div>
+        <pre><span class="cm">// String jest immutable — modyfikacje tworzą nowy obiekt</span>
+<span class="cls">String</span> s = <span class="str">"hello"</span>;
+s.<span class="fn">toUpperCase</span>();          <span class="cm">// nic nie robi — wynik jest ignorowany!</span>
+<span class="cls">System</span>.out.<span class="fn">println</span>(s);    <span class="cm">// ➜ "hello" (nie zmienił się)</span>
+
+s = s.<span class="fn">toUpperCase</span>();      <span class="cm">// ➜ "HELLO" (przypisz wynik!)</span>
+
+<span class="cm">// substring() — pułapka memory leak (Java 6)</span>
+<span class="cm">// Java 7+ substring tworzy nową kopię — brak leak</span>
+<span class="cls">String</span> big = <span class="str">"..." </span>; <span class="cm">// milion znaków</span>
+<span class="cls">String</span> sub = big.<span class="fn">substring</span>(<span class="num">0</span>, <span class="num">5</span>); <span class="cm">// Java 7+: nowa kopia (bezpieczne)</span>
+
+<span class="cm">// equals vs equalsIgnoreCase vs compareTo</span>
+<span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"abc"</span>.<span class="fn">compareTo</span>(<span class="str">"abd"</span>));     <span class="cm">// ➜ -1 (leksykograficznie)</span>
+<span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"abc"</span>.<span class="fn">compareTo</span>(<span class="str">"ABC"</span>));     <span class="cm">// ➜ 32 (różnica ASCII)</span>
+<span class="cls">System</span>.out.<span class="fn">println</span>(<span class="kw">null</span>.<span class="fn">equals</span>(<span class="str">"x"</span>));          <span class="cm">// ➜ NPE!</span>
+<span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"x"</span>.<span class="fn">equals</span>(<span class="kw">null</span>));          <span class="cm">// ➜ false (bezpieczne)</span>
+
+<span class="cm">// StringBuilder NIE jest thread-safe, StringBuffer TAK</span>
+<span class="cm">// StringBuilder szybszy (brak synchronizacji)</span>
+<span class="cls">StringBuilder</span> sb = <span class="kw">new</span> <span class="cls">StringBuilder</span>(<span class="str">"hello"</span>);
+sb.<span class="fn">reverse</span>();             <span class="cm">// ➜ "olleh" (in-place!)</span>
+sb.<span class="fn">insert</span>(<span class="num">0</span>, <span class="str">"!"</span>);        <span class="cm">// ➜ "!olleh"</span>
+sb.<span class="fn">delete</span>(<span class="num">0</span>, <span class="num">1</span>);          <span class="cm">// ➜ "olleh"</span>
+sb.<span class="fn">replace</span>(<span class="num">0</span>, <span class="num">2</span>, <span class="str">"XX"</span>); <span class="cm">// ➜ "XXleh"</span>
+
+<span class="cm">// String.format vs + w pętli</span>
+<span class="cm">// W pętli: StringBuilder.append() &gt;&gt; "str" + val (n² copies)</span></pre>
+      </div>
+      <div class="gap12"></div>
+      <div class="alert al-rose">
+        <span class="alert-label">String switch — jak działa</span>
+        <code>switch(str)</code> używa <code>hashCode()</code> + <code>equals()</code> — nie <code>==</code>. Bezpieczne dla wartości z pool i z new String(). Ale uwaga: <code>switch(null)</code> = <code>NullPointerException</code> zawsze!
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 04 OOP & POLYMORPHISM ══ -->
+<section class="chapter" id="oop">
+  <div class="ch-head">
+    <div class="ch-num">04 / 10</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--orange)">OOP & Polymorphism</div>
+      <div class="ch-title">Overloading vs overriding, covariant return, this/super, inicjalizacja</div>
+      <div class="ch-desc">Polimorfizm i dziedziczenie mają mnóstwo subtelnych zasad. Overloading rozwiązywany w compile-time, overriding w runtime. Kolejność inicjalizacji statycznych pól vs instancyjnych — klasyczny materiał na pytania.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--orange)"></div> Overloading — compile-time, zaskakujące wybory</div>
+      <pre><span class="cm">// Overloading: metoda wybierana na podstawie DEKLAROWANEGO typu</span>
+<span class="kw">class</span> <span class="cls">Printer</span> {
+  <span class="kw">void</span> <span class="fn">print</span>(<span class="cls">Object</span> o)  { <span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"Object"</span>); }
+  <span class="kw">void</span> <span class="fn">print</span>(<span class="cls">String</span> s)  { <span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"String"</span>); }
+  <span class="kw">void</span> <span class="fn">print</span>(<span class="cls">Integer</span> i) { <span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"Integer"</span>);}
+}
+
+<span class="cls">Printer</span> p = <span class="kw">new</span> <span class="cls">Printer</span>();
+<span class="cls">Object</span>  o = <span class="str">"hello"</span>;   <span class="cm">// declared type: Object, actual: String</span>
+p.<span class="fn">print</span>(o);            <span class="cm">// ➜ "Object"! (compile-time typ = Object)</span>
+p.<span class="fn">print</span>(<span class="str">"hello"</span>);      <span class="cm">// ➜ "String"  (compile-time typ = String)</span>
+p.<span class="fn">print</span>((<span class="cls">String</span>) o);   <span class="cm">// ➜ "String"  (cast = compile-time info)</span>
+
+<span class="cm">// Overloading z null — niejednoznaczność</span>
+<span class="cm">// p.print(null); // BŁĄD KOMPILACJI - niejednoznaczne (String? Integer?)</span>
+p.<span class="fn">print</span>((<span class="cls">String</span>) <span class="kw">null</span>); <span class="cm">// OK — wybrany print(String)</span>
+
+<span class="cm">// Varargs vs konkretne typy</span>
+<span class="kw">static</span> <span class="kw">void</span> <span class="fn">f</span>(<span class="kw">int</span> a, <span class="kw">int</span> b) { <span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"two ints"</span>); }
+<span class="kw">static</span> <span class="kw">void</span> <span class="fn">f</span>(<span class="kw">int</span>... a)     { <span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"varargs"</span>); }
+<span class="fn">f</span>(<span class="num">1</span>, <span class="num">2</span>);   <span class="cm">// ➜ "two ints" (konkretna wersja ma priorytet!)</span>
+<span class="fn">f</span>(<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>); <span class="cm">// ➜ "varargs"</span></pre>
+    </div>
+    <div>
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--orange)"></div> Kolejność inicjalizacji — klasyczne pytanie</div>
+        <pre><span class="kw">class</span> <span class="cls">Base</span> {
+  <span class="kw">static</span> { <span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"1: Base static"</span>); }
+  { <span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"3: Base instance block"</span>); }
+  <span class="cls">Base</span>() { <span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"4: Base constructor"</span>); }
+}
+
+<span class="kw">class</span> <span class="cls">Child</span> <span class="kw">extends</span> <span class="cls">Base</span> {
+  <span class="kw">static</span> { <span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"2: Child static"</span>); }
+  { <span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"5: Child instance block"</span>); }
+  <span class="cls">Child</span>() { <span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"6: Child constructor"</span>); }
+}
+
+<span class="kw">new</span> <span class="cls">Child</span>();
+<span class="cm">// Wydrukuje kolejno 1,2,3,4,5,6</span>
+<span class="cm">// Kolejność: static parent → static child</span>
+<span class="cm">//            → instance parent → ctor parent</span>
+<span class="cm">//            → instance child → ctor child</span>
+
+<span class="cm">// PUŁAPKA: wywołanie overridden metody w konstruktorze!</span>
+<span class="kw">class</span> <span class="cls">A</span> {
+  <span class="kw">int</span> x = <span class="num">10</span>;
+  <span class="cls">A</span>() { <span class="fn">print</span>(); }  <span class="cm">// wywołuje overridden metodę!</span>
+  <span class="kw">void</span> <span class="fn">print</span>() { <span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"A.x="</span> + x); }
+}
+<span class="kw">class</span> <span class="cls">B</span> <span class="kw">extends</span> <span class="cls">A</span> {
+  <span class="kw">int</span> y = <span class="num">20</span>;
+  <span class="cls">B</span>() { <span class="kw">super</span>(); }
+  <span class="ann">@Override</span>
+  <span class="kw">void</span> <span class="fn">print</span>() { <span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"B.y="</span> + y); }
+}
+<span class="kw">new</span> <span class="cls">B</span>(); <span class="cm">// ➜ "B.y=0" !!! y jeszcze nie zainicjalizowane (=0 default)</span>
+<span class="cm">// NIGDY nie wywołuj metod wirtualnych w konstruktorze!</span></pre>
+      </div>
+      <div class="gap12"></div>
+      <div class="alert al-orange">
+        <span class="alert-label">Hiding vs Overriding — static methods</span>
+        <strong>Static metody nie są overridowane — są hidden.</strong> <code>Parent p = new Child()</code>, <code>p.staticMethod()</code> wywoła metodę z <code>Parent</code> (compile-time typ), nie <code>Child</code>. Static metody nie uczestniczą w dynamicznym polimorfizmie.
+      </div>
+    </div>
+  </div>
+  <div class="gap16"></div>
+  <div class="code">
+    <div class="cbar"><div class="fdot" style="background:var(--orange)"></div> Covariant return, final, interface defaults — zaawansowane</div>
+    <pre><span class="cm">// Covariant return type — override może zwrócić podtyp</span>
+<span class="kw">class</span> <span class="cls">Animal</span> { <span class="cls">Animal</span> <span class="fn">create</span>() { <span class="kw">return</span> <span class="kw">new</span> <span class="cls">Animal</span>(); } }
+<span class="kw">class</span> <span class="cls">Dog</span> <span class="kw">extends</span> <span class="cls">Animal</span> {
+  <span class="ann">@Override</span>
+  <span class="cls">Dog</span> <span class="fn">create</span>() { <span class="kw">return</span> <span class="kw">new</span> <span class="cls">Dog</span>(); }  <span class="cm">// OK — Dog extends Animal</span>
+}
+
+<span class="cm">// Interface default method conflict — class wins</span>
+<span class="kw">interface</span> <span class="cls">A</span> { <span class="kw">default</span> <span class="kw">void</span> <span class="fn">hello</span>() { <span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"A"</span>); } }
+<span class="kw">interface</span> <span class="cls">B</span> { <span class="kw">default</span> <span class="kw">void</span> <span class="fn">hello</span>() { <span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"B"</span>); } }
+<span class="kw">class</span> <span class="cls">C</span> <span class="kw">implements</span> <span class="cls">A</span>, <span class="cls">B</span> {
+  <span class="ann">@Override</span>
+  <span class="kw">public</span> <span class="kw">void</span> <span class="fn">hello</span>() { <span class="cls">A</span>.<span class="kw">super</span>.<span class="fn">hello</span>(); }  <span class="cm">// WYMAGANE — niejednoznaczność</span>
+}
+
+<span class="cm">// final field vs effectively final — lambda/anonymous class</span>
+<span class="kw">int</span> i = <span class="num">10</span>;  <span class="cm">// effectively final — nie deklarujemy final ale nie zmieniamy</span>
+<span class="cls">Runnable</span> r = () -> <span class="cls">System</span>.out.<span class="fn">println</span>(i);  <span class="cm">// OK</span>
+<span class="cm">// i++; — po tej linii: BŁĄD KOMPILACJI w lambdzie!</span></pre>
+  </div>
+</section>
+
+<!-- ══ 05 GENERICS ══ -->
+<section class="chapter" id="generics">
+  <div class="ch-head">
+    <div class="ch-num">05 / 10</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--green)">Generics & Type Erasure</div>
+      <div class="ch-title">Type erasure, wildcards, bounded types, heap pollution</div>
+      <div class="ch-desc">Generics są compile-time only — w runtime wszystkie parametry typów są erasowane do Object lub upper bound. To wyjaśnia dlaczego nie możesz <code>new T()</code> ani <code>instanceof List&lt;String&gt;</code>.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--green)"></div> Type Erasure — konsekwencje</div>
+      <pre><span class="cm">// Type erasure — w bytecode List&lt;String&gt; == List&lt;Integer&gt; == List</span>
+<span class="cls">List</span>&lt;<span class="cls">String</span>&gt;  strings = <span class="kw">new</span> <span class="cls">ArrayList</span>&lt;&gt;();
+<span class="cls">List</span>&lt;<span class="cls">Integer</span>&gt; ints    = <span class="kw">new</span> <span class="cls">ArrayList</span>&lt;&gt;();
+<span class="cls">System</span>.out.<span class="fn">println</span>(strings.<span class="fn">getClass</span>() == ints.<span class="fn">getClass</span>()); <span class="cm">// ➜ true!</span>
+
+<span class="cm">// Nie możesz: instanceof z parametrem typów</span>
+<span class="cm">// if (list instanceof List&lt;String&gt;) {}  // BŁĄD KOMPILACJI</span>
+<span class="kw">if</span> (strings <span class="kw">instanceof</span> <span class="cls">List</span>&lt;?&gt;) {}      <span class="cm">// OK — wildcard unbounded</span>
+
+<span class="cm">// Nie możesz: tworzyć tablic sparametryzowanych typów</span>
+<span class="cm">// List&lt;String&gt;[] arr = new List&lt;String&gt;[10]; // BŁĄD (unchecked)</span>
+<span class="cls">List</span>&lt;?&gt;[] arr = <span class="kw">new</span> <span class="cls">List</span>[<span class="num">10</span>];              <span class="cm">// OK z warnings</span>
+
+<span class="cm">// Wildcards: &lt;? extends T&gt; vs &lt;? super T&gt; — PECS rule</span>
+<span class="cm">// Producer Extends, Consumer Super</span>
+
+<span class="cm">// PRODUCER (czytasz z kolekcji) → ? extends T</span>
+<span class="kw">static</span> <span class="kw">double</span> <span class="fn">sum</span>(<span class="cls">List</span>&lt;? <span class="kw">extends</span> <span class="cls">Number</span>&gt; list) {
+  <span class="kw">return</span> list.<span class="fn">stream</span>().<span class="fn">mapToDouble</span>(<span class="cls">Number</span>::<span class="fn">doubleValue</span>).<span class="fn">sum</span>();
+}
+<span class="cm">// CONSUMER (piszesz do kolekcji) → ? super T</span>
+<span class="kw">static</span> <span class="kw">void</span> <span class="fn">addNumbers</span>(<span class="cls">List</span>&lt;? <span class="kw">super</span> <span class="cls">Integer</span>&gt; list) {
+  list.<span class="fn">add</span>(<span class="num">1</span>); list.<span class="fn">add</span>(<span class="num">2</span>);  <span class="cm">// OK</span>
+}
+
+<span class="cm">// Wywołania:</span>
+<span class="fn">sum</span>(<span class="kw">new</span> <span class="cls">ArrayList</span>&lt;<span class="cls">Integer</span>&gt;());   <span class="cm">// OK</span>
+<span class="fn">sum</span>(<span class="kw">new</span> <span class="cls">ArrayList</span>&lt;<span class="cls">Double</span>&gt;());    <span class="cm">// OK</span>
+<span class="fn">addNumbers</span>(<span class="kw">new</span> <span class="cls">ArrayList</span>&lt;<span class="cls">Number</span>&gt;()); <span class="cm">// OK (Number super Integer)</span></pre>
+    </div>
+    <div>
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--green)"></div> Heap pollution, @SafeVarargs, type tokens</div>
+        <pre><span class="cm">// Heap Pollution — mieszanie raw types i generics</span>
+<span class="cls">List</span> rawList = <span class="kw">new</span> <span class="cls">ArrayList</span>&lt;<span class="cls">String</span>&gt;();
+rawList.<span class="fn">add</span>(<span class="num">42</span>);              <span class="cm">// unchecked warning — kompiluje się!</span>
+<span class="cls">List</span>&lt;<span class="cls">String</span>&gt; strings = rawList; <span class="cm">// unchecked warning</span>
+<span class="cls">String</span> s = strings.<span class="fn">get</span>(<span class="num">0</span>);    <span class="cm">// ➜ ClassCastException w runtime!</span>
+
+<span class="cm">// @SafeVarargs — suppresses heap pollution warnings</span>
+<span class="ann">@SafeVarargs</span>
+<span class="kw">static</span> &lt;<span class="cls">T</span>&gt; <span class="cls">List</span>&lt;<span class="cls">T</span>&gt; <span class="fn">listOf</span>(<span class="cls">T</span>... elements) {
+  <span class="kw">return</span> <span class="cls">Arrays</span>.<span class="fn">asList</span>(elements);
+}
+
+<span class="cm">// Nie możesz: new T() → użyj Supplier lub Class&lt;T&gt; (type token)</span>
+<span class="kw">static</span> &lt;<span class="cls">T</span>&gt; <span class="cls">T</span> <span class="fn">create</span>(<span class="cls">Class</span>&lt;<span class="cls">T</span>&gt; clazz) <span class="kw">throws</span> <span class="cls">Exception</span> {
+  <span class="kw">return</span> clazz.<span class="fn">getDeclaredConstructor</span>().<span class="fn">newInstance</span>();
+}
+<span class="cm">// Użycie: create(String.class)</span>
+
+<span class="cm">// Generic method — type inference</span>
+<span class="kw">static</span> &lt;<span class="cls">T</span> <span class="kw">extends</span> <span class="cls">Comparable</span>&lt;<span class="cls">T</span>&gt;&gt; <span class="cls">T</span> <span class="fn">max</span>(<span class="cls">T</span> a, <span class="cls">T</span> b) {
+  <span class="kw">return</span> a.<span class="fn">compareTo</span>(b) >= <span class="num">0</span> ? a : b;
+}
+<span class="cls">Integer</span> maxInt = <span class="fn">max</span>(<span class="num">3</span>, <span class="num">7</span>);    <span class="cm">// type inferred: T=Integer</span>
+<span class="cls">String</span>  maxStr = <span class="fn">max</span>(<span class="str">"a"</span>, <span class="str">"b"</span>);<span class="cm">// type inferred: T=String</span>
+
+<span class="cm">// Multiple bounds</span>
+<span class="kw">static</span> &lt;<span class="cls">T</span> <span class="kw">extends</span> <span class="cls">Comparable</span>&lt;<span class="cls">T</span>&gt; &amp; <span class="cls">Serializable</span>&gt; <span class="kw">void</span> <span class="fn">store</span>(<span class="cls">T</span> t) {}</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 06 EXCEPTIONS ══ -->
+<section class="chapter" id="exceptions">
+  <div class="ch-head">
+    <div class="ch-num">06 / 10</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--rose)">Exceptions</div>
+      <div class="ch-title">try-catch-finally, multi-catch, try-with-resources, pułapki zwracania</div>
+      <div class="ch-desc">Wyjątki mają dużo nieintuicyjnych zachowań — finally który nadpisuje return, exception który "gubi" poprzedni, multi-catch który zabrania dziedziczenia.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--rose)"></div> finally i return — co wygrywa</div>
+      <pre><span class="cm">// finally ZAWSZE się wykonuje (poza System.exit() i kill)</span>
+<span class="kw">static</span> <span class="kw">int</span> <span class="fn">tricky</span>() {
+  <span class="kw">try</span> {
+    <span class="kw">return</span> <span class="num">1</span>;   <span class="cm">// zapisuje "1" do return value slot</span>
+  } <span class="kw">finally</span> {
+    <span class="kw">return</span> <span class="num">2</span>;   <span class="cm">// nadpisuje! finally wins</span>
+  }
+}
+<span class="cm">// tricky() ➜ 2</span>
+
+<span class="cm">// Exception w finally "połyka" exception z try</span>
+<span class="kw">static</span> <span class="kw">void</span> <span class="fn">danger</span>() {
+  <span class="kw">try</span> {
+    <span class="kw">throw</span> <span class="kw">new</span> <span class="cls">RuntimeException</span>(<span class="str">"from try"</span>);
+  } <span class="kw">finally</span> {
+    <span class="kw">throw</span> <span class="kw">new</span> <span class="cls">RuntimeException</span>(<span class="str">"from finally"</span>); <span class="cm">// "from try" znika!</span>
+  }
+}
+
+<span class="cm">// Zmienna lokalna w finally — NIE nadpisuje return value</span>
+<span class="kw">static</span> <span class="kw">int</span> <span class="fn">notTricky</span>() {
+  <span class="kw">int</span> x = <span class="num">1</span>;
+  <span class="kw">try</span> {
+    <span class="kw">return</span> x;   <span class="cm">// zwraca kopię x = 1</span>
+  } <span class="kw">finally</span> {
+    x = <span class="num">2</span>;      <span class="cm">// zmienia x ale nie zwracaną wartość!</span>
+  }
+}
+<span class="cm">// notTricky() ➜ 1 (nie 2!)</span></pre>
+    </div>
+    <div>
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--rose)"></div> Multi-catch, try-with-resources, suppressed</div>
+        <pre><span class="cm">// Multi-catch — typy nie mogą być w relacji dziedziczenia</span>
+<span class="kw">try</span> { ... }
+<span class="kw">catch</span> (<span class="cls">IOException</span> | <span class="cls">SQLException</span> e) {  <span class="cm">// OK — niezwiązane</span>
+  <span class="cm">// e jest effectively final — nie można przypisać nowej wartości!</span>
+}
+<span class="cm">// catch (Exception | IOException e) {}  // BŁĄD KOMPILACJI!</span>
+<span class="cm">// IOException extends Exception — redundant</span>
+
+<span class="cm">// Try-with-resources — close() wywoływane automatycznie</span>
+<span class="kw">try</span> (<span class="cls">InputStream</span> is = <span class="kw">new</span> <span class="cls">FileInputStream</span>(<span class="str">"f"</span>);
+     <span class="cls">OutputStream</span> os = <span class="kw">new</span> <span class="cls">FileOutputStream</span>(<span class="str">"g"</span>)) {
+  <span class="cm">// os.close() wywoływane PRZED is.close() (LIFO)</span>
+  <span class="cm">// Exception z close() → Suppressed exception</span>
+}
+
+<span class="cm">// Suppressed exceptions — Java 7+</span>
+<span class="kw">try</span> {
+  <span class="kw">throw</span> <span class="kw">new</span> <span class="cls">RuntimeException</span>(<span class="str">"primary"</span>);
+} <span class="kw">catch</span> (<span class="cls">RuntimeException</span> e) {
+  e.<span class="fn">addSuppressed</span>(<span class="kw">new</span> <span class="cls">Exception</span>(<span class="str">"suppressed"</span>));
+  <span class="kw">throw</span> e;
+}
+<span class="cm">// e.getSuppressed() → tablica suppressed exceptions</span>
+
+<span class="cm">// Checked vs Unchecked</span>
+<span class="cm">// Checked: extends Exception (nie RuntimeException)</span>
+<span class="cm">// Unchecked: extends RuntimeException lub Error</span>
+<span class="cm">// Error: OutOfMemoryError, StackOverflowError — nie catch!</span>
+
+<span class="cm">// StackOverflowError — rekurencja bez base case</span>
+<span class="kw">static</span> <span class="kw">void</span> <span class="fn">infinite</span>() { <span class="fn">infinite</span>(); }  <span class="cm">// StackOverflowError</span></pre>
+      </div>
+      <div class="gap12"></div>
+      <div class="alert al-rose">
+        <span class="alert-label">Rethrow z Java 7</span>
+        <code>catch (Exception e) { throw e; }</code> — Java 7+ jest wystarczająco mądra żeby wiedzieć że jeśli w try może lecieć tylko <code>IOException</code>, to rethrow jest bezpieczny jako checked. Kompilator wie dokładnie co leci — nie musi być <code>throws Exception</code>.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 07 LAMBDAS & STREAMS ══ -->
+<section class="chapter" id="lambdas">
+  <div class="ch-head">
+    <div class="ch-num">07 / 10</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--sky)">Lambdy & Streams</div>
+      <div class="ch-title">Functional interfaces, method references, lazy evaluation, pułapki streamów</div>
+      <div class="ch-desc">Lambdy i Stream API mają wiele subtelnych zachowań. Streams są lazy — terminal operation go uruchamia. Stream nie może być użyty dwa razy. Pułapki z modyfikacją kolekcji podczas streamowania.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--sky)"></div> Stream — lazy, single-use, pułapki</div>
+      <pre><span class="cm">// Stream jest LAZY — intermediate ops nie wykonują się bez terminal</span>
+<span class="cls">Stream</span>&lt;<span class="cls">Integer</span>&gt; stream = <span class="cls">Stream</span>.<span class="fn">of</span>(<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>)
+  .<span class="fn">filter</span>(n -> { <span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"filter: "</span>+n); <span class="kw">return</span> n > <span class="num">1</span>; })
+  .<span class="fn">map</span>(n -> { <span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"map: "</span>+n); <span class="kw">return</span> n * <span class="num">2</span>; });
+<span class="cm">// Nic nie wydrukowano jeszcze!</span>
+stream.<span class="fn">forEach</span>(<span class="cls">System</span>.out::println);
+<span class="cm">// Teraz: filter:1, filter:2, map:2, 4, filter:3, map:3, 6</span>
+<span class="cm">// Vertical processing — każdy element przez cały pipeline</span>
+
+<span class="cm">// Stream single-use — drugi terminal operation = exception</span>
+<span class="cls">Stream</span>&lt;<span class="cls">String</span>&gt; s = <span class="cls">Stream</span>.<span class="fn">of</span>(<span class="str">"a"</span>, <span class="str">"b"</span>);
+s.<span class="fn">forEach</span>(<span class="cls">System</span>.out::println);
+<span class="cm">// s.count(); // ➜ IllegalStateException: stream already operated upon</span>
+
+<span class="cm">// findFirst vs findAny — parallel streams</span>
+<span class="cls">Optional</span>&lt;<span class="cls">String</span>&gt; first = <span class="cls">Stream</span>.<span class="fn">of</span>(<span class="str">"a"</span>,<span class="str">"b"</span>,<span class="str">"c"</span>)
+  .<span class="fn">parallel</span>().<span class="fn">filter</span>(x -> x.<span class="fn">compareTo</span>(<span class="str">"b"</span>) >= <span class="num">0</span>)
+  .<span class="fn">findFirst</span>();  <span class="cm">// zawsze "b" — deterministyczny</span>
+
+<span class="cls">Optional</span>&lt;<span class="cls">String</span>&gt; any = <span class="cls">Stream</span>.<span class="fn">of</span>(<span class="str">"a"</span>,<span class="str">"b"</span>,<span class="str">"c"</span>)
+  .<span class="fn">parallel</span>().<span class="fn">filter</span>(x -> x.<span class="fn">compareTo</span>(<span class="str">"b"</span>) >= <span class="num">0</span>)
+  .<span class="fn">findAny</span>();    <span class="cm">// może być "b" lub "c" — niedeterministyczny</span>
+
+<span class="cm">// reduce — akumulator musi być asocjatywny dla parallel</span>
+<span class="kw">int</span> sum = <span class="cls">IntStream</span>.<span class="fn">rangeClosed</span>(<span class="num">1</span>, <span class="num">10</span>)
+  .<span class="fn">reduce</span>(<span class="num">0</span>, <span class="cls">Integer</span>::<span class="fn">sum</span>);  <span class="cm">// ➜ 55</span>
+
+<span class="cm">// collect vs toList (Java 16+)</span>
+<span class="cls">List</span>&lt;<span class="cls">String</span>&gt; mutable   = stream.<span class="fn">collect</span>(<span class="cls">Collectors</span>.<span class="fn">toList</span>());   <span class="cm">// mutable</span>
+<span class="cls">List</span>&lt;<span class="cls">String</span>&gt; immutable = stream.<span class="fn">toList</span>();                        <span class="cm">// immutable (Java 16+)</span></pre>
+    </div>
+    <div>
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--sky)"></div> Method references, Optional, functional interfaces</div>
+        <pre><span class="cm">// 4 typy method references</span>
+<span class="cm">// 1. Static method</span>
+<span class="cls">Function</span>&lt;<span class="cls">String</span>, <span class="cls">Integer</span>&gt; f1 = <span class="cls">Integer</span>::<span class="fn">parseInt</span>;
+
+<span class="cm">// 2. Instance method konkretnego obiektu</span>
+<span class="cls">String</span> str = <span class="str">"hello"</span>;
+<span class="cls">Supplier</span>&lt;<span class="cls">String</span>&gt; f2 = str::<span class="fn">toUpperCase</span>;
+
+<span class="cm">// 3. Instance method arbitrary obiektu (pierwszy arg = this)</span>
+<span class="cls">Function</span>&lt;<span class="cls">String</span>, <span class="cls">String</span>&gt; f3 = <span class="cls">String</span>::<span class="fn">toUpperCase</span>;
+<span class="cm">// equivalent: s -> s.toUpperCase()</span>
+
+<span class="cm">// 4. Constructor reference</span>
+<span class="cls">Supplier</span>&lt;<span class="cls">ArrayList</span>&gt; f4 = <span class="cls">ArrayList</span>::<span class="kw">new</span>;
+
+<span class="cm">// Optional — pułapki</span>
+<span class="cls">Optional</span>&lt;<span class="cls">String</span>&gt; opt = <span class="cls">Optional</span>.<span class="fn">of</span>(<span class="str">"hello"</span>);
+opt.<span class="fn">get</span>();              <span class="cm">// OK, ale rzuca NoSuchElementException gdy empty</span>
+opt.<span class="fn">orElse</span>(<span class="str">"default"</span>); <span class="cm">// bezpieczne</span>
+
+<span class="cm">// orElse vs orElseGet — różnica gdy tworzysz obiekt!</span>
+<span class="cls">Optional</span>&lt;<span class="cls">String</span>&gt; present = <span class="cls">Optional</span>.<span class="fn">of</span>(<span class="str">"val"</span>);
+present.<span class="fn">orElse</span>(<span class="fn">expensiveOp</span>());      <span class="cm">// expensiveOp() ZAWSZE wywoływana</span>
+present.<span class="fn">orElseGet</span>(() -> <span class="fn">expensive</span>()); <span class="cm">// expensiveOp() tylko gdy empty!</span>
+
+<span class="cm">// flatMap dla Optional — unikaj nested Optional</span>
+<span class="cls">Optional</span>&lt;<span class="cls">String</span>&gt; nested =
+  <span class="cls">Optional</span>.<span class="fn">of</span>(<span class="str">"hello"</span>)
+    .<span class="fn">flatMap</span>(s -> <span class="cls">Optional</span>.<span class="fn">of</span>(s.<span class="fn">toUpperCase</span>()));
+
+<span class="cm">// NIE rób Optional.get() bez isPresent() — użyj ifPresent/map</span>
+opt.<span class="fn">ifPresent</span>(<span class="cls">System</span>.out::println);
+<span class="cls">String</span> upper = opt.<span class="fn">map</span>(<span class="cls">String</span>::<span class="fn">toUpperCase</span>).<span class="fn">orElse</span>(<span class="str">""</span>);</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 08 CONCURRENCY ══ -->
+<section class="chapter" id="concurrency">
+  <div class="ch-head">
+    <div class="ch-num">08 / 10</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--k1)">Concurrency</div>
+      <div class="ch-title">volatile, synchronized, happens-before, AtomicXxx, pułapki wątków</div>
+      <div class="ch-desc">Współbieżność w Javie to temat-rzeka na rozmowach. volatile nie zastępuje synchronizacji, synchronized ma semantykę happens-before, i++ nie jest atomowy nawet dla int.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--k1)"></div> volatile, happens-before, pułapki</div>
+      <pre><span class="cm">// volatile — widoczność, NIE atomowość złożonych operacji</span>
+<span class="kw">volatile</span> <span class="kw">boolean</span> running = <span class="kw">true</span>;   <span class="cm">// OK dla flag boolean</span>
+<span class="kw">volatile</span> <span class="kw">int</span> counter = <span class="num">0</span>;
+<span class="cm">// counter++ NIE jest atomowe! = read + increment + write</span>
+<span class="cm">// Dwa wątki: obydwa czytają 0, obydwa zapisują 1 = lost update</span>
+
+<span class="cm">// Poprawnie: AtomicInteger</span>
+<span class="cls">AtomicInteger</span> atomic = <span class="kw">new</span> <span class="cls">AtomicInteger</span>(<span class="num">0</span>);
+atomic.<span class="fn">incrementAndGet</span>();    <span class="cm">// atomowy</span>
+atomic.<span class="fn">compareAndSet</span>(<span class="num">5</span>, <span class="num">6</span>); <span class="cm">// CAS — set 6 tylko jeśli jest 5</span>
+
+<span class="cm">// synchronized — happens-before guarantee</span>
+<span class="kw">class</span> <span class="cls">Counter</span> {
+  <span class="kw">private int</span> count = <span class="num">0</span>;
+  <span class="kw">synchronized void</span> <span class="fn">increment</span>() { count++; }  <span class="cm">// lock na this</span>
+  <span class="kw">static synchronized void</span> <span class="fn">staticOp</span>() { }     <span class="cm">// lock na Class</span>
+}
+
+<span class="cm">// Double-checked locking — klasyczny pattern (Java 5+)</span>
+<span class="kw">class</span> <span class="cls">Singleton</span> {
+  <span class="kw">private volatile static</span> <span class="cls">Singleton</span> instance; <span class="cm">// MUST be volatile</span>
+  <span class="kw">static</span> <span class="cls">Singleton</span> <span class="fn">getInstance</span>() {
+    <span class="kw">if</span> (instance == <span class="kw">null</span>) {
+      <span class="kw">synchronized</span> (<span class="cls">Singleton</span>.<span class="kw">class</span>) {
+        <span class="kw">if</span> (instance == <span class="kw">null</span>) {       <span class="cm">// drugi check</span>
+          instance = <span class="kw">new</span> <span class="cls">Singleton</span>(); <span class="cm">// BEZ volatile: reorder risk!</span>
+        }
+      }
+    }
+    <span class="kw">return</span> instance;
+  }
+}
+<span class="cm">// Lepiej: Initialization-on-demand holder idiom:</span>
+<span class="kw">class</span> <span class="cls">Better</span> {
+  <span class="kw">private static class</span> <span class="cls">Holder</span> { <span class="kw">static final</span> <span class="cls">Better</span> INSTANCE = <span class="kw">new</span> <span class="cls">Better</span>(); }
+  <span class="kw">static</span> <span class="cls">Better</span> <span class="fn">get</span>() { <span class="kw">return</span> <span class="cls">Holder</span>.INSTANCE; }
+}</pre>
+    </div>
+    <div>
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--k1)"></div> wait/notify, ThreadLocal, CompletableFuture</div>
+        <pre><span class="cm">// wait() MUSI być w synchronized — inaczej IllegalMonitorStateException</span>
+<span class="kw">synchronized</span> (obj) {
+  <span class="kw">while</span> (!condition) {   <span class="cm">// WHILE nie IF — spurious wakeups!</span>
+    obj.<span class="fn">wait</span>();
+  }
+  <span class="cm">// praca z condition</span>
+  obj.<span class="fn">notifyAll</span>();       <span class="cm">// notify vs notifyAll — bezpieczniej notifyAll</span>
+}
+
+<span class="cm">// ThreadLocal — per-thread state</span>
+<span class="cls">ThreadLocal</span>&lt;<span class="cls">SimpleDateFormat</span>&gt; sdf = 
+  <span class="cls">ThreadLocal</span>.<span class="fn">withInitial</span>(() -> <span class="kw">new</span> <span class="cls">SimpleDateFormat</span>(<span class="str">"yyyy-MM-dd"</span>));
+<span class="cm">// PAMIĘTAJ: remove() po użyciu w thread pool (thread reuse!)</span>
+<span class="kw">try</span> {
+  sdf.<span class="fn">get</span>().<span class="fn">format</span>(<span class="kw">new</span> <span class="cls">Date</span>());
+} <span class="kw">finally</span> {
+  sdf.<span class="fn">remove</span>();  <span class="cm">// bez tego: memory leak + wrong state w pooled threads</span>
+}
+
+<span class="cm">// CompletableFuture — async chain</span>
+<span class="cls">CompletableFuture</span>.<span class="fn">supplyAsync</span>(() -> <span class="fn">fetchData</span>())
+  .<span class="fn">thenApply</span>(<span class="cls">String</span>::<span class="fn">toUpperCase</span>)  <span class="cm">// same thread (often)</span>
+  .<span class="fn">thenApplyAsync</span>(<span class="cls">String</span>::<span class="fn">trim</span>)    <span class="cm">// ForkJoinPool.commonPool()</span>
+  .<span class="fn">exceptionally</span>(e -> <span class="str">"error"</span>)
+  .<span class="fn">thenAccept</span>(<span class="cls">System</span>.out::println);
+
+<span class="cm">// join() vs get() — join rzuca unchecked (CompletionException)</span>
+<span class="cm">// get() rzuca checked InterruptedException + ExecutionException</span></pre>
+      </div>
+      <div class="gap12"></div>
+      <div class="alert al-k">
+        <span class="alert-label">Deadlock — 4 warunki Coffmana</span>
+        Mutex (zasoby wyłączne) + Hold &amp; Wait (trzymasz i czekasz) + No Preemption (nie można odebrać) + Circular Wait (cykl zależności). Zapobieganie: <strong>zawsze lockuj w tej samej kolejności</strong>. Diagnoza: <code>jstack &lt;pid&gt;</code> → szukaj "BLOCKED" i "waiting to lock".
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 09 COLLECTIONS ══ -->
+<section class="chapter" id="collections">
+  <div class="ch-head">
+    <div class="ch-num">09 / 10</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--amber)">Collections & equals/hashCode</div>
+      <div class="ch-title">equals/hashCode kontrakt, ConcurrentModificationException, iterator</div>
+      <div class="ch-desc">equals() i hashCode() mają kontrakt który musisz znać. Złamanie go powoduje że obiekty znikają w HashSet lub duplikują się. ConcurrentModificationException przy modyfikacji podczas iteracji to klasyczna pułapka.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--amber)"></div> equals/hashCode kontrakt — skutki złamania</div>
+      <pre><span class="cm">// Kontrakt equals(): reflexive, symmetric, transitive, consistent</span>
+<span class="cm">// Kontrakt hashCode(): jeśli a.equals(b) to a.hashCode() == b.hashCode()</span>
+<span class="cm">// Odwrotnie NIE musi być! (hash collision = OK)</span>
+
+<span class="cm">// Klasa BEZ override hashCode — złamanie kontraktu</span>
+<span class="kw">class</span> <span class="cls">Bad</span> {
+  <span class="kw">int</span> id;
+  <span class="cls">Bad</span>(<span class="kw">int</span> id) { <span class="kw">this</span>.id = id; }
+  <span class="ann">@Override</span>
+  <span class="kw">public boolean</span> <span class="fn">equals</span>(<span class="cls">Object</span> o) {
+    <span class="kw">return</span> o <span class="kw">instanceof</span> <span class="cls">Bad</span> b &amp;&amp; b.id == <span class="kw">this</span>.id;
+  }
+  <span class="cm">// BRAK hashCode() → używa Object.hashCode() (address-based)</span>
+}
+
+<span class="cls">Bad</span> b1 = <span class="kw">new</span> <span class="cls">Bad</span>(<span class="num">1</span>), b2 = <span class="kw">new</span> <span class="cls">Bad</span>(<span class="num">1</span>);
+b1.<span class="fn">equals</span>(b2);                        <span class="cm">// ➜ true</span>
+<span class="kw">new</span> <span class="cls">HashSet</span>&lt;&gt;().<span class="fn">add</span>(b1); <span class="fn">add</span>(b2);    <span class="cm">// ➜ 2 elementy! (różne hash buckets)</span>
+<span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;().<span class="fn">put</span>(b1, <span class="str">"x"</span>).<span class="fn">get</span>(b2); <span class="cm">// ➜ null!!! (b2 w złym bucket)</span>
+
+<span class="cm">// Poprawny hashCode dla powyższej klasy:</span>
+<span class="ann">@Override</span>
+<span class="kw">public int</span> <span class="fn">hashCode</span>() { <span class="kw">return</span> <span class="cls">Integer</span>.<span class="fn">hashCode</span>(id); }
+
+<span class="cm">// Mutable key w HashMap — katastrofa!</span>
+<span class="cls">List</span>&lt;<span class="cls">Integer</span>&gt; key = <span class="kw">new</span> <span class="cls">ArrayList</span>&lt;&gt;(<span class="cls">Arrays</span>.<span class="fn">asList</span>(<span class="num">1</span>, <span class="num">2</span>));
+<span class="cls">Map</span>&lt;<span class="cls">List</span>&lt;<span class="cls">Integer</span>&gt;, <span class="cls">String</span>&gt; map = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();
+map.<span class="fn">put</span>(key, <span class="str">"value"</span>);
+key.<span class="fn">add</span>(<span class="num">3</span>);          <span class="cm">// hashCode zmienił się!</span>
+map.<span class="fn">get</span>(key);         <span class="cm">// ➜ null! (szuka w złym buckecie)</span></pre>
+    </div>
+    <div>
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--amber)"></div> ConcurrentModificationException, iterator, fail-fast</div>
+        <pre><span class="cm">// ConcurrentModificationException — modyfikacja podczas iteracji</span>
+<span class="cls">List</span>&lt;<span class="cls">Integer</span>&gt; list = <span class="kw">new</span> <span class="cls">ArrayList</span>&lt;&gt;(<cls>Arrays</cls>.<fn>asList</fn>(<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>));
+
+<span class="cm">// ❌ Pętla for-each + remove → ConcurrentModificationException</span>
+<span class="kw">for</span> (<span class="cls">Integer</span> i : list) {
+  <span class="kw">if</span> (i % <span class="num">2</span> == <span class="num">0</span>) list.<span class="fn">remove</span>(i); <span class="cm">// ➜ ConcurrentModificationException</span>
+}
+
+<span class="cm">// ✅ Iterator.remove() — bezpieczne</span>
+<span class="cls">Iterator</span>&lt;<span class="cls">Integer</span>&gt; it = list.<span class="fn">iterator</span>();
+<span class="kw">while</span> (it.<span class="fn">hasNext</span>()) {
+  <span class="kw">if</span> (it.<span class="fn">next</span>() % <span class="num">2</span> == <span class="num">0</span>) it.<span class="fn">remove</span>(); <span class="cm">// OK</span>
+}
+
+<span class="cm">// ✅ removeIf (Java 8) — najlepsze</span>
+list.<span class="fn">removeIf</span>(i -> i % <span class="num">2</span> == <span class="num">0</span>);
+
+<span class="cm">// ✅ Stream filter — nowa lista</span>
+<span class="cls">List</span>&lt;<span class="cls">Integer</span>&gt; filtered = list.<span class="fn">stream</span>()
+  .<span class="fn">filter</span>(i -> i % <span class="num">2</span> != <span class="num">0</span>)
+  .<span class="fn">collect</span>(<span class="cls">Collectors</span>.<span class="fn">toList</span>());
+
+<span class="cm">// Fail-fast vs fail-safe iteratory</span>
+<span class="cm">// ArrayList, HashMap → fail-fast (rzuca CME)</span>
+<span class="cm">// CopyOnWriteArrayList, ConcurrentHashMap → fail-safe (kopia)</span>
+
+<span class="cm">// Arrays.asList() — PUŁAPKA: fixed-size!</span>
+<span class="cls">List</span>&lt;<span class="cls">String</span>&gt; fixed = <span class="cls">Arrays</span>.<span class="fn">asList</span>(<span class="str">"a"</span>, <span class="str">"b"</span>);
+fixed.<span class="fn">set</span>(<span class="num">0</span>, <span class="str">"x"</span>);    <span class="cm">// OK — modyfikacja elementu</span>
+<span class="cm">// fixed.add("c"); // ➜ UnsupportedOperationException!</span>
+<span class="cls">List</span>&lt;<span class="cls">String</span>&gt; mutable = <span class="kw">new</span> <span class="cls">ArrayList</span>&lt;&gt;(fixed); <span class="cm">// zrób mutable kopię</span>
+
+<span class="cm">// List.of() (Java 9) — immutable AND null-hostile</span>
+<span class="cls">List</span>&lt;<span class="cls">String</span>&gt; immutable = <span class="cls">List</span>.<span class="fn">of</span>(<span class="str">"a"</span>, <span class="str">"b"</span>);
+<span class="cm">// immutable.add("c");    // UnsupportedOperationException</span>
+<span class="cm">// List.of(null);         // NullPointerException!</span></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 10 JAVA 17-21 ══ -->
+<section class="chapter" id="modern">
+  <div class="ch-head">
+    <div class="ch-num">10 / 10</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--green)">Java 17–21 Modern Features</div>
+      <div class="ch-title">Records, Sealed classes, Pattern Matching, Switch Expressions, Text Blocks</div>
+      <div class="ch-desc">Nowoczesna Java ma eleganckie features które pojawiają się na rozmowach. Records (niezmienne data classes), sealed classes (zamknięta hierarchia), pattern matching w instanceof i switch.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--green)"></div> Records, Sealed Classes, Pattern Matching</div>
+      <pre><span class="cm">// ══ RECORDS (Java 16) ════════════════════════════</span>
+<span class="cm">// Auto-generuje: constructor, getters, equals, hashCode, toString</span>
+<span class="kw">record</span> <span class="cls">Point</span>(<span class="kw">int</span> x, <span class="kw">int</span> y) {
+  <span class="cm">// Compact constructor — walidacja</span>
+  <span class="cls">Point</span> {
+    <span class="kw">if</span> (x &lt; <span class="num">0</span> || y &lt; <span class="num">0</span>) <span class="kw">throw new</span> <span class="cls">IllegalArgumentException</span>();
+  }
+  <span class="cm">// Można dodać metody i static fields (nie instance!)</span>
+  <span class="kw">double</span> <span class="fn">distance</span>() { <span class="kw">return</span> <span class="cls">Math</span>.<span class="fn">sqrt</span>(x*x + y*y); }
+}
+<span class="cm">// Getter to p.x() nie p.getX()!</span>
+<span class="cls">Point</span> p = <span class="kw">new</span> <span class="cls">Point</span>(<span class="num">3</span>, <span class="num">4</span>);
+p.<span class="fn">x</span>();   <span class="cm">// ➜ 3</span>
+<span class="cm">// p.x = 5;  // BŁĄD — fields są final!</span>
+
+<span class="cm">// ══ SEALED CLASSES (Java 17) ══════════════════</span>
+<span class="kw">sealed interface</span> <span class="cls">Shape</span> <span class="kw">permits</span> <span class="cls">Circle</span>, <span class="cls">Rectangle</span>, <span class="cls">Triangle</span> {}
+<span class="kw">record</span> <span class="cls">Circle</span>(<span class="kw">double</span> r) <span class="kw">implements</span> <span class="cls">Shape</span> {}
+<span class="kw">record</span> <span class="cls">Rectangle</span>(<span class="kw">double</span> w, <span class="kw">double</span> h) <span class="kw">implements</span> <span class="cls">Shape</span> {}
+<span class="kw">final class</span> <span class="cls">Triangle</span> <span class="kw">implements</span> <span class="cls">Shape</span> {}
+<span class="cm">// Klasy nie w 'permits' → BŁĄD KOMPILACJI</span>
+
+<span class="cm">// ══ PATTERN MATCHING w SWITCH (Java 21) ══════</span>
+<span class="kw">double</span> <span class="fn">area</span>(<span class="cls">Shape</span> shape) {
+  <span class="kw">return switch</span> (shape) {
+    <span class="kw">case</span> <span class="cls">Circle</span> c    -> <span class="cls">Math</span>.PI * c.<span class="fn">r</span>() * c.<span class="fn">r</span>();
+    <span class="kw">case</span> <span class="cls">Rectangle</span> r -> r.<span class="fn">w</span>() * r.<span class="fn">h</span>();
+    <span class="kw">case</span> <span class="cls">Triangle</span> t  -> <span class="num">0.0</span>; <span class="cm">// placeholder</span>
+    <span class="cm">// Sealed: nie trzeba default! Kompilator wie że to wszystkie typy</span>
+  };
+}
+
+<span class="cm">// Guarded patterns (Java 21)</span>
+<span class="kw">return switch</span> (shape) {
+  <span class="kw">case</span> <span class="cls">Circle</span> c <span class="kw">when</span> c.<span class="fn">r</span>() > <span class="num">10</span> -> <span class="str">"big circle"</span>;
+  <span class="kw">case</span> <span class="cls">Circle</span> c                  -> <span class="str">"small circle"</span>;
+  <span class="kw">default</span>                        -> <span class="str">"other"</span>;
+};</pre>
+    </div>
+    <div>
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--green)"></div> Switch expressions, text blocks, var</div>
+        <pre><span class="cm">// ══ SWITCH EXPRESSION (Java 14) ══════════════</span>
+<span class="cm">// Arrow syntax — bez fall-through, zwraca wartość</span>
+<span class="kw">int</span> numLetters = <span class="kw">switch</span> (day) {
+  <span class="kw">case</span> MONDAY, FRIDAY, SUNDAY -> <span class="num">6</span>;
+  <span class="kw">case</span> TUESDAY                -> <span class="num">7</span>;
+  <span class="kw">case</span> THURSDAY, SATURDAY     -> <span class="num">8</span>;
+  <span class="kw">case</span> WEDNESDAY              -> <span class="num">9</span>;
+};  <span class="cm">// ; wymagane na końcu!</span>
+
+<span class="cm">// yield — w blokach switch expression</span>
+<span class="kw">int</span> result = <span class="kw">switch</span> (x) {
+  <span class="kw">case</span> <span class="num">1</span> -> <span class="num">10</span>;
+  <span class="kw">case</span> <span class="num">2</span> -> {
+    <span class="kw">int</span> y = x * <span class="num">2</span>;
+    <span class="kw">yield</span> y + <span class="num">1</span>;  <span class="cm">// YIELD nie return!</span>
+  }
+  <span class="kw">default</span> -> <span class="num">0</span>;
+};
+
+<span class="cm">// ══ TEXT BLOCKS (Java 15) ════════════════════</span>
+<span class="cls">String</span> json = <span class="str">"""
+    {
+      "name": "Jan",
+      "age": 30
+    }
+    """</span>;
+<span class="cm">// Indentacja bazowa usuwana automatycznie (closing """ pozycja)</span>
+<span class="cm">// \n dodawany na końcu każdej linii (usuń trailing newline: \)</span>
+
+<span class="cls">String</span> oneLine = <span class="str">"""
+    hello \
+    world"""</span>;  <span class="cm">// ➜ "hello world" (\ = line continuation)</span>
+
+<span class="cm">// ══ VAR (Java 10) ════════════════════════════</span>
+<span class="kw">var</span> list = <span class="kw">new</span> <span class="cls">ArrayList</span>&lt;<span class="cls">String</span>&gt;();  <span class="cm">// ArrayList&lt;String&gt;</span>
+<span class="kw">var</span> x = <span class="num">42</span>;             <span class="cm">// int (nie Integer!)</span>
+<span class="kw">var</span> d = <span class="num">3.14</span>;           <span class="cm">// double</span>
+<span class="cm">// var n = null;         // BŁĄD — nie można inferować null</span>
+<span class="cm">// var je TYLKO dla lokalne zmiennych — nie fields, nie params</span>
+
+<span class="cm">// ══ INSTANCEOF PATTERN MATCHING (Java 16) ════</span>
+<span class="kw">if</span> (obj <span class="kw">instanceof</span> <span class="cls">String</span> s &amp;&amp; s.<span class="fn">length</span>() > <span class="num">5</span>) {
+  <span class="cm">// s dostępne w całym bloku if (i w &&!)</span>
+  <span class="cls">System</span>.out.<span class="fn">println</span>(s.<span class="fn">toUpperCase</span>());
+}
+<span class="cm">// Stary sposób: if (obj instanceof String) { String s = (String)obj; }</span></pre>
+      </div>
+      <div class="gap12"></div>
+      <div class="alert al-green">
+        <span class="alert-label">Virtual Threads (Java 21) — Project Loom</span>
+        <code>Thread.ofVirtual().start(runnable)</code> lub <code>Executors.newVirtualThreadPerTaskExecutor()</code>. Miliony wirtualnych wątków na kilku OS threads. Blokujące I/O nie blokuje OS thread — carrier thread jest zwracany do pool. <strong>Nie używaj synchronized w virtual threads z blokującym I/O</strong> — pinning problemu. Używaj ReentrantLock zamiast synchronized.
+      </div>
+    </div>
+  </div>
+  <div class="gap16"></div>
+  <div class="strip" style="border-color:var(--violet);background:rgba(167,139,250,.04)">
+    <div class="strip-icon">🏆</div>
+    <div><strong>Senior Java — pełen obraz kodu:</strong> Na rozmowie kwalifikacyjnej senior wie że <code>Integer a=127; Integer b=127; a==b</code> to <code>true</code>, ale <code>128</code> to już <code>false</code>. Wie że <code>"hel"+"lo" == "hello"</code> to <code>true</code> (compile-time), ale <code>part+"lo" == "hello"</code> to <code>false</code> (runtime). Wie że <code>finally return</code> bije try <code>return</code>. Wie że overloading to compile-time a overriding to runtime. Wie że <code>i++</code> nie jest atomowe nawet dla <code>volatile int</code>. Wie że <code>List.of()</code> rzuca NPE na null, a <code>Arrays.asList()</code> rzuca UOE na add. <strong>Kluczowa umiejętność: czytaj kod powoli, krok po kroku — nigdy nie zakładaj "oczywistego" wyniku.</strong></div>
+  </div>
+</section>
+
+</main>
+<footer class="footer">
+  <div><span class="footer-title">Senior Java Syntax & Traps</span> — Kompendium</div>
+  <div>Typy · Autoboxing · String Pool · OOP · Generics · Exceptions · Lambdy · Concurrency · Collections · Java 21</div>
+</footer>
+</body>
+</html>

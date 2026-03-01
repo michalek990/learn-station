@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Struktury Danych</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --border: #1e1e2e;
+    --accent1: #00ff88;
+    --accent2: #ff6b35;
+    --accent3: #7c3aed;
+    --accent4: #06b6d4;
+    --accent5: #f59e0b;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --node-size: 48px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    padding: 40px 20px;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    letter-spacing: -2px;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, var(--accent1), var(--accent4));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .subtitle {
+    text-align: center;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.85rem;
+    margin-bottom: 60px;
+    letter-spacing: 2px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 24px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-4px);
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    border-radius: 16px 16px 0 0;
+  }
+
+  .card.green::before { background: var(--accent1); }
+  .card.green:hover { border-color: var(--accent1); }
+
+  .card.orange::before { background: var(--accent2); }
+  .card.orange:hover { border-color: var(--accent2); }
+
+  .card.purple::before { background: var(--accent3); }
+  .card.purple:hover { border-color: var(--accent3); }
+
+  .card.cyan::before { background: var(--accent4); }
+  .card.cyan:hover { border-color: var(--accent4); }
+
+  .card.yellow::before { background: var(--accent5); }
+  .card.yellow:hover { border-color: var(--accent5); }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .card-icon {
+    font-size: 1.5rem;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    flex-shrink: 0;
+  }
+
+  .green .card-icon { background: rgba(0,255,136,0.1); }
+  .orange .card-icon { background: rgba(255,107,53,0.1); }
+  .purple .card-icon { background: rgba(124,58,237,0.1); }
+  .cyan .card-icon { background: rgba(6,182,212,0.1); }
+  .yellow .card-icon { background: rgba(245,158,11,0.1); }
+
+  .card-title {
+    font-size: 1.2rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+
+  .complexity {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .card-desc {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 20px;
+    line-height: 1.6;
+  }
+
+  /* === VISUALIZATION AREA === */
+  .viz {
+    background: rgba(0,0,0,0.3);
+    border-radius: 10px;
+    padding: 20px;
+    min-height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    position: relative;
+  }
+
+  /* NODE styles */
+  .node {
+    width: var(--node-size);
+    height: var(--node-size);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+    position: relative;
+    transition: transform 0.2s;
+  }
+
+  .node:hover { transform: scale(1.1); }
+
+  .node-green { background: rgba(0,255,136,0.15); border: 2px solid var(--accent1); color: var(--accent1); }
+  .node-orange { background: rgba(255,107,53,0.15); border: 2px solid var(--accent2); color: var(--accent2); }
+  .node-purple { background: rgba(124,58,237,0.15); border: 2px solid var(--accent3); color: var(--accent3); }
+  .node-cyan { background: rgba(6,182,212,0.15); border: 2px solid var(--accent4); color: var(--accent4); }
+  .node-yellow { background: rgba(245,158,11,0.15); border: 2px solid var(--accent5); color: var(--accent5); }
+
+  .node-sq {
+    border-radius: 8px;
+  }
+
+  /* ARROW */
+  .arrow {
+    color: var(--muted);
+    font-size: 1.2rem;
+    margin: 0 4px;
+    flex-shrink: 0;
+  }
+
+  /* === ARRAY === */
+  .array-wrap {
+    display: flex;
+    align-items: stretch;
+    border: 2px solid var(--accent1);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .array-cell {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--accent1);
+    background: rgba(0,255,136,0.08);
+    border-right: 1px solid rgba(0,255,136,0.2);
+    position: relative;
+    flex-direction: column;
+    transition: background 0.2s;
+  }
+
+  .array-cell:hover { background: rgba(0,255,136,0.2); }
+  .array-cell:last-child { border-right: none; }
+
+  .array-idx {
+    font-size: 0.55rem;
+    color: var(--muted);
+    position: absolute;
+    top: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  /* === LINKED LIST === */
+  .ll-wrap {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .ll-node {
+    display: flex;
+    align-items: stretch;
+    border: 2px solid var(--accent2);
+    border-radius: 8px;
+    overflow: hidden;
+    height: 50px;
+  }
+
+  .ll-val {
+    width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    color: var(--accent2);
+    background: rgba(255,107,53,0.08);
+    font-size: 0.9rem;
+  }
+
+  .ll-ptr {
+    width: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,107,53,0.15);
+    border-left: 1px solid rgba(255,107,53,0.3);
+    font-size: 0.7rem;
+    color: var(--accent2);
+  }
+
+  .ll-null {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+    padding: 0 8px;
+  }
+
+  /* === STACK === */
+  .stack-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    position: relative;
+  }
+
+  .stack-cell {
+    width: 120px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--accent3);
+    background: rgba(124,58,237,0.1);
+    border: 1px solid rgba(124,58,237,0.3);
+    border-radius: 4px;
+    transition: background 0.2s;
+  }
+
+  .stack-cell:hover { background: rgba(124,58,237,0.2); }
+
+  .stack-cell.top {
+    border-color: var(--accent3);
+    background: rgba(124,58,237,0.2);
+  }
+
+  .stack-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--accent3);
+    margin-left: 8px;
+    align-self: flex-start;
+  }
+
+  .stack-row {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* === QUEUE === */
+  .queue-wrap {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+
+  .queue-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--cyan);
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    margin: 0 4px;
+  }
+
+  .queue-cell {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--accent4);
+    background: rgba(6,182,212,0.08);
+    border: 1px solid rgba(6,182,212,0.25);
+    transition: background 0.2s;
+  }
+
+  .queue-cell:hover { background: rgba(6,182,212,0.2); }
+  .queue-cell.first { border-color: var(--accent4); border-radius: 8px 0 0 8px; background: rgba(6,182,212,0.15); }
+  .queue-cell.last { border-radius: 0 8px 8px 0; }
+
+  /* === TREE === */
+  .tree-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    width: 100%;
+  }
+
+  .tree-level {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+
+  .tree-node {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--accent5);
+    background: rgba(245,158,11,0.1);
+    border: 2px solid var(--accent5);
+    transition: transform 0.2s, background 0.2s;
+    cursor: default;
+  }
+
+  .tree-node:hover { transform: scale(1.15); background: rgba(245,158,11,0.25); }
+  .tree-node.root { width: 50px; height: 50px; font-size: 1rem; background: rgba(245,158,11,0.2); }
+
+  .tree-connectors {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    position: relative;
+    height: 20px;
+    margin-bottom: 4px;
+  }
+
+  .tree-line {
+    position: absolute;
+    border-top: 2px solid rgba(245,158,11,0.4);
+    border-left: 2px solid rgba(245,158,11,0.4);
+    border-right: 2px solid rgba(245,158,11,0.4);
+  }
+
+  /* SVG tree lines */
+  .tree-svg {
+    width: 100%;
+    overflow: visible;
+  }
+
+  /* === HASH MAP === */
+  .hash-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 100%;
+  }
+
+  .hash-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .hash-bucket {
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .hash-entry {
+    display: flex;
+    align-items: center;
+    background: rgba(0,255,136,0.06);
+    border: 1px solid rgba(0,255,136,0.2);
+    border-radius: 6px;
+    overflow: hidden;
+    height: 32px;
+  }
+
+  .hash-key {
+    padding: 0 8px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent1);
+    border-right: 1px solid rgba(0,255,136,0.2);
+    height: 100%;
+    display: flex;
+    align-items: center;
+  }
+
+  .hash-val {
+    padding: 0 8px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--text);
+    height: 100%;
+    display: flex;
+    align-items: center;
+  }
+
+  .hash-empty {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--border);
+  }
+
+  /* === GRAPH === */
+  .graph-svg-wrap {
+    width: 100%;
+    height: 160px;
+  }
+
+  .graph-node-circle {
+    fill: rgba(124,58,237,0.15);
+    stroke: var(--accent3);
+    stroke-width: 2;
+    transition: fill 0.2s;
+    cursor: pointer;
+  }
+
+  .graph-node-circle:hover { fill: rgba(124,58,237,0.35); }
+
+  .graph-node-text {
+    fill: var(--accent3);
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    font-size: 14px;
+    text-anchor: middle;
+    dominant-baseline: middle;
+    pointer-events: none;
+  }
+
+  .graph-edge {
+    stroke: rgba(124,58,237,0.35);
+    stroke-width: 2;
+    marker-end: url(#arrowhead);
+  }
+
+  /* === HEAP === */
+  .heap-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+  }
+
+  .heap-row {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+  }
+
+  .heap-node {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--accent4);
+    background: rgba(6,182,212,0.1);
+    border: 2px solid var(--accent4);
+    transition: transform 0.2s;
+  }
+
+  .heap-node:hover { transform: scale(1.15); }
+  .heap-node.root-node { background: rgba(6,182,212,0.25); width: 48px; height: 48px; }
+
+  /* OPERATIONS */
+  .ops {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+  }
+
+  .op-badge {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    padding: 3px 8px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .op-badge.fast { background: rgba(0,255,136,0.1); color: var(--accent1); border: 1px solid rgba(0,255,136,0.2); }
+  .op-badge.med  { background: rgba(245,158,11,0.1); color: var(--accent5); border: 1px solid rgba(245,158,11,0.2); }
+  .op-badge.slow { background: rgba(255,107,53,0.1); color: var(--accent2); border: 1px solid rgba(255,107,53,0.2); }
+
+  /* ANIMATION */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card {
+    animation: fadeIn 0.5s ease backwards;
+  }
+
+  .card:nth-child(1) { animation-delay: 0.05s; }
+  .card:nth-child(2) { animation-delay: 0.1s; }
+  .card:nth-child(3) { animation-delay: 0.15s; }
+  .card:nth-child(4) { animation-delay: 0.2s; }
+  .card:nth-child(5) { animation-delay: 0.25s; }
+  .card:nth-child(6) { animation-delay: 0.3s; }
+  .card:nth-child(7) { animation-delay: 0.35s; }
+  .card:nth-child(8) { animation-delay: 0.4s; }
+
+  .tooltip {
+    position: absolute;
+    background: #1e1e2e;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--text);
+    pointer-events: none;
+    white-space: nowrap;
+    z-index: 10;
+    opacity: 0;
+    transition: opacity 0.2s;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .node:hover .tooltip,
+  .tree-node:hover .tooltip { opacity: 1; }
+
+  .sep {
+    height: 1px;
+    background: var(--border);
+    margin: 14px 0;
+  }
+
+  .section-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  /* BIG O CHART */
+  .bigo-card {
+    grid-column: 1 / -1;
+  }
+
+  .bigo-wrap {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 20px 0 10px;
+  }
+
+  .bigo-bar-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .bigo-bar {
+    width: 60px;
+    border-radius: 6px 6px 0 0;
+    transition: opacity 0.2s;
+    cursor: default;
+  }
+
+  .bigo-bar:hover { opacity: 0.8; }
+
+  .bigo-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text);
+    text-align: center;
+  }
+
+  .bigo-desc {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--muted);
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<h1>Struktury Danych</h1>
+<p class="subtitle">// wizualizacja interaktywna — najedź na elementy</p>
+
+<div class="grid">
+
+  <!-- ARRAY -->
+  <div class="card green">
+    <div class="card-header">
+      <div class="card-icon">📦</div>
+      <div>
+        <div class="card-title">Tablica (Array)</div>
+        <div class="complexity">indeksowany, ciągły blok pamięci</div>
+      </div>
+    </div>
+    <p class="card-desc">Elementy leżą obok siebie w pamięci. Znasz indeks → masz element natychmiast. Jak szuflady ponumerowane od 0.</p>
+    <div class="viz">
+      <div>
+        <div class="section-label" style="text-align:center;margin-bottom:10px;">int[] arr = {7, 2, 9, 4, 1, 6, 3}</div>
+        <div class="array-wrap">
+          <div class="array-cell"><span class="array-idx">0</span>7</div>
+          <div class="array-cell"><span class="array-idx">1</span>2</div>
+          <div class="array-cell"><span class="array-idx">2</span>9</div>
+          <div class="array-cell"><span class="array-idx">3</span>4</div>
+          <div class="array-cell"><span class="array-idx">4</span>1</div>
+          <div class="array-cell"><span class="array-idx">5</span>6</div>
+          <div class="array-cell"><span class="array-idx">6</span>3</div>
+        </div>
+        <div style="text-align:center;margin-top:8px;font-family:'Space Mono',monospace;font-size:0.7rem;color:var(--accent1);">arr[2] = 9 → natychmiast! O(1)</div>
+      </div>
+    </div>
+    <div class="ops">
+      <span class="op-badge fast">dostęp [i] → O(1)</span>
+      <span class="op-badge fast">zapis [i] → O(1)</span>
+      <span class="op-badge slow">szukanie → O(n)</span>
+      <span class="op-badge slow">wstawianie → O(n)</span>
+    </div>
+  </div>
+
+  <!-- LINKED LIST -->
+  <div class="card orange">
+    <div class="card-header">
+      <div class="card-icon">🔗</div>
+      <div>
+        <div class="card-title">Lista Wiązana (Linked List)</div>
+        <div class="complexity">węzły połączone wskaźnikami</div>
+      </div>
+    </div>
+    <p class="card-desc">Każdy element (węzeł) trzyma wartość i wskaźnik na następny. Nie ma ciągłości w pamięci — jak łańcuch.</p>
+    <div class="viz">
+      <div>
+        <div class="section-label" style="text-align:center;margin-bottom:10px;">HEAD → [val|next] → [val|next] → NULL</div>
+        <div class="ll-wrap" style="justify-content:center;">
+          <div style="font-family:'Space Mono',monospace;font-size:0.7rem;color:var(--accent2);margin-right:4px;">HEAD</div>
+          <span class="arrow">→</span>
+          <div class="ll-node"><div class="ll-val">7</div><div class="ll-ptr">→</div></div>
+          <span class="arrow">→</span>
+          <div class="ll-node"><div class="ll-val">2</div><div class="ll-ptr">→</div></div>
+          <span class="arrow">→</span>
+          <div class="ll-node"><div class="ll-val">9</div><div class="ll-ptr">→</div></div>
+          <span class="arrow">→</span>
+          <div class="ll-null">NULL</div>
+        </div>
+        <div style="text-align:center;margin-top:8px;font-family:'Space Mono',monospace;font-size:0.7rem;color:var(--accent2);">dodaj na początku → O(1) | szukaj → O(n)</div>
+      </div>
+    </div>
+    <div class="ops">
+      <span class="op-badge fast">dodaj na pocz. → O(1)</span>
+      <span class="op-badge slow">dostęp [i] → O(n)</span>
+      <span class="op-badge slow">szukanie → O(n)</span>
+      <span class="op-badge med">usuń z pocz. → O(1)</span>
+    </div>
+  </div>
+
+  <!-- STACK -->
+  <div class="card purple">
+    <div class="card-header">
+      <div class="card-icon">📚</div>
+      <div>
+        <div class="card-title">Stos (Stack)</div>
+        <div class="complexity">LIFO — Last In, First Out</div>
+      </div>
+    </div>
+    <p class="card-desc">Jak stos talerzy — kładziesz na wierzch (push) i zdejmujesz z wierzchu (pop). Ostatni wchodzi, pierwszy wychodzi.</p>
+    <div class="viz">
+      <div style="width:100%;">
+        <div style="display:flex;gap:20px;justify-content:center;align-items:flex-start;">
+          <div class="stack-wrap">
+            <div class="stack-row">
+              <div class="stack-cell top">42</div>
+              <div class="stack-label">← TOP (push/pop tu)</div>
+            </div>
+            <div class="stack-cell">17</div>
+            <div class="stack-cell">8</div>
+            <div class="stack-cell">33</div>
+            <div style="width:120px;height:3px;background:var(--accent3);border-radius:2px;margin-top:2px;"></div>
+          </div>
+          <div style="font-family:'Space Mono',monospace;font-size:0.7rem;color:var(--muted);margin-top:20px;line-height:2;">
+            <div style="color:var(--accent3);">push(5) ↓</div>
+            <div style="color:var(--accent3);">pop() ↑</div>
+            <div>peek() = 42</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="ops">
+      <span class="op-badge fast">push → O(1)</span>
+      <span class="op-badge fast">pop → O(1)</span>
+      <span class="op-badge fast">peek → O(1)</span>
+      <span class="op-badge slow">szukanie → O(n)</span>
+    </div>
+  </div>
+
+  <!-- QUEUE -->
+  <div class="card cyan">
+    <div class="card-header">
+      <div class="card-icon">🚶</div>
+      <div>
+        <div class="card-title">Kolejka (Queue)</div>
+        <div class="complexity">FIFO — First In, First Out</div>
+      </div>
+    </div>
+    <p class="card-desc">Jak kolejka w sklepie — wchodzisz z tyłu (enqueue) i wychodzisz z przodu (dequeue). Pierwszy wchodzi, pierwszy wychodzi.</p>
+    <div class="viz">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:10px;width:100%;">
+        <div style="font-family:'Space Mono',monospace;font-size:0.7rem;color:var(--accent4);display:flex;width:100%;justify-content:space-between;padding:0 10px;">
+          <span>← dequeue (wychodzi)</span>
+          <span>(wchodzi) enqueue →</span>
+        </div>
+        <div class="queue-wrap">
+          <span style="font-size:1.2rem;">←</span>
+          <div class="queue-cell first">3</div>
+          <div class="queue-cell">7</div>
+          <div class="queue-cell">1</div>
+          <div class="queue-cell">9</div>
+          <div class="queue-cell last">4</div>
+          <span style="font-size:1.2rem;">←</span>
+        </div>
+        <div style="font-family:'Space Mono',monospace;font-size:0.7rem;color:var(--accent4);">3 wyjdzie pierwszy • 4 wyjdzie ostatni</div>
+      </div>
+    </div>
+    <div class="ops">
+      <span class="op-badge fast">enqueue → O(1)</span>
+      <span class="op-badge fast">dequeue → O(1)</span>
+      <span class="op-badge fast">peek → O(1)</span>
+      <span class="op-badge slow">szukanie → O(n)</span>
+    </div>
+  </div>
+
+  <!-- BINARY TREE -->
+  <div class="card yellow">
+    <div class="card-header">
+      <div class="card-icon">🌳</div>
+      <div>
+        <div class="card-title">Drzewo Binarne (BST)</div>
+        <div class="complexity">lewy syn &lt; rodzic &lt; prawy syn</div>
+      </div>
+    </div>
+    <p class="card-desc">Każdy węzeł ma max 2 dzieci. W BST: lewe dziecko jest mniejsze, prawe większe. Szukanie dzieli problem na pół — O(log n).</p>
+    <div class="viz">
+      <div style="width:100%;">
+        <svg viewBox="0 0 300 150" class="tree-svg">
+          <!-- Edges -->
+          <line x1="150" y1="30" x2="80" y2="75" stroke="rgba(245,158,11,0.4)" stroke-width="2"/>
+          <line x1="150" y1="30" x2="220" y2="75" stroke="rgba(245,158,11,0.4)" stroke-width="2"/>
+          <line x1="80" y1="75" x2="45" y2="120" stroke="rgba(245,158,11,0.3)" stroke-width="2"/>
+          <line x1="80" y1="75" x2="115" y2="120" stroke="rgba(245,158,11,0.3)" stroke-width="2"/>
+          <line x1="220" y1="75" x2="185" y2="120" stroke="rgba(245,158,11,0.3)" stroke-width="2"/>
+          <line x1="220" y1="75" x2="255" y2="120" stroke="rgba(245,158,11,0.3)" stroke-width="2"/>
+          <!-- Root -->
+          <circle cx="150" cy="30" r="22" fill="rgba(245,158,11,0.2)" stroke="#f59e0b" stroke-width="2"/>
+          <text x="150" y="30" fill="#f59e0b" font-family="Space Mono" font-weight="700" font-size="13" text-anchor="middle" dominant-baseline="middle">50</text>
+          <!-- Level 2 -->
+          <circle cx="80" cy="75" r="18" fill="rgba(245,158,11,0.12)" stroke="#f59e0b" stroke-width="2"/>
+          <text x="80" y="75" fill="#f59e0b" font-family="Space Mono" font-weight="700" font-size="12" text-anchor="middle" dominant-baseline="middle">25</text>
+          <circle cx="220" cy="75" r="18" fill="rgba(245,158,11,0.12)" stroke="#f59e0b" stroke-width="2"/>
+          <text x="220" y="75" fill="#f59e0b" font-family="Space Mono" font-weight="700" font-size="12" text-anchor="middle" dominant-baseline="middle">75</text>
+          <!-- Level 3 -->
+          <circle cx="45" cy="120" r="15" fill="rgba(245,158,11,0.08)" stroke="rgba(245,158,11,0.6)" stroke-width="1.5"/>
+          <text x="45" y="120" fill="#f59e0b" font-family="Space Mono" font-weight="700" font-size="11" text-anchor="middle" dominant-baseline="middle">12</text>
+          <circle cx="115" cy="120" r="15" fill="rgba(245,158,11,0.08)" stroke="rgba(245,158,11,0.6)" stroke-width="1.5"/>
+          <text x="115" y="120" fill="#f59e0b" font-family="Space Mono" font-weight="700" font-size="11" text-anchor="middle" dominant-baseline="middle">37</text>
+          <circle cx="185" cy="120" r="15" fill="rgba(245,158,11,0.08)" stroke="rgba(245,158,11,0.6)" stroke-width="1.5"/>
+          <text x="185" y="120" fill="#f59e0b" font-family="Space Mono" font-weight="700" font-size="11" text-anchor="middle" dominant-baseline="middle">62</text>
+          <circle cx="255" cy="120" r="15" fill="rgba(245,158,11,0.08)" stroke="rgba(245,158,11,0.6)" stroke-width="1.5"/>
+          <text x="255" y="120" fill="#f59e0b" font-family="Space Mono" font-weight="700" font-size="11" text-anchor="middle" dominant-baseline="middle">88</text>
+          <!-- Labels -->
+          <text x="4" y="120" fill="rgba(245,158,11,0.5)" font-family="Space Mono" font-size="9" dominant-baseline="middle">lewo</text>
+          <text x="262" y="120" fill="rgba(245,158,11,0.5)" font-family="Space Mono" font-size="9" dominant-baseline="middle">prawo</text>
+        </svg>
+        <div style="text-align:center;font-family:'Space Mono',monospace;font-size:0.7rem;color:var(--accent5);">szukaj 62: 50→prawo→75→lewo→62 ✓ (3 kroki!)</div>
+      </div>
+    </div>
+    <div class="ops">
+      <span class="op-badge fast">szukaj → O(log n)</span>
+      <span class="op-badge fast">wstaw → O(log n)</span>
+      <span class="op-badge fast">usuń → O(log n)</span>
+      <span class="op-badge slow">najgorzej → O(n)</span>
+    </div>
+  </div>
+
+  <!-- HASH MAP -->
+  <div class="card green">
+    <div class="card-header">
+      <div class="card-icon">🗂️</div>
+      <div>
+        <div class="card-title">Hash Mapa (HashMap)</div>
+        <div class="complexity">klucz → hash → indeks → wartość</div>
+      </div>
+    </div>
+    <p class="card-desc">Klucz przechodzi przez funkcję hash która daje indeks w tablicy. Dostęp do wartości po kluczu — prawie zawsze O(1).</p>
+    <div class="viz">
+      <div style="width:100%;">
+        <div class="section-label">HashMap&lt;String, Integer&gt; mapa</div>
+        <div style="display:flex;gap:12px;align-items:flex-start;margin-top:8px;">
+          <div style="font-family:'Space Mono',monospace;font-size:0.65rem;color:var(--muted);line-height:2.4;">
+            hash("Jan")=2<br>
+            hash("Anna")=0<br>
+            hash("Kuba")=3<br>
+          </div>
+          <div class="hash-wrap" style="flex:1;">
+            <div class="hash-row">
+              <div class="hash-bucket">0</div>
+              <div class="hash-entry"><div class="hash-key">"Anna"</div><div class="hash-val">25</div></div>
+            </div>
+            <div class="hash-row">
+              <div class="hash-bucket">1</div>
+              <div class="hash-empty" style="font-family:'Space Mono',monospace;font-size:0.65rem;color:var(--border);">— puste —</div>
+            </div>
+            <div class="hash-row">
+              <div class="hash-bucket">2</div>
+              <div class="hash-entry"><div class="hash-key">"Jan"</div><div class="hash-val">30</div></div>
+            </div>
+            <div class="hash-row">
+              <div class="hash-bucket">3</div>
+              <div class="hash-entry"><div class="hash-key">"Kuba"</div><div class="hash-val">22</div></div>
+            </div>
+          </div>
+        </div>
+        <div style="text-align:center;margin-top:8px;font-family:'Space Mono',monospace;font-size:0.7rem;color:var(--accent1);">mapa.get("Jan") → hash → index 2 → 30 ⚡</div>
+      </div>
+    </div>
+    <div class="ops">
+      <span class="op-badge fast">get(key) → O(1)</span>
+      <span class="op-badge fast">put(k,v) → O(1)</span>
+      <span class="op-badge fast">remove → O(1)</span>
+      <span class="op-badge slow">kolizja → O(n)</span>
+    </div>
+  </div>
+
+  <!-- GRAPH -->
+  <div class="card purple">
+    <div class="card-header">
+      <div class="card-icon">🕸️</div>
+      <div>
+        <div class="card-title">Graf (Graph)</div>
+        <div class="complexity">węzły + krawędzie, skierowany/nieskierowany</div>
+      </div>
+    </div>
+    <p class="card-desc">Węzły (vertices) połączone krawędziami (edges). Modeluje sieci, drogi, zależności. Przeszukiwanie: BFS lub DFS.</p>
+    <div class="viz">
+      <svg viewBox="0 0 300 160" style="width:100%;height:160px;">
+        <defs>
+          <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="rgba(124,58,237,0.6)"/>
+          </marker>
+        </defs>
+        <!-- Edges -->
+        <line x1="80" y1="50" x2="155" y2="75" stroke="rgba(124,58,237,0.4)" stroke-width="2" marker-end="url(#arrowhead)"/>
+        <line x1="80" y1="50" x2="65" y2="118" stroke="rgba(124,58,237,0.4)" stroke-width="2" marker-end="url(#arrowhead)"/>
+        <line x1="175" y1="80" x2="210" y2="118" stroke="rgba(124,58,237,0.4)" stroke-width="2" marker-end="url(#arrowhead)"/>
+        <line x1="175" y1="80" x2="95" y2="118" stroke="rgba(124,58,237,0.4)" stroke-width="2" marker-end="url(#arrowhead)"/>
+        <line x1="80" y1="130" x2="155" y2="130" stroke="rgba(124,58,237,0.4)" stroke-width="2" marker-end="url(#arrowhead)"/>
+        <line x1="220" y1="118" x2="95" y2="48" stroke="rgba(124,58,237,0.25)" stroke-width="1.5" stroke-dasharray="4" marker-end="url(#arrowhead)"/>
+        <!-- Nodes -->
+        <circle cx="80" cy="45" r="22" fill="rgba(124,58,237,0.15)" stroke="#7c3aed" stroke-width="2"/>
+        <text x="80" y="45" fill="#7c3aed" font-family="Space Mono" font-weight="700" font-size="13" text-anchor="middle" dominant-baseline="middle">A</text>
+        <circle cx="175" cy="80" r="22" fill="rgba(124,58,237,0.15)" stroke="#7c3aed" stroke-width="2"/>
+        <text x="175" y="80" fill="#7c3aed" font-family="Space Mono" font-weight="700" font-size="13" text-anchor="middle" dominant-baseline="middle">B</text>
+        <circle cx="75" cy="130" r="22" fill="rgba(124,58,237,0.15)" stroke="#7c3aed" stroke-width="2"/>
+        <text x="75" y="130" fill="#7c3aed" font-family="Space Mono" font-weight="700" font-size="13" text-anchor="middle" dominant-baseline="middle">C</text>
+        <circle cx="220" cy="130" r="22" fill="rgba(124,58,237,0.15)" stroke="#7c3aed" stroke-width="2"/>
+        <text x="220" y="130" fill="#7c3aed" font-family="Space Mono" font-weight="700" font-size="13" text-anchor="middle" dominant-baseline="middle">D</text>
+        <circle cx="175" cy="30" r="18" fill="rgba(124,58,237,0.08)" stroke="rgba(124,58,237,0.5)" stroke-width="1.5"/>
+        <text x="175" y="30" fill="#7c3aed" font-family="Space Mono" font-weight="700" font-size="12" text-anchor="middle" dominant-baseline="middle">E</text>
+      </svg>
+    </div>
+    <div class="ops">
+      <span class="op-badge med">BFS → O(V+E)</span>
+      <span class="op-badge med">DFS → O(V+E)</span>
+      <span class="op-badge fast">sąsiedzi → O(1)</span>
+      <span class="op-badge slow">najkrótsza → O(E log V)</span>
+    </div>
+  </div>
+
+  <!-- HEAP -->
+  <div class="card cyan">
+    <div class="card-header">
+      <div class="card-icon">⛰️</div>
+      <div>
+        <div class="card-title">Kopiec (Heap)</div>
+        <div class="complexity">max-heap: rodzic ≥ dzieci zawsze</div>
+      </div>
+    </div>
+    <p class="card-desc">Drzewo gdzie rodzic jest zawsze większy (max-heap) lub mniejszy (min-heap) od dzieci. Błyskawiczny dostęp do max/min.</p>
+    <div class="viz">
+      <div style="width:100%;">
+        <div class="section-label" style="text-align:center;">MAX-HEAP — korzeń zawsze największy</div>
+        <svg viewBox="0 0 280 150" style="width:100%;height:150px;margin-top:5px;">
+          <!-- Edges level 1-2 -->
+          <line x1="140" y1="32" x2="80" y2="72" stroke="rgba(6,182,212,0.35)" stroke-width="2"/>
+          <line x1="140" y1="32" x2="200" y2="72" stroke="rgba(6,182,212,0.35)" stroke-width="2"/>
+          <!-- Edges level 2-3 -->
+          <line x1="80" y1="75" x2="45" y2="118" stroke="rgba(6,182,212,0.25)" stroke-width="1.5"/>
+          <line x1="80" y1="75" x2="115" y2="118" stroke="rgba(6,182,212,0.25)" stroke-width="1.5"/>
+          <line x1="200" y1="75" x2="170" y2="118" stroke="rgba(6,182,212,0.25)" stroke-width="1.5"/>
+          <line x1="200" y1="75" x2="235" y2="118" stroke="rgba(6,182,212,0.25)" stroke-width="1.5"/>
+          <!-- Root -->
+          <circle cx="140" cy="28" r="24" fill="rgba(6,182,212,0.25)" stroke="#06b6d4" stroke-width="2.5"/>
+          <text x="140" y="28" fill="#06b6d4" font-family="Space Mono" font-weight="700" font-size="14" text-anchor="middle" dominant-baseline="middle">99</text>
+          <!-- Level 2 -->
+          <circle cx="80" cy="75" r="20" fill="rgba(6,182,212,0.12)" stroke="#06b6d4" stroke-width="2"/>
+          <text x="80" y="75" fill="#06b6d4" font-family="Space Mono" font-weight="700" font-size="13" text-anchor="middle" dominant-baseline="middle">72</text>
+          <circle cx="200" cy="75" r="20" fill="rgba(6,182,212,0.12)" stroke="#06b6d4" stroke-width="2"/>
+          <text x="200" y="75" fill="#06b6d4" font-family="Space Mono" font-weight="700" font-size="13" text-anchor="middle" dominant-baseline="middle">85</text>
+          <!-- Level 3 -->
+          <circle cx="45" cy="118" r="16" fill="rgba(6,182,212,0.08)" stroke="rgba(6,182,212,0.5)" stroke-width="1.5"/>
+          <text x="45" y="118" fill="#06b6d4" font-family="Space Mono" font-weight="700" font-size="11" text-anchor="middle" dominant-baseline="middle">41</text>
+          <circle cx="115" cy="118" r="16" fill="rgba(6,182,212,0.08)" stroke="rgba(6,182,212,0.5)" stroke-width="1.5"/>
+          <text x="115" y="118" fill="#06b6d4" font-family="Space Mono" font-weight="700" font-size="11" text-anchor="middle" dominant-baseline="middle">65</text>
+          <circle cx="170" cy="118" r="16" fill="rgba(6,182,212,0.08)" stroke="rgba(6,182,212,0.5)" stroke-width="1.5"/>
+          <text x="170" y="118" fill="#06b6d4" font-family="Space Mono" font-weight="700" font-size="11" text-anchor="middle" dominant-baseline="middle">78</text>
+          <circle cx="235" cy="118" r="16" fill="rgba(6,182,212,0.08)" stroke="rgba(6,182,212,0.5)" stroke-width="1.5"/>
+          <text x="235" y="118" fill="#06b6d4" font-family="Space Mono" font-weight="700" font-size="11" text-anchor="middle" dominant-baseline="middle">50</text>
+          <!-- Label -->
+          <text x="140" y="148" fill="rgba(6,182,212,0.6)" font-family="Space Mono" font-size="9" text-anchor="middle">99 ≥ 72 ≥ 41,65 | 99 ≥ 85 ≥ 78,50</text>
+        </svg>
+      </div>
+    </div>
+    <div class="ops">
+      <span class="op-badge fast">peek max → O(1)</span>
+      <span class="op-badge med">wstaw → O(log n)</span>
+      <span class="op-badge med">usuń max → O(log n)</span>
+      <span class="op-badge slow">szukaj → O(n)</span>
+    </div>
+  </div>
+
+  <!-- BIG O CHART -->
+  <div class="card orange bigo-card">
+    <div class="card-header">
+      <div class="card-icon">📈</div>
+      <div>
+        <div class="card-title">Big O — porównanie złożoności</div>
+        <div class="complexity">dla n = 1000 elementów</div>
+      </div>
+    </div>
+    <p class="card-desc">Jak szybko rośnie liczba operacji gdy dane rosną. Im niższy słupek tym lepiej.</p>
+    <div class="viz" style="min-height:200px;align-items:flex-end;padding-bottom:0;">
+      <div class="bigo-wrap" style="width:100%;align-items:flex-end;">
+
+        <div class="bigo-bar-wrap">
+          <div class="bigo-bar" style="height:8px;background:var(--accent1);"></div>
+          <div class="bigo-label" style="color:var(--accent1);">O(1)</div>
+          <div class="bigo-desc">1 op</div>
+        </div>
+
+        <div class="bigo-bar-wrap">
+          <div class="bigo-bar" style="height:24px;background:#34d399;"></div>
+          <div class="bigo-label" style="color:#34d399;">O(log n)</div>
+          <div class="bigo-desc">~10 ops</div>
+        </div>
+
+        <div class="bigo-bar-wrap">
+          <div class="bigo-bar" style="height:60px;background:var(--accent5);"></div>
+          <div class="bigo-label" style="color:var(--accent5);">O(n)</div>
+          <div class="bigo-desc">1K ops</div>
+        </div>
+
+        <div class="bigo-bar-wrap">
+          <div class="bigo-bar" style="height:100px;background:#fb923c;"></div>
+          <div class="bigo-label" style="color:#fb923c;">O(n log n)</div>
+          <div class="bigo-desc">~10K ops</div>
+        </div>
+
+        <div class="bigo-bar-wrap">
+          <div class="bigo-bar" style="height:160px;background:var(--accent2);"></div>
+          <div class="bigo-label" style="color:var(--accent2);">O(n²)</div>
+          <div class="bigo-desc">1M ops</div>
+        </div>
+
+        <div class="bigo-bar-wrap">
+          <div class="bigo-bar" style="height:200px;background:#dc2626;"></div>
+          <div class="bigo-label" style="color:#dc2626;">O(2ⁿ)</div>
+          <div class="bigo-desc">∞ ops 💀</div>
+        </div>
+      </div>
+    </div>
+    <div class="ops" style="margin-top:12px;">
+      <span class="op-badge fast">O(1) — dostęp do tablicy, HashMap</span>
+      <span class="op-badge fast">O(log n) — binary search, BST</span>
+      <span class="op-badge med">O(n) — pętla, szukanie liniowe</span>
+      <span class="op-badge med">O(n log n) — merge sort, quick sort</span>
+      <span class="op-badge slow">O(n²) — bubble sort, pętle zagnieżdżone</span>
+      <span class="op-badge slow">O(2ⁿ) — naiwna rekurencja fib</span>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

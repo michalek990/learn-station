@@ -1,0 +1,1539 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Java Senior — Deep Knowledge Map</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080c0a;
+  --s1: #0d1410;
+  --s2: #141d18;
+  --s3: #1c2820;
+  --bd: #233329;
+  --bd2: #2e4438;
+  --tx: #d8f0e0;
+  --tx2: #80a890;
+  --mt: #3d6050;
+  --java: #f89820;
+  --java2: #fdb54e;
+  --green: #4ade80;
+  --teal: #2dd4bf;
+  --sky: #38bdf8;
+  --violet: #a78bfa;
+  --rose: #fb7185;
+  --amber: #fbbf24;
+  --pink: #e879f9;
+  --emerald: #34d399;
+  --lime: #a3e635;
+  --slate: #94a3b8;
+}
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;line-height:1.65;overflow-x:hidden}
+
+.back{position:fixed;top:22px;left:22px;z-index:9999;background:rgba(255,255,255,.95);backdrop-filter:blur(14px);border:1px solid var(--bd2);border-radius:40px;padding:10px 20px;display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--tx2);font-family:'IBM Plex Mono',monospace;font-size:.72rem;font-weight:500;letter-spacing:1px;transition:all .25s}
+.back:hover{color:var(--java);border-color:var(--java)}
+
+/* HEADER */
+.hdr{min-height:480px;padding:110px 80px 80px;position:relative;overflow:hidden;display:flex;align-items:flex-end}
+.hdr-bg{position:absolute;inset:0;background:var(--s1)}
+.hdr-bg::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 5% 100%,rgba(248,152,32,.11) 0%,transparent 55%),radial-gradient(ellipse 50% 70% at 95% 10%,rgba(74,222,128,.07) 0%,transparent 50%),radial-gradient(ellipse 40% 60% at 50% 50%,rgba(45,212,191,.04) 0%,transparent 60%)}
+.hdr-grid{position:absolute;inset:0;background-image:linear-gradient(var(--bd) 1px,transparent 1px),linear-gradient(90deg,var(--bd) 1px,transparent 1px);background-size:48px 48px;opacity:.12;mask-image:radial-gradient(ellipse 85% 90% at 50% 50%,black,transparent)}
+.hdr-content{position:relative;max-width:1360px;width:100%}
+.hdr-tier{display:inline-flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:.65rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--java);margin-bottom:28px;padding:7px 16px;border:1px solid rgba(248,152,32,.35);border-radius:4px;background:rgba(248,152,32,.06)}
+.tier-dot{width:6px;height:6px;border-radius:50%;background:var(--java);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+h1{font-size:clamp(3rem,7.5vw,7rem);font-weight:800;line-height:.9;letter-spacing:-5px;margin-bottom:28px}
+h1 em{font-style:normal;color:var(--java2)}
+h1 small{display:block;font-size:.36em;letter-spacing:-1px;color:var(--tx2);font-weight:500;margin-top:14px}
+.hdr-desc{font-size:1rem;color:var(--tx2);max-width:640px;line-height:1.9}
+.hdr-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.chip{font-family:'IBM Plex Mono',monospace;font-size:.63rem;font-weight:600;letter-spacing:.5px;padding:5px 12px;border-radius:3px;border:1px solid}
+.cj{color:var(--java);  border-color:rgba(248,152,32,.4); background:rgba(248,152,32,.06)}
+.cg{color:var(--green); border-color:rgba(74,222,128,.35);background:rgba(74,222,128,.05)}
+.ct{color:var(--teal);  border-color:rgba(45,212,191,.35);background:rgba(45,212,191,.05)}
+.cv{color:var(--violet);border-color:rgba(167,139,250,.35);background:rgba(167,139,250,.07)}
+.cr{color:var(--rose);  border-color:rgba(251,113,133,.35);background:rgba(251,113,133,.05)}
+.ca{color:var(--amber); border-color:rgba(251,191,36,.35); background:rgba(251,191,36,.05)}
+.cp{color:var(--pink);  border-color:rgba(232,121,249,.35);background:rgba(232,121,249,.06)}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:300;background:rgba(8,12,10,.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--bd);display:flex;overflow-x:auto;scrollbar-width:none;padding:0 80px}
+.nav::-webkit-scrollbar{display:none}
+.nav-a{color:var(--mt);text-decoration:none;font-family:'IBM Plex Mono',monospace;font-size:.64rem;font-weight:600;letter-spacing:.5px;padding:14px 13px;white-space:nowrap;border-bottom:2px solid transparent;transition:all .18s}
+.nav-a:hover{color:var(--java);border-bottom-color:var(--java)}
+
+/* MAIN */
+.main{max-width:1360px;margin:0 auto;padding:80px 24px 160px}
+.chapter{margin-bottom:104px;animation:fadeUp .5s ease backwards}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.chapter:nth-child(1){animation-delay:.04s}.chapter:nth-child(2){animation-delay:.07s}
+.chapter:nth-child(3){animation-delay:.10s}.chapter:nth-child(4){animation-delay:.13s}
+.chapter:nth-child(5){animation-delay:.16s}.chapter:nth-child(6){animation-delay:.19s}
+.chapter:nth-child(7){animation-delay:.22s}.chapter:nth-child(8){animation-delay:.25s}
+.chapter:nth-child(9){animation-delay:.28s}.chapter:nth-child(10){animation-delay:.31s}
+.chapter:nth-child(11){animation-delay:.34s}.chapter:nth-child(12){animation-delay:.37s}
+
+.ch-head{display:flex;align-items:flex-start;gap:22px;margin-bottom:36px;padding-bottom:28px;border-bottom:1px solid var(--bd)}
+.ch-num{font-family:'IBM Plex Mono',monospace;font-size:.62rem;font-weight:700;letter-spacing:3px;color:var(--mt);padding-top:6px;white-space:nowrap}
+.ch-info{flex:1}
+.ch-cat{font-family:'IBM Plex Mono',monospace;font-size:.58rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:6px}
+.ch-title{font-size:1.9rem;font-weight:800;letter-spacing:-1px;line-height:1.1;margin-bottom:10px}
+.ch-desc{font-size:.9rem;color:var(--tx2);max-width:820px;line-height:1.9}
+
+/* GRIDS */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.g13{display:grid;grid-template-columns:1fr 3fr;gap:14px}
+.g32{display:grid;grid-template-columns:3fr 2fr;gap:14px}
+@media(max-width:1100px){.g4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:900px){.g2,.g3,.g4,.g13,.g32{grid-template-columns:1fr}.hdr{padding:80px 24px 56px}.nav{padding:0 16px}h1{font-size:3rem;letter-spacing:-2px}}
+
+/* CARD */
+.card{background:var(--s1);border:1px solid var(--bd);border-radius:8px;overflow:hidden;transition:border-color .2s,box-shadow .2s}
+.card:hover{border-color:var(--bd2);box-shadow:0 6px 28px rgba(0,0,0,.45)}
+.card-h{padding:11px 18px;font-family:'IBM Plex Mono',monospace;font-size:.66rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:8px}
+.card-b{padding:18px}
+
+/* CODE */
+.code{background:#030608;border:1px solid var(--bd);border-radius:8px;overflow:hidden}
+.cbar{background:var(--s1);border-bottom:1px solid var(--bd);padding:9px 16px;font-family:'IBM Plex Mono',monospace;font-size:.64rem;color:var(--mt);display:flex;align-items:center;justify-content:space-between}
+.cbar-l{display:flex;align-items:center;gap:7px}
+.fdot{width:7px;height:7px;border-radius:50%}
+pre{padding:20px;font-family:'IBM Plex Mono',monospace;font-size:.77rem;line-height:1.72;overflow-x:auto;color:#374151}
+.kw{color:#c792ea}.an{color:#ffcb6b}.st{color:#c3e88d}.cm{color:#2e4838;font-style:italic}
+.ty{color:#82aaff}.nu{color:#f78c6c}.fn{color:#80cbc4}.op{color:#89ddff}
+.go{color:var(--java2)}.gr{color:var(--green)}.vi{color:var(--violet)}.re{color:var(--rose)}
+
+/* ALERTS */
+.alert{padding:16px 20px;border-radius:6px;border-left:3px solid;font-size:.87rem;line-height:1.85;color:var(--tx2)}
+.alert strong{color:var(--tx)}
+.alert-label{font-family:'IBM Plex Mono',monospace;font-size:.58rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;display:block;margin-bottom:6px}
+.al-java{background:rgba(248,152,32,.05);border-color:var(--java)} .al-java .alert-label{color:var(--java)}
+.al-rose{background:rgba(251,113,133,.05);border-color:var(--rose)} .al-rose .alert-label{color:var(--rose)}
+.al-teal{background:rgba(45,212,191,.05);border-color:var(--teal)} .al-teal .alert-label{color:var(--teal)}
+.al-violet{background:rgba(167,139,250,.05);border-color:var(--violet)} .al-violet .alert-label{color:var(--violet)}
+.al-green{background:rgba(74,222,128,.05);border-color:var(--green)} .al-green .alert-label{color:var(--green)}
+.al-amber{background:rgba(251,191,36,.05);border-color:var(--amber)} .al-amber .alert-label{color:var(--amber)}
+.al-pink{background:rgba(232,121,249,.05);border-color:var(--pink)} .al-pink .alert-label{color:var(--pink)}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;font-size:.84rem}
+.tbl th{background:var(--s2);color:var(--tx2);font-family:'IBM Plex Mono',monospace;font-size:.63rem;letter-spacing:2px;text-transform:uppercase;font-weight:700;padding:11px 16px;text-align:left;border-bottom:1px solid var(--bd);white-space:nowrap}
+.tbl td{padding:11px 16px;border-bottom:1px solid var(--bd);color:var(--tx2);vertical-align:top;line-height:1.75}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:var(--s2);color:var(--tx)}
+.tbl code{font-family:'IBM Plex Mono',monospace;font-size:.76rem;color:var(--java2);background:rgba(248,152,32,.09);padding:2px 7px;border-radius:3px}
+
+/* RLIST */
+.rlist{}
+.ritem{display:flex;gap:16px;padding:12px 0;border-bottom:1px solid var(--bd);align-items:flex-start}
+.ritem:last-child{border-bottom:none}
+.ritem-key{font-family:'IBM Plex Mono',monospace;font-size:.76rem;white-space:nowrap;padding-top:2px;min-width:185px;flex-shrink:0}
+.ritem-val{font-size:.85rem;color:var(--tx2);line-height:1.75}
+.ritem-val code{font-family:'IBM Plex Mono',monospace;font-size:.76rem;color:var(--java2);background:rgba(248,152,32,.09);padding:1px 6px;border-radius:3px}
+.ritem-val strong{color:var(--tx)}
+
+/* COMPARE */
+.compare{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--bd);border-radius:8px;overflow:hidden}
+.compare-col:first-child{border-right:1px solid var(--bd)}
+.compare-head{padding:11px 18px;font-family:'IBM Plex Mono',monospace;font-size:.66rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border-bottom:1px solid var(--bd)}
+.compare-body{padding:16px 18px;font-size:.84rem;color:var(--tx2);line-height:1.8}
+
+/* STRIP */
+.strip{border:1px solid var(--bd);border-radius:8px;padding:18px 22px;font-size:.87rem;color:var(--tx2);line-height:1.85;display:flex;gap:16px;align-items:flex-start}
+.strip-icon{font-size:1.3rem;flex-shrink:0;padding-top:2px}
+.strip strong{color:var(--tx)}
+
+/* PILLS */
+.pills{display:flex;flex-wrap:wrap;gap:7px;padding:14px}
+.pill{font-family:'IBM Plex Mono',monospace;font-size:.67rem;padding:4px 11px;border-radius:20px;border:1px solid;font-weight:600}
+.pj{color:var(--java);border-color:rgba(248,152,32,.4);background:rgba(248,152,32,.06)}
+.pg{color:var(--green);border-color:rgba(74,222,128,.35);background:rgba(74,222,128,.05)}
+.pt{color:var(--teal);border-color:rgba(45,212,191,.35);background:rgba(45,212,191,.05)}
+.pv{color:var(--violet);border-color:rgba(167,139,250,.35);background:rgba(167,139,250,.07)}
+.pr{color:var(--rose);border-color:rgba(251,113,133,.35);background:rgba(251,113,133,.05)}
+.pa{color:var(--amber);border-color:rgba(251,191,36,.35);background:rgba(251,191,36,.05)}
+.pp{color:var(--pink);border-color:rgba(232,121,249,.35);background:rgba(232,121,249,.06)}
+
+.gap8{margin-top:8px}.gap12{margin-top:12px}.gap16{margin-top:16px}.gap24{margin-top:24px}
+
+/* FOOTER */
+.footer{border-top:1px solid var(--bd);background:var(--s1);padding:36px 80px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;font-family:'IBM Plex Mono',monospace;font-size:.68rem;color:var(--mt)}
+.footer-title{color:var(--java);font-weight:700}
+</style>
+</head>
+<body>
+
+<a class="back" href="#">← MENU</a>
+
+<!-- ═══ HEADER ═══ -->
+<header class="hdr">
+  <div class="hdr-bg"></div>
+  <div class="hdr-grid"></div>
+  <div class="hdr-content">
+    <div class="hdr-tier"><div class="tier-dot"></div> Java Senior · Deep Knowledge</div>
+    <h1>Java<br><em>Senior</em><small>OOP, wzorce, reflection, immutability, collections internals, exceptions i więcej</small></h1>
+    <p class="hdr-desc">Zaawansowana wiedza Javowa której nie ma w tutorialach — kontrakty equals/hashCode, pułapki OOP, Reflection API, Annotation Processing, kolekcje od środka, defensive programming i functional patterns.</p>
+    <div class="hdr-chips">
+      <span class="chip cj">● Senior / Expert</span>
+      <span class="chip cg">OOP Deep-Dive</span>
+      <span class="chip ct">Collections Internals</span>
+      <span class="chip cv">Reflection & Annotations</span>
+      <span class="chip cr">Exception Design</span>
+      <span class="chip ca">Immutability Patterns</span>
+      <span class="chip cp">Functional Java</span>
+    </div>
+  </div>
+</header>
+
+<!-- ═══ NAV ═══ -->
+<nav class="nav">
+  <a class="nav-a" href="#oop">OOP Pułapki</a>
+  <a class="nav-a" href="#equals">equals & hashCode</a>
+  <a class="nav-a" href="#collections">Collections Internals</a>
+  <a class="nav-a" href="#exceptions">Exception Design</a>
+  <a class="nav-a" href="#immutability">Immutability</a>
+  <a class="nav-a" href="#reflection">Reflection & Proxy</a>
+  <a class="nav-a" href="#annotations">Annotations & APT</a>
+  <a class="nav-a" href="#functional">Functional Patterns</a>
+  <a class="nav-a" href="#design-patterns">Design Patterns</a>
+  <a class="nav-a" href="#solid">SOLID & Zasady</a>
+  <a class="nav-a" href="#strings">String & Text</a>
+  <a class="nav-a" href="#defensive">Defensive Programming</a>
+</nav>
+
+<main class="main">
+
+  <!-- ══ 01 OOP PUŁAPKI ══ -->
+  <section class="chapter" id="oop">
+    <div class="ch-head">
+      <div class="ch-num">01 / 12</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--green)">OOP — Głębokie Pułapki</div>
+        <div class="ch-title">Dziedziczenie, kompozycja i polimorfizm — co senior wie</div>
+        <div class="ch-desc">OOP wygląda prosto — dopóki nie spotkasz się z problemem diamenta, konstruktorami w dziedziczeniu, kowariancją zwracanych typów czy przeciążaniem kontra przesłanianiem. To są pytania które padają na senior interview.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--green)"></div>Overriding vs Overloading — różnice kluczowe</div></div>
+        <pre><span class="cm">// ─── Overriding — polimorfizm w runtime ──────────────────</span>
+<span class="kw">class</span> <span class="ty">Animal</span> {
+    <span class="kw">public</span> <span class="ty">String</span> <span class="fn">sound</span>() { <span class="kw">return</span> <span class="st">"..."</span>; }
+}
+<span class="kw">class</span> <span class="ty">Dog</span> <span class="kw">extends</span> <span class="ty">Animal</span> {
+    <span class="an">@Override</span>
+    <span class="kw">public</span> <span class="ty">String</span> <span class="fn">sound</span>() { <span class="kw">return</span> <span class="st">"Woof"</span>; } <span class="cm">// runtime dispatch</span>
+}
+<span class="ty">Animal</span> a = <span class="kw">new</span> <span class="ty">Dog</span>();
+a.sound(); <span class="cm">// "Woof" — virtual dispatch</span>
+
+<span class="cm">// ─── Overloading — rozwiązywane w compile-time! ───────────</span>
+<span class="kw">void</span> <span class="fn">print</span>(<span class="ty">Object</span> o)  { System.out.println(<span class="st">"Object: "</span> + o); }
+<span class="kw">void</span> <span class="fn">print</span>(<span class="ty">String</span> s)  { System.out.println(<span class="st">"String: "</span> + s); }
+
+<span class="ty">Object</span> obj = <span class="st">"hello"</span>;   <span class="cm">// static type = Object</span>
+<span class="fn">print</span>(obj);             <span class="cm">// ❌ "Object: hello" — NIE String!</span>
+<span class="cm">// Overloading zależy od statycznego (compile-time) typu argumentu</span>
+
+<span class="cm">// ─── Kowariantny typ zwracany (Java 5+) ──────────────────</span>
+<span class="kw">class</span> <span class="ty">Builder</span> {
+    <span class="kw">public</span> <span class="ty">Builder</span> <span class="fn">withName</span>(<span class="ty">String</span> n) { ... <span class="kw">return</span> <span class="kw">this</span>; }
+}
+<span class="kw">class</span> <span class="ty">SpecialBuilder</span> <span class="kw">extends</span> <span class="ty">Builder</span> {
+    <span class="an">@Override</span>
+    <span class="kw">public</span> <span class="ty">SpecialBuilder</span> <span class="fn">withName</span>(<span class="ty">String</span> n) { ... <span class="kw">return</span> <span class="kw">this</span>; }
+    <span class="cm">// ✅ Covariant return type — bardziej konkretny typ</span>
+}</pre>
+      </div>
+
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--green)"></div>Dziedziczenie — pułapki konstruktorów</div></div>
+        <pre><span class="cm">// PUŁAPKA: wywołanie metody wirtualnej w konstruktorze!</span>
+<span class="kw">class</span> <span class="ty">Base</span> {
+    <span class="kw">public</span> <span class="ty">Base</span>() {
+        <span class="fn">init</span>();  <span class="cm">// ❌ NIEBEZPIECZNE!</span>
+    }
+    <span class="kw">protected void</span> <span class="fn">init</span>() { System.out.println(<span class="st">"Base.init"</span>); }
+}
+<span class="kw">class</span> <span class="ty">Child</span> <span class="kw">extends</span> <span class="ty">Base</span> {
+    <span class="kw">private final</span> <span class="ty">String</span> value = <span class="st">"hello"</span>;
+
+    <span class="an">@Override</span>
+    <span class="kw">protected void</span> <span class="fn">init</span>() {
+        <span class="cm">// value jest null tutaj! Pole nie zostało jeszcze zainicjalizowane</span>
+        System.out.println(value.toUpperCase()); <span class="cm">// NPE!</span>
+    }
+}
+<span class="cm">// Kolejność: Base() → Child.init() → Child fields init</span>
+<span class="cm">// Rozwiązanie: nie wywołuj metod wirtualnych z konstruktora</span>
+<span class="cm">// Użyj factory method pattern lub inicjalizuj przez super()</span>
+
+<span class="cm">// ─── super() jest zawsze pierwszy! ───────────────────────</span>
+<span class="kw">class</span> <span class="ty">Child</span> <span class="kw">extends</span> <span class="ty">Base</span> {
+    <span class="kw">public</span> <span class="ty">Child</span>(<span class="ty">String</span> name) {
+        <span class="cm">// super() wywołane niejawnie jeśli nie podasz explicite</span>
+        <span class="cm">// ❌ nie możesz mieć kodu PRZED super()</span>
+        <span class="kw">super</span>(name);       <span class="cm">// musi być pierwszą instrukcją</span>
+        <span class="kw">this</span>.extra = name; <span class="cm">// dopiero potem</span>
+    }
+}</pre>
+      </div>
+    </div>
+
+    <div class="gap16"></div>
+    <div class="g3">
+      <div class="card">
+        <div class="card-h" style="color:var(--green)">💡 Kompozycja &gt; Dziedziczenie</div>
+        <div class="card-b">
+          <div class="code" style="border:none;border-radius:0;background:transparent">
+            <pre style="padding:0;font-size:.74rem"><span class="cm">// ❌ Dziedziczenie dla reużycia kodu</span>
+<span class="kw">class</span> <span class="ty">Stack</span> <span class="kw">extends</span> <span class="ty">ArrayList</span> {
+    <span class="cm">// Stack NIE jest ArrayList!</span>
+    <span class="cm">// Dziedziczysz push, pop, add, set...</span>
+    <span class="cm">// Użytkownik może pominąć Stack semantykę</span>
+}
+
+<span class="cm">// ✅ Kompozycja — forwarding</span>
+<span class="kw">class</span> <span class="ty">Stack</span>&lt;<span class="ty">E</span>&gt; {
+    <span class="kw">private final</span> <span class="ty">List</span>&lt;<span class="ty">E</span>&gt; elements = <span class="kw">new</span> <span class="ty">ArrayList</span>&lt;&gt;();
+
+    <span class="kw">public void</span> <span class="fn">push</span>(<span class="ty">E</span> e)  { elements.add(e); }
+    <span class="kw">public</span>    <span class="ty">E</span> <span class="fn">pop</span>()      { <span class="kw">return</span> elements.removeLast(); }
+    <span class="kw">public boolean</span> <span class="fn">isEmpty</span>() { <span class="kw">return</span> elements.isEmpty(); }
+    <span class="cm">// Ujawniasz TYLKO Stack operacje</span>
+}</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h" style="color:var(--green)">🔷 Interfejsy — default methods</div>
+        <div class="card-b">
+          <div class="code" style="border:none;border-radius:0;background:transparent">
+            <pre style="padding:0;font-size:.74rem"><span class="cm">// Problem diamenta z default methods:</span>
+<span class="kw">interface</span> <span class="ty">A</span> { <span class="kw">default void</span> <span class="fn">greet</span>() { print(<span class="st">"A"</span>); } }
+<span class="kw">interface</span> <span class="ty">B</span> { <span class="kw">default void</span> <span class="fn">greet</span>() { print(<span class="st">"B"</span>); } }
+
+<span class="kw">class</span> <span class="ty">C</span> <span class="kw">implements</span> <span class="ty">A</span>, <span class="ty">B</span> {
+    <span class="an">@Override</span>
+    <span class="kw">public void</span> <span class="fn">greet</span>() {
+        <span class="ty">A</span>.super.<span class="fn">greet</span>(); <span class="cm">// explicit — musi nadpisać!</span>
+    }
+}
+<span class="cm">// Reguły priorytetu:</span>
+<span class="cm">// 1. Class > Interface (zawsze)</span>
+<span class="cm">// 2. Bardziej konkretny interfejs > ogólniejszy</span>
+<span class="cm">// 3. Konflikt → kompilator wymaga nadpisania</span></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h" style="color:var(--green)">🦆 duck typing & Structural Types</div>
+        <div class="card-b" style="font-size:.83rem;color:var(--tx2);line-height:1.85">
+          <p style="margin-bottom:10px">Java używa <strong style="color:var(--tx)">nominal typing</strong> — typy kompatybilne gdy explicite implementują interfejs. Brak duck typing jak w Python/Go.</p>
+          <p style="margin-bottom:10px"><strong style="color:var(--tx)">Obejście:</strong> Generics + structural constraints, Reflection, lub Proxy dynamiczny.</p>
+          <p>Interfejsy funkcjonalne + lambdy dają <strong style="color:var(--tx)">praktyczny duck typing</strong> — dowolna metoda o pasującym sygnaturze może być użyta jako lambda.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="gap16"></div>
+    <div class="alert al-rose">
+      <span class="alert-label">⚠️ Fragile Base Class Problem</span>
+      <strong>Problem:</strong> dodanie lub zmiana metody w klasie bazowej może nieoczekiwanie zepsuć podklasę, która "przypadkowo" nadpisała tę metodę lub polegała na określonym zachowaniu. <strong>Efektywna Java (Bloch):</strong> "Design and document for inheritance or else prohibit it." Używaj <code>final</code> jeśli klasa nie jest projektowana do dziedziczenia. Dokumentuj które metody nadpisywać (i które wywołują inne wirtualne metody).
+    </div>
+  </section>
+
+  <!-- ══ 02 EQUALS & HASHCODE ══ -->
+  <section class="chapter" id="equals">
+    <div class="ch-head">
+      <div class="ch-num">02 / 12</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--amber)">Kontrakt equals() i hashCode()</div>
+        <div class="ch-title">equals, hashCode, Comparable — pełny kontrakt</div>
+        <div class="ch-desc">Kontrakt equals/hashCode to jeden z najważniejszych w Javie — złamanie go powoduje cichy błąd w kolekcjach. HashMap, HashSet, Hibernate cache — wszystkie zależą od poprawnej implementacji.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--amber)"></div>Kontrakt equals() — 5 właściwości</div></div>
+        <pre><span class="cm">// Kontrakt equals() (java.lang.Object):</span>
+<span class="cm">// 1. Reflexive:   x.equals(x) == true</span>
+<span class="cm">// 2. Symmetric:   x.equals(y) == y.equals(x)</span>
+<span class="cm">// 3. Transitive:  x.equals(y) && y.equals(z) → x.equals(z)</span>
+<span class="cm">// 4. Consistent:  wielokrotne wywołanie = ten sam wynik</span>
+<span class="cm">// 5. Non-null:    x.equals(null) == false (nigdy NPE)</span>
+
+<span class="cm">// ✅ Poprawna implementacja (Java 7+ Objects.equals):</span>
+<span class="an">@Override</span>
+<span class="kw">public boolean</span> <span class="fn">equals</span>(<span class="ty">Object</span> o) {
+    <span class="kw">if</span> (<span class="kw">this</span> == o) <span class="kw">return true</span>;            <span class="cm">// 1. identity check</span>
+    <span class="kw">if</span> (!(o <span class="kw">instanceof</span> <span class="ty">Money</span> other)) <span class="kw">return false</span>; <span class="cm">// 2. type + null</span>
+    <span class="kw">return</span> <span class="ty">Objects</span>.equals(amount, other.amount)
+        && <span class="ty">Objects</span>.equals(currency, other.currency);  <span class="cm">// 3. fields</span>
+}
+
+<span class="cm">// PUŁAPKA: equals z dziedziczeniem łamie symetrię!</span>
+<span class="kw">class</span> <span class="ty">Point</span> {
+    <span class="kw">int</span> x, y;
+    <span class="kw">public boolean</span> <span class="fn">equals</span>(<span class="ty">Object</span> o) {
+        <span class="kw">if</span> (!(o <span class="kw">instanceof</span> <span class="ty">Point</span> p)) <span class="kw">return false</span>;
+        <span class="kw">return</span> x == p.x && y == p.y;
+    }
+}
+<span class="kw">class</span> <span class="ty">ColorPoint</span> <span class="kw">extends</span> <span class="ty">Point</span> {
+    <span class="ty">Color</span> color;
+    <span class="kw">public boolean</span> <span class="fn">equals</span>(<span class="ty">Object</span> o) {
+        <span class="kw">if</span> (!(o <span class="kw">instanceof</span> <span class="ty">ColorPoint</span> cp)) <span class="kw">return false</span>;
+        <span class="kw">return</span> <span class="kw">super</span>.equals(o) && color.equals(cp.color);
+    }
+}
+<span class="ty">Point</span> p = <span class="kw">new</span> <span class="ty">Point</span>(<span class="nu">1</span>,<span class="nu">2</span>);
+<span class="ty">ColorPoint</span> cp = <span class="kw">new</span> <span class="ty">ColorPoint</span>(<span class="nu">1</span>,<span class="nu">2</span>, <span class="ty">RED</span>);
+p.equals(cp);   <span class="cm">// true (Point.equals)</span>
+cp.equals(p);   <span class="cm">// false (ColorPoint.equals)  ← ŁAMIE SYMETRIĘ!</span>
+<span class="cm">// Rozwiązanie: kompozycja zamiast dziedziczenia + getClass() check</span></pre>
+      </div>
+
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--amber)"></div>hashCode — kontrakt i implementacja</div></div>
+        <pre><span class="cm">// Kontrakt hashCode:</span>
+<span class="cm">// 1. Konsystencja: hashCode() zwraca ten sam int w życiu obiektu</span>
+<span class="cm">// 2. equals → hashCode: jeśli a.equals(b) to a.hashCode() == b.hashCode()</span>
+<span class="cm">// 3. !equals → hashCode: NIE musi być różny (ale powinien dla wydajności)</span>
+
+<span class="cm">// ✅ Implementacja z Objects.hash():</span>
+<span class="an">@Override</span>
+<span class="kw">public int</span> <span class="fn">hashCode</span>() {
+    <span class="kw">return</span> <span class="ty">Objects</span>.hash(amount, currency); <span class="cm">// wygodne, nie najszybsze</span>
+}
+
+<span class="cm">// ✅ Ręczna implementacja (Bloch's recipe — wyższy hash quality):</span>
+<span class="kw">public int</span> <span class="fn">hashCode</span>() {
+    <span class="kw">int</span> result = <span class="nu">31</span>;                          <span class="cm">// prime start</span>
+    result = <span class="nu">31</span> * result + amount.hashCode();  <span class="cm">// prime multiplier</span>
+    result = <span class="nu">31</span> * result + currency.hashCode();
+    <span class="kw">return</span> result;
+}
+<span class="cm">// 31 = 2^5 - 1 = JVM może optimizować do shift+subtract</span>
+
+<span class="cm">// PUŁAPKA: mutowalny klucz w HashMap!</span>
+<span class="ty">Map</span>&lt;<span class="ty">List</span>&lt;<span class="ty">String</span>&gt;, <span class="ty">String</span>&gt; map = <span class="kw">new</span> <span class="ty">HashMap</span>&lt;&gt;();
+<span class="ty">List</span>&lt;<span class="ty">String</span>&gt; key = <span class="kw">new</span> <span class="ty">ArrayList</span>&lt;&gt;(<span class="ty">List</span>.of(<span class="st">"a"</span>));
+map.put(key, <span class="st">"value"</span>);
+key.add(<span class="st">"b"</span>);              <span class="cm">// modyfikacja! hashCode się zmieniło</span>
+map.get(key);              <span class="cm">// null — klucz nie znajdzie się w buckecie!</span></pre>
+      </div>
+    </div>
+
+    <div class="gap16"></div>
+    <div class="g2">
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--amber)"></div>Comparable vs Comparator</div></div>
+        <pre><span class="cm">// Comparable — naturalne porządkowanie (wewnątrz klasy)</span>
+<span class="kw">public class</span> <span class="ty">Money</span> <span class="kw">implements</span> <span class="ty">Comparable</span>&lt;<span class="ty">Money</span>&gt; {
+    <span class="an">@Override</span>
+    <span class="kw">public int</span> <span class="fn">compareTo</span>(<span class="ty">Money</span> other) {
+        <span class="cm">// Reguła: return negative gdy this &lt; other</span>
+        <span class="cm">// ❌ Nie używaj: return this.amount - other.amount (overflow!)</span>
+        <span class="cm">// ✅ Użyj:</span>
+        <span class="kw">return</span> this.amount.compareTo(other.amount);
+    }
+}
+
+<span class="cm">// Comparator — zewnętrzne / wielokrotne porządkowania</span>
+<span class="ty">Comparator</span>&lt;<span class="ty">Employee</span>&gt; byDeptThenSalary = <span class="ty">Comparator</span>
+    .comparing(<span class="ty">Employee</span>::getDept)
+    .thenComparingDouble(<span class="ty">Employee</span>::getSalary).reversed()
+    .thenComparing(<span class="ty">Employee</span>::getName, <span class="ty">String</span>.CASE_INSENSITIVE_ORDER);
+
+<span class="cm">// Comparator.naturalOrder() / reverseOrder()</span>
+<span class="cm">// Comparator.nullsFirst() / nullsLast()</span>
+<span class="ty">Comparator</span>&lt;<span class="ty">String</span>&gt; safeComp = <span class="ty">Comparator</span>.nullsLast(
+    <span class="ty">String</span>::compareToIgnoreCase);
+
+<span class="cm">// compareTo kontrakt:</span>
+<span class="cm">// sgn(x.compareTo(y)) == -sgn(y.compareTo(x))</span>
+<span class="cm">// transitivity: x &gt; y && y &gt; z → x &gt; z</span>
+<span class="cm">// consistency with equals (strongly recommended):</span>
+<span class="cm">// x.compareTo(y) == 0 → x.equals(y) (TreeSet/TreeMap!)</span></pre>
+      </div>
+
+      <div class="card">
+        <div class="card-h" style="color:var(--amber)">🔑 Records — equals gratis</div>
+        <div class="card-b" style="font-size:.85rem;color:var(--tx2);line-height:1.85">
+          <p style="margin-bottom:10px">Records automatycznie generują <strong style="color:var(--tx)">equals, hashCode i toString</strong> na podstawie wszystkich komponentów (canonical fields).</p>
+          <div class="code" style="border:none;border-radius:0;background:transparent">
+            <pre style="padding:0;font-size:.75rem"><span class="kw">public record</span> <span class="ty">Money</span>(<span class="ty">BigDecimal</span> amount, <span class="ty">String</span> currency) {}
+
+<span class="ty">Money</span> a = <span class="kw">new</span> <span class="ty">Money</span>(<span class="ty">BigDecimal</span>.TEN, <span class="st">"PLN"</span>);
+<span class="ty">Money</span> b = <span class="kw">new</span> <span class="ty">Money</span>(<span class="ty">BigDecimal</span>.TEN, <span class="st">"PLN"</span>);
+a.equals(b); <span class="cm">// ✅ true — strukturalna równość</span>
+
+<span class="cm">// Uwaga: equals na BigDecimal!</span>
+<span class="kw">new</span> <span class="ty">BigDecimal</span>(<span class="st">"1.0"</span>).equals(<span class="kw">new</span> <span class="ty">BigDecimal</span>(<span class="st">"1.00"</span>)) <span class="cm">// false!</span>
+<span class="kw">new</span> <span class="ty">BigDecimal</span>(<span class="st">"1.0"</span>).compareTo(<span class="kw">new</span> <span class="ty">BigDecimal</span>(<span class="st">"1.00"</span>)) <span class="cm">// 0 ✅</span></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 03 COLLECTIONS INTERNALS ══ -->
+  <section class="chapter" id="collections">
+    <div class="ch-head">
+      <div class="ch-num">03 / 12</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--teal)">Collections — Internals</div>
+        <div class="ch-title">Jak naprawdę działają kolekcje Javy</div>
+        <div class="ch-desc">HashMap, ArrayList, LinkedList — każda kolekcja ma unikalną implementację z innym profilem złożoności. Senior rozumie co dzieje się "pod maską" i wybiera właściwą strukturę dla kontekstu.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--teal)"></div>HashMap — jak działa wewnętrznie</div></div>
+        <pre><span class="cm">// Struktura: tablica bucketów (Node[])
+// index = (n-1) &amp; hash(key)  gdzie n = capacity (potęga 2)</span>
+
+<span class="cm">// Java 8+: bucket &lt;= 8 elementów → LinkedList</span>
+<span class="cm">//          bucket  &gt; 8 elementów → TreeNode (red-black tree!)</span>
+<span class="cm">// → gwarantuje O(log n) nawet przy słabym hashCode</span>
+
+<span class="cm">// Parametry:</span>
+<span class="kw">new</span> <span class="ty">HashMap</span>&lt;&gt;(<span class="nu">16</span>, <span class="nu">0.75f</span>);
+<span class="cm">//            ↑           ↑</span>
+<span class="cm">//   initial capacity   load factor</span>
+<span class="cm">// Resize gdy: size > capacity * loadFactor</span>
+<span class="cm">// Resize = 2x capacity + rehash wszystkich kluczy = O(n)!</span>
+
+<span class="cm">// ✅ Inicjalizuj z właściwą pojemnością:</span>
+<span class="kw">int</span> expectedSize = <span class="nu">1000</span>;
+<span class="kw">new</span> <span class="ty">HashMap</span>&lt;&gt;((int)(expectedSize / <span class="nu">0.75f</span>) + <span class="nu">1</span>); <span class="cm">// bez resize</span>
+
+<span class="cm">// hash() — perturbacja wyższych bitów:</span>
+<span class="kw">static final int</span> <span class="fn">hash</span>(<span class="ty">Object</span> key) {
+    <span class="kw">int</span> h;
+    <span class="kw">return</span> (key == <span class="kw">null</span>) ? <span class="nu">0</span>
+        : (h = key.hashCode()) ^ (h >>> <span class="nu">16</span>);
+    <span class="cm">// XOR z górnymi bitami — redukuje kolizje gdy tablica mała</span>
+}
+
+<span class="cm">// Złożoności: get/put/remove = O(1) amortyzowane</span>
+<span class="cm">// W najgorszym (wszystko w jednym buckecie): O(log n) w Java 8+</span></pre>
+      </div>
+
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--teal)"></div>ArrayList vs LinkedList — kiedy co</div></div>
+        <pre><span class="cm">// ArrayList — tablica dynamiczna</span>
+<span class="cm">// Wewnętrznie: Object[] elementData</span>
+<span class="cm">// Domyślny rozmiar: 10. Grow factor: 1.5x</span>
+<span class="cm">// get(i)     → O(1) — random access</span>
+<span class="cm">// add(e)     → O(1) amortyzowane (ostatni)</span>
+<span class="cm">// add(i,e)   → O(n) — shift elementów w prawo</span>
+<span class="cm">// remove(i)  → O(n) — shift w lewo</span>
+<span class="cm">// contains   → O(n) — liniowe przeszukiwanie</span>
+
+<span class="cm">// LinkedList — doubly-linked list</span>
+<span class="cm">// Każdy element: Node { item, prev, next }</span>
+<span class="cm">// get(i)     → O(n) — musi przejść od head/tail</span>
+<span class="cm">// addFirst() → O(1)</span>
+<span class="cm">// addLast()  → O(1)</span>
+<span class="cm">// remove(i)  → O(n) — find, potem O(1) relink</span>
+<span class="cm">// Overhead: każdy Node = 24 bytes (header + item + prev + next)</span>
+
+<span class="cm">// W praktyce: ArrayList PRAWIE ZAWSZE lepsza niż LinkedList!</span>
+<span class="cm">// LinkedList dobre tylko gdy: Deque semantics + dużo add/remove na końcach</span>
+<span class="cm">// ArrayDeque &gt; LinkedList jako Deque (lepsza lokalność cache)</span>
+
+<span class="cm">// Inne kolekcje i ich złożoności:</span>
+<span class="cm">// TreeMap/TreeSet   → O(log n) get/put/remove, sorted order</span>
+<span class="cm">// LinkedHashMap     → O(1) jak HashMap + insertion order</span>
+<span class="cm">// PriorityQueue     → O(log n) offer/poll, O(1) peek (min-heap)</span>
+<span class="cm">// ArrayDeque        → O(1) addFirst/addLast/pollFirst/pollLast</span></pre>
+      </div>
+    </div>
+
+    <div class="gap16"></div>
+    <div class="card">
+      <div class="card-h" style="color:var(--teal)">📊 Złożoność kolekcji — kompleksowa tabela</div>
+      <div class="card-b" style="overflow-x:auto">
+        <table class="tbl">
+          <thead><tr><th>Kolekcja</th><th>get(i)</th><th>add/offer</th><th>remove</th><th>contains</th><th>Iteracja</th><th>Thread-safe?</th></tr></thead>
+          <tbody>
+            <tr><td><code>ArrayList</code></td><td>O(1)</td><td>O(1)*</td><td>O(n)</td><td>O(n)</td><td>O(n)</td><td>❌</td></tr>
+            <tr><td><code>LinkedList</code></td><td>O(n)</td><td>O(1)</td><td>O(n)</td><td>O(n)</td><td>O(n)</td><td>❌</td></tr>
+            <tr><td><code>ArrayDeque</code></td><td>O(1)</td><td>O(1)*</td><td>O(1)**</td><td>O(n)</td><td>O(n)</td><td>❌</td></tr>
+            <tr><td><code>HashMap</code></td><td>—</td><td>O(1)*</td><td>O(1)*</td><td>O(1)*</td><td>O(n+capacity)</td><td>❌</td></tr>
+            <tr><td><code>LinkedHashMap</code></td><td>—</td><td>O(1)*</td><td>O(1)*</td><td>O(1)*</td><td>O(n)</td><td>❌</td></tr>
+            <tr><td><code>TreeMap</code></td><td>—</td><td>O(log n)</td><td>O(log n)</td><td>O(log n)</td><td>O(n)</td><td>❌</td></tr>
+            <tr><td><code>HashSet</code></td><td>—</td><td>O(1)*</td><td>O(1)*</td><td>O(1)*</td><td>O(n)</td><td>❌</td></tr>
+            <tr><td><code>TreeSet</code></td><td>—</td><td>O(log n)</td><td>O(log n)</td><td>O(log n)</td><td>O(n)</td><td>❌</td></tr>
+            <tr><td><code>PriorityQueue</code></td><td>peek O(1)</td><td>O(log n)</td><td>poll O(log n)</td><td>O(n)</td><td>O(n)</td><td>❌</td></tr>
+            <tr><td><code>ConcurrentHashMap</code></td><td>—</td><td>O(1)*</td><td>O(1)*</td><td>O(1)*</td><td>O(n)</td><td>✅</td></tr>
+            <tr><td><code>CopyOnWriteArrayList</code></td><td>O(1)</td><td>O(n)</td><td>O(n)</td><td>O(n)</td><td>O(n)</td><td>✅ r,❌ w</td></tr>
+          </tbody>
+        </table>
+        <p style="font-size:.75rem;color:var(--mt);padding:10px 0 0">* amortyzowane. ** tylko head/tail operacje</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 04 EXCEPTION DESIGN ══ -->
+  <section class="chapter" id="exceptions">
+    <div class="ch-head">
+      <div class="ch-num">04 / 12</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--rose)">Exception Design</div>
+        <div class="ch-title">Wyjątki — jak projektować, kiedy rzucać</div>
+        <div class="ch-desc">Większość programistów używa wyjątków źle — łapią Exception, połykają stack trace, używają wyjątków do flow control. Senior wie kiedy checked vs unchecked, jak projektować hierarchię i kiedy wyjątek to zły wybór.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--rose)"></div>Checked vs Unchecked — kiedy co</div></div>
+        <pre><span class="cm">// Checked (Exception) → wywołujący MUSI obsłużyć</span>
+<span class="cm">// Używaj gdy: wywołujący może i powinien podjąć sensowne działanie</span>
+<span class="kw">public class</span> <span class="ty">InsufficientFundsException</span> <span class="kw">extends</span> <span class="ty">Exception</span> {
+    <span class="kw">private final</span> <span class="ty">BigDecimal</span> deficit;
+    <span class="kw">public</span> <span class="ty">InsufficientFundsException</span>(<span class="ty">BigDecimal</span> d) {
+        <span class="kw">super</span>(<span class="st">"Insufficient funds: deficit "</span> + d);
+        <span class="kw">this</span>.deficit = d;
+    }
+    <span class="kw">public</span> <span class="ty">BigDecimal</span> <span class="fn">getDeficit</span>() { <span class="kw">return</span> deficit; }
+}
+<span class="cm">// Wywołujący może zaproponować doładowanie konta</span>
+
+<span class="cm">// Unchecked (RuntimeException) → błąd programisty lub nie do naprawienia</span>
+<span class="kw">public class</span> <span class="ty">OrderNotFoundException</span> <span class="kw">extends</span> <span class="ty">RuntimeException</span> {
+    <span class="kw">public</span> <span class="ty">OrderNotFoundException</span>(<span class="ty">Long</span> id) {
+        <span class="kw">super</span>(<span class="st">"Order not found: "</span> + id);
+    }
+    <span class="cm">// cause chain dla diagnostyki:</span>
+    <span class="kw">public</span> <span class="ty">OrderNotFoundException</span>(<span class="ty">Long</span> id, <span class="ty">Throwable</span> cause) {
+        <span class="kw">super</span>(<span class="st">"Order not found: "</span> + id, cause);
+    }
+}
+
+<span class="cm">// ❌ Anty-pattern — łapanie Exception/Throwable:</span>
+<span class="kw">try</span> { ... } <span class="kw">catch</span> (<span class="ty">Exception</span> e) { log.error(<span class="st">"error"</span>); } <span class="cm">// połykanie!</span>
+
+<span class="cm">// ❌ Wyjątek do flow control (bardzo wolne — stack unwind):</span>
+<span class="kw">try</span> {
+    <span class="kw">return</span> map.get(key);  <span class="cm">// jeśli null → NullPointerException</span>
+} <span class="kw">catch</span> (<span class="ty">NullPointerException</span> e) {
+    <span class="kw">return</span> defaultValue;   <span class="cm">// ❌ użyj getOrDefault!</span>
+}</pre>
+      </div>
+
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--rose)"></div>Exception chaining i multi-catch</div></div>
+        <pre><span class="cm">// ✅ Zawsze zachowuj cause chain:</span>
+<span class="kw">try</span> {
+    jdbcTemplate.query(sql, params);
+} <span class="kw">catch</span> (<span class="ty">DataAccessException</span> e) {
+    <span class="cm">// ❌ nowy exception BEZ cause — trace utracony!</span>
+    <span class="kw">throw new</span> <span class="ty">OrderNotFoundException</span>(id);
+    <span class="cm">// ✅ z cause:</span>
+    <span class="kw">throw new</span> <span class="ty">OrderNotFoundException</span>(id, e); <span class="cm">// zachowaj trace!</span>
+}
+
+<span class="cm">// Multi-catch (Java 7+):</span>
+<span class="kw">try</span> { ... }
+<span class="kw">catch</span> (<span class="ty">IOException</span> | <span class="ty">SQLException</span> e) { <span class="cm">// oba → jeden handler</span>
+    <span class="cm">// e jest effectively final — nie możesz reassignować</span>
+    handleError(e);
+}
+
+<span class="cm">// Catch more specific first:</span>
+<span class="kw">try</span> { ... }
+<span class="kw">catch</span> (<span class="ty">FileNotFoundException</span> e) { ... } <span class="cm">// bardziej szczegółowy first</span>
+<span class="kw">catch</span> (<span class="ty">IOException</span> e) { ... }           <span class="cm">// ogólniejszy second</span>
+
+<span class="cm">// Exception w lambda — problem!</span>
+list.forEach(item -> {
+    <span class="kw">try</span> { process(item); }         <span class="cm">// ❌ verbose</span>
+    <span class="kw">catch</span> (<span class="ty">IOException</span> e) { <span class="kw">throw new</span> <span class="ty">RuntimeException</span>(e); }
+});
+<span class="cm">// ✅ Wrapper helper:</span>
+<span class="kw">interface</span> <span class="ty">ThrowingConsumer</span>&lt;<span class="ty">T</span>&gt; {
+    <span class="kw">void</span> <span class="fn">accept</span>(<span class="ty">T</span> t) <span class="kw">throws</span> <span class="ty">Exception</span>;
+    <span class="kw">static</span> &lt;<span class="ty">T</span>&gt; <span class="ty">Consumer</span>&lt;<span class="ty">T</span>&gt; <span class="fn">wrap</span>(<span class="ty">ThrowingConsumer</span>&lt;<span class="ty">T</span>&gt; tc) {
+        <span class="kw">return</span> t -> { <span class="kw">try</span> { tc.accept(t); }
+            <span class="kw">catch</span>(<span class="ty">Exception</span> e) { <span class="kw">throw new</span> <span class="ty">RuntimeException</span>(e); }};
+    }
+}
+list.forEach(<span class="ty">ThrowingConsumer</span>.wrap(<span class="kw">this</span>::process));</pre>
+      </div>
+    </div>
+
+    <div class="gap16"></div>
+    <div class="g3">
+      <div class="card">
+        <div class="card-h" style="color:var(--rose)">🏗️ Hierarchia wyjątków</div>
+        <div class="card-b">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:.72rem;line-height:1.9;background:var(--s2);padding:14px;border-radius:6px">
+            <span style="color:var(--rose)">Throwable</span><br>
+            ├── <span style="color:var(--amber)">Error</span> (nie łap!)<br>
+            │   ├── OutOfMemoryError<br>
+            │   ├── StackOverflowError<br>
+            │   └── AssertionError<br>
+            └── <span style="color:var(--green)">Exception</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;├── <span style="color:var(--teal)">IOException</span> (checked)<br>
+            │   │   ├── FileNotFoundException<br>
+            │   │   └── SocketException<br>
+            │   ├── <span style="color:var(--teal)">SQLException</span> (checked)<br>
+            │   └── <span style="color:var(--violet)">RuntimeException</span> (unchecked)<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── NullPointerException<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── IllegalArgumentException<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── IllegalStateException<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── IndexOutOfBoundsException
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h" style="color:var(--rose)">✅ Kiedy Optional zamiast exception</div>
+        <div class="card-b">
+          <div class="code" style="border:none;border-radius:0;background:transparent">
+            <pre style="padding:0;font-size:.74rem"><span class="cm">// ✅ Optional — wartość może nie istnieć</span>
+<span class="kw">public</span> <span class="ty">Optional</span>&lt;<span class="ty">User</span>&gt; <span class="fn">findById</span>(<span class="ty">Long</span> id);
+
+<span class="cm">// Wywołujący decyduje co zrobić:</span>
+findById(<span class="nu">42L</span>)
+    .map(<span class="ty">User</span>::getName)
+    .orElse(<span class="st">"Anonymous"</span>);
+
+findById(<span class="nu">42L</span>)
+    .orElseThrow(() -> <span class="kw">new</span>
+        <span class="ty">UserNotFoundException</span>(<span class="nu">42L</span>));
+
+<span class="cm">// ❌ NIE używaj Optional jako:</span>
+<span class="cm">// - parametr metody (użyj @Nullable lub overload)</span>
+<span class="cm">// - pole klasy (użyj null + @Nullable)</span>
+<span class="cm">// - w kolekcjach (Collection&lt;Optional&lt;T&gt;&gt;)</span>
+<span class="cm">// - zamiast if(x != null) w kodzie wewnętrznym</span></pre>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h" style="color:var(--rose)">📝 Dobre wyjątki — checklist</div>
+        <div class="card-b" style="font-size:.83rem;color:var(--tx2);line-height:1.9">
+          <p>□ Czytelna wiadomość z kontekstem (co, dlaczego, jakie wartości)</p>
+          <p>□ Pola z informacjami dla catch (np. entityId, attemptedValue)</p>
+          <p>□ Cause chain zachowany gdy wrapujesz</p>
+          <p>□ Nie loguj i nie rzucaj jednocześnie (duplicate logs)</p>
+          <p>□ Nie używaj wyjątków do normalnego flow</p>
+          <p>□ Zawsze finally lub try-with-resources dla zasobów</p>
+          <p>□ Unchecked dla błędów programisty (preconditions)</p>
+          <p>□ Checked gdy wywołujący może sensownie obsłużyć</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 05 IMMUTABILITY ══ -->
+  <section class="chapter" id="immutability">
+    <div class="ch-head">
+      <div class="ch-num">05 / 12</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--violet)">Immutability Patterns</div>
+        <div class="ch-title">Niezmienność — jak budować i dlaczego</div>
+        <div class="ch-desc">Niezmienne obiekty są thread-safe, bezpieczne jako klucze w HashMap i łatwiejsze do rozumowania. Ale "final field" nie wystarczy — musisz rozumieć defensive copy, shallow vs deep immutability i Builder pattern.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--violet)"></div>Budowanie immutable klasy</div></div>
+        <pre><span class="cm">// Reguły immutable klasy (Effective Java):</span>
+<span class="cm">// 1. Nie udostępniaj mutujących metod (setterów)</span>
+<span class="cm">// 2. Klasa powinna być final (lub wszystkie konstruktory prywatne)</span>
+<span class="cm">// 3. Wszystkie pola final</span>
+<span class="cm">// 4. Wszystkie pola private</span>
+<span class="cm">// 5. Defensive copy dla mutable komponentów</span>
+
+<span class="kw">public final class</span> <span class="ty">Period</span> {
+    <span class="kw">private final</span> <span class="ty">Date</span> start;
+    <span class="kw">private final</span> <span class="ty">Date</span> end;
+
+    <span class="kw">public</span> <span class="ty">Period</span>(<span class="ty">Date</span> start, <span class="ty">Date</span> end) {
+        <span class="cm">// ✅ Defensive copy w konstruktorze PRZED walidacją</span>
+        <span class="cm">// (TOCTOU attack: zmiana po sprawdzeniu)</span>
+        <span class="kw">this</span>.start = <span class="kw">new</span> <span class="ty">Date</span>(start.getTime());  <span class="cm">// kopia!</span>
+        <span class="kw">this</span>.end   = <span class="kw">new</span> <span class="ty">Date</span>(end.getTime());    <span class="cm">// kopia!</span>
+        <span class="kw">if</span> (<span class="kw">this</span>.start.after(<span class="kw">this</span>.end))
+            <span class="kw">throw new</span> <span class="ty">IllegalArgumentException</span>(<span class="st">"start after end"</span>);
+    }
+
+    <span class="kw">public</span> <span class="ty">Date</span> <span class="fn">start</span>() {
+        <span class="kw">return new</span> <span class="ty">Date</span>(start.getTime()); <span class="cm">// ✅ defensive copy w getterze</span>
+    }
+}
+<span class="cm">// Dziś zamiast Date używaj java.time.LocalDate — immutable!</span>
+
+<span class="cm">// Shallow vs Deep immutability:</span>
+<span class="kw">public final class</span> <span class="ty">Order</span> {
+    <span class="kw">private final</span> <span class="ty">List</span>&lt;<span class="ty">Item</span>&gt; items;
+
+    <span class="kw">public</span> <span class="ty">Order</span>(<span class="ty">List</span>&lt;<span class="ty">Item</span>&gt; items) {
+        <span class="kw">this</span>.items = <span class="ty">List</span>.copyOf(items); <span class="cm">// ✅ unmodifiable copy</span>
+    }
+    <span class="kw">public</span> <span class="ty">List</span>&lt;<span class="ty">Item</span>&gt; <span class="fn">items</span>() { <span class="kw">return</span> items; } <span class="cm">// już bezpieczne</span>
+    <span class="cm">// Ale Item musi być też immutable dla deep immutability!</span>
+}</pre>
+      </div>
+
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--violet)"></div>Builder Pattern — właściwa implementacja</div></div>
+        <pre><span class="kw">public final class</span> <span class="ty">User</span> {
+    <span class="kw">private final</span> <span class="ty">String</span> firstName;
+    <span class="kw">private final</span> <span class="ty">String</span> lastName;
+    <span class="kw">private final</span> <span class="ty">String</span> email;
+    <span class="kw">private final</span> <span class="ty">int</span>    age;
+
+    <span class="kw">private</span> <span class="ty">User</span>(<span class="ty">Builder</span> b) {
+        <span class="kw">this</span>.firstName = <span class="ty">Objects</span>.requireNonNull(b.firstName, <span class="st">"firstName"</span>);
+        <span class="kw">this</span>.lastName  = <span class="ty">Objects</span>.requireNonNull(b.lastName,  <span class="st">"lastName"</span>);
+        <span class="kw">this</span>.email     = b.email;
+        <span class="kw">this</span>.age       = b.age;
+    }
+
+    <span class="kw">public static class</span> <span class="ty">Builder</span> {
+        <span class="kw">private</span> <span class="ty">String</span> firstName, lastName, email;
+        <span class="kw">private int</span> age;
+
+        <span class="kw">public</span> <span class="ty">Builder</span> <span class="fn">firstName</span>(<span class="ty">String</span> v) { firstName = v; <span class="kw">return this</span>; }
+        <span class="kw">public</span> <span class="ty">Builder</span> <span class="fn">lastName</span>(<span class="ty">String</span> v)  { lastName  = v; <span class="kw">return this</span>; }
+        <span class="kw">public</span> <span class="ty">Builder</span> <span class="fn">email</span>(<span class="ty">String</span> v)     { email     = v; <span class="kw">return this</span>; }
+        <span class="kw">public</span> <span class="ty">Builder</span> <span class="fn">age</span>(<span class="kw">int</span> v)          { age       = v; <span class="kw">return this</span>; }
+        <span class="kw">public</span> <span class="ty">User</span>    <span class="fn">build</span>() { <span class="kw">return new</span> <span class="ty">User</span>(<span class="kw">this</span>); }
+    }
+}
+
+<span class="cm">// Użycie:</span>
+<span class="ty">User</span> user = <span class="kw">new</span> <span class="ty">User</span>.<span class="ty">Builder</span>()
+    .firstName(<span class="st">"Jan"</span>)
+    .lastName(<span class="st">"Kowalski"</span>)
+    .email(<span class="st">"<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="7c161d123c19041d110c1019521f1311">[email&#160;protected]</a>"</span>)
+    .age(<span class="nu">30</span>)
+    .build();
+
+<span class="cm">// Lub Lombok @Builder / @Value (prostszy zapis)</span>
+<span class="cm">// Lub Record dla prostszych przypadków</span></pre>
+      </div>
+    </div>
+
+    <div class="gap16"></div>
+    <div class="g3">
+      <div class="card">
+        <div class="card-h" style="color:var(--violet)">🔄 Wither pattern — modyfikacja immutable</div>
+        <div class="card-b">
+          <div class="code" style="border:none;border-radius:0;background:transparent">
+            <pre style="padding:0;font-size:.74rem"><span class="cm">// "With" — kopiuj z jedną zmianą</span>
+<span class="kw">public final class</span> <span class="ty">Config</span> {
+    <span class="kw">public final</span> <span class="kw">int</span> timeout;
+    <span class="kw">public final</span> <span class="ty">String</span> url;
+
+    <span class="kw">public</span> <span class="ty">Config</span> <span class="fn">withTimeout</span>(<span class="kw">int</span> t) {
+        <span class="kw">return new</span> <span class="ty">Config</span>(t, <span class="kw">this</span>.url);
+    }
+    <span class="kw">public</span> <span class="ty">Config</span> <span class="fn">withUrl</span>(<span class="ty">String</span> u) {
+        <span class="kw">return new</span> <span class="ty">Config</span>(<span class="kw">this</span>.timeout, u);
+    }
+}
+
+<span class="cm">// Record robi to automatycznie w Java 16+:</span>
+<span class="kw">record</span> <span class="ty">Config</span>(<span class="kw">int</span> timeout, <span class="ty">String</span> url) {}
+<span class="ty">Config</span> updated = original.withTimeout(<span class="nu">5000</span>); <span class="cm">// (preview)</span></pre>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h" style="color:var(--violet)">📦 Unmodifiable vs Immutable</div>
+        <div class="card-b" style="font-size:.84rem;color:var(--tx2);line-height:1.85">
+          <p style="margin-bottom:10px"><strong style="color:var(--rose)">Unmodifiable view</strong> — <code>Collections.unmodifiableList(list)</code> — rzuca UnsupportedOperationException przy mutacji, ALE oryginalna lista wciąż może się zmienić!</p>
+          <p style="margin-bottom:10px"><strong style="color:var(--green)">Truly immutable</strong> — <code>List.of()</code>, <code>List.copyOf()</code> — nie można zmienić ani przez widok ani przez oryginalną referencję.</p>
+          <p>Używaj <strong style="color:var(--tx)">List.copyOf()</strong> gdy chcesz mieć pewność że kopia jest immutable — nawet jeśli oryginał jest mutowany.</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h" style="color:var(--violet)">⚡ Dlaczego String jest immutable</div>
+        <div class="card-b" style="font-size:.84rem;color:var(--tx2);line-height:1.85">
+          <p style="margin-bottom:8px"><strong style="color:var(--tx)">String Pool:</strong> wielokrotne referencje do tego samego obiektu — mutable String byłoby katastrofalne (jedna referencja zmienia, wszystkie widzą zmianę).</p>
+          <p style="margin-bottom:8px"><strong style="color:var(--tx)">Thread safety:</strong> automatyczna bez synchronizacji.</p>
+          <p style="margin-bottom:8px"><strong style="color:var(--tx)">Klucz HashMap:</strong> hashCode jest cachowany — bezpieczny jako klucz.</p>
+          <p><strong style="color:var(--tx)">Bezpieczeństwo:</strong> ścieżki plików, adresy URL nie mogą być podmienione po walidacji.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 06 REFLECTION & PROXY ══ -->
+  <section class="chapter" id="reflection">
+    <div class="ch-head">
+      <div class="ch-num">06 / 12</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--sky)">Reflection API & Dynamic Proxy</div>
+        <div class="ch-title">Reflection, Dynamic Proxy i MethodHandles</div>
+        <div class="ch-desc">Reflection to fundament Spring AOP, Hibernate, Jackson i wielu innych frameworków. Senior musi rozumieć jak działa, kiedy jest bezpieczna i kiedy lepiej użyć nowszego MethodHandles API.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--sky)"></div>Reflection — pełny zakres możliwości</div></div>
+        <pre><span class="cm">// Inspekcja klasy:</span>
+<span class="ty">Class</span>&lt;<span class="ty">User</span>&gt; clazz = <span class="ty">User</span>.class;
+clazz.getDeclaredFields();          <span class="cm">// prywatne też!</span>
+clazz.getDeclaredMethods();
+clazz.getDeclaredConstructors();
+clazz.getAnnotations();
+clazz.getSuperclass();
+clazz.getGenericInterfaces();       <span class="cm">// z parametrami typów</span>
+
+<span class="cm">// Tworzenie instancji:</span>
+<span class="ty">Constructor</span>&lt;<span class="ty">User</span>&gt; ctor = clazz.getDeclaredConstructor(<span class="ty">String</span>.class);
+ctor.setAccessible(<span class="kw">true</span>);           <span class="cm">// omija private!</span>
+<span class="ty">User</span> user = ctor.newInstance(<span class="st">"Jan"</span>);
+
+<span class="cm">// Dostęp do pól:</span>
+<span class="ty">Field</span> field = clazz.getDeclaredField(<span class="st">"name"</span>);
+field.setAccessible(<span class="kw">true</span>);
+field.set(user, <span class="st">"Nowa wartość"</span>);  <span class="cm">// nawet private final!</span>
+<span class="ty">Object</span> value = field.get(user);
+
+<span class="cm">// Wywoływanie metod:</span>
+<span class="ty">Method</span> method = clazz.getDeclaredMethod(<span class="st">"processOrder"</span>, <span class="ty">Long</span>.class);
+method.setAccessible(<span class="kw">true</span>);
+<span class="ty">Object</span> result = method.invoke(user, <span class="nu">42L</span>);
+
+<span class="cm">// MethodHandles — szybsze niż Reflection, sprawdzane w compile-time:</span>
+<span class="ty">MethodHandles</span>.<span class="ty">Lookup</span> lookup = <span class="ty">MethodHandles</span>.lookup();
+<span class="ty">MethodHandle</span> mh = lookup.findVirtual(
+    <span class="ty">User</span>.class, <span class="st">"getName"</span>,
+    <span class="ty">MethodType</span>.methodType(<span class="ty">String</span>.class));
+<span class="ty">String</span> name = (<span class="ty">String</span>) mh.invoke(user); <span class="cm">// ~3x szybsze niż reflect</span></pre>
+      </div>
+
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--sky)"></div>Dynamic Proxy — jak działa Spring AOP</div></div>
+        <pre><span class="cm">// JDK Dynamic Proxy — tylko dla interfejsów</span>
+<span class="ty">OrderService</span> proxy = (<span class="ty">OrderService</span>) <span class="ty">Proxy</span>.newProxyInstance(
+    <span class="ty">OrderService</span>.class.getClassLoader(),
+    <span class="kw">new</span> <span class="ty">Class</span>[] { <span class="ty">OrderService</span>.class },
+    <span class="kw">new</span> <span class="ty">InvocationHandler</span>() {
+        <span class="kw">private final</span> <span class="ty">OrderService</span> delegate = <span class="kw">new</span> <span class="ty">OrderServiceImpl</span>();
+
+        <span class="an">@Override</span>
+        <span class="kw">public</span> <span class="ty">Object</span> <span class="fn">invoke</span>(<span class="ty">Object</span> proxy, <span class="ty">Method</span> method, <span class="ty">Object</span>[] args)
+                <span class="kw">throws</span> <span class="ty">Throwable</span> {
+            <span class="cm">// Around advice:</span>
+            log.info(<span class="st">"Before: {}"</span>, method.getName());
+            <span class="kw">long</span> start = <span class="ty">System</span>.nanoTime();
+            <span class="kw">try</span> {
+                <span class="kw">return</span> method.invoke(delegate, args); <span class="cm">// wywołaj prawdziwe</span>
+            } <span class="finally">finally</span> {
+                log.info(<span class="st">"After: {}ms"</span>, (System.nanoTime()-start)/1e6);
+            }
+        }
+    });
+
+<span class="cm">// CGLIB Proxy (Spring gdy brak interfejsu) — subklasa bajtkodu</span>
+<span class="cm">// Enhancer enhancer = new Enhancer();</span>
+<span class="cm">// enhancer.setSuperclass(OrderServiceImpl.class);</span>
+<span class="cm">// enhancer.setCallback(new MethodInterceptor() { ... });</span>
+<span class="cm">// OrderServiceImpl proxy = (OrderServiceImpl) enhancer.create();</span>
+
+<span class="cm">// Dlatego Spring AOP nie działa dla:</span>
+<span class="cm">// - final klas (CGLIB nie może subklasować)</span>
+<span class="cm">// - prywatnych metod</span>
+<span class="cm">// - wywołań this.method() — omija proxy!</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 07 ANNOTATIONS ══ -->
+  <section class="chapter" id="annotations">
+    <div class="ch-head">
+      <div class="ch-num">07 / 12</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--amber)">Adnotacje & Annotation Processing</div>
+        <div class="ch-title">Tworzenie i przetwarzanie adnotacji</div>
+        <div class="ch-desc">Adnotacje to metadane — fundament Lombok, MapStruct, Dagger, QueryDSL i wielu innych. Annotation Processor (APT) generuje kod w compile-time — zero overhead w runtime. Senior powinien umieć pisać własne.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--amber)"></div>Własna adnotacja — meta-adnotacje</div></div>
+        <pre><span class="cm">// Meta-adnotacje — opisują adnotacje</span>
+
+<span class="an">@Target</span>({
+    <span class="ty">ElementType</span>.METHOD,       <span class="cm">// na metodach</span>
+    <span class="ty">ElementType</span>.TYPE,         <span class="cm">// na klasach</span>
+    <span class="ty">ElementType</span>.FIELD,        <span class="cm">// na polach</span>
+    <span class="ty">ElementType</span>.PARAMETER,    <span class="cm">// na parametrach</span>
+    <span class="ty">ElementType</span>.CONSTRUCTOR,  <span class="cm">// na konstruktorach</span>
+    <span class="ty">ElementType</span>.ANNOTATION_TYPE <span class="cm">// na adnotacjach (meta!)</span>
+})
+<span class="an">@Retention</span>(<span class="ty">RetentionPolicy</span>.RUNTIME)   <span class="cm">// widoczna przez Reflection</span>
+<span class="cm">// RetentionPolicy.SOURCE  → tylko w kompilacji, znika z .class</span>
+<span class="cm">// RetentionPolicy.CLASS   → w .class, nie dostępna przez Reflection</span>
+<span class="an">@Documented</span>    <span class="cm">// pojawi się w Javadoc</span>
+<span class="an">@Inherited</span>     <span class="cm">// dziedziczona przez podklasy (tylko TYPE)</span>
+<span class="an">@Repeatable</span>(<span class="ty">Roles</span>.class) <span class="cm">// można stosować wielokrotnie</span>
+<span class="kw">public @interface</span> <span class="ty">Role</span> {
+    <span class="ty">String</span> value();                        <span class="cm">// "value" → skrót</span>
+    <span class="ty">String</span>[] permissions() <span class="kw">default</span> {};      <span class="cm">// domyślna wartość</span>
+    <span class="ty">Class</span>&lt;?&gt; handler() <span class="kw">default</span> <span class="ty">Void</span>.class; <span class="cm">// typ klasy</span>
+}
+
+<span class="cm">// Odczyt przez Reflection:</span>
+<span class="kw">for</span> (<span class="ty">Method</span> m : clazz.getDeclaredMethods()) {
+    <span class="kw">if</span> (m.isAnnotationPresent(<span class="ty">Role</span>.class)) {
+        <span class="ty">Role</span> role = m.getAnnotation(<span class="ty">Role</span>.class);
+        System.out.println(<span class="st">"Role: "</span> + role.value());
+    }
+}</pre>
+      </div>
+
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--amber)"></div>Annotation Processor — generowanie kodu</div></div>
+        <pre><span class="cm">// Annotation Processor działa w compile-time (javac)</span>
+<span class="cm">// Jak Lombok, MapStruct, Dagger2 generują kod</span>
+<span class="an">@SupportedAnnotationTypes</span>(<span class="st">"com.app.Builder"</span>)
+<span class="an">@SupportedSourceVersion</span>(<span class="ty">SourceVersion</span>.RELEASE_21)
+<span class="an">@AutoService</span>(<span class="ty">Processor</span>.class)  <span class="cm">// google-auto-service rejestruje</span>
+<span class="kw">public class</span> <span class="ty">BuilderProcessor</span> <span class="kw">extends</span> <span class="ty">AbstractProcessor</span> {
+
+    <span class="an">@Override</span>
+    <span class="kw">public boolean</span> <span class="fn">process</span>(<span class="ty">Set</span>&lt;? <span class="kw">extends</span> <span class="ty">TypeElement</span>&gt; annotations,
+                            <span class="ty">RoundEnvironment</span> roundEnv) {
+        <span class="kw">for</span> (<span class="ty">Element</span> el : roundEnv.getElementsAnnotatedWith(<span class="ty">Builder</span>.class)) {
+            <span class="kw">if</span> (el.getKind() != <span class="ty">ElementKind</span>.CLASS) <span class="kw">continue</span>;
+            <span class="ty">TypeElement</span> typeEl = (<span class="ty">TypeElement</span>) el;
+
+            <span class="cm">// Generuj kod za pomocą JavaPoet lub ręcznie:</span>
+            <span class="ty">String</span> builderCode = generateBuilder(typeEl);
+            <span class="kw">try</span> {
+                <span class="ty">JavaFileObject</span> file = processingEnv.getFiler()
+                    .createSourceFile(typeEl.getSimpleName() + <span class="st">"Builder"</span>);
+                <span class="kw">try</span> (<span class="kw">var</span> writer = file.openWriter()) {
+                    writer.write(builderCode);
+                }
+            } <span class="kw">catch</span> (<span class="ty">IOException</span> e) { <span class="kw">throw new</span> <span class="ty">RuntimeException</span>(e); }
+        }
+        <span class="kw">return true</span>; <span class="cm">// claim the annotation</span>
+    }
+}
+<span class="cm">// Rejestracja: META-INF/services/javax.annotation.processing.Processor</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 08 FUNCTIONAL PATTERNS ══ -->
+  <section class="chapter" id="functional">
+    <div class="ch-head">
+      <div class="ch-num">08 / 12</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--pink)">Functional Java — zaawansowane wzorce</div>
+        <div class="ch-title">Monady, Either, Try — functional error handling</div>
+        <div class="ch-desc">Functional programming w Javie to więcej niż lambdy i streams. Monady jak Either, Try i Result eliminują wyjątki z API, robią kod bardziej kompozycyjnym i czytelnym — biblioteki: Vavr, Arrow (Kotlin).</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--pink)"></div>Either — wynik lub błąd bez wyjątków</div></div>
+        <pre><span class="cm">// Either&lt;L, R&gt; — Left (błąd) lub Right (sukces)</span>
+<span class="cm">// Pozwala na composable error handling</span>
+
+<span class="cm">// Prosta implementacja (sealed):</span>
+<span class="kw">sealed interface</span> <span class="ty">Either</span>&lt;<span class="ty">L</span>, <span class="ty">R</span>&gt; <span class="kw">permits</span> <span class="ty">Left</span>, <span class="ty">Right</span> {
+    <span class="kw">static</span> &lt;<span class="ty">L</span>,<span class="ty">R</span>&gt; <span class="ty">Either</span>&lt;<span class="ty">L</span>,<span class="ty">R</span>&gt; <span class="fn">left</span>(<span class="ty">L</span> v)  { <span class="kw">return new</span> <span class="ty">Left</span>&lt;&gt;(v); }
+    <span class="kw">static</span> &lt;<span class="ty">L</span>,<span class="ty">R</span>&gt; <span class="ty">Either</span>&lt;<span class="ty">L</span>,<span class="ty">R</span>&gt; <span class="fn">right</span>(<span class="ty">R</span> v) { <span class="kw">return new</span> <span class="ty">Right</span>&lt;&gt;(v); }
+    <span class="kw">boolean</span> <span class="fn">isRight</span>();
+
+    <span class="kw">default</span> &lt;<span class="ty">T</span>&gt; <span class="ty">Either</span>&lt;<span class="ty">L</span>,<span class="ty">T</span>&gt; <span class="fn">map</span>(<span class="ty">Function</span>&lt;<span class="ty">R</span>,<span class="ty">T</span>&gt; fn) {
+        <span class="kw">return switch</span> (<span class="kw">this</span>) {
+            <span class="kw">case</span> <span class="ty">Right</span>&lt;<span class="ty">L</span>,<span class="ty">R</span>&gt;(R v) -> <span class="ty">Either</span>.right(fn.apply(v));
+            <span class="kw">case</span> <span class="ty">Left</span>&lt;<span class="ty">L</span>,<span class="ty">R</span>&gt;(L l) -> <span class="ty">Either</span>.left(l);
+        };
+    }
+}
+<span class="kw">record</span> <span class="ty">Left</span>&lt;<span class="ty">L</span>,<span class="ty">R</span>&gt;(<span class="ty">L</span> value)  <span class="kw">implements</span> <span class="ty">Either</span>&lt;<span class="ty">L</span>,<span class="ty">R</span>&gt; { <span class="kw">public boolean</span> isRight(){<span class="kw">return false</span>;}}
+<span class="kw">record</span> <span class="ty">Right</span>&lt;<span class="ty">L</span>,<span class="ty">R</span>&gt;(<span class="ty">R</span> value) <span class="kw">implements</span> <span class="ty">Either</span>&lt;<span class="ty">L</span>,<span class="ty">R</span>&gt; { <span class="kw">public boolean</span> isRight(){<span class="kw">return true</span>; }}
+
+<span class="cm">// Użycie — composable pipeline bez wyjątków:</span>
+<span class="ty">Either</span>&lt;<span class="ty">ValidationError</span>, <span class="ty">Order</span>&gt; result = validateRequest(req)
+    .map(this::enrichWithUser)
+    .map(this::calculatePricing)
+    .map(orderRepo::save);
+
+<span class="cm">// Lub Vavr — bogatsza biblioteka:</span>
+<span class="cm">// io.vavr:vavr — Either, Try, Option, Tuple, List...</span></pre>
+      </div>
+
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--pink)"></div>Wzorce funkcjonalne — memoizacja, currying</div></div>
+        <pre><span class="cm">// ─── Memoizacja — cache wyników funkcji ──────────────────</span>
+<span class="kw">public static</span> &lt;<span class="ty">T</span>, <span class="ty">R</span>&gt; <span class="ty">Function</span>&lt;<span class="ty">T</span>, <span class="ty">R</span>&gt; <span class="fn">memoize</span>(<span class="ty">Function</span>&lt;<span class="ty">T</span>, <span class="ty">R</span>&gt; fn) {
+    <span class="ty">Map</span>&lt;<span class="ty">T</span>, <span class="ty">R</span>&gt; cache = <span class="kw">new</span> <span class="ty">ConcurrentHashMap</span>&lt;&gt;();
+    <span class="kw">return</span> key -> cache.computeIfAbsent(key, fn);
+}
+
+<span class="ty">Function</span>&lt;<span class="ty">Long</span>, <span class="ty">BigDecimal</span>&gt; cachedPrice = <span class="fn">memoize</span>(id ->
+    priceService.calculateExpensive(id));  <span class="cm">// wywołane raz per id</span>
+
+<span class="cm">// ─── Currying — przekształcanie f(a,b) w f(a)(b) ─────────</span>
+<span class="kw">static</span> &lt;<span class="ty">A</span>,<span class="ty">B</span>,<span class="ty">C</span>&gt; <span class="ty">Function</span>&lt;<span class="ty">A</span>, <span class="ty">Function</span>&lt;<span class="ty">B</span>,<span class="ty">C</span>&gt;&gt; <span class="fn">curry</span>(<span class="ty">BiFunction</span>&lt;<span class="ty">A</span>,<span class="ty">B</span>,<span class="ty">C</span>&gt; f) {
+    <span class="kw">return</span> a -> b -> f.apply(a, b);
+}
+
+<span class="ty">Function</span>&lt;<span class="ty">String</span>, <span class="ty">String</span>&gt; addPrefix =
+    <span class="fn">curry</span>(<span class="ty">String</span>::concat).apply(<span class="st">"PREFIX_"</span>);
+addPrefix.apply(<span class="st">"hello"</span>);  <span class="cm">// "PREFIX_hello"</span>
+
+<span class="cm">// ─── Partial Application — częściowe przyłożenie arg ──────</span>
+<span class="ty">BiFunction</span>&lt;<span class="ty">String</span>, <span class="ty">Integer</span>, <span class="ty">String</span>&gt; repeat = <span class="ty">String</span>::repeat;
+<span class="ty">Function</span>&lt;<span class="ty">String</span>, <span class="ty">String</span>&gt; triple = s -> repeat.apply(s, <span class="nu">3</span>);
+
+<span class="cm">// ─── Pipeline / Fluent API ────────────────────────────────</span>
+<span class="ty">Function</span>&lt;<span class="ty">String</span>, <span class="ty">String</span>&gt; pipeline =
+    <span class="ty">Function</span>.&lt;<span class="ty">String</span>&gt;identity()
+        .andThen(<span class="ty">String</span>::trim)
+        .andThen(<span class="ty">String</span>::toLowerCase)
+        .andThen(s -> s.replaceAll(<span class="st">"\\s+"</span>, <span class="st">"_"</span>));
+
+pipeline.apply(<span class="st">"  Hello World  "</span>); <span class="cm">// "hello_world"</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 09 DESIGN PATTERNS ══ -->
+  <section class="chapter" id="design-patterns">
+    <div class="ch-head">
+      <div class="ch-num">09 / 12</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--teal)">Design Patterns — implementacje</div>
+        <div class="ch-title">GoF Patterns — implementacje i pułapki Java</div>
+        <div class="ch-desc">Wzorce projektowe to język komunikacji między developerami. Senior nie tylko je zna — rozumie kiedy stosować i kiedy NIE stosować. Przeuczenie jest gorsze niż brak wzorców.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--teal)"></div>Singleton — jedyna właściwa implementacja</div></div>
+        <pre><span class="cm">// ❌ Lazy (non-thread-safe):</span>
+<span class="kw">if</span> (instance == <span class="kw">null</span>) instance = <span class="kw">new</span> <span class="ty">Singleton</span>(); <span class="cm">// race condition</span>
+
+<span class="cm">// ❌ Synchronized — zbyt wolne:</span>
+<span class="kw">synchronized</span> (<span class="ty">Singleton</span>.class) { instance = <span class="kw">new</span> <span class="ty">Singleton</span>(); }
+
+<span class="cm">// ✅ Initialization-on-demand holder (Bill Pugh):</span>
+<span class="kw">public class</span> <span class="ty">Singleton</span> {
+    <span class="kw">private</span> <span class="ty">Singleton</span>() {}
+    <span class="kw">private static class</span> <span class="ty">Holder</span> {
+        <span class="kw">static final</span> <span class="ty">Singleton</span> INSTANCE = <span class="kw">new</span> <span class="ty">Singleton</span>();
+    }
+    <span class="kw">public static</span> <span class="ty">Singleton</span> <span class="fn">getInstance</span>() { <span class="kw">return</span> <span class="ty">Holder</span>.INSTANCE; }
+}
+<span class="cm">// Thread-safe: JVM gwarantuje inicjalizację statycznych pól klasy</span>
+<span class="cm">// przy pierwszym dostępie, z pełną synchronizacją</span>
+
+<span class="cm">// ✅ Najlepsza: Enum Singleton (Effective Java):</span>
+<span class="kw">public enum</span> <span class="ty">Singleton</span> {
+    <span class="ty">INSTANCE</span>;
+    <span class="kw">public void</span> <span class="fn">doWork</span>() { ... }
+}
+<span class="ty">Singleton</span>.<span class="ty">INSTANCE</span>.doWork();
+<span class="cm">// Bonus: odporny na serializację i reflection!</span>
+<span class="cm">// (Reflection na enum constructor rzuca IllegalArgumentException)</span></pre>
+      </div>
+
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--teal)"></div>Observer, Command, Template Method</div></div>
+        <pre><span class="cm">// ─── Observer — modern Java style ────────────────────────</span>
+<span class="cm">// Zamiast interfejsów — funkcje! (Java 8+)</span>
+<span class="kw">public class</span> <span class="ty">EventBus</span>&lt;<span class="ty">T</span>&gt; {
+    <span class="kw">private final</span> <span class="ty">List</span>&lt;<span class="ty">Consumer</span>&lt;<span class="ty">T</span>&gt;&gt; listeners = <span class="kw">new</span> <span class="ty">CopyOnWriteArrayList</span>&lt;&gt;();
+
+    <span class="kw">public</span> <span class="ty">Runnable</span> <span class="fn">subscribe</span>(<span class="ty">Consumer</span>&lt;<span class="ty">T</span>&gt; l) {
+        listeners.add(l);
+        <span class="kw">return</span> () -> listeners.remove(l); <span class="cm">// ✅ zwraca unsubscribe!</span>
+    }
+    <span class="kw">public void</span> <span class="fn">publish</span>(<span class="ty">T</span> event) { listeners.forEach(l -> l.accept(event)); }
+}
+
+<span class="cm">// ─── Command — z undo ────────────────────────────────────</span>
+<span class="kw">interface</span> <span class="ty">Command</span> { <span class="kw">void</span> <span class="fn">execute</span>(); <span class="kw">void</span> <span class="fn">undo</span>(); }
+
+<span class="kw">record</span> <span class="ty">MoveCommand</span>(<span class="ty">Figure</span> fig, <span class="kw">int</span> dx, <span class="kw">int</span> dy) <span class="kw">implements</span> <span class="ty">Command</span> {
+    <span class="kw">public void</span> <span class="fn">execute</span>() { fig.move(dx, dy); }
+    <span class="kw">public void</span> <span class="fn">undo</span>()    { fig.move(-dx, -dy); }
+}
+
+<span class="kw">class</span> <span class="ty">History</span> {
+    <span class="kw">private final</span> <span class="ty">Deque</span>&lt;<span class="ty">Command</span>&gt; stack = <span class="kw">new</span> <span class="ty">ArrayDeque</span>&lt;&gt;();
+    <span class="kw">public void</span> <span class="fn">execute</span>(<span class="ty">Command</span> cmd) { cmd.execute(); stack.push(cmd); }
+    <span class="kw">public void</span> <span class="fn">undo</span>()              { <span class="kw">if</span> (!stack.isEmpty()) stack.pop().undo(); }
+}
+
+<span class="cm">// ─── Template Method — z lambdami (Java 8) ───────────────</span>
+<span class="cm">// Zamiast abstract class — Function!</span>
+<span class="kw">public</span> <span class="ty">Report</span> <span class="fn">generateReport</span>(
+        <span class="ty">Supplier</span>&lt;<span class="ty">Data</span>&gt; fetchData,
+        <span class="ty">Function</span>&lt;<span class="ty">Data</span>, <span class="ty">Report</span>&gt; format) {
+    <span class="ty">Data</span> data = fetchData.get();    <span class="cm">// "abstract step" jako lambda</span>
+    validate(data);
+    <span class="kw">return</span> format.apply(data);      <span class="cm">// "abstract step" jako lambda</span>
+}</pre>
+      </div>
+    </div>
+
+    <div class="gap16"></div>
+    <div class="card">
+      <div class="card-h" style="color:var(--teal)">📋 Wzorce — kiedy stosować vs anty-pattern</div>
+      <div class="card-b" style="overflow-x:auto">
+        <table class="tbl">
+          <thead><tr><th>Wzorzec</th><th>Stosuj gdy</th><th>Unikaj gdy</th></tr></thead>
+          <tbody>
+            <tr><td><code>Singleton</code></td><td>Naprawdę jeden zasób (config, driver). Preferuj DI framework.</td><td>Dla wygody. Utrudnia testowanie (global state).</td></tr>
+            <tr><td><code>Factory Method</code></td><td>Tworzenie obiektów wymaga logiki lub wariantów podtypów.</td><td>Prosty <code>new</code> wystarczy.</td></tr>
+            <tr><td><code>Abstract Factory</code></td><td>Rodziny powiązanych obiektów (UI theme: button/input/dialog).</td><td>Jedna rodzina — Factory Method wystarczy.</td></tr>
+            <tr><td><code>Builder</code></td><td>Wiele opcjonalnych parametrów, teleskopowy konstruktor.</td><td>2-3 pola — używaj konstruktora.</td></tr>
+            <tr><td><code>Decorator</code></td><td>Dynamiczne rozszerzanie bez dziedziczenia. Stackowalny.</td><td>Zachowanie stałe — prosta subklasa lepsza.</td></tr>
+            <tr><td><code>Proxy</code></td><td>Lazy loading, caching, access control, logging cross-cutting.</td><td>Dostęp bezpośredni jest prostszy i wystarczy.</td></tr>
+            <tr><td><code>Strategy</code></td><td>Rodzina algorytmów, wybierana w runtime lub per konfiguracja.</td><td>Jeden algorytm — inline kod jest prostszy.</td></tr>
+            <tr><td><code>Observer</code></td><td>Loose coupling: wiele konsumentów jednego zdarzenia.</td><td>Synchroniczna liniowa kolejność — zwykłe wywołanie metody.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 10 SOLID ══ -->
+  <section class="chapter" id="solid">
+    <div class="ch-head">
+      <div class="ch-num">10 / 12</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--violet)">SOLID & Zasady Projektowania</div>
+        <div class="ch-title">SOLID, DRY, YAGNI, Law of Demeter</div>
+        <div class="ch-desc">Zasady projektowania to nie dogmaty — to narzędzia do komunikacji o trade-offach. Senior rozumie kiedy złamanie SOLID jest uzasadnione i umie argumentować kompromisy.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--violet)"></div>SOLID — praktyczne przykłady</div></div>
+        <pre><span class="cm">// ─── S: Single Responsibility ─────────────────────────────</span>
+<span class="cm">// ❌ Naruszenie: UserService zarządza userem I wysyła emaile</span>
+<span class="kw">class</span> <span class="ty">UserService</span> { saveUser(); sendWelcomeEmail(); generateReport(); }
+<span class="cm">// ✅ Osobne serwisy per odpowiedzialność</span>
+<span class="kw">class</span> <span class="ty">UserRepository</span>    { save(); }
+<span class="kw">class</span> <span class="ty">WelcomeMailService</span>{ send(); }
+<span class="kw">class</span> <span class="ty">UserReportService</span> { generate(); }
+
+<span class="cm">// ─── O: Open/Closed ───────────────────────────────────────</span>
+<span class="cm">// Otwarte na rozszerzenie, zamknięte na modyfikację</span>
+<span class="cm">// ❌ switch po typie → zmiana = modyfikacja klasy</span>
+<span class="kw">double</span> area = <span class="kw">switch</span>(type) { <span class="kw">case</span> <span class="st">"circle"</span> -> ...; <span class="kw">case</span> <span class="st">"rect"</span> -> ...; }
+<span class="cm">// ✅ Interfejs + sealed classes lub Strategy</span>
+<span class="kw">interface</span> <span class="ty">Shape</span> { <span class="kw">double</span> <span class="fn">area</span>(); } <span class="cm">// nowy typ = nowa klasa</span>
+
+<span class="cm">// ─── L: Liskov Substitution ───────────────────────────────</span>
+<span class="cm">// ❌ Kwadrat extends Prostokąt — klasyczny przykład LSP!</span>
+<span class="kw">class</span> <span class="ty">Rectangle</span>   { <span class="kw">int</span> w, h; setWidth(w){this.w=w;} setHeight(h){this.h=h;} }
+<span class="kw">class</span> <span class="ty">Square</span> <span class="kw">extends</span> <span class="ty">Rectangle</span> {
+    <span class="kw">void</span> <span class="fn">setWidth</span>(<span class="kw">int</span> w)  { this.w = this.h = w; } <span class="cm">// ❌ LSP!</span>
+}
+<span class="ty">Rectangle</span> r = <span class="kw">new</span> <span class="ty">Square</span>();
+r.setWidth(<span class="nu">5</span>); r.setHeight(<span class="nu">10</span>); <span class="cm">// Oczekujemy 50, dostajemy 100!</span>
+
+<span class="cm">// ─── I: Interface Segregation ─────────────────────────────</span>
+<span class="cm">// ❌ Fat interface: Worker { work(); eat(); sleep(); }</span>
+<span class="cm">// ✅ Małe, spójne interfejsy:</span>
+<span class="kw">interface</span> <span class="ty">Workable</span>  { <span class="kw">void</span> <span class="fn">work</span>(); }
+<span class="kw">interface</span> <span class="ty">Feedable</span>  { <span class="kw">void</span> <span class="fn">eat</span>(); }
+<span class="kw">interface</span> <span class="ty">Sleepable</span> { <span class="kw">void</span> <span class="fn">sleep</span>(); }
+
+<span class="cm">// ─── D: Dependency Inversion ──────────────────────────────</span>
+<span class="cm">// Wysoko-poziomowe moduły nie zależą od niskopoziomowych</span>
+<span class="cm">// ❌ UserService { private MySQLUserRepo repo = new MySQLUserRepo(); }</span>
+<span class="cm">// ✅ UserService { private UserRepository repo; } // interfejs!</span></pre>
+      </div>
+
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--violet)"></div>Law of Demeter i inne zasady</div></div>
+        <pre><span class="cm">// ─── Law of Demeter (Principle of Least Knowledge) ───────</span>
+<span class="cm">// Metoda powinna rozmawiać tylko z "bliskimi sąsiadami"</span>
+
+<span class="cm">// ❌ Train wreck — głęboki łańcuch wywołań</span>
+user.getOrder().getAddress().getCity().getZipCode();
+<span class="cm">// Twój kod zależy od struktury 4 obiektów</span>
+
+<span class="cm">// ✅ Tell, don't ask — deleguj do odpowiedniego obiektu</span>
+user.getShippingZipCode(); <span class="cm">// User wie jak to zrobić</span>
+<span class="cm">// Lub: wprowadź metodę getCity() bezpośrednio w Order</span>
+
+<span class="cm">// ─── DRY vs DRY-too-much ──────────────────────────────────</span>
+<span class="cm">// DRY (Don't Repeat Yourself) — nie kopiuj logiki</span>
+<span class="cm">// Ale: "duplication is far cheaper than the wrong abstraction"</span>
+<span class="cm">// (Sandi Metz). Kilka linii podobnego kodu ≠ problem.</span>
+<span class="cm">// Problem: kody podobne ale różne przyczyny zmian → rozdziel</span>
+
+<span class="cm">// ─── YAGNI — You Aren't Gonna Need It ────────────────────</span>
+<span class="cm">// Nie implementuj "na przyszłość"</span>
+<span class="cm">// Dobra architektura jest łatwa do zmiany gdy potrzeba</span>
+<span class="cm">// Zamiast: factory + strategy + proxy na wszelki wypadek</span>
+<span class="cm">// Rób: najprostsze działające rozwiązanie, refaktoruj gdy potrzeba</span>
+
+<span class="cm">// ─── Composition Root ─────────────────────────────────────</span>
+<span class="cm">// Jedno miejsce gdzie wire'ujesz wszystkie zależności</span>
+<span class="cm">// Spring: ApplicationContext = Composition Root</span>
+<span class="cm">// Nie twórz obiektów głęboko w logice — przekazuj przez konstruktor</span>
+
+<span class="cm">// ─── Tell, Don't Ask ─────────────────────────────────────</span>
+<span class="cm">// ❌ Ask: if (account.getBalance() &gt; amount) account.debit(amount);</span>
+<span class="cm">// ✅ Tell: account.debit(amount); // account sam sprawdza</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 11 STRING & TEXT ══ -->
+  <section class="chapter" id="strings">
+    <div class="ch-head">
+      <div class="ch-num">11 / 12</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--java)">String — internals i wydajność</div>
+        <div class="ch-title">String, StringBuilder, RegEx — głęboka wiedza</div>
+        <div class="ch-desc">String to najczęściej używana klasa w Javie — i najczęściej używana źle. Compact Strings (Java 9), intern pool, regex backtracking, String.format vs formatted vs interpolacja — senior zna te detale.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--java)"></div>String internals — Java 9+ Compact Strings</div></div>
+        <pre><span class="cm">// Java 9+: Compact Strings — oszczędność pamięci</span>
+<span class="cm">// String przechowuje: byte[] value + byte coder</span>
+<span class="cm">// LATIN1 (1 byte/char) lub UTF16 (2 bytes/char)</span>
+<span class="cm">// Automatyczny wybór — łańcuch ASCII = LATIN1 → 50% mniej pamięci!</span>
+
+<span class="cm">// String.intern() — String Pool</span>
+<span class="ty">String</span> a = <span class="kw">new</span> <span class="ty">String</span>(<span class="st">"hello"</span>); <span class="cm">// na heap</span>
+<span class="ty">String</span> b = a.intern();          <span class="cm">// z pula (lub dodaje do puli)</span>
+<span class="ty">String</span> c = <span class="st">"hello"</span>;            <span class="cm">// literał = automatycznie w puli</span>
+b == c; <span class="cm">// true — ten sam obiekt z puli</span>
+
+<span class="cm">// Kiedy intern()? Gdy masz tysiące powtarzających się wartości</span>
+<span class="cm">// (statusy, kody krajów, kategorie). Uważaj na overhead puli!</span>
+
+<span class="cm">// String concatenation — co robi kompilator:</span>
+<span class="ty">String</span> s = <span class="st">"Hello, "</span> + name + <span class="st">"!"</span>;
+<span class="cm">// Java 8: new StringBuilder().append("Hello, ").append(name).append("!").toString()</span>
+<span class="cm">// Java 9+: invokedynamic + StringConcatFactory — szybsze!</span>
+
+<span class="cm">// StringBuilder vs StringBuffer:</span>
+<span class="cm">// StringBuffer — synchronized (thread-safe, wolny) — prawie nigdy nie używaj</span>
+<span class="cm">// StringBuilder — nie synchronized (szybki) — pojedynczy wątek</span>
+
+<span class="cm">// String.format vs formatted (Java 15+):</span>
+<span class="ty">String</span>.format(<span class="st">"Hello %s, age %d"</span>, name, age); <span class="cm">// stary</span>
+<span class="st">"Hello %s, age %d"</span>.formatted(name, age);       <span class="cm">// nowy, czytelny</span>
+<span class="cm">// Format specifiers: %s, %d, %f, %n (newline), %05d (padding), %.2f</span></pre>
+      </div>
+
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--java)"></div>RegEx — pułapki i ReDoS</div></div>
+        <pre><span class="cm">// ─── Kompilacja Pattern — kosztowna! ─────────────────────</span>
+<span class="cm">// ❌ W metodzie — kompiluje za każdym wywołaniem!</span>
+<span class="kw">public boolean</span> <span class="fn">isValid</span>(<span class="ty">String</span> email) {
+    <span class="kw">return</span> email.matches(<span class="st">"[a-zA-Z0-9._%+\\-]+@..."</span>);
+    <span class="cm">// String.matches() kompiluje wzorzec przy każdym wywołaniu</span>
+}
+<span class="cm">// ✅ Static final Pattern:</span>
+<span class="kw">private static final</span> <span class="ty">Pattern</span> EMAIL_PATTERN =
+    <span class="ty">Pattern</span>.compile(<span class="st">"[a-zA-Z0-9._%+\\-]+@[a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}"</span>);
+
+<span class="kw">public boolean</span> <span class="fn">isValid</span>(<span class="ty">String</span> email) {
+    <span class="kw">return</span> EMAIL_PATTERN.matcher(email).matches();
+}
+
+<span class="cm">// ─── ReDoS — catastrophic backtracking ───────────────────</span>
+<span class="cm">// Wzorzec (a+)+ na input "aaaaaaaaab" → eksponencjalny czas!</span>
+<span class="cm">// Nested quantifiers + ambiguous patterns = ReDoS vulnerability</span>
+
+<span class="cm">// ❌ Niebezpieczne wzorce:</span>
+<span class="st">"(a+)+"</span>      <span class="cm">// nested quantifier</span>
+<span class="st">"(a|aa)+"</span>    <span class="cm">// ambiguous alternation</span>
+<span class="st">"(.+)*"</span>      <span class="cm">// bardzo niebezpieczne na user input</span>
+
+<span class="cm">// ✅ Zabezpieczenia:</span>
+<span class="cm">// 1. Possessive quantifiers: a++ (nie backtrackuje)</span>
+<span class="cm">// 2. Atomic groups: (?>a+)</span>
+<span class="cm">// 3. Timeout przez ExecutorService</span>
+<span class="cm">// 4. Biblioteka RE2J (Google) — guaranteed O(n)</span>
+
+<span class="cm">// ─── Named groups ──────────────────────────────────────────</span>
+<span class="ty">Pattern</span> p = <span class="ty">Pattern</span>.compile(<span class="st">"(?&lt;year&gt;\\d{4})-(?&lt;month&gt;\\d{2})-(?&lt;day&gt;\\d{2})"</span>);
+<span class="ty">Matcher</span> m = p.matcher(<span class="st">"2024-01-15"</span>);
+<span class="kw">if</span> (m.matches()) m.group(<span class="st">"year"</span>); <span class="cm">// "2024" — czytelniejsze</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 12 DEFENSIVE PROGRAMMING ══ -->
+  <section class="chapter" id="defensive">
+    <div class="ch-head">
+      <div class="ch-num">12 / 12</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--emerald)">Defensive Programming</div>
+        <div class="ch-title">Pisanie niezawodnego kodu Java</div>
+        <div class="ch-desc">Defensive programming to pisanie kodu który działa poprawnie nie tylko dla happy path ale też weryfikuje swoje założenia i zawodzi głośno i wcześnie, zamiast cicho produkować złe wyniki.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--emerald)"></div>Preconditions, Postconditions, Invariants</div></div>
+        <pre><span class="cm">// ─── Preconditions — walidacja parametrów ────────────────</span>
+<span class="kw">public</span> <span class="ty">Order</span> <span class="fn">createOrder</span>(<span class="ty">String</span> userId, <span class="ty">List</span>&lt;<span class="ty">Item</span>&gt; items, <span class="ty">BigDecimal</span> discount) {
+    <span class="cm">// Objects.requireNonNull — NPE z dobrą wiadomością</span>
+    <span class="ty">Objects</span>.requireNonNull(userId, <span class="st">"userId must not be null"</span>);
+    <span class="ty">Objects</span>.requireNonNull(items,  <span class="st">"items must not be null"</span>);
+
+    <span class="cm">// Guava Preconditions lub ręcznie:</span>
+    <span class="kw">if</span> (items.isEmpty())
+        <span class="kw">throw new</span> <span class="ty">IllegalArgumentException</span>(<span class="st">"items must not be empty"</span>);
+    <span class="kw">if</span> (discount.compareTo(<span class="ty">BigDecimal</span>.ZERO) < <span class="nu">0</span>
+            || discount.compareTo(<span class="ty">BigDecimal</span>.ONE) > <span class="nu">0</span>)
+        <span class="kw">throw new</span> <span class="ty">IllegalArgumentException</span>(
+            <span class="st">"discount must be in [0,1], was: "</span> + discount);
+
+    <span class="cm">// Dopiero po walidacji — praca</span>
+    <span class="kw">return</span> doCreate(userId, items, discount);
+}
+
+<span class="cm">// ─── assert — tylko w dev/test (wyłączone production!) ───</span>
+<span class="kw">assert</span> result != <span class="kw">null</span> : <span class="st">"result should never be null here"</span>;
+<span class="cm">// JVM: java -ea → enabled. Domyślnie disabled!</span>
+
+<span class="cm">// ─── Class Invariant ──────────────────────────────────────</span>
+<span class="kw">private void</span> <span class="fn">checkInvariant</span>() {
+    <span class="kw">assert</span> balance.compareTo(<span class="ty">BigDecimal</span>.ZERO) >= <span class="nu">0</span>
+        : <span class="st">"Balance cannot be negative: "</span> + balance;
+    <span class="kw">assert</span> !transactions.isEmpty() || balance.equals(<span class="ty">BigDecimal</span>.ZERO)
+        : <span class="st">"Zero balance should have no transactions"</span>;
+}
+<span class="cm">// Wywołuj po każdej operacji zmieniającej stan</span></pre>
+      </div>
+
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--emerald)"></div>Fail-Fast, Null handling, API design</div></div>
+        <pre><span class="cm">// ─── Fail Fast — wykryj błąd jak najwcześniej ────────────</span>
+<span class="cm">// ✅ Waliduj na granicy systemu (wejście danych)</span>
+<span class="cm">// ✅ Używaj typów które niemożliwe są niepoprawne (positive int, email)</span>
+<span class="cm">// ✅ IllegalArgumentException > milczące ignorowanie</span>
+<span class="cm">// ✅ Loguj i rzucaj — nie łap i ignoruj</span>
+
+<span class="cm">// ─── Null handling strategie ─────────────────────────────</span>
+<span class="cm">// 1. Nigdy nie zwracaj null z publicznych metod:</span>
+<span class="kw">public</span> <span class="ty">List</span>&lt;<span class="ty">Order</span>&gt; <span class="fn">findOrders</span>() {
+    <span class="kw">return</span> <span class="ty">Collections</span>.emptyList(); <span class="cm">// ✅ nie null!</span>
+}
+
+<span class="cm">// 2. Adnotacje nullability (@Nullable, @NonNull):</span>
+<span class="cm">// JSR-305, JetBrains, Spring własne — dokumentują intent</span>
+<span class="kw">public</span> <span class="an">@Nullable</span> <span class="ty">User</span>             <span class="fn">findById</span>(<span class="ty">Long</span> id);    <span class="cm">// może null</span>
+<span class="kw">public</span> <span class="an">@NonNull</span>  <span class="ty">Optional</span>&lt;<span class="ty">User</span>&gt;   <span class="fn">findOptional</span>(<span class="ty">Long</span> id); <span class="cm">// lepiej</span>
+
+<span class="cm">// 3. Objects.requireNonNullElse:</span>
+<span class="ty">String</span> name = <span class="ty">Objects</span>.requireNonNullElse(input, <span class="st">"default"</span>);
+<span class="ty">String</span> name2 = <span class="ty">Objects</span>.requireNonNullElseGet(input, this::computeDefault);
+
+<span class="cm">// ─── API Design zasady ────────────────────────────────────</span>
+<span class="cm">// 1. Minimalizuj publiczne API — łatwo dodać, trudno usunąć</span>
+<span class="cm">// 2. Preferuj niemutowalność zwracanych wartości</span>
+<span class="cm">// 3. Nazwy metod opisują CO robią, nie JAK</span>
+<span class="cm">// 4. Nie ujawniaj implementacji przez typy (return List nie ArrayList)</span>
+<span class="cm">// 5. Parametry: najpierw wymagane, opcjonalne na końcu lub @Builder</span>
+<span class="cm">// 6. Dokumentuj: co metoda robi, co rzuca, co zwraca (null?)</span>
+<span class="cm">// 7. @Deprecated + replacement — zachowaj BW compatibility</span></pre>
+      </div>
+    </div>
+
+    <div class="gap16"></div>
+    <div class="g3">
+      <div class="card">
+        <div class="card-h" style="color:var(--emerald)">🧱 Value Objects — Domain Primitives</div>
+        <div class="card-b">
+          <div class="code" style="border:none;border-radius:0;background:transparent">
+            <pre style="padding:0;font-size:.74rem"><span class="cm">// ❌ Primitive Obsession:</span>
+<span class="kw">public</span> <span class="ty">Order</span> <span class="fn">create</span>(<span class="ty">String</span> userId, <span class="ty">String</span> email, <span class="kw">double</span> amount);
+<span class="cm">// Łatwo pomylić kolejność! String != String semantycznie</span>
+
+<span class="cm">// ✅ Domain Primitives / Tiny Types:</span>
+<span class="kw">public record</span> <span class="ty">UserId</span>(<span class="ty">String</span> value) {
+    <span class="kw">public</span> <span class="ty">UserId</span> {
+        <span class="kw">if</span> (value == <span class="kw">null</span> || value.isBlank())
+            <span class="kw">throw new</span> <span class="ty">IllegalArgumentException</span>(<span class="st">"userId blank"</span>);
+    }
+}
+<span class="kw">public record</span> <span class="ty">Email</span>(<span class="ty">String</span> value) {
+    <span class="kw">public</span> <span class="ty">Email</span> { <span class="cm">/* validate */</span> }
+}
+
+<span class="cm">// Teraz: kompilator nie pozwoli pomylić kolejności</span>
+<span class="kw">public</span> <span class="ty">Order</span> <span class="fn">create</span>(<span class="ty">UserId</span> userId, <span class="ty">Email</span> email);</pre>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h" style="color:var(--emerald)">🔍 Code Smells</div>
+        <div class="card-b" style="font-size:.83rem;color:var(--tx2);line-height:1.85">
+          <p><strong style="color:var(--rose)">Long Method</strong> — &gt;20 linii to sygnał. Wydziel helper metody.</p>
+          <p><strong style="color:var(--rose)">Data Clumps</strong> — te same 3+ pola wszędzie → stwórz klasę.</p>
+          <p><strong style="color:var(--rose)">Feature Envy</strong> — metoda bardziej interesuje się polami innej klasy niż własnej → przenieś metodę.</p>
+          <p><strong style="color:var(--rose)">Primitive Obsession</strong> — String jako email, int jako wiek → Value Objects.</p>
+          <p><strong style="color:var(--rose)">Switch Statements</strong> — na typie obiektu → polimorfizm lub Strategy.</p>
+          <p><strong style="color:var(--rose)">God Class</strong> — klasa która wie zbyt wiele → podziel na mniejsze.</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h" style="color:var(--emerald)">📋 Senior Code Habits</div>
+        <div class="card-b" style="font-size:.83rem;color:var(--tx2);line-height:1.9">
+          <p>□ Testy piszę przed lub równocześnie z kodem</p>
+          <p>□ Nazwy zmiennych opisują intencję, nie implementację</p>
+          <p>□ Komentarze wyjaśniają DLACZEGO, nie CO (kod mówi co)</p>
+          <p>□ Walidacje na granicach systemu, nie w głębi</p>
+          <p>□ Każda publiczna metoda ma preconditions</p>
+          <p>□ Nie zwracam null z kolekcji (emptyList)</p>
+          <p>□ Używam typów z domeny, nie prymitywów</p>
+          <p>□ Refaktoruję zanim dodam nową feature (clean then extend)</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="gap24"></div>
+    <div class="strip" style="border-color:var(--java);background:rgba(248,152,32,.04)">
+      <div class="strip-icon">☕</div>
+      <div>
+        <strong>"Make it work, make it right, make it fast"</strong> — Kent Beck. W tej kolejności. Większość kodu nigdy nie potrzebuje kroku trzeciego. Pochopna optymalizacja jest źródłem wielu bugów. Czytelny, poprawny kod który można łatwo zmienić ma więcej wartości niż mikro-zoptymalizowany kod który nikt nie rozumie. Senior pisze kod dla następnego developera (którym często jest on sam za 6 miesięcy).
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div><span class="footer-title">Java Senior — Deep Knowledge Map</span> · OOP, Collections, Reflection, Functional, Def

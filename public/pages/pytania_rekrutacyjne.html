@@ -1,0 +1,1924 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>100 Pytań Rekrutacyjnych — Java Backend + SQL + Frontend</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Lora:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0c10;
+  --s1: #0f1218;
+  --s2: #141820;
+  --s3: #1a2030;
+  --bd: #1e2635;
+  --bd2: #28344a;
+  --tx: #e8ecf4;
+  --tx2: #7a8aa0;
+  --tx3: #3a4a60;
+  --acc: #4f9cf9;
+  --acc2: #2563eb;
+
+  --java: #f89820;
+  --java-bg: rgba(248,152,32,.08);
+  --java-bd: rgba(248,152,32,.25);
+
+  --sql: #22c55e;
+  --sql-bg: rgba(34,197,94,.07);
+  --sql-bd: rgba(34,197,94,.25);
+
+  --front: #e879f9;
+  --front-bg: rgba(232,121,249,.07);
+  --front-bd: rgba(232,121,249,.25);
+
+  --spring: #6db33f;
+  --spring-bg: rgba(109,179,63,.07);
+  --spring-bd: rgba(109,179,63,.25);
+
+  --hard-easy: #22c55e;
+  --hard-med: #f59e0b;
+  --hard-hard: #ef4444;
+  --hard-senior: #a78bfa;
+}
+
+*,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--tx);
+  font-family: 'Lora', serif;
+  line-height: 1.65;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* ── BACK ── */
+.back {
+  position: fixed; top: 20px; left: 20px; z-index: 999;
+  background: var(--s1); border: 1px solid var(--bd2);
+  border-radius: 40px; padding: 9px 18px;
+  text-decoration: none; color: var(--tx2);
+  font-family: 'Syne', sans-serif;
+  font-size: .72rem; font-weight: 600; letter-spacing: .5px;
+  transition: all .2s;
+}
+.back:hover { color: var(--acc); border-color: var(--acc); }
+
+/* ── HERO ── */
+.hero {
+  padding: 100px 24px 72px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(var(--bd) 1px, transparent 1px),
+    linear-gradient(90deg, var(--bd) 1px, transparent 1px);
+  background-size: 44px 44px;
+  opacity: .18;
+  mask-image: radial-gradient(ellipse 80% 100% at 50% 0%, black 30%, transparent 100%);
+}
+.hero-glow {
+  position: absolute; top: -120px; left: 50%; transform: translateX(-50%);
+  width: 700px; height: 500px;
+  background: radial-gradient(ellipse, rgba(79,156,249,.12) 0%, transparent 65%);
+  pointer-events: none;
+}
+.hero-inner { position: relative; max-width: 860px; margin: 0 auto; }
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(79,156,249,.1); border: 1px solid rgba(79,156,249,.3);
+  border-radius: 50px; padding: 6px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .65rem; font-weight: 600; color: var(--acc);
+  letter-spacing: 1px; text-transform: uppercase;
+  margin-bottom: 28px;
+  animation: fadeDown .6s ease both;
+}
+.badge-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--acc);
+  animation: blink 2s infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
+@keyframes fadeDown { from{opacity:0;transform:translateY(-12px)} to{opacity:1;transform:translateY(0)} }
+@keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+.hero h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(2.6rem, 6vw, 5rem);
+  font-weight: 800;
+  line-height: .95;
+  letter-spacing: -2px;
+  margin-bottom: 20px;
+  animation: fadeDown .7s .05s ease both;
+}
+.hero h1 .n { color: var(--java); }
+.hero h1 .sub {
+  display: block;
+  font-size: .42em;
+  font-weight: 400;
+  color: var(--tx2);
+  letter-spacing: 0px;
+  margin-top: 12px;
+}
+.hero-desc {
+  font-size: .97rem; color: var(--tx2);
+  max-width: 600px; margin: 0 auto 36px;
+  line-height: 1.85;
+  animation: fadeDown .7s .1s ease both;
+}
+
+/* ── TECH PILLS ── */
+.tech-row {
+  display: flex; flex-wrap: wrap; gap: 10px;
+  justify-content: center; margin-bottom: 48px;
+  animation: fadeDown .7s .15s ease both;
+}
+.tpill {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 14px; border-radius: 50px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .67rem; font-weight: 600;
+  border: 1px solid; cursor: pointer;
+  transition: all .2s; user-select: none;
+  letter-spacing: .3px;
+}
+.tpill.all { color: var(--acc); border-color: rgba(79,156,249,.4); background: rgba(79,156,249,.08); }
+.tpill.java { color: var(--java); border-color: var(--java-bd); background: var(--java-bg); }
+.tpill.sql { color: var(--sql); border-color: var(--sql-bd); background: var(--sql-bg); }
+.tpill.front { color: var(--front); border-color: var(--front-bd); background: var(--front-bg); }
+.tpill.spring { color: var(--spring); border-color: var(--spring-bd); background: var(--spring-bg); }
+.tpill:hover { transform: translateY(-1px); filter: brightness(1.2); }
+.tpill.active { filter: brightness(1.3); box-shadow: 0 4px 16px rgba(0,0,0,.4); }
+
+/* ── STATS ── */
+.stats-row {
+  display: flex; flex-wrap: wrap; gap: 12px;
+  justify-content: center; margin-bottom: 16px;
+  animation: fadeDown .7s .2s ease both;
+}
+.stat {
+  background: var(--s1); border: 1px solid var(--bd);
+  border-radius: 10px; padding: 14px 24px; text-align: center;
+  min-width: 110px;
+}
+.stat-num {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.8rem; font-weight: 800;
+  line-height: 1;
+}
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .6rem; color: var(--tx2); letter-spacing: 1px;
+  text-transform: uppercase; margin-top: 4px;
+}
+
+/* ── PROGRESS ── */
+.progress-wrap {
+  max-width: 600px; margin: 0 auto 16px;
+  animation: fadeDown .7s .22s ease both;
+}
+.progress-label {
+  display: flex; justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .65rem; color: var(--tx2);
+  margin-bottom: 6px; letter-spacing: .5px;
+}
+.progress-bar {
+  height: 4px; background: var(--s3); border-radius: 4px; overflow: hidden;
+}
+.progress-fill {
+  height: 100%; border-radius: 4px;
+  background: linear-gradient(90deg, var(--java), var(--acc));
+  transition: width .4s ease;
+  width: 0%;
+}
+
+/* ── SEARCH ── */
+.search-wrap {
+  max-width: 600px; margin: 0 auto 0;
+  position: relative;
+  animation: fadeDown .7s .25s ease both;
+}
+.search-icon {
+  position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
+  color: var(--tx3); font-size: 1rem; pointer-events: none;
+}
+.search-input {
+  width: 100%; background: var(--s1);
+  border: 1px solid var(--bd2); border-radius: 12px;
+  padding: 14px 16px 14px 44px;
+  color: var(--tx);
+  font-family: 'Lora', serif; font-size: .92rem;
+  outline: none; transition: border-color .2s;
+}
+.search-input:focus { border-color: var(--acc); }
+.search-input::placeholder { color: var(--tx3); }
+
+/* ── MAIN LAYOUT ── */
+.main {
+  max-width: 1000px; margin: 0 auto; padding: 48px 24px 120px;
+}
+
+/* ── SECTION HEADER ── */
+.sec-head {
+  display: flex; align-items: center; gap: 16px;
+  margin: 56px 0 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--bd);
+}
+.sec-head:first-child { margin-top: 0; }
+.sec-dot {
+  width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+}
+.sec-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.1rem; font-weight: 800;
+  letter-spacing: -.3px;
+}
+.sec-count {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .65rem; color: var(--tx3);
+  margin-left: auto; letter-spacing: 1px;
+}
+
+/* ── QUESTION CARD ── */
+.q-card {
+  background: var(--s1);
+  border: 1px solid var(--bd);
+  border-radius: 12px;
+  margin-bottom: 10px;
+  overflow: hidden;
+  transition: border-color .2s;
+  animation: fadeUp .4s ease both;
+}
+.q-card:hover { border-color: var(--bd2); }
+.q-card.answered { border-color: rgba(79,156,249,.3); }
+.q-card.answered .q-head { background: rgba(79,156,249,.04); }
+
+.q-head {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 18px 20px;
+  cursor: pointer;
+  transition: background .15s;
+  -webkit-user-select: none; user-select: none;
+}
+.q-head:hover { background: var(--s2); }
+
+.q-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .65rem; font-weight: 600;
+  color: var(--tx3); flex-shrink: 0;
+  min-width: 28px; padding-top: 2px;
+}
+.q-main { flex: 1; }
+.q-text {
+  font-family: 'Syne', sans-serif;
+  font-size: .95rem; font-weight: 600;
+  color: var(--tx); line-height: 1.4;
+  margin-bottom: 8px;
+}
+.q-meta { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.q-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .58rem; font-weight: 600;
+  padding: 2px 8px; border-radius: 4px; border: 1px solid;
+  letter-spacing: .5px; text-transform: uppercase;
+}
+.q-tag.java { color: var(--java); border-color: var(--java-bd); background: var(--java-bg); }
+.q-tag.sql { color: var(--sql); border-color: var(--sql-bd); background: var(--sql-bg); }
+.q-tag.front { color: var(--front); border-color: var(--front-bd); background: var(--front-bg); }
+.q-tag.spring { color: var(--spring); border-color: var(--spring-bd); background: var(--spring-bg); }
+
+.q-diff {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .58rem; font-weight: 700;
+  padding: 2px 8px; border-radius: 4px;
+  letter-spacing: .5px; text-transform: uppercase;
+}
+.diff-easy { color: var(--hard-easy); background: rgba(34,197,94,.1); border: 1px solid rgba(34,197,94,.3); }
+.diff-med { color: var(--hard-med); background: rgba(245,158,11,.1); border: 1px solid rgba(245,158,11,.3); }
+.diff-hard { color: var(--hard-hard); background: rgba(239,68,68,.1); border: 1px solid rgba(239,68,68,.3); }
+.diff-senior { color: var(--hard-senior); background: rgba(167,139,250,.1); border: 1px solid rgba(167,139,250,.3); }
+
+.q-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.q-check {
+  width: 20px; height: 20px; border-radius: 50%;
+  border: 1.5px solid var(--bd2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: .7rem; transition: all .2s; flex-shrink: 0;
+  cursor: pointer;
+}
+.q-check:hover { border-color: var(--acc); }
+.q-check.done { background: rgba(79,156,249,.15); border-color: var(--acc); color: var(--acc); }
+.q-arrow {
+  color: var(--tx3); font-size: .8rem;
+  transition: transform .25s; flex-shrink: 0;
+}
+.q-card.open .q-arrow { transform: rotate(180deg); }
+
+/* ── ANSWER ── */
+.q-answer {
+  max-height: 0; overflow: hidden;
+  transition: max-height .35s ease;
+  border-top: 0 solid var(--bd);
+}
+.q-card.open .q-answer {
+  max-height: 1800px;
+  border-top-width: 1px;
+}
+.q-answer-inner {
+  padding: 24px 20px 24px 62px;
+  font-size: .88rem; color: var(--tx2); line-height: 1.85;
+}
+.q-answer-inner strong { color: var(--tx); }
+.q-answer-inner em { font-style: italic; color: var(--tx); }
+.q-answer-inner ul, .q-answer-inner ol {
+  padding-left: 18px; margin: 8px 0;
+}
+.q-answer-inner li { margin-bottom: 4px; }
+.q-answer-inner code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .8em;
+  background: var(--s3); border: 1px solid var(--bd);
+  padding: 1px 6px; border-radius: 4px;
+  color: var(--java);
+}
+.q-answer-inner pre {
+  background: #080b10; border: 1px solid var(--bd);
+  border-radius: 8px; padding: 16px 20px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .78rem; line-height: 1.7;
+  overflow-x: auto; margin: 12px 0;
+  color: #8b9eb8;
+}
+.q-answer-inner pre .kw { color: #c792ea; }
+.q-answer-inner pre .str { color: #c3e88d; }
+.q-answer-inner pre .cm { color: #394850; font-style: italic; }
+.q-answer-inner pre .num { color: #f78c6c; }
+.q-answer-inner pre .fn { color: #82aaff; }
+.q-answer-inner pre .cls { color: #ffcb6b; }
+.q-answer-inner .tip {
+  background: rgba(79,156,249,.07); border-left: 3px solid var(--acc);
+  border-radius: 0 8px 8px 0; padding: 10px 14px;
+  margin-top: 12px; font-size: .85rem;
+}
+.q-answer-inner .tip strong { color: var(--acc); }
+.q-answer-inner .warn {
+  background: rgba(239,68,68,.07); border-left: 3px solid var(--hard-hard);
+  border-radius: 0 8px 8px 0; padding: 10px 14px;
+  margin-top: 12px; font-size: .85rem;
+}
+.q-answer-inner .warn strong { color: var(--hard-hard); }
+
+/* ── EMPTY STATE ── */
+.empty {
+  text-align: center; padding: 80px 24px;
+  color: var(--tx3);
+  font-family: 'Syne', sans-serif;
+  display: none;
+}
+.empty-icon { font-size: 3rem; margin-bottom: 16px; }
+.empty p { font-size: .9rem; }
+
+/* ── FOOTER ── */
+.footer {
+  border-top: 1px solid var(--bd);
+  background: var(--s1);
+  padding: 32px 40px;
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .65rem; color: var(--tx3); letter-spacing: .5px;
+}
+.footer-brand { color: var(--java); font-weight: 700; }
+
+/* ── RESPONSIVE ── */
+@media(max-width: 700px) {
+  .hero { padding: 80px 16px 60px; }
+  .hero h1 { letter-spacing: -1px; }
+  .main { padding: 36px 16px 80px; }
+  .q-answer-inner { padding-left: 20px; }
+  .stats-row { gap: 8px; }
+  .stat { padding: 12px 16px; min-width: 90px; }
+}
+
+/* ── HIDDEN ── */
+.q-section { }
+.q-section.hidden { display: none; }
+.q-card.hidden { display: none; }
+</style>
+</head>
+<body>
+
+<a class="back" href="index.html">← Menu</a>
+
+<!-- ══════ HERO ══════ -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-inner">
+    <div class="hero-badge"><div class="badge-dot"></div>Rozmowa kwalifikacyjna · Java Backend</div>
+    <h1>
+      <span class="n">100</span> Pytań<br>Rekrutacyjnych
+      <span class="sub">Java Backend · Spring · SQL · Frontend · Architektura</span>
+    </h1>
+    <p class="hero-desc">Najczęściej zadawane pytania na rozmowach kwalifikacyjnych dla Java Backend developerów. Każde pytanie ma rozwinięcie z pełną odpowiedzią.</p>
+
+    <div class="tech-row">
+      <div class="tpill all active" onclick="filterCat('all')">☰ Wszystkie <span id="cnt-all">(100)</span></div>
+      <div class="tpill java" onclick="filterCat('java')">☕ Java <span id="cnt-java"></span></div>
+      <div class="tpill spring" onclick="filterCat('spring')">🍃 Spring <span id="cnt-spring"></span></div>
+      <div class="tpill sql" onclick="filterCat('sql')">🗄️ SQL <span id="cnt-sql"></span></div>
+      <div class="tpill front" onclick="filterCat('front')">🎨 Frontend <span id="cnt-front"></span></div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat"><div class="stat-num" style="color:var(--hard-easy)">32</div><div class="stat-label">Łatwe</div></div>
+      <div class="stat"><div class="stat-num" style="color:var(--hard-med)">38</div><div class="stat-label">Średnie</div></div>
+      <div class="stat"><div class="stat-num" style="color:var(--hard-hard)">20</div><div class="stat-label">Trudne</div></div>
+      <div class="stat"><div class="stat-num" style="color:var(--hard-senior)">10</div><div class="stat-label">Senior</div></div>
+      <div class="stat"><div class="stat-num" id="answered-count" style="color:var(--acc)">0</div><div class="stat-label">Zaliczone</div></div>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span>Postęp nauki</span>
+        <span id="progress-text">0 / 100</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+    </div>
+
+    <div class="search-wrap" style="margin-top:16px">
+      <span class="search-icon">🔍</span>
+      <input class="search-input" type="text" placeholder="Szukaj pytania... (np. SOLID, HashMap, JOIN)" id="search-input" oninput="filterSearch()">
+    </div>
+  </div>
+</section>
+
+<!-- ══════ QUESTIONS ══════ -->
+<main class="main" id="questions-main">
+  <div class="empty" id="empty-state">
+    <div class="empty-icon">🔍</div>
+    <p>Brak pytań pasujących do filtru.</p>
+  </div>
+</main>
+
+<footer class="footer">
+  <div><span class="footer-brand">100 Pytań Rekrutacyjnych</span></div>
+  <div>Java · Spring · SQL · Frontend · Kliknij pytanie aby zobaczyć odpowiedź</div>
+</footer>
+
+<script>
+const QUESTIONS = [
+  // ═══════════════════════════════════════════════
+  //  JAVA CORE
+  // ═══════════════════════════════════════════════
+  {
+    cat: 'java', diff: 'easy', section: '☕ Java Core',
+    q: 'Czym różni się JDK, JRE i JVM?',
+    a: `<strong>JVM (Java Virtual Machine)</strong> — maszyna wirtualna która uruchamia bytecode Java. Tłumaczy bytecode na instrukcje natywne systemu operacyjnego. Zapewnia "Write Once, Run Anywhere".<br><br>
+<strong>JRE (Java Runtime Environment)</strong> — JVM + standardowe biblioteki (java.lang, java.util itp.). To co potrzebujesz żeby <em>uruchomić</em> program Java.<br><br>
+<strong>JDK (Java Development Kit)</strong> — JRE + narzędzia deweloperskie: kompilator (javac), debugger, javadoc, jar itp. To co potrzebujesz żeby <em>pisać i kompilować</em> kod Java.
+<div class="tip"><strong>Zapamiętaj:</strong> JDK ⊃ JRE ⊃ JVM. Na produkcji wystarczy JRE, developerowi potrzebny JDK.</div>`
+  },
+  {
+    cat: 'java', diff: 'easy', section: '☕ Java Core',
+    q: 'Co to jest autoboxing i jakie ma pułapki?',
+    a: `<strong>Autoboxing</strong> to automatyczna konwersja między typami prymitywnymi a ich wrapperami: <code>int ↔ Integer</code>, <code>double ↔ Double</code> itp.<br><br>
+<strong>Pułapki:</strong><br>
+<ul>
+<li><strong>Integer cache −128..127</strong> — <code>Integer a=127; Integer b=127; a==b → true</code>, ale dla 128 już <code>false</code>! Zawsze używaj <code>equals()</code>.</li>
+<li><strong>NPE przy unboxingu null</strong> — <code>Integer n = null; int x = n;</code> → NullPointerException</li>
+<li><strong>Performance</strong> — autoboxing w pętli tworzy miliony obiektów i obciąża GC</li>
+</ul>
+<pre><span class="cls">Integer</span> a = <span class="num">128</span>, b = <span class="num">128</span>;
+a == b       <span class="cm">// false! (różne obiekty)</span>
+a.equals(b)  <span class="cm">// true  (zawsze tak porównuj)</span></pre>`
+  },
+  {
+    cat: 'java', diff: 'easy', section: '☕ Java Core',
+    q: 'Czym różni się == od equals() dla Stringów?',
+    a: `<code>==</code> porównuje <strong>referencje</strong> (czy to ten sam obiekt w pamięci). <code>equals()</code> porównuje <strong>zawartość</strong> (czy mają te same znaki).<br><br>
+<pre><span class="cls">String</span> a = <span class="str">"hello"</span>;          <span class="cm">// String Pool</span>
+<span class="cls">String</span> b = <span class="str">"hello"</span>;          <span class="cm">// ten sam obiekt z Pool</span>
+<span class="cls">String</span> c = <span class="kw">new</span> <span class="cls">String</span>(<span class="str">"hello"</span>); <span class="cm">// nowy obiekt poza Pool</span>
+
+a == b        <span class="cm">// true  (Pool współdzieli literały)</span>
+a == c        <span class="cm">// false (różne obiekty)</span>
+a.equals(c)   <span class="cm">// true  (ta sama zawartość)</span></pre>
+<div class="warn"><strong>Zasada:</strong> nigdy nie porównuj Stringów przez ==. Zawsze <code>equals()</code> lub <code>Objects.equals(a, b)</code> gdy jeden może być null.</div>`
+  },
+  {
+    cat: 'java', diff: 'easy', section: '☕ Java Core',
+    q: 'Co to jest immutability? Dlaczego String jest immutable?',
+    a: `<strong>Immutable</strong> — obiekt którego stan nie może być zmieniony po stworzeniu. Każda operacja tworzy nowy obiekt.<br><br>
+<strong>String jest immutable ponieważ:</strong><ul>
+<li><strong>String Pool</strong> — wiele referencji może wskazywać na ten sam obiekt. Gdyby String był mutable, zmiana przez jedną referencję dotknęłaby wszystkich.</li>
+<li><strong>Bezpieczeństwo</strong> — Stringi są używane jako klucze w HashMap i jako nazwy klas w ClassLoader. Mutability byłaby katastrofą bezpieczeństwa.</li>
+<li><strong>Thread safety</strong> — immutable obiekty są z definicji thread-safe.</li>
+</ul>
+<code>s.toUpperCase()</code> NIE modyfikuje s — zwraca nowy String. Zawsze przypisuj wynik: <code>s = s.toUpperCase()</code>.`
+  },
+  {
+    cat: 'java', diff: 'med', section: '☕ Java Core',
+    q: 'Wyjaśnij HashMap — jak działa wewnątrz? Co to są kolizje?',
+    a: `<strong>HashMap</strong> trzyma dane w tablicy "bucketów". Dla klucza <code>k</code>:<br>
+1. Oblicz <code>hash(k)</code> — funkcja hashująca<br>
+2. <code>bucketIndex = hash & (capacity-1)</code> — mapowanie na indeks tablicy<br>
+3. W danym buckecie trzymana jest lista LinkedList (lub TreeMap gdy lista &gt;8 elementów — Java 8+)<br><br>
+<strong>Kolizja</strong> — dwa klucze trafiają do tego samego bucketu. Rozwiązanie: chaining — trzymamy listę par (key, value) w buckecie.<br><br>
+<strong>Kluczowe parametry:</strong><ul>
+<li><code>initialCapacity</code> — rozmiar tablicy (domyślnie 16)</li>
+<li><code>loadFactor</code> — próg zapełnienia triggujący resize (domyślnie 0.75)</li>
+<li>Resize = rehash wszystkich elementów → O(n) operacja</li>
+</ul>
+<div class="tip"><strong>Złożoność:</strong> O(1) amortyzowane dla get/put, O(n) worst case przy wielu kolizjach lub podczas resize.</div>`
+  },
+  {
+    cat: 'java', diff: 'med', section: '☕ Java Core',
+    q: 'Kontakt equals() i hashCode() — co się dzieje gdy go złamiesz?',
+    a: `<strong>Kontrakt:</strong> jeśli <code>a.equals(b)</code> jest <code>true</code>, to <code>a.hashCode() == b.hashCode()</code> musi być <code>true</code>.<br><br>
+<strong>Złamanie kontraktu</strong> (masz equals ale brak hashCode):<br>
+<ul>
+<li>Dwa "równe" obiekty trafiają do różnych bucketów HashMap</li>
+<li><code>map.get(b)</code> zwraca null mimo że wstawiłeś <code>map.put(a, value)</code> gdzie <code>a.equals(b)</code></li>
+<li>HashSet ma duplikaty które "są równe"</li>
+</ul>
+<pre><span class="cm">// ZAWSZE nadpisuj oba razem — IDE generuje automatycznie</span>
+<span class="fn">@Override</span>
+<span class="kw">public int</span> <span class="fn">hashCode</span>() {
+    <span class="kw">return</span> <span class="cls">Objects</span>.<span class="fn">hash</span>(id, name); <span class="cm">// pomocnicza metoda</span>
+}</pre>`
+  },
+  {
+    cat: 'java', diff: 'med', section: '☕ Java Core',
+    q: 'ArrayList vs LinkedList — kiedy użyć której?',
+    a: `<strong>ArrayList</strong> — tablica dynamiczna:<ul>
+<li><code>get(i)</code> — O(1) — losowy dostęp przez indeks</li>
+<li><code>add(end)</code> — O(1) amortyzowane</li>
+<li><code>add(middle)/remove(middle)</code> — O(n) — przesuwanie elementów</li>
+<li>Dobra lokalność pamięci → cache-friendly</li>
+</ul>
+<strong>LinkedList</strong> — dwukierunkowa lista łączona:<ul>
+<li><code>get(i)</code> — O(n) — trzeba przejść od początku</li>
+<li><code>add/remove</code> na początku/środku — O(1) gdy masz iterator</li>
+<li>Duże narzuty pamięciowe (każdy węzeł: dane + 2 wskaźniki)</li>
+</ul>
+<div class="tip"><strong>W praktyce:</strong> prawie zawsze ArrayList. LinkedList ma sens gdy masz bardzo dużo operacji insert/delete na początku listy i rzadko czytasz przez indeks.</div>`
+  },
+  {
+    cat: 'java', diff: 'med', section: '☕ Java Core',
+    q: 'Co to jest generics i type erasure? Dlaczego nie możesz new T[]?',
+    a: `<strong>Generics</strong> — parametryzacja typów: <code>List&lt;String&gt;</code>, <code>Map&lt;K,V&gt;</code>. Daje type safety w compile-time.<br><br>
+<strong>Type Erasure</strong> — w runtime wszystkie parametry typów są usuwane. <code>List&lt;String&gt;</code> staje się <code>List</code>. Dlatego:<ul>
+<li><code>list instanceof List&lt;String&gt;</code> — błąd kompilacji (w runtime to po prostu List)</li>
+<li><code>new T[]</code> — niemożliwe (JVM nie wie co to T w runtime)</li>
+<li><code>list.getClass() == list2.getClass()</code> — true nawet dla List&lt;String&gt; vs List&lt;Integer&gt;</li>
+</ul>
+<strong>Rozwiązanie dla new T():</strong> przekaż <code>Class&lt;T&gt;</code> jako argument i użyj refleksji, lub przekaż <code>Supplier&lt;T&gt;</code>.`
+  },
+  {
+    cat: 'java', diff: 'easy', section: '☕ Java Core',
+    q: 'final, finally, finalize — czym się różnią?',
+    a: `<ul>
+<li><strong>final</strong> — modyfikator: finalna zmienna (nie można przypisać nowej wartości), finalna metoda (nie można override), finalna klasa (nie można dziedziczyć). <code>String</code> jest final.</li>
+<li><strong>finally</strong> — blok w try-catch który ZAWSZE się wykonuje (poza System.exit() i nagłym kill procesu). Używany do zwalniania zasobów.</li>
+<li><strong>finalize()</strong> — metoda wywoływana przez GC przed zwolnieniem obiektu. <strong>Deprecated od Java 9</strong>, nie polegaj na niej. Używaj try-with-resources zamiast tego.</li>
+</ul>
+<div class="warn"><strong>Pułapka:</strong> <code>finally { return X; }</code> nadpisuje <code>return</code> z bloku try. Nigdy nie dawaj return w finally!</div>`
+  },
+  {
+    cat: 'java', diff: 'med', section: '☕ Java Core',
+    q: 'Checked vs unchecked exceptions — kiedy której użyć?',
+    a: `<strong>Checked</strong> — dziedziczy z <code>Exception</code> (nie RuntimeException). Kompilator wymusza obsługę — musisz złapać lub zadeklarować <code>throws</code>. Przykłady: <code>IOException</code>, <code>SQLException</code>.<br><br>
+<strong>Unchecked</strong> — dziedziczy z <code>RuntimeException</code>. Kompilator nie wymusza obsługi. Przykłady: <code>NullPointerException</code>, <code>IllegalArgumentException</code>.<br><br>
+<strong>Kiedy checked:</strong> gdy caller może sensownie zareagować na błąd (np. plik nie istnieje → zaproponuj inną ścieżkę).<br>
+<strong>Kiedy unchecked:</strong> błędy programistyczne (null gdzie nie powinno być, nieprawidłowy argument), sytuacje z których nie da się elegancko wyjść.
+<div class="tip">W praktyce nowoczesny Java preferuje unchecked — Spring, Hibernate, Kotlin wszystko rzuca unchecked. Checked exceptions wymuszają boilerplate i często są łapane i ignorowane.</div>`
+  },
+  {
+    cat: 'java', diff: 'med', section: '☕ Java Core',
+    q: 'Co to jest Optional i jak poprawnie go używać?',
+    a: `<code>Optional&lt;T&gt;</code> to kontener który może zawierać wartość lub być pusty. Alternatywa dla zwracania null — zmusza callera do obsługi braku wartości.<br><br>
+<pre><span class="cm">// Tworzenie</span>
+<span class="cls">Optional</span>&lt;<span class="cls">String</span>&gt; present = <span class="cls">Optional</span>.<span class="fn">of</span>(<span class="str">"hello"</span>);
+<span class="cls">Optional</span>&lt;<span class="cls">String</span>&gt; empty   = <span class="cls">Optional</span>.<span class="fn">empty</span>();
+<span class="cls">Optional</span>&lt;<span class="cls">String</span>&gt; maybe  = <span class="cls">Optional</span>.<span class="fn">ofNullable</span>(value);
+
+<span class="cm">// Użycie — NIE używaj get() bez sprawdzenia!</span>
+opt.<span class="fn">ifPresent</span>(<span class="cls">System</span>.out::println);
+<span class="cls">String</span> val = opt.<span class="fn">orElse</span>(<span class="str">"default"</span>);
+<span class="cls">String</span> val2 = opt.<span class="fn">orElseGet</span>(() -> <span class="fn">expensive</span>()); <span class="cm">// lazy!</span>
+<span class="cls">String</span> upper = opt.<span class="fn">map</span>(<span class="cls">String</span>::toUpperCase).<span class="fn">orElse</span>(<span class="str">""</span>);</pre>
+<div class="warn"><strong>orElse vs orElseGet:</strong> <code>orElse(expensiveOp())</code> ZAWSZE wywołuje expensiveOp() nawet gdy Optional ma wartość. Używaj <code>orElseGet(() -> expensiveOp())</code>.</div>`
+  },
+  {
+    cat: 'java', diff: 'med', section: '☕ Java Core',
+    q: 'Czym różni się Comparable od Comparator?',
+    a: `<strong>Comparable&lt;T&gt;</strong> — interfejs implementowany przez klasę która chce mieć "naturalne" porządkowanie. Metoda <code>compareTo(T o)</code>. Np. <code>String</code>, <code>Integer</code>.<br><br>
+<strong>Comparator&lt;T&gt;</strong> — zewnętrzny komparator. Definiujesz osobno, możesz mieć wiele różnych sortowań dla tej samej klasy.<br><br>
+<pre><span class="cm">// Comparable — klasa implementuje</span>
+<span class="kw">class</span> <span class="cls">Person</span> <span class="kw">implements</span> <span class="cls">Comparable</span>&lt;<span class="cls">Person</span>&gt; {
+    <span class="kw">public int</span> <span class="fn">compareTo</span>(<span class="cls">Person</span> o) {
+        <span class="kw">return</span> <span class="cls">Integer</span>.<span class="fn">compare</span>(<span class="kw">this</span>.age, o.age);
+    }
+}
+
+<span class="cm">// Comparator — zewnętrzny, możesz mieć wiele</span>
+<span class="cls">Comparator</span>&lt;<span class="cls">Person</span>&gt; byName = <span class="cls">Comparator</span>.<span class="fn">comparing</span>(<span class="cls">Person</span>::getName);
+list.<span class="fn">sort</span>(byName.<span class="fn">thenComparing</span>(<span class="cls">Person</span>::getAge));</pre>`
+  },
+  {
+    cat: 'java', diff: 'hard', section: '☕ Java Core',
+    q: 'volatile vs synchronized — kiedy które wystarcza?',
+    a: `<strong>volatile</strong> — gwarantuje <em>widoczność</em>: zmiana wartości przez jeden wątek jest natychmiast widoczna dla innych. NIE gwarantuje atomowości złożonych operacji.<br><br>
+<strong>synchronized</strong> — gwarantuje <em>widoczność + atomowość</em>: blok wykonuje się wyłącznie przez jeden wątek na raz.<br><br>
+<pre><span class="kw">volatile boolean</span> running = <span class="kw">true</span>; <span class="cm">// OK dla flag</span>
+<span class="kw">volatile int</span> counter = <span class="num">0</span>;
+counter++; <span class="cm">// NIE atomowe! = read+increment+write</span>
+<span class="cm">// → użyj AtomicInteger.incrementAndGet()</span></pre>
+<strong>volatile wystarczy gdy:</strong> jeden wątek pisze, wiele czyta. Flagi typu <code>running</code>.<br>
+<strong>synchronized potrzebny gdy:</strong> wiele wątków pisze — złożone operacje (check-then-act), increment itp.`
+  },
+  {
+    cat: 'java', diff: 'hard', section: '☕ Java Core',
+    q: 'Jak działa GC w JVM? Co to są generacje?',
+    a: `<strong>JVM Garbage Collector</strong> zwalnia pamięć zajmowaną przez obiekty do których nie ma już referencji.<br><br>
+<strong>Generational GC</strong> — oparte na hipotezie że młode obiekty szybko umierają:<ul>
+<li><strong>Young Generation</strong> — nowe obiekty. Minor GC — szybkie, częste. Eden + dwa Survivor spaces.</li>
+<li><strong>Old Generation (Tenured)</strong> — długo żyjące obiekty. Major/Full GC — wolne, rzadkie.</li>
+<li><strong>Metaspace</strong> — metadata klas (zastąpiło PermGen w Java 8)</li>
+</ul>
+<strong>Algorytmy GC:</strong><ul>
+<li><strong>G1GC</strong> — domyślny od Java 9, low-latency, regionowy podział sterty</li>
+<li><strong>ZGC / Shenandoah</strong> — &lt;1ms pauz, Java 15+</li>
+<li><strong>Serial/Parallel GC</strong> — starsze, throughput-focused</li>
+</ul>
+<div class="tip">Na rozmowie: wspomnij że dobór GC zależy od wymagań: G1 na ogólne zastosowania, ZGC/Shenandoah gdy latencja krytyczna.</div>`
+  },
+  {
+    cat: 'java', diff: 'med', section: '☕ Java Core',
+    q: 'Co to jest Stream API? Czym różni się intermediate od terminal operation?',
+    a: `<strong>Stream</strong> — leniwa sekwencja elementów przetwarzanych funkcyjnie. Nie modyfikuje źródła danych.<br><br>
+<strong>Intermediate operations</strong> (leniwe, zwracają Stream):<br>
+<code>filter()</code>, <code>map()</code>, <code>flatMap()</code>, <code>sorted()</code>, <code>distinct()</code>, <code>limit()</code>, <code>skip()</code><br><br>
+<strong>Terminal operations</strong> (uruchamiają pipeline, zwracają wynik):<br>
+<code>collect()</code>, <code>forEach()</code>, <code>count()</code>, <code>findFirst()</code>, <code>reduce()</code>, <code>anyMatch()</code><br><br>
+<pre><span class="cls">List</span>&lt;<span class="cls">String</span>&gt; result = names.<span class="fn">stream</span>()
+    .<span class="fn">filter</span>(n -> n.<span class="fn">startsWith</span>(<span class="str">"A"</span>))   <span class="cm">// intermediate</span>
+    .<span class="fn">map</span>(<span class="cls">String</span>::toUpperCase)         <span class="cm">// intermediate</span>
+    .<span class="fn">sorted</span>()                          <span class="cm">// intermediate</span>
+    .<span class="fn">collect</span>(<span class="cls">Collectors</span>.<span class="fn">toList</span>());  <span class="cm">// terminal!</span></pre>
+<div class="tip">Stream jest single-use — po użyciu terminal operation nie można go ponownie użyć (IllegalStateException).</div>`
+  },
+  {
+    cat: 'java', diff: 'med', section: '☕ Java Core',
+    q: 'Czym są functional interfaces i lambdy?',
+    a: `<strong>Functional interface</strong> — interfejs z dokładnie jedną abstrakcyjną metodą. Adnotacja <code>@FunctionalInterface</code> (opcjonalna, ale dokumentuje intencję).<br><br>
+<strong>Wbudowane interfejsy funkcyjne:</strong><ul>
+<li><code>Function&lt;T,R&gt;</code> — przyjmuje T, zwraca R: <code>s -> s.length()</code></li>
+<li><code>Predicate&lt;T&gt;</code> — przyjmuje T, zwraca boolean: <code>s -> s.isEmpty()</code></li>
+<li><code>Consumer&lt;T&gt;</code> — przyjmuje T, nic nie zwraca: <code>System.out::println</code></li>
+<li><code>Supplier&lt;T&gt;</code> — nic nie przyjmuje, zwraca T: <code>ArrayList::new</code></li>
+<li><code>BiFunction&lt;T,U,R&gt;</code> — dwa argumenty</li>
+</ul>
+<strong>Lambda</strong> to skrócona implementacja functional interface. <code>(params) -> body</code>.`
+  },
+  {
+    cat: 'java', diff: 'easy', section: '☕ Java Core',
+    q: 'Co nowego przyniosło Java 8? (najważniejsze zmiany)',
+    a: `<strong>Najważniejsze zmiany Java 8:</strong><ul>
+<li><strong>Lambdy i Stream API</strong> — programowanie funkcyjne</li>
+<li><strong>Optional&lt;T&gt;</strong> — alternatywa dla null</li>
+<li><strong>Default methods w interfejsach</strong> — metody z implementacją w interfejsie</li>
+<li><strong>Date/Time API (java.time)</strong> — LocalDate, LocalDateTime, ZonedDateTime — zastąpienie starych Date/Calendar</li>
+<li><strong>Method references</strong> — <code>String::toUpperCase</code></li>
+<li><strong>Metaspace zamiast PermGen</strong></li>
+<li><strong>CompletableFuture</strong> — programowanie asynchroniczne</li>
+</ul>
+<div class="tip">Na rozmowie często pada też pytanie o Java 11 (var, HTTP Client, String.isBlank()) i Java 17/21 (Records, Sealed classes, Pattern matching, Virtual Threads).</div>`
+  },
+  {
+    cat: 'java', diff: 'hard', section: '☕ Java Core',
+    q: 'Co to są Virtual Threads (Project Loom, Java 21)?',
+    a: `<strong>Virtual Threads</strong> — lekkie wątki zarządzane przez JVM (nie OS). Miliony virtual threads na kilkudziesięciu OS threads.<br><br>
+<strong>Problem przed Loom:</strong> wątek OS = ~1MB stack. 10k wątków = 10GB RAM. I/O block = wątek OS zablokowany.<br><br>
+<strong>Loom:</strong> virtual thread blokujący się na I/O zwalnia carrier thread (OS thread) dla innych virtual threads. JVM montuje/odmontowuje virtual threads na/z carrier threads.<br><br>
+<pre><span class="cm">// Tworzenie virtual thread</span>
+<span class="cls">Thread</span>.<span class="fn">ofVirtual</span>().<span class="fn">start</span>(() -> doWork());
+<span class="cm">// Executor z virtual threads</span>
+<span class="cls">ExecutorService</span> ex = <span class="cls">Executors</span>.<span class="fn">newVirtualThreadPerTaskExecutor</span>();</pre>
+<div class="warn"><strong>Uwaga:</strong> nie używaj <code>synchronized</code> z blokującym I/O w virtual threads — powoduje "pinning" (carrier thread blokuje się też). Używaj <code>ReentrantLock</code>.</div>`
+  },
+  {
+    cat: 'java', diff: 'med', section: '☕ Java Core',
+    q: 'try-with-resources — jak działa i czym różni się od finally?',
+    a: `<strong>try-with-resources</strong> automatycznie wywołuje <code>close()</code> na obiektach implementujących <code>AutoCloseable</code>, w odwrotnej kolejności otwarcia (LIFO).<br><br>
+<pre><span class="cm">// Zasoby zamykane automatycznie, nawet przy wyjątku</span>
+<span class="kw">try</span> (<span class="cls">InputStream</span> is = <span class="kw">new</span> <span class="cls">FileInputStream</span>(<span class="str">"f"</span>);
+     <span class="cls">OutputStream</span> os = <span class="kw">new</span> <span class="cls">FileOutputStream</span>(<span class="str">"g"</span>)) {
+    <span class="cm">// os.close() przed is.close() przy wychodzeniu</span>
+}</pre>
+<strong>Przewaga nad finally:</strong> jeśli zarówno try jak i close() rzucą wyjątek, wyjątek z close() jest "suppressed" — dostępny przez <code>getSuppressed()</code>. Przy ręcznym finally w środku close() wyjątek z try byłby utracony.`
+  },
+  {
+    cat: 'java', diff: 'med', section: '☕ Java Core',
+    q: 'Co to są Records (Java 16)? Kiedy ich używać?',
+    a: `<strong>Record</strong> — kompaktowa klasa danych. Automatycznie generuje: konstruktor, gettery, equals(), hashCode(), toString(). Pola są <code>final</code> — record jest immutable.<br><br>
+<pre><span class="kw">record</span> <span class="cls">Point</span>(<span class="kw">int</span> x, <span class="kw">int</span> y) {
+    <span class="cm">// Compact constructor — walidacja</span>
+    <span class="cls">Point</span> { <span class="kw">if</span> (x < <span class="num">0</span>) <span class="kw">throw new</span> <span class="cls">IllegalArgumentException</span>(); }
+}
+
+<span class="cls">Point</span> p = <span class="kw">new</span> <span class="cls">Point</span>(<span class="num">3</span>, <span class="num">4</span>);
+p.x()   <span class="cm">// getter to p.x() nie p.getX()!</span></pre>
+<strong>Kiedy używać:</strong> DTO, value objects, dane zwracane z metod, tymczasowe struktury w Streamach. Nie używaj gdy potrzebujesz mutability, dziedziczenia lub wstrzyknięcia przez Spring (problem z no-arg constructorem).`
+  },
+
+  // ═══════════════════════════════════════════════
+  //  SPRING
+  // ═══════════════════════════════════════════════
+  {
+    cat: 'spring', diff: 'easy', section: '🍃 Spring Framework',
+    q: 'Co to jest IoC i Dependency Injection?',
+    a: `<strong>IoC (Inversion of Control)</strong> — zamiast obiekt sam tworzyć swoje zależności, framework mu je "wstrzykuje". Kontrola jest odwrócona — to nie obiekt zarządza swoim lifecycle, a kontener.<br><br>
+<strong>Dependency Injection</strong> — konkretna implementacja IoC. Spring kontener tworzy beany i wstrzykuje je gdzie są potrzebne.<br><br>
+<strong>Typy DI:</strong><ul>
+<li><strong>Constructor injection</strong> — zalecane. Immutable, jasne zależności, łatwe testy.</li>
+<li><strong>Setter injection</strong> — dla opcjonalnych zależności.</li>
+<li><strong>Field injection</strong> (<code>@Autowired</code> na polu) — wygodne, ale utrudnia testowanie i ukrywa zależności.</li>
+</ul>
+<div class="tip">Na rozmowie: faworyzuj constructor injection. Możesz wymienić że <code>@Autowired</code> na polu jest antypatternem bo nie można prosto zainstancjonować klasy w testach.</div>`
+  },
+  {
+    cat: 'spring', diff: 'easy', section: '🍃 Spring Framework',
+    q: 'Jakie są scope\'y beanów w Spring?',
+    a: `<ul>
+<li><strong>singleton</strong> (domyślny) — jeden egzemplarz na ApplicationContext. Dzielony przez wszystkich.</li>
+<li><strong>prototype</strong> — nowy egzemplarz przy każdym <code>getBean()</code>. Spring nie zarządza lifecycle po wstrzyknięciu.</li>
+<li><strong>request</strong> — jeden egzemplarz na HTTP request (Spring MVC)</li>
+<li><strong>session</strong> — jeden egzemplarz na HTTP session</li>
+<li><strong>application</strong> — jeden na ServletContext</li>
+<li><strong>websocket</strong> — jeden na WebSocket session</li>
+</ul>
+<div class="warn"><strong>Pułapka:</strong> wstrzyknięcie prototype beana do singleton beana — dostaniesz zawsze ten sam prototype (bo singleton jest tworzony raz). Rozwiązanie: <code>ApplicationContext.getBean()</code> lub <code>@Lookup</code>.</div>`
+  },
+  {
+    cat: 'spring', diff: 'med', section: '🍃 Spring Framework',
+    q: 'Jak działają transakcje w Spring? Co to jest @Transactional?',
+    a: `<code>@Transactional</code> mówi Springowi żeby owinął metodę w transakcję bazodanową — commit jeśli się powiedzie, rollback jeśli rzuci wyjątek.<br><br>
+<strong>Jak to działa:</strong> Spring tworzy proxy (CGLIB lub JDK Dynamic Proxy) wokół beana. Wywołanie metody idzie przez proxy które otwiera transakcję, wywołuje metodę i commituje/rollbackuje.<br><br>
+<strong>Kluczowe atrybuty:</strong><ul>
+<li><code>propagation</code> — REQUIRED (default), REQUIRES_NEW, SUPPORTS, MANDATORY…</li>
+<li><code>isolation</code> — READ_COMMITTED, REPEATABLE_READ, SERIALIZABLE…</li>
+<li><code>rollbackFor</code> — dla checked wyjątków (domyślnie rollback tylko na RuntimeException)</li>
+<li><code>readOnly = true</code> — optymalizacja dla operacji tylko-do-odczytu</li>
+</ul>
+<div class="warn"><strong>Self-invocation pułapka:</strong> wywołanie <code>@Transactional</code> metody z tej samej klasy omija proxy → transakcja nie działa! Trzeba wywołać przez osobny bean lub użyć <code>AopContext.currentProxy()</code>.</div>`
+  },
+  {
+    cat: 'spring', diff: 'med', section: '🍃 Spring Framework',
+    q: 'Co to jest Spring Boot? Czym różni się od "gołego" Spring?',
+    a: `<strong>Spring Boot</strong> = Spring + autoconfiguration + embedded server + opinionated defaults.<br><br>
+<strong>Kluczowe cechy:</strong><ul>
+<li><strong>Auto-configuration</strong> — Spring Boot automatycznie konfiguruje beans na podstawie classpath (masz H2 w classpath? Automatycznie konfiguruje DataSource)</li>
+<li><strong>Starter dependencies</strong> — <code>spring-boot-starter-web</code> zamiast ręcznego dobierania 20 zależności</li>
+<li><strong>Embedded server</strong> — Tomcat/Jetty/Undertow wbudowany. Jar = samodzielna aplikacja.</li>
+<li><strong>Actuator</strong> — health checks, metryki, info endpoints</li>
+<li><strong>application.properties/yml</strong> — jedno miejsce konfiguracji</li>
+</ul>
+<div class="tip"><code>@SpringBootApplication</code> = <code>@Configuration</code> + <code>@EnableAutoConfiguration</code> + <code>@ComponentScan</code></div>`
+  },
+  {
+    cat: 'spring', diff: 'med', section: '🍃 Spring Framework',
+    q: 'N+1 problem w Spring Data JPA — co to jest i jak naprawić?',
+    a: `<strong>N+1 problem</strong> — ładujesz N encji i dla każdej z nich Hibernate wykonuje dodatkowe zapytanie po relację. Razem N+1 zapytań zamiast 1.<br><br>
+<pre><span class="cm">// Dla 100 orderów → 101 zapytań (1 + 100)!</span>
+<span class="cls">List</span>&lt;<span class="cls">Order</span>&gt; orders = orderRepo.<span class="fn">findAll</span>();
+orders.<span class="fn">forEach</span>(o -> System.out.<span class="fn">println</span>(o.<span class="fn">getCustomer</span>().<span class="fn">getName</span>()));
+<span class="cm">// customer jest LAZY → osobne zapytanie dla każdego</span></pre>
+<strong>Rozwiązania:</strong><ul>
+<li><code>@EntityGraph</code> — definiuj jakie relacje ładować eagerly dla konkretnego zapytania</li>
+<li>JPQL JOIN FETCH — <code>SELECT o FROM Order o JOIN FETCH o.customer</code></li>
+<li><code>@BatchSize</code> — Hibernate ładuje batchami zamiast jeden-po-jednym</li>
+<li>DTO projekcje — pobierz tylko potrzebne dane, bez encji</li>
+</ul>`
+  },
+  {
+    cat: 'spring', diff: 'med', section: '🍃 Spring Framework',
+    q: 'Czym różni się Spring MVC od Spring WebFlux?',
+    a: `<strong>Spring MVC</strong> — tradycyjny, blokujący (synchroniczny). Jeden wątek na request. Opiera się na Java Servlet API. Sprawdza się gdy: logika jest synchroniczna, JDBC, brak bardzo dużej równoczesności.<br><br>
+<strong>Spring WebFlux</strong> — reaktywny, nieblokujący. Oparty na Project Reactor (Mono, Flux). Małe liczba wątków obsługuje tysiące jednoczesnych requestów. Sprawdza się gdy: dużo I/O, mikroserwisy, streaming danych.<br><br>
+<strong>Kiedy co wybrać:</strong><ul>
+<li>WebFlux ma sens gdy masz naprawdę dużo concurrent connections i I/O-heavy workload</li>
+<li>Jeśli używasz JDBC/JPA (blokujące) i tak musisz blokować wątek — WebFlux nie pomaga</li>
+<li>Reactive code trudniejszy do debugowania i czytania</li>
+</ul>`
+  },
+  {
+    cat: 'spring', diff: 'easy', section: '🍃 Spring Framework',
+    q: 'Co robi @RestController vs @Controller?',
+    a: `<code>@Controller</code> — oznacza klasę jako kontroler MVC. Metody domyślnie zwracają nazwę widoku (np. dla Thymeleaf).<br><br>
+<code>@RestController</code> = <code>@Controller</code> + <code>@ResponseBody</code>. Metody zwracają dane bezpośrednio serializowane do JSON/XML, nie nazwę widoku.<br><br>
+<pre><span class="fn">@RestController</span>
+<span class="fn">@RequestMapping</span>(<span class="str">"/api/users"</span>)
+<span class="kw">public class</span> <span class="cls">UserController</span> {
+
+    <span class="fn">@GetMapping</span>(<span class="str">"/{id}"</span>)
+    <span class="kw">public</span> <span class="cls">UserDto</span> <span class="fn">getUser</span>(<span class="fn">@PathVariable</span> <span class="cls">Long</span> id) {
+        <span class="kw">return</span> userService.<span class="fn">findById</span>(id); <span class="cm">// → JSON</span>
+    }
+}</pre>`
+  },
+  {
+    cat: 'spring', diff: 'hard', section: '🍃 Spring Framework',
+    q: 'Jak działa Spring Security? Opisz FilterChain.',
+    a: `Spring Security działa jako <strong>łańcuch filtrów HTTP</strong> (Filter Chain) który przechwytuje każde żądanie przed dotarciem do kontrolera.<br><br>
+<strong>Kluczowe filtry:</strong><ul>
+<li><code>SecurityContextPersistenceFilter</code> — ładuje SecurityContext z sesji</li>
+<li><code>UsernamePasswordAuthenticationFilter</code> — obsługuje login formularza</li>
+<li><code>BearerTokenAuthenticationFilter</code> — obsługuje JWT</li>
+<li><code>ExceptionTranslationFilter</code> — transluje wyjątki na 401/403</li>
+<li><code>FilterSecurityInterceptor</code> — sprawdza uprawnienia</li>
+</ul>
+<strong>Authentication vs Authorization:</strong><br>
+<strong>Authentication</strong> — kto to jest? (login/hasło, JWT)<br>
+<strong>Authorization</strong> — czy ma dostęp? (<code>@PreAuthorize</code>, <code>hasRole()</code>)
+<div class="tip">Na rozmowie warto wspomnieć o JWT flow: klient loguje → dostaje JWT → przy każdym requeście wysyła Bearer token → Security filtr weryfikuje podpis i wyciąga claims.</div>`
+  },
+  {
+    cat: 'spring', diff: 'med', section: '🍃 Spring Framework',
+    q: 'Co to jest Spring Cache (@Cacheable, @CacheEvict)?',
+    a: `Spring Cache abstrakcja pozwala cache'ować wyniki metod bez zmiany kodu biznesowego.<br><br>
+<pre><span class="fn">@Cacheable</span>(<span class="str">"users"</span>)  <span class="cm">// wynik cache'owany po kluczu (domyślnie: parametry)</span>
+<span class="kw">public</span> <span class="cls">User</span> <span class="fn">findById</span>(<span class="cls">Long</span> id) { ... }
+
+<span class="fn">@CacheEvict</span>(value = <span class="str">"users"</span>, key = <span class="str">"#id"</span>) <span class="cm">// usuwa z cache</span>
+<span class="kw">public void</span> <span class="fn">deleteUser</span>(<span class="cls">Long</span> id) { ... }
+
+<span class="fn">@CachePut</span>(<span class="str">"users"</span>) <span class="cm">// aktualizuje cache (zawsze wykonuje metodę)</span>
+<span class="kw">public</span> <span class="cls">User</span> <span class="fn">updateUser</span>(<span class="cls">User</span> u) { ... }</pre>
+<strong>Popularne backendy:</strong> Caffeine (in-memory, zalecany), Redis (distributed), EhCache.<br>
+Konfiguracja przez <code>@EnableCaching</code> + bean <code>CacheManager</code>.`
+  },
+  {
+    cat: 'spring', diff: 'hard', section: '🍃 Spring Framework',
+    q: 'PROPAGATION_REQUIRED vs PROPAGATION_REQUIRES_NEW — jaka różnica?',
+    a: `<strong>REQUIRED (domyślny)</strong> — jeśli jest już aktywna transakcja, dołącz do niej. Jeśli nie, utwórz nową. Metoda A (transakcja) wywołuje metodę B (REQUIRED) → B uczestniczy w transakcji A — rollback B = rollback A.<br><br>
+<strong>REQUIRES_NEW</strong> — zawsze utwórz nową transakcję. Zawieś bieżącą. Metoda A wywołuje B (REQUIRES_NEW) → B ma własną transakcję, commit B nie zależy od A. Rollback A nie rollbackuje B.<br><br>
+<strong>Kiedy REQUIRES_NEW:</strong> np. logowanie do bazy audytowej — chcesz zapisać log nawet gdy główna transakcja się nie powiedzie.
+<div class="warn">Pamiętaj o self-invocation pułapce — nie działa gdy wywołujesz @Transactional(REQUIRES_NEW) metodę z tej samej klasy!</div>`
+  },
+
+  // ═══════════════════════════════════════════════
+  //  SQL
+  // ═══════════════════════════════════════════════
+  {
+    cat: 'sql', diff: 'easy', section: '🗄️ SQL & Bazy Danych',
+    q: 'Czym różni się INNER JOIN od LEFT JOIN?',
+    a: `<strong>INNER JOIN</strong> — zwraca tylko wiersze które mają dopasowanie w obu tabelach.<br><br>
+<strong>LEFT JOIN</strong> — zwraca wszystkie wiersze z lewej tabeli + dopasowania z prawej. Gdy brak dopasowania z prawej: NULL.<br><br>
+<pre><span class="cm">-- INNER JOIN: tylko zamówienia ze zidentyfikowanym klientem</span>
+<span class="kw">SELECT</span> o.id, c.name
+<span class="kw">FROM</span> orders o
+<span class="kw">INNER JOIN</span> customers c <span class="kw">ON</span> o.customer_id = c.id;
+
+<span class="cm">-- LEFT JOIN: wszystkie zamówienia (też bez klienta)</span>
+<span class="kw">SELECT</span> o.id, c.name  <span class="cm">-- c.name może być NULL</span>
+<span class="kw">FROM</span> orders o
+<span class="kw">LEFT JOIN</span> customers c <span class="kw">ON</span> o.customer_id = c.id;</pre>
+<strong>RIGHT JOIN</strong> = odwrócony LEFT JOIN. <strong>FULL OUTER JOIN</strong> = wszystkie wiersze z obu tabel.`
+  },
+  {
+    cat: 'sql', diff: 'easy', section: '🗄️ SQL & Bazy Danych',
+    q: 'Co to jest indeks w bazie danych i kiedy go zakładać?',
+    a: `<strong>Indeks</strong> — dodatkowa struktura danych (najczęściej B-Tree) która przyspiesza wyszukiwanie kosztem wolniejszego INSERT/UPDATE/DELETE i zajętego miejsca na dysku.<br><br>
+<strong>Kiedy zakładać:</strong><ul>
+<li>Kolumny w klauzulach WHERE, JOIN ON, ORDER BY</li>
+<li>Kolumny o wysokiej selektywności (wiele unikalnych wartości)</li>
+<li>Klucze obce (JOIN-y)</li>
+</ul>
+<strong>Kiedy NIE zakładać:</strong><ul>
+<li>Małe tabele (full scan szybszy)</li>
+<li>Kolumny z małą selektywnością (np. kolumna boolean)</li>
+<li>Tabele z bardzo częstymi UPDATE/INSERT (indeksy spowalniają zapisy)</li>
+</ul>
+<div class="tip">W PostgreSQL: użyj EXPLAIN ANALYZE żeby zobaczyć czy planista używa indeksu.</div>`
+  },
+  {
+    cat: 'sql', diff: 'easy', section: '🗄️ SQL & Bazy Danych',
+    q: 'Co to są transakcje ACID?',
+    a: `<ul>
+<li><strong>A — Atomicity (Atomowość)</strong> — transakcja jest niepodzielna. Albo wszystkie operacje się wykonają, albo żadna. Brak "połowicznego" stanu.</li>
+<li><strong>C — Consistency (Spójność)</strong> — transakcja przenosi bazę z jednego spójnego stanu w inny. Ograniczenia (constraints, FK, unique) są zawsze spełnione.</li>
+<li><strong>I — Isolation (Izolacja)</strong> — równoległe transakcje nie widzą nawzajem swoich niezacommitowanych zmian (w zależności od poziomu izolacji).</li>
+<li><strong>D — Durability (Trwałość)</strong> — po commicie dane są trwale zapisane. Restart bazy nie utraci zacommitowanych danych (WAL - Write-Ahead Log).</li>
+</ul>`
+  },
+  {
+    cat: 'sql', diff: 'med', section: '🗄️ SQL & Bazy Danych',
+    q: 'Czym różni się WHERE od HAVING?',
+    a: `<strong>WHERE</strong> — filtruje wiersze <em>przed</em> grupowaniem. Nie może używać funkcji agregujących (SUM, COUNT itp.).<br><br>
+<strong>HAVING</strong> — filtruje grupy <em>po</em> grupowaniu (GROUP BY). Może używać funkcji agregujących.<br><br>
+<pre><span class="cm">-- Działy gdzie średnia pensja > 5000</span>
+<span class="kw">SELECT</span> department, <span class="kw">AVG</span>(salary) <span class="kw">AS</span> avg_sal
+<span class="kw">FROM</span> employees
+<span class="kw">WHERE</span> active = <span class="kw">true</span>          <span class="cm">-- filtruj PRZED GROUP BY</span>
+<span class="kw">GROUP BY</span> department
+<span class="kw">HAVING AVG</span>(salary) > <span class="num">5000</span>;   <span class="cm">-- filtruj GRUPY</span></pre>`
+  },
+  {
+    cat: 'sql', diff: 'med', section: '🗄️ SQL & Bazy Danych',
+    q: 'Co to są Window Functions? Podaj przykład.',
+    a: `<strong>Window Functions</strong> — obliczenia nad "oknem" (zbiorem) wierszy powiązanym z bieżącym wierszem. W odróżnieniu od GROUP BY nie redukują liczby wierszy.<br><br>
+<pre><span class="cm">-- Ranking pracowników wg pensji w swoim dziale</span>
+<span class="kw">SELECT</span>
+    name, department, salary,
+    <span class="kw">RANK</span>() <span class="kw">OVER</span> (<span class="kw">PARTITION BY</span> department <span class="kw">ORDER BY</span> salary <span class="kw">DESC</span>) <span class="kw">AS</span> rnk,
+    <span class="kw">SUM</span>(salary) <span class="kw">OVER</span> (<span class="kw">PARTITION BY</span> department) <span class="kw">AS</span> dept_total,
+    <span class="kw">LAG</span>(salary, <span class="num">1</span>) <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> salary) <span class="kw">AS</span> prev_salary
+<span class="kw">FROM</span> employees;</pre>
+<strong>Popularne funkcje okienkowe:</strong> <code>ROW_NUMBER()</code>, <code>RANK()</code>, <code>DENSE_RANK()</code>, <code>LAG()</code>, <code>LEAD()</code>, <code>SUM() OVER</code>, <code>AVG() OVER</code>`
+  },
+  {
+    cat: 'sql', diff: 'med', section: '🗄️ SQL & Bazy Danych',
+    q: 'Co to jest CTE (Common Table Expression)?',
+    a: `<strong>CTE</strong> — tymczasowy nazwany rezultat zapytania zdefiniowany klauzulą <code>WITH</code>. Zwiększa czytelność i pozwala na rekurencję.<br><br>
+<pre><span class="kw">WITH</span> high_earners <span class="kw">AS</span> (
+    <span class="kw">SELECT</span> * <span class="kw">FROM</span> employees <span class="kw">WHERE</span> salary > <span class="num">10000</span>
+),
+dept_counts <span class="kw">AS</span> (
+    <span class="kw">SELECT</span> department, <span class="kw">COUNT</span>(*) <span class="kw">AS</span> cnt
+    <span class="kw">FROM</span> high_earners
+    <span class="kw">GROUP BY</span> department
+)
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> dept_counts <span class="kw">WHERE</span> cnt > <span class="num">5</span>;</pre>
+<strong>Recursive CTE</strong> — do drzew/hierarchii (np. kategorie). Składa się z części bazowej i rekurencyjnej połączonych UNION ALL.`
+  },
+  {
+    cat: 'sql', diff: 'med', section: '🗄️ SQL & Bazy Danych',
+    q: 'Czym różni się DELETE, TRUNCATE i DROP?',
+    a: `<ul>
+<li><strong>DELETE</strong> — usuwa wiersze spełniające WHERE (lub wszystkie jeśli bez WHERE). Można rollback w transakcji. Triggery się odpalają. Powolne przy dużych tabelach.</li>
+<li><strong>TRUNCATE</strong> — usuwa WSZYSTKIE wiersze. Szybsze (nie loguje każdego wiersza). Można rollback w PostgreSQL. Triggery nie są odpalane (zazwyczaj). Resetuje sekwencje AUTO_INCREMENT.</li>
+<li><strong>DROP</strong> — usuwa całą tabelę (strukturę + dane). Nie można odwrócić (w PostgreSQL TRUNCATE można).</li>
+</ul>
+<div class="tip"><strong>Zapamiętaj:</strong> DELETE usuwa dane (można cofnąć), TRUNCATE czyści tabelę (szybko), DROP niszczy tabelę.</div>`
+  },
+  {
+    cat: 'sql', diff: 'hard', section: '🗄️ SQL & Bazy Danych',
+    q: 'Poziomy izolacji transakcji — opisz anomalie.',
+    a: `<strong>Anomalie:</strong><ul>
+<li><strong>Dirty Read</strong> — czytasz niezacommitowane dane innej transakcji</li>
+<li><strong>Non-Repeatable Read</strong> — ten sam SELECT daje różne wyniki w tej samej transakcji (inny UPDATE)</li>
+<li><strong>Phantom Read</strong> — ten sam SELECT zwraca różną liczbę wierszy (nowy INSERT)</li>
+</ul>
+<strong>Poziomy izolacji (rosnąca izolacja, malejąca wydajność):</strong>
+<ul>
+<li><strong>READ UNCOMMITTED</strong> — dopuszcza wszystkie anomalie</li>
+<li><strong>READ COMMITTED</strong> — brak dirty read. Domyślny w PostgreSQL/Oracle.</li>
+<li><strong>REPEATABLE READ</strong> — brak dirty + non-repeatable. Domyślny w MySQL InnoDB.</li>
+<li><strong>SERIALIZABLE</strong> — brak wszystkich anomalii. Najwolniejszy.</li>
+</ul>`
+  },
+  {
+    cat: 'sql', diff: 'hard', section: '🗄️ SQL & Bazy Danych',
+    q: 'Jak działa EXPLAIN ANALYZE w PostgreSQL?',
+    a: `<code>EXPLAIN ANALYZE</code> — pokazuje plan wykonania zapytania wraz z rzeczywistymi czasami. <code>EXPLAIN</code> (bez ANALYZE) tylko szacuje, nie wykonuje.<br><br>
+<pre><span class="kw">EXPLAIN ANALYZE</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> orders <span class="kw">WHERE</span> customer_id = <span class="num">42</span>;</pre>
+<strong>Kluczowe elementy w output:</strong><ul>
+<li><strong>Seq Scan</strong> — pełny skan tabeli (brak indeksu lub tabela mała)</li>
+<li><strong>Index Scan</strong> — użyto indeksu</li>
+<li><strong>Index Only Scan</strong> — wszystkie dane w indeksie (covering index)</li>
+<li><strong>Hash Join / Nested Loop / Merge Join</strong> — strategie łączenia tabel</li>
+<li><strong>cost=X..Y</strong> — szacowany koszt (startup..total)</li>
+<li><strong>actual time=X..Y rows=N</strong> — rzeczywiste czasy</li>
+</ul>
+<div class="tip">Jeśli planista wybiera Seq Scan mimo istnienia indeksu — możliwe że tabela jest mała, kolumna ma niską selektywność lub statystyki są nieaktualne (ANALYZE).</div>`
+  },
+  {
+    cat: 'sql', diff: 'easy', section: '🗄️ SQL & Bazy Danych',
+    q: 'Co to jest normalizacja bazy danych? 1NF, 2NF, 3NF.',
+    a: `<strong>Normalizacja</strong> — organizacja danych w bazie by zredukować redundancję i anomalie przy modyfikacjach.<br><br>
+<ul>
+<li><strong>1NF</strong> — każda komórka ma jedną wartość atomową, brak powtarzających się grup kolumn, każdy wiersz jest unikalny (klucz główny).</li>
+<li><strong>2NF</strong> — 1NF + każda kolumna niebędąca kluczem jest w pełni zależna od całego klucza głównego (brak partial dependency). Dotyczy tabel z kluczem złożonym.</li>
+<li><strong>3NF</strong> — 2NF + brak zależności przechodnich. Kolumna A zależy od klucza, kolumna B zależy od A → B powinna być w osobnej tabeli.</li>
+</ul>
+<strong>Denormalizacja</strong> — celowe łamanie normalizacji dla wydajności (np. przechowywanie sumy zamówienia zamiast obliczania jej za każdym razem).`
+  },
+  {
+    cat: 'sql', diff: 'med', section: '🗄️ SQL & Bazy Danych',
+    q: 'Co to jest deadlock w bazie danych i jak go uniknąć?',
+    a: `<strong>Deadlock</strong> — dwie transakcje blokują zasoby których potrzebuje druga i obie czekają w nieskończoność.<br><br>
+<em>Transakcja A</em>: lock na wiersz 1, czeka na wiersz 2<br>
+<em>Transakcja B</em>: lock na wiersz 2, czeka na wiersz 1 → deadlock!<br><br>
+<strong>Jak unikać:</strong><ul>
+<li>Zawsze blokuj zasoby w tej samej kolejności we wszystkich transakcjach</li>
+<li>Ogranicz czas życia transakcji — nie rób długich transakcji</li>
+<li>Używaj <code>SELECT FOR UPDATE SKIP LOCKED</code> (job queues)</li>
+<li>Zmniejsz poziom izolacji jeśli możesz</li>
+</ul>
+<strong>Detekcja:</strong> PostgreSQL automatycznie wykrywa deadloci i robi rollback jednej z transakcji (ERROR 40P01).`
+  },
+  {
+    cat: 'sql', diff: 'easy', section: '🗄️ SQL & Bazy Danych',
+    q: 'Klucz główny vs klucz obcy — wyjaśnij.',
+    a: `<strong>Primary Key (PK)</strong> — unikalnie identyfikuje każdy wiersz w tabeli. Nie może być NULL. Może być prosty (jedna kolumna) lub złożony. Automatycznie tworzy indeks.<br><br>
+<strong>Foreign Key (FK)</strong> — kolumna (lub zestaw kolumn) która odwołuje się do PK w innej tabeli. Zapewnia integralność referencyjną — nie możesz dodać orderu dla klienta który nie istnieje.<br><br>
+<pre><span class="kw">CREATE TABLE</span> orders (
+    id <span class="kw">BIGINT PRIMARY KEY</span>,
+    customer_id <span class="kw">BIGINT NOT NULL</span>,
+    <span class="kw">FOREIGN KEY</span> (customer_id) <span class="kw">REFERENCES</span> customers(id)
+        <span class="kw">ON DELETE CASCADE</span>  <span class="cm">-- usuń ordery gdy klient usunięty</span>
+);</pre>`
+  },
+  {
+    cat: 'sql', diff: 'hard', section: '🗄️ SQL & Bazy Danych',
+    q: 'Co to jest MVCC w PostgreSQL?',
+    a: `<strong>MVCC (Multi-Version Concurrency Control)</strong> — mechanizm izolacji transakcji bez blokowania. Każda wersja wiersza ma metadane: <code>xmin</code> (transakcja która utworzyła) i <code>xmax</code> (transakcja która usunęła/zmodyfikowała).<br><br>
+<strong>Jak działa UPDATE:</strong> nie modyfikuje wiersza w miejscu — tworzy nową wersję wiersza. Stara wersja (dead tuple) czeka na VACUUM.<br><br>
+<strong>Konsekwencje:</strong><ul>
+<li>Czytający nie blokują piszących i odwrotnie (wysoki concurrency)</li>
+<li>Każda transakcja widzi snapshot danych ze swojego momentu startu</li>
+<li>Konieczny VACUUM do czyszczenia dead tuples</li>
+<li>Ryzyko table bloat gdy VACUUM nie nadąża</li>
+</ul>`
+  },
+  {
+    cat: 'sql', diff: 'med', section: '🗄️ SQL & Bazy Danych',
+    q: 'Subquery vs JOIN — kiedy co wybrać?',
+    a: `<strong>JOIN</strong> — zazwyczaj szybszy, planer może lepiej optymalizować. Czytelniejszy gdy potrzebujesz danych z wielu tabel.<br><br>
+<strong>Subquery</strong> — czytelniejsza dla prostych sprawdzeń istnienia. <code>EXISTS</code> jest zazwyczaj szybsze niż <code>IN</code> gdy subquery zwraca wiele wierszy.<br><br>
+<pre><span class="cm">-- EXISTS (szybkie — zatrzymuje przy pierwszym znalezieniu)</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> customers c
+<span class="kw">WHERE EXISTS</span> (<span class="kw">SELECT</span> <span class="num">1</span> <span class="kw">FROM</span> orders <span class="kw">WHERE</span> customer_id = c.id);
+
+<span class="cm">-- Odpowiednik z JOIN</span>
+<span class="kw">SELECT DISTINCT</span> c.* <span class="kw">FROM</span> customers c
+<span class="kw">JOIN</span> orders o <span class="kw">ON</span> o.customer_id = c.id;</pre>
+<div class="tip">Współcześnie query planner (PostgreSQL, MySQL) często przekształca subquery w JOIN wewnętrznie. Różnica w wydajności często minimalna — wybieraj co czytelniejsze.</div>`
+  },
+
+  // ═══════════════════════════════════════════════
+  //  FRONTEND
+  // ═══════════════════════════════════════════════
+  {
+    cat: 'front', diff: 'easy', section: '🎨 Frontend & HTTP',
+    q: 'Co to jest REST? Jakie są zasady RESTful API?',
+    a: `<strong>REST (Representational State Transfer)</strong> — styl architektoniczny dla API oparty na protokole HTTP.<br><br>
+<strong>6 zasad REST:</strong><ul>
+<li><strong>Client-Server</strong> — separacja klienta od serwera</li>
+<li><strong>Stateless</strong> — każde żądanie zawiera wszystkie potrzebne informacje. Serwer nie pamięta poprzednich requestów.</li>
+<li><strong>Cacheable</strong> — odpowiedzi mogą być cache'owane</li>
+<li><strong>Uniform Interface</strong> — standardowe metody HTTP, zasoby identyfikowane przez URI</li>
+<li><strong>Layered System</strong> — klient nie wie czy trafia bezpośrednio do serwera</li>
+<li><strong>Code on Demand</strong> (opcjonalnie) — serwer może wysyłać kod do wykonania</li>
+</ul>
+<strong>HTTP Methods:</strong> GET (read), POST (create), PUT (replace), PATCH (partial update), DELETE (remove)`
+  },
+  {
+    cat: 'front', diff: 'easy', section: '🎨 Frontend & HTTP',
+    q: 'Co to są kody statusu HTTP? Wymień najważniejsze.',
+    a: `<strong>2xx — Sukces:</strong><ul>
+<li><code>200 OK</code> — standardowa odpowiedź sukcesu</li>
+<li><code>201 Created</code> — zasób utworzony (po POST)</li>
+<li><code>204 No Content</code> — sukces, brak ciała odpowiedzi (DELETE)</li>
+</ul>
+<strong>3xx — Przekierowania:</strong> <code>301 Moved Permanently</code>, <code>304 Not Modified</code><br><br>
+<strong>4xx — Błąd klienta:</strong><ul>
+<li><code>400 Bad Request</code> — nieprawidłowe żądanie</li>
+<li><code>401 Unauthorized</code> — nie uwierzytelniony (brak/zły token)</li>
+<li><code>403 Forbidden</code> — uwierzytelniony, ale brak uprawnień</li>
+<li><code>404 Not Found</code> — zasób nie istnieje</li>
+<li><code>409 Conflict</code> — konflikt (np. duplicate email)</li>
+<li><code>422 Unprocessable Entity</code> — błąd walidacji</li>
+</ul>
+<strong>5xx — Błąd serwera:</strong> <code>500 Internal Server Error</code>, <code>503 Service Unavailable</code>`
+  },
+  {
+    cat: 'front', diff: 'med', section: '🎨 Frontend & HTTP',
+    q: 'Co to jest CORS i jak działa?',
+    a: `<strong>CORS (Cross-Origin Resource Sharing)</strong> — mechanizm przeglądarki blokujący żądania do innej domeny/portu/protokołu (cross-origin) niż strona która je wysyła.<br><br>
+<strong>Problem:</strong> strona na <code>app.com</code> wysyła AJAX do <code>api.com</code> — przeglądarka blokuje.<br><br>
+<strong>Rozwiązanie:</strong> serwer API wysyła nagłówki CORS:<br>
+<code>Access-Control-Allow-Origin: https://app.com</code><br>
+<code>Access-Control-Allow-Methods: GET, POST, PUT</code><br><br>
+<strong>Preflight request</strong> — przed "niebezpiecznymi" żądaniami (non-GET, custom headers) przeglądarka wysyła <code>OPTIONS</code> request i czeka na odpowiedź z pozwoleniem.<br><br>
+W Spring Boot: <code>@CrossOrigin</code> na kontrolerze lub globalna konfiguracja przez <code>WebMvcConfigurer.addCorsMappings()</code>.`
+  },
+  {
+    cat: 'front', diff: 'easy', section: '🎨 Frontend & HTTP',
+    q: 'Czym różni się localStorage od sessionStorage od cookies?',
+    a: `<ul>
+<li><strong>localStorage</strong> — trwały, do ręcznego wyczyszczenia. Dostępny w wielu kartach tej samej domeny. Tylko JS. Max ~5MB. Nie wysyłany do serwera automatycznie.</li>
+<li><strong>sessionStorage</strong> — wymazywany po zamknięciu karty/okna. Tylko bieżąca karta. Nie współdzielony między kartami.</li>
+<li><strong>Cookies</strong> — wysyłane automatycznie z każdym requestem HTTP. Konfigurowalne: expiry, domain, path, HttpOnly (brak dostępu przez JS), Secure (tylko HTTPS), SameSite (ochrona CSRF). Max ~4KB.</li>
+</ul>
+<div class="tip"><strong>JWT tokeny:</strong> bezpieczniejsze w HttpOnly cookie (brak XSS ryzyka) niż w localStorage.</div>`
+  },
+  {
+    cat: 'front', diff: 'med', section: '🎨 Frontend & HTTP',
+    q: 'Co to jest JWT? Jak działa autoryzacja tokenowa?',
+    a: `<strong>JWT (JSON Web Token)</strong> — samowystarczalny token zawierający claims (dane). Składa się z 3 części oddzielonych kropką: <code>header.payload.signature</code>.<br><br>
+<strong>Flow:</strong><ol>
+<li>Klient wysyła login + hasło</li>
+<li>Serwer weryfikuje, generuje JWT podpisany kluczem tajnym</li>
+<li>Serwer zwraca JWT</li>
+<li>Klient przechowuje token (localStorage, cookie)</li>
+<li>Każde żądanie: <code>Authorization: Bearer &lt;token&gt;</code></li>
+<li>Serwer weryfikuje podpis, wyciąga claims (userId, roles)</li>
+</ol>
+<strong>Zalety:</strong> stateless (serwer nie przechowuje sesji), skalowalny<br>
+<strong>Wady:</strong> nie można unieważnić przed expiry (chyba że blacklist), payload widoczny (Base64, nie szyfrowany — nie wkładaj sekretów!)
+<div class="warn">Podpisany (HS256/RS256) ≠ szyfrowany. Każdy może zdekodować payload.</div>`
+  },
+  {
+    cat: 'front', diff: 'easy', section: '🎨 Frontend & HTTP',
+    q: 'Co to jest CSS Box Model?',
+    a: `Każdy element HTML jest prostokątem składającym się z 4 warstw (od środka):<br><br>
+<strong>Content</strong> → <strong>Padding</strong> → <strong>Border</strong> → <strong>Margin</strong><br><br>
+<ul>
+<li><strong>Content</strong> — rzeczywista zawartość (tekst, obraz). Wymiary: width × height.</li>
+<li><strong>Padding</strong> — wewnętrzny odstęp między contentem a borderem. Ma tło elementu.</li>
+<li><strong>Border</strong> — obramowanie. Ma grubość, styl, kolor.</li>
+<li><strong>Margin</strong> — zewnętrzny odstęp od innych elementów. Przezroczysty.</li>
+</ul>
+<strong>box-sizing:</strong><br>
+<code>content-box</code> (domyślny) — width = szerokość contentu. Padding i border dodawane na zewnątrz.<br>
+<code>border-box</code> — width = content + padding + border. Intuicyjniejsze, używaj w projektach.`
+  },
+  {
+    cat: 'front', diff: 'med', section: '🎨 Frontend & HTTP',
+    q: 'Flexbox vs CSS Grid — kiedy użyć którego?',
+    a: `<strong>Flexbox</strong> — <em>jednowymiarowy</em> layout: albo wiersz albo kolumna. Świetny do:<ul>
+<li>Nawigacji, przycisków w rzędzie</li>
+<li>Centrowania elementów</li>
+<li>Dynamicznych list o zmiennym rozmiarze</li>
+</ul>
+<strong>CSS Grid</strong> — <em>dwuwymiarowy</em> layout: wiersze I kolumny jednocześnie. Świetny do:<ul>
+<li>Całościowego układu strony</li>
+<li>Galerii, kart w siatce</li>
+<li>Złożonych layoutów z overlapping elementami</li>
+</ul>
+<div class="tip"><strong>W praktyce:</strong> często używasz obu. Grid na makropoziomie (layout strony), Flexbox na mikropoziomie (wyrównanie elementów w komponencie).</div>`
+  },
+  {
+    cat: 'front', diff: 'med', section: '🎨 Frontend & HTTP',
+    q: 'Co to jest Event Loop w JavaScript?',
+    a: `JavaScript jest single-threaded — może robić tylko jedną rzecz na raz. Event Loop to mechanizm który umożliwia asynchroniczność.<br><br>
+<strong>Składowe:</strong><ul>
+<li><strong>Call Stack</strong> — stos wykonywania kodu synchronicznego</li>
+<li><strong>Web APIs</strong> — przeglądarka obsługuje async (setTimeout, fetch, DOM events)</li>
+<li><strong>Callback Queue (Macro)</strong> — zadania z setTimeout, setInterval, fetch</li>
+<li><strong>Microtask Queue</strong> — Promise callbacks, MutationObserver. <em>Wyższy priorytet</em>!</li>
+</ul>
+<strong>Kolejność:</strong> Call Stack opróżnia się → najpierw wszystkie Microtasks → potem jedno Macro zadanie → znowu Microtasks → itd.<br><br>
+<code>console.log(1); setTimeout(()=>log(2),0); Promise.resolve().then(()=>log(3)); log(4)</code><br>
+→ Wydrukuje: 1, 4, 3, 2`
+  },
+  {
+    cat: 'front', diff: 'easy', section: '🎨 Frontend & HTTP',
+    q: 'Czym różni się let, const i var w JavaScript?',
+    a: `<ul>
+<li><strong>var</strong> — function-scoped, hoisted (dostępny przed deklaracją jako undefined). Można redeclare. Nie używaj w nowoczesnym JS.</li>
+<li><strong>let</strong> — block-scoped (tylko w {} w którym zadeklarowany). Hoisted ale w "temporal dead zone" — błąd przy dostępie przed deklaracją. Można reassign.</li>
+<li><strong>const</strong> — block-scoped. Musi być zainicjalizowany. Nie można reassign referencji. <em>Ale obiekt/tablica mogą być mutowane!</em></li>
+</ul>
+<pre><span class="kw">const</span> arr = [<span class="num">1</span>, <span class="num">2</span>];
+arr.<span class="fn">push</span>(<span class="num">3</span>);  <span class="cm">// OK — mutujemy zawartość</span>
+arr = [<span class="num">4</span>];   <span class="cm">// TypeError — reassign referencji</span></pre>
+<div class="tip">Zasada: używaj const domyślnie, let gdy musisz reassign. Nigdy var.</div>`
+  },
+  {
+    cat: 'front', diff: 'med', section: '🎨 Frontend & HTTP',
+    q: 'Co to są Promises i async/await w JavaScript?',
+    a: `<strong>Promise</strong> — obiekt reprezentujący przyszły wynik operacji asynchronicznej. Stany: pending → fulfilled / rejected.<br><br>
+<pre><span class="cm">// Promise chain</span>
+<span class="fn">fetch</span>(<span class="str">"/api/user"</span>)
+  .<span class="fn">then</span>(res => res.<span class="fn">json</span>())
+  .<span class="fn">then</span>(data => console.<span class="fn">log</span>(data))
+  .<span class="fn">catch</span>(err => console.<span class="fn">error</span>(err));
+
+<span class="cm">// async/await — cukier składniowy dla Promise</span>
+<span class="kw">async function</span> <span class="fn">loadUser</span>() {
+    <span class="kw">try</span> {
+        <span class="kw">const</span> res  = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">"/api/user"</span>);
+        <span class="kw">const</span> data = <span class="kw">await</span> res.<span class="fn">json</span>();
+        <span class="kw">return</span> data;
+    } <span class="kw">catch</span> (err) { console.<span class="fn">error</span>(err); }
+}</pre>
+<strong>Promise.all()</strong> — czeka na wszystkie jednocześnie. <strong>Promise.race()</strong> — zwraca wynik pierwszego.`
+  },
+  {
+    cat: 'front', diff: 'easy', section: '🎨 Frontend & HTTP',
+    q: 'Co to jest JSON? Czym różni się od XML?',
+    a: `<strong>JSON (JavaScript Object Notation)</strong> — lekki format wymiany danych. Czytelny dla człowieka, łatwy do parsowania przez maszyny.<br><br>
+<pre>{
+  <span class="str">"name"</span>: <span class="str">"Jan"</span>,
+  <span class="str">"age"</span>: <span class="num">30</span>,
+  <span class="str">"active"</span>: <span class="kw">true</span>,
+  <span class="str">"scores"</span>: [<span class="num">90</span>, <span class="num">85</span>, <span class="num">92</span>]
+}</pre>
+<strong>JSON vs XML:</strong><ul>
+<li>JSON mniejszy, szybszy w parsowaniu</li>
+<li>XML ma schematy (XSD), walidację, przestrzenie nazw</li>
+<li>JSON nie obsługuje komentarzy (chyba że JSON5)</li>
+<li>XML lepszy dla dokumentów, JSON dla API</li>
+</ul>
+<strong>W Javie:</strong> Jackson (<code>ObjectMapper</code>) lub Gson do serialize/deserialize.`
+  },
+  {
+    cat: 'front', diff: 'med', section: '🎨 Frontend & HTTP',
+    q: 'Co to jest WebSocket i kiedy użyć zamiast HTTP?',
+    a: `<strong>WebSocket</strong> — protokół dwukierunkowej, pełnodupleksowej komunikacji przez jedno połączenie TCP. Po handshake HTTP, serwer może wysyłać dane do klienta bez pytania.<br><br>
+<strong>HTTP (Request-Response)</strong> — klient zawsze inicjuje, serwer odpowiada. Polling lub Long-polling do symulacji "push".<br><br>
+<strong>Kiedy WebSocket:</strong><ul>
+<li>Chat w czasie rzeczywistym</li>
+<li>Live scores, notyfikacje push</li>
+<li>Collaborative editing (Google Docs-like)</li>
+<li>Online gaming</li>
+<li>Live dashboardy z dużą częstotliwością aktualizacji</li>
+</ul>
+<strong>Alternatywa:</strong> Server-Sent Events (SSE) — jednokierunkowy push od serwera, prostszy niż WebSocket, działa przez HTTP.`
+  },
+
+  // ═══════════════════════════════════════════════
+  //  ARCHITEKTURA & WZORCE
+  // ═══════════════════════════════════════════════
+  {
+    cat: 'java', diff: 'med', section: '🏗️ Architektura & Wzorce',
+    q: 'Czym są zasady SOLID?',
+    a: `<ul>
+<li><strong>S — Single Responsibility</strong> — klasa ma tylko jeden powód do zmiany. Jeden cel, jedna odpowiedzialność.</li>
+<li><strong>O — Open/Closed</strong> — otwarta na rozszerzenie, zamknięta na modyfikację. Dodawaj przez dziedziczenie/kompozycję, nie edytuj istniejącego kodu.</li>
+<li><strong>L — Liskov Substitution</strong> — obiekty podklas muszą być zastępowalne przez obiekty klasy bazowej bez zmiany poprawności programu.</li>
+<li><strong>I — Interface Segregation</strong> — wiele małych interfejsów lepsze niż jeden duży. Klient nie powinien zależeć od metod których nie używa.</li>
+<li><strong>D — Dependency Inversion</strong> — zależności od abstrakcji, nie konkretnych implementacji. High-level moduły nie zależą od low-level.</li>
+</ul>
+<div class="tip">Na rozmowie zawsze podaj przykład. Np. dla SRP: klasa User nie powinna mieć metody sendEmail() — to odpowiedzialność EmailService.</div>`
+  },
+  {
+    cat: 'java', diff: 'med', section: '🏗️ Architektura & Wzorce',
+    q: 'Wzorzec Singleton — jak implementować thread-safe?',
+    a: `<strong>Singleton</strong> — jeden egzemplarz klasy w całej aplikacji.<br><br>
+<strong>Najlepsza implementacja — Initialization-on-demand holder:</strong>
+<pre><span class="kw">public class</span> <span class="cls">Singleton</span> {
+    <span class="kw">private</span> <span class="cls">Singleton</span>() {}
+
+    <span class="kw">private static class</span> <span class="cls">Holder</span> {
+        <span class="kw">static final</span> <span class="cls">Singleton</span> INSTANCE = <span class="kw">new</span> <span class="cls">Singleton</span>();
+    }
+
+    <span class="kw">public static</span> <span class="cls">Singleton</span> <span class="fn">getInstance</span>() {
+        <span class="kw">return</span> <span class="cls">Holder</span>.INSTANCE; <span class="cm">// thread-safe, lazy!</span>
+    }
+}</pre>
+<strong>Alternatywa: enum Singleton</strong> (Josh Bloch) — thread-safe, serializable, chroniony przed reflection.<br><br>
+<div class="tip">W Spring: każdy <code>@Component</code>/<code>@Service</code>/<code>@Bean</code> jest domyślnie singletonem zarządzanym przez kontener — rzadko potrzebujesz ręcznego Singleton.</div>`
+  },
+  {
+    cat: 'java', diff: 'med', section: '🏗️ Architektura & Wzorce',
+    q: 'Builder vs Factory — czym się różnią?',
+    a: `<strong>Factory Method / Abstract Factory</strong> — enkapsuluje tworzenie obiektu. Używasz gdy nie chcesz ujawniać konkretnej klasy implementacji, lub gdy tworzenie jest złożone.<br><br>
+<strong>Builder</strong> — stopniowe budowanie złożonego obiektu krok po kroku. Używasz gdy obiekt ma wiele opcjonalnych parametrów.<br><br>
+<pre><span class="cm">// Builder — czytelny, unika "telescoping constructors"</span>
+<span class="cls">Pizza</span> pizza = <span class="kw">new</span> <span class="cls">Pizza</span>.<span class="cls">Builder</span>()
+    .<span class="fn">size</span>(<span class="str">"LARGE"</span>)
+    .<span class="fn">crust</span>(<span class="str">"THIN"</span>)
+    .<span class="fn">addTopping</span>(<span class="str">"CHEESE"</span>)
+    .<span class="fn">addTopping</span>(<span class="str">"MUSHROOM"</span>)
+    .<span class="fn">build</span>();</pre>
+W Lomboku: <code>@Builder</code> generuje builder automatycznie.`
+  },
+  {
+    cat: 'java', diff: 'hard', section: '🏗️ Architektura & Wzorce',
+    q: 'Co to są mikroserwisy? Wady i zalety vs monolit.',
+    a: `<strong>Monolit</strong> — jeden deployowalny artefakt, wszystko w jednym procesie. Prosty do developmentu i testowania, ale skalowanie to skalowanie całości.<br><br>
+<strong>Mikroserwisy</strong> — wiele małych, niezależnie deployowalnych serwisów komunikujących się przez sieć (REST, messaging).<br><br>
+<strong>Zalety mikroserwisów:</strong><ul>
+<li>Niezależne skalowanie komponentów</li>
+<li>Niezależny deployment i release cycle</li>
+<li>Różne technologie dla różnych serwisów</li>
+<li>Izolacja awarii</li>
+</ul>
+<strong>Wady:</strong><ul>
+<li>Złożoność operacyjna (service discovery, load balancing, distributed tracing)</li>
+<li>Latencja sieciowa między serwisami</li>
+<li>Problemy z transakcjami rozproszonymi (Saga pattern)</li>
+<li>Trudniejsze debugowanie</li>
+</ul>`
+  },
+  {
+    cat: 'java', diff: 'hard', section: '🏗️ Architektura & Wzorce',
+    q: 'Co to jest Circuit Breaker pattern?',
+    a: `<strong>Circuit Breaker</strong> — wzorzec resilience. Gdy wywołanie zewnętrznego serwisu często się nie udaje, CB "otwiera obwód" i zamiast czekać na timeout, szybko zwraca błąd.<br><br>
+<strong>3 stany:</strong><ul>
+<li><strong>Closed</strong> — normalny ruch. Liczy błędy.</li>
+<li><strong>Open</strong> — zbyt dużo błędów. Fast-fail przez określony czas. Serwis ma czas się "wyleczyć".</li>
+<li><strong>Half-Open</strong> — po timeout próbuje jedno żądanie. Sukces → Closed. Błąd → Open.</li>
+</ul>
+<strong>Implementacje:</strong> Resilience4j (zalecany w Spring), Hystrix (Netflix, deprecated).<br><br>
+<div class="tip">Warto wspomnieć o Bulkhead (izolacja pul wątków dla różnych operacji) i Retry pattern jako uzupełniające wzorce resilience.</div>`
+  },
+  {
+    cat: 'java', diff: 'senior', section: '🏗️ Architektura & Wzorce',
+    q: 'Co to jest CQRS i Event Sourcing?',
+    a: `<strong>CQRS (Command Query Responsibility Segregation)</strong> — rozdzielenie modelu zapisu (Command) od modelu odczytu (Query). Możesz optymalizować każdą stronę niezależnie. Write model → przetwarza komendy, Read model → denormalizowane widoki.<br><br>
+<strong>Event Sourcing</strong> — zamiast przechowywać aktualny stan, przechowujesz wszystkie zdarzenia (eventy) które do niego doprowadziły. Stan = replay eventów.<br><br>
+<strong>Zalety Event Sourcing:</strong><ul>
+<li>Pełny audit log "za darmo"</li>
+<li>Można odtworzyć stan z dowolnego momentu w historii</li>
+<li>Naturalnie pasuje do eventów domenowych i CQRS</li>
+</ul>
+<strong>Wady:</strong> złożoność, eventual consistency, schema evolution eventów trudna.`
+  },
+  {
+    cat: 'java', diff: 'hard', section: '🏗️ Architektura & Wzorce',
+    q: 'Co to jest CAP theorem?',
+    a: `W systemie rozproszonym możesz mieć co najwyżej 2 z 3 właściwości jednocześnie:<br><br>
+<ul>
+<li><strong>C — Consistency</strong> — każdy węzeł zwraca aktualną wersję danych</li>
+<li><strong>A — Availability</strong> — każde żądanie dostaje odpowiedź (nie koniecznie aktualną)</li>
+<li><strong>P — Partition Tolerance</strong> — system działa mimo utraty komunikacji między węzłami</li>
+</ul>
+<strong>W praktyce:</strong> partition (P) nieunikniony w systemach rozproszonych. Wybierasz między CP i AP:<br>
+<ul>
+<li><strong>CP</strong> (MongoDB, HBase, ZooKeeper) — spójność ważniejsza. Przy partycji: brak odpowiedzi.</li>
+<li><strong>AP</strong> (Cassandra, DynamoDB, CouchDB) — dostępność ważniejsza. Przy partycji: stare dane.</li>
+</ul>
+<div class="tip">PACELC rozszerza CAP — uwzględnia też latencję vs spójność przy normalnej pracy (bez partycji).</div>`
+  },
+  {
+    cat: 'java', diff: 'easy', section: '🏗️ Architektura & Wzorce',
+    q: 'Co to jest DTO i po co je stosować?',
+    a: `<strong>DTO (Data Transfer Object)</strong> — obiekt przenoszący dane między warstwami lub przez sieć. Nie zawiera logiki biznesowej.<br><br>
+<strong>Po co DTO zamiast encji wprost?</strong><ul>
+<li><strong>Bezpieczeństwo</strong> — nie ujawniasz wewnętrznych pól encji (hasło, systemowe metadane)</li>
+<li><strong>Elastyczność</strong> — kształt API niezależny od schematu bazy danych</li>
+<li><strong>Wydajność</strong> — przenosisz tylko potrzebne pola, nie całą encję</li>
+<li><strong>Wersjonowanie</strong> — możesz zmieniać encję bez łamania API</li>
+</ul>
+<strong>Mapowanie:</strong> ModelMapper, MapStruct (compile-time, szybsze), ręczne mappery.<br>
+<strong>Records</strong> (Java 16+) idealne jako DTO — immutable, kompaktowe.`
+  },
+  {
+    cat: 'java', diff: 'easy', section: '🏗️ Architektura & Wzorce',
+    q: 'Wyjaśnij zasadę DRY, KISS i YAGNI.',
+    a: `<ul>
+<li><strong>DRY (Don't Repeat Yourself)</strong> — każdy fragment wiedzy/logiki powinien mieć jedno, autorytatywne miejsce w systemie. Duplikacja = dwa miejsca do aktualizacji = potencjalny bug.</li>
+<li><strong>KISS (Keep It Simple, Stupid)</strong> — prostsze rozwiązania są lepsze. Nie komplikuj bez powodu. Złożoność to koszt — trudniejsze testowanie, debugowanie, zrozumienie.</li>
+<li><strong>YAGNI (You Aren't Gonna Need It)</strong> — nie implementuj funkcji "na przyszłość". Implementuj tylko to co faktycznie potrzebujesz teraz. Spekulatywne feature'y = czas zmarnowany + kod który trzeba utrzymywać.</li>
+</ul>
+<div class="tip">Ale: DRY i KISS mogą być sprzeczne. Czasem duplikacja jest prostsza od wymuszonej abstrakcji (Wrong Abstraction &gt; Duplication).</div>`
+  },
+
+  // ═══════════════════════════════════════════════
+  //  SENIOR / ADVANCED
+  // ═══════════════════════════════════════════════
+  {
+    cat: 'java', diff: 'senior', section: '⭐ Senior Level',
+    q: 'Jak projektować REST API? Jakie są best practices?',
+    a: `<strong>Naming:</strong><ul>
+<li>Rzeczowniki dla zasobów: <code>/users</code>, <code>/orders/{id}</code> — nie czasowniki (<code>/getUsers</code>)</li>
+<li>Liczba mnoga dla kolekcji: <code>/users</code>, nie <code>/user</code></li>
+<li>Snake_case lub kebab-case w URL: <code>/user-profiles</code></li>
+</ul>
+<strong>Struktura odpowiedzi:</strong> spójny format, zawsze ten sam kształt błędów (RFC 7807 Problem Details), paginacja (page+size lub cursor-based).<br><br>
+<strong>Wersjonowanie:</strong> <code>/api/v1/users</code> lub nagłówek <code>Accept: application/vnd.myapi.v2+json</code>.<br><br>
+<strong>Bezpieczeństwo:</strong> HTTPS zawsze, autoryzacja (JWT/OAuth2), rate limiting, walidacja inputu, nie ujawniaj wewnętrznych szczegółów w błędach.<br><br>
+<strong>Idempotentność:</strong> PUT/DELETE/GET idempotentne — wielokrotne wywołanie = ten sam efekt. POST nie.`
+  },
+  {
+    cat: 'java', diff: 'senior', section: '⭐ Senior Level',
+    q: 'Co to jest observability? Trzy filary: logs, metrics, traces.',
+    a: `<strong>Observability</strong> — zdolność do zrozumienia stanu wewnętrznego systemu na podstawie zewnętrznych sygnałów.<br><br>
+<ul>
+<li><strong>Logs</strong> — dyskretne zdarzenia z timestampem. "Order 123 placed at 10:23:45". Stack traces przy błędach. Narzędzia: ELK (Elasticsearch, Logstash, Kibana), Loki.</li>
+<li><strong>Metrics</strong> — liczby agregowane w czasie. Request per second, error rate, latency percentile (p99). Narzędzia: Prometheus + Grafana. Spring Actuator eksponuje metryki.</li>
+<li><strong>Traces (Distributed Tracing)</strong> — śledzenie żądania przez wiele serwisów. Trace ID propagowany przez serwisy. Narzędzia: Jaeger, Zipkin, OpenTelemetry.</li>
+</ul>
+<strong>OpenTelemetry</strong> — standard: jeden API/SDK dla wszystkich trzech filarów.`
+  },
+  {
+    cat: 'java', diff: 'senior', section: '⭐ Senior Level',
+    q: 'Jak działa load balancing? Algorytmy.',
+    a: `<strong>Load Balancer</strong> — rozdziela ruch przychodzący między wiele instancji serwisu.<br><br>
+<strong>Algorytmy:</strong><ul>
+<li><strong>Round Robin</strong> — kolejno do każdego serwera. Prosto, ale ignoruje obciążenie.</li>
+<li><strong>Least Connections</strong> — do serwera z najmniejszą liczbą aktywnych połączeń</li>
+<li><strong>Weighted Round Robin</strong> — silniejsze serwery dostają więcej ruchu</li>
+<li><strong>IP Hash</strong> — ten sam klient zawsze trafia do tego samego serwera (session affinity/sticky sessions)</li>
+<li><strong>Least Response Time</strong> — do najszybszego serwera</li>
+</ul>
+<strong>Warstwy:</strong> L4 (transport, TCP/UDP) — szybszy. L7 (aplikacyjny, HTTP) — może routować wg URL, headers, cookies. AWS ALB, Nginx, HAProxy.`
+  },
+  {
+    cat: 'java', diff: 'senior', section: '⭐ Senior Level',
+    q: 'Jak zaprojektować system do obsługi miliona użytkowników?',
+    a: `Pytanie otwarte — na rozmowie oczekują procesu myślenia, nie jednej odpowiedzi.<br><br>
+<strong>Kroki:</strong><ol>
+<li><strong>Wymagania</strong> — co system robi? Read-heavy czy write-heavy? Latencja, throughput?</li>
+<li><strong>Estymacja</strong> — ile requestów/s? Ile danych? Ile storage?</li>
+<li><strong>Horyzontalne skalowanie</strong> — wiele instancji aplikacji za load balancerem</li>
+<li><strong>Stateless aplikacja</strong> — sesja w Redis, nie w pamięci serwera</li>
+<li><strong>Cache</strong> — Redis/Memcached dla często czytanych danych. CDN dla statycznych assetów.</li>
+<li><strong>Baza danych</strong> — repliki read-only, sharding, connection pooling</li>
+<li><strong>Async processing</strong> — kolejki wiadomości (Kafka, RabbitMQ) dla ciężkich operacji</li>
+<li><strong>Monitorowanie</strong> — health checks, metryki, alerty</li>
+</ol>`
+  },
+  {
+    cat: 'spring', diff: 'senior', section: '⭐ Senior Level',
+    q: 'Czym jest Connection Pooling? Jak skonfigurować w Spring Boot?',
+    a: `<strong>Connection Pool</strong> — pula gotowych, otwartych połączeń do bazy danych. Zamiast otwierać nowe połączenie dla każdego zapytania (kosztowne ~50ms), bierzesz gotowe z puli i zwracasz po użyciu.<br><br>
+<strong>HikariCP</strong> (domyślny w Spring Boot) — najszybszy pool w JVM:<br>
+<pre><span class="cm"># application.properties</span>
+spring.datasource.hikari.maximum-pool-size=20
+spring.datasource.hikari.minimum-idle=5
+spring.datasource.hikari.connection-timeout=30000
+spring.datasource.hikari.idle-timeout=600000</pre>
+<strong>Optimal pool size</strong> ≈ <code>CPU cores × 2 + effective spindle count</code> (reguła Hikari). Nie zawsze więcej = lepiej!<br><br>
+<strong>Monitorowanie:</strong> <code>/actuator/metrics/hikaricp.connections.*</code> — obserwuj active, idle, pending.`
+  },
+  {
+    cat: 'java', diff: 'senior', section: '⭐ Senior Level',
+    q: 'Co to jest idempotentność? Jak zapewnić w API?',
+    a: `<strong>Idempotentność</strong> — operacja wykonana wielokrotnie daje ten sam wynik co jednokrotna. Kluczowe dla niezawodności (retry bez efektów ubocznych).<br><br>
+<strong>HTTP methods:</strong><ul>
+<li>GET, HEAD, DELETE, PUT — z definicji idempotentne</li>
+<li>POST — z definicji NIE (każde wywołanie tworzy nowy zasób)</li>
+</ul>
+<strong>Jak zapewnić idempotentność POST:</strong><ul>
+<li><strong>Idempotency-Key</strong> — klient wysyła unikalny klucz (UUID) w nagłówku. Serwer zapamiętuje odpowiedź dla danego klucza. Drugi request z tym samym kluczem → zwróć zapamiętaną odpowiedź.</li>
+<li><strong>Natural key w bazie</strong> — UNIQUE constraint na kolumnach biznesowych (np. external_reference_id)</li>
+</ul>
+<div class="tip">Stripe API to wzorzec do naśladowania — każda operacja płatności ma Idempotency-Key.</div>`
+  },
+
+  // ═══════════════════════════════════════════════
+  //  SQL ADVANCED
+  // ═══════════════════════════════════════════════
+  {
+    cat: 'sql', diff: 'med', section: '🗄️ SQL & Bazy Danych',
+    q: 'Co to jest partycjonowanie tabel? Kiedy używać?',
+    a: `<strong>Partycjonowanie</strong> — podział dużej tabeli na mniejsze fizyczne części (partycje) przy zachowaniu logicznej jedności.<br><br>
+<strong>Strategie:</strong><ul>
+<li><strong>RANGE</strong> — np. <code>PARTITION BY RANGE (year)</code> — dane z 2024 w jednej partycji, 2025 w innej. Świetne dla danych szeregów czasowych.</li>
+<li><strong>LIST</strong> — np. po kraju/regionie</li>
+<li><strong>HASH</strong> — równomierny podział, brak naturalnego klucza</li>
+</ul>
+<strong>Zalety:</strong><ul>
+<li><strong>Partition pruning</strong> — zapytania tylko do odpowiedniej partycji (WHERE year=2024 skanuje tylko tę partycję)</li>
+<li><strong>Szybkie usuwanie starych danych</strong> — DROP PARTITION zamiast DELETE (natychmiastowe!)</li>
+</ul>
+<strong>Kiedy nie:</strong> mała tabela, losowe dostępy do wszystkich danych.`
+  },
+  {
+    cat: 'sql', diff: 'hard', section: '🗄️ SQL & Bazy Danych',
+    q: 'Typy indeksów w PostgreSQL — B-Tree, GIN, GiST, BRIN.',
+    a: `<ul>
+<li><strong>B-Tree</strong> (domyślny) — drzewo zbalansowane. Obsługuje: =, &lt;, &gt;, BETWEEN, LIKE 'abc%' (prefix). Używaj dla większości przypadków.</li>
+<li><strong>Hash</strong> — tylko operator =. Szybszy od B-Tree dla equality. Nie wspierany w replikacji do PostgreSQL 9.x.</li>
+<li><strong>GIN (Generalized Inverted Index)</strong> — dla złożonych typów: tablice, jsonb, full-text search. Wolny w budowaniu, szybki w wyszukiwaniu.</li>
+<li><strong>GiST (Generalized Search Tree)</strong> — geometria, PostGIS, full-text (ts_vector). Szybszy w budowaniu niż GIN.</li>
+<li><strong>BRIN (Block Range Index)</strong> — bardzo mały indeks dla ogromnych tabel gdzie dane są fizycznie posortowane (np. log_time w tabeli logów). Tiny size, ale mniej dokładny.</li>
+</ul>`
+  },
+  {
+    cat: 'sql', diff: 'med', section: '🗄️ SQL & Bazy Danych',
+    q: 'Jak działa SELECT FOR UPDATE? Do czego służy?',
+    a: `<code>SELECT FOR UPDATE</code> — blokuje wybrane wiersze wyłącznie do końca transakcji. Inne transakcje muszą czekać na te wiersze.<br><br>
+<strong>Typowe zastosowania:</strong><ul>
+<li>Odczyt + warunkowy update bez race condition (optimistic vs pessimistic locking)</li>
+<li>Job queues — weź zadanie, zablokuj żeby inne workersy go nie wzięły</li>
+</ul>
+<pre><span class="cm">-- Job queue pattern</span>
+<span class="kw">BEGIN</span>;
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> jobs
+<span class="kw">WHERE</span> status = <span class="str">'pending'</span>
+<span class="kw">LIMIT</span> <span class="num">1</span>
+<span class="kw">FOR UPDATE SKIP LOCKED</span>;  <span class="cm">-- SKIP LOCKED = nie czekaj, pomiń zajęte</span>
+
+<span class="cm">-- przetwórz zadanie...</span>
+<span class="kw">UPDATE</span> jobs <span class="kw">SET</span> status = <span class="str">'done'</span> <span class="kw">WHERE</span> id = ...;
+<span class="kw">COMMIT</span>;</pre>
+<code>SKIP LOCKED</code> — kluczowe dla wydajnych kolejek, omija wiersze zablokowane przez inne wątki.`
+  },
+  {
+    cat: 'sql', diff: 'easy', section: '🗄️ SQL & Bazy Danych',
+    q: 'Co to jest VIEW? Kiedy używać zmaterializowanego widoku?',
+    a: `<strong>VIEW</strong> — nazwane zapytanie SQL. Przy każdym użyciu jest wykonywane od nowa. Nie przechowuje danych fizycznie.<br><br>
+<strong>Zmaterializowany widok (Materialized View)</strong> — wyniki zapytania przechowywane fizycznie na dysku. Szybki odczyt, ale dane nieaktualne do momentu odświeżenia.<br><br>
+<pre><span class="cm">-- Tworz widok</span>
+<span class="kw">CREATE MATERIALIZED VIEW</span> monthly_sales <span class="kw">AS</span>
+<span class="kw">SELECT</span> month, <span class="kw">SUM</span>(amount) <span class="kw">FROM</span> orders <span class="kw">GROUP BY</span> month;
+
+<span class="cm">-- Odśwież ręcznie lub scheduluj</span>
+<span class="kw">REFRESH MATERIALIZED VIEW CONCURRENTLY</span> monthly_sales;</pre>
+<strong>Kiedy użyć MV:</strong> raporty, agregacje na dużych danych, gdzie dane nieaktualne o kilka minut są akceptowalne.`
+  },
+  {
+    cat: 'sql', diff: 'hard', section: '🗄️ SQL & Bazy Danych',
+    q: 'VACUUM w PostgreSQL — do czego służy?',
+    a: `<strong>VACUUM</strong> — porządkuje "dead tuples" (stare wersje wierszy po UPDATE/DELETE w MVCC) i aktualizuje visibility map.<br><br>
+<strong>VACUUM (zwykły)</strong> — oznacza dead tuples jako wolne, NIE zwraca przestrzeni do OS. Bezblokujące.<br>
+<strong>VACUUM FULL</strong> — przepisuje całą tabelę, zwraca miejsce do OS. Blokuje tabelę (ACCESS EXCLUSIVE)! Użyj pg_repack jako nieblokującą alternatywę.<br><br>
+<strong>AUTOVACUUM</strong> — daemon który automatycznie uruchamia VACUUM gdy <code>dead_tuple_count &gt; threshold + scale_factor * reltuples</code>.<br><br>
+<strong>Monitoring bloat:</strong>
+<pre><span class="kw">SELECT</span> relname, n_dead_tup, n_live_tup,
+       last_autovacuum, last_analyze
+<span class="kw">FROM</span> pg_stat_user_tables
+<span class="kw">ORDER BY</span> n_dead_tup <span class="kw">DESC</span>;</pre>`
+  },
+
+  // ═══════════════════════════════════════════════
+  //  JAVA COLLECTIONS & CONCURRENCY ADVANCED
+  // ═══════════════════════════════════════════════
+  {
+    cat: 'java', diff: 'hard', section: '☕ Java Core',
+    q: 'ConcurrentHashMap vs synchronizedMap vs Hashtable.',
+    a: `<strong>Hashtable</strong> — stary, każda metoda synchronized na całym obiekcie. Wolny, nie używaj.<br><br>
+<strong>Collections.synchronizedMap()</strong> — wrapper, każda metoda synchronized na całym mapie. Compound operations (check-then-act) nadal wymagają ręcznej synchronizacji.<br><br>
+<strong>ConcurrentHashMap</strong> (Java 5+) — nowoczesny, lock striping (segmentacja w Java 6, node-level locking od Java 8). Szybki concurrent odczyt bez blokady. Zapewnia atomowe compound operations: <code>putIfAbsent()</code>, <code>computeIfAbsent()</code>, <code>merge()</code>.<br><br>
+<div class="tip">ConcurrentHashMap nie gwarantuje spójności iteratora z modyfikacjami — jest fail-safe (nie rzuca CME). Używaj zawsze ConcurrentHashMap zamiast synchronizedMap.</div>`
+  },
+  {
+    cat: 'java', diff: 'med', section: '☕ Java Core',
+    q: 'Co to jest ConcurrentModificationException? Jak jej uniknąć?',
+    a: `Rzucana gdy modyfikujesz kolekcję podczas iteracji przez nią (fail-fast iterator).<br><br>
+<pre><span class="cm">// ❌ Rzuci ConcurrentModificationException</span>
+<span class="kw">for</span> (<span class="cls">String</span> s : list) {
+    <span class="kw">if</span> (s.<span class="fn">isEmpty</span>()) list.<span class="fn">remove</span>(s);
+}
+
+<span class="cm">// ✅ Iterator.remove() — bezpieczne</span>
+<span class="kw">var</span> it = list.<span class="fn">iterator</span>();
+<span class="kw">while</span> (it.<span class="fn">hasNext</span>()) {
+    <span class="kw">if</span> (it.<span class="fn">next</span>().<span class="fn">isEmpty</span>()) it.<span class="fn">remove</span>();
+}
+
+<span class="cm">// ✅ removeIf — najprościej (Java 8+)</span>
+list.<span class="fn">removeIf</span>(<span class="cls">String</span>::isEmpty);
+
+<span class="cm">// ✅ CopyOnWriteArrayList — fail-safe iterator</span>
+<span class="cm">// Kosztowne (kopia przy każdym write) — tylko gdy mało writes</span></pre>`
+  },
+  {
+    cat: 'java', diff: 'easy', section: '☕ Java Core',
+    q: 'Co to jest interface default method? Kiedy używać?',
+    a: `Wprowadzone w Java 8. Metody z implementacją w interfejsie — pozwoliły rozszerzyć istniejące interfejsy bez łamania klas które je implementują.<br><br>
+<pre><span class="kw">interface</span> <span class="cls">Animal</span> {
+    <span class="kw">void</span> <span class="fn">speak</span>(); <span class="cm">// abstrakcyjna</span>
+
+    <span class="kw">default</span> <span class="cls">String</span> <span class="fn">describe</span>() { <span class="cm">// domyślna implementacja</span>
+        <span class="kw">return</span> <span class="str">"I am "</span> + <span class="kw">this</span>.<span class="fn">getClass</span>().<span class="fn">getSimpleName</span>();
+    }
+}</pre>
+<strong>Konflikt diamond:</strong> jeśli dwa interfejsy mają default method o tej samej sygnaturze, klasa MUSI ją override i może wybrać: <code>InterfaceA.super.method()</code>.<br><br>
+<strong>Kiedy używać:</strong> ewolucja istniejących interfejsów. Nie zamiast abstrakcyjnych klas — klasy mają stan, interfejsy nie powinny.`
+  },
+  {
+    cat: 'java', diff: 'med', section: '☕ Java Core',
+    q: 'Sealed classes (Java 17) — co to i po co?',
+    a: `<strong>Sealed class/interface</strong> ogranicza które klasy mogą po niej dziedziczyć. Zamknięta hierarchia.<br><br>
+<pre><span class="kw">sealed interface</span> <span class="cls">Shape</span> <span class="kw">permits</span> <span class="cls">Circle</span>, <span class="cls">Rectangle</span>, <span class="cls">Triangle</span> {}
+<span class="kw">record</span> <span class="cls">Circle</span>(<span class="kw">double</span> r) <span class="kw">implements</span> <span class="cls">Shape</span> {}
+<span class="kw">record</span> <span class="cls">Rectangle</span>(<span class="kw">double</span> w, <span class="kw">double</span> h) <span class="kw">implements</span> <span class="cls">Shape</span> {}</pre>
+<strong>Korzyści:</strong><ul>
+<li>Kompilator wie o wszystkich możliwych podtypach → wyczerpujący pattern matching w switch (bez default)</li>
+<li>Wyraźna intencja projektanta — "tylko te klasy"</li>
+<li>Lepsza enkapsulacja hierarchii</li>
+</ul>
+<pre><span class="cm">// Switch bez default — kompilator sprawdza kompletność</span>
+<span class="kw">double</span> area = <span class="kw">switch</span>(shape) {
+    <span class="kw">case</span> <span class="cls">Circle</span> c    -> Math.PI * c.r() * c.r();
+    <span class="kw">case</span> <span class="cls">Rectangle</span> r -> r.w() * r.h();
+    <span class="kw">case</span> <span class="cls">Triangle</span> t  -> <span class="num">0.0</span>;
+};</pre>`
+  },
+  {
+    cat: 'java', diff: 'med', section: '☕ Java Core',
+    q: 'Co to jest CompletableFuture? Jak używać?',
+    a: `<strong>CompletableFuture</strong> (Java 8) — asynchroniczne obliczenia z możliwością łańcuchowania, kombinowania i obsługi błędów. Alternatywa dla callback hell.<br><br>
+<pre><span class="cls">CompletableFuture</span>.<span class="fn">supplyAsync</span>(() -> <span class="fn">fetchFromDb</span>())  <span class="cm">// async w FJPool</span>
+    .<span class="fn">thenApply</span>(<span class="cls">String</span>::toUpperCase)  <span class="cm">// transform wynik</span>
+    .<span class="fn">thenCombine</span>(<span class="fn">otherFuture</span>(), (a, b) -> a + b)  <span class="cm">// połącz dwa</span>
+    .<span class="fn">exceptionally</span>(e -> <span class="str">"fallback"</span>)  <span class="cm">// obsłuż błąd</span>
+    .<span class="fn">thenAccept</span>(<span class="cls">System</span>.out::println);
+
+<span class="cm">// Czekaj na kilka naraz</span>
+<span class="cls">CompletableFuture</span>.<span class="fn">allOf</span>(cf1, cf2, cf3).<span class="fn">join</span>();
+
+<span class="cm">// join() vs get() — join rzuca unchecked CompletionException</span></pre>
+<div class="tip">Podaj własny executor dla CPU-intensive tasków. ForkJoinPool.commonPool() (domyślny) przeznaczony dla IO-bound/short tasks.</div>`
+  },
+
+  // ═══════════════════════════════════════════════
+  //  DODATKOWE PYTANIA
+  // ═══════════════════════════════════════════════
+  {
+    cat: 'java', diff: 'easy', section: '☕ Java Core',
+    q: 'Co to jest method reference? Podaj 4 typy.',
+    a: `Method reference = skrócona forma lambdy gdy tylko wywołujemy metodę.<br><br>
+<pre><span class="cm">// 1. Static method:    ClassName::methodName</span>
+<span class="cls">Function</span>&lt;<span class="cls">String</span>, <span class="cls">Integer</span>&gt; f1 = <span class="cls">Integer</span>::parseInt;
+
+<span class="cm">// 2. Instance method konkretnego obiektu: obj::methodName</span>
+<span class="cls">String</span> s = <span class="str">"hello"</span>;
+<span class="cls">Supplier</span>&lt;<span class="cls">String</span>&gt; f2 = s::toUpperCase;
+
+<span class="cm">// 3. Instance method dowolnego obiektu: ClassName::methodName</span>
+<span class="cm">// (pierwszy arg lambdy staje się "this")</span>
+<span class="cls">Function</span>&lt;<span class="cls">String</span>, <span class="cls">String</span>&gt; f3 = <span class="cls">String</span>::toUpperCase;
+<span class="cm">// równoważne: s -> s.toUpperCase()</span>
+
+<span class="cm">// 4. Constructor reference: ClassName::new</span>
+<span class="cls">Supplier</span>&lt;<span class="cls">ArrayList</span>&gt; f4 = <span class="cls">ArrayList</span>::<span class="kw">new</span>;</pre>`
+  },
+  {
+    cat: 'front', diff: 'med', section: '🎨 Frontend & HTTP',
+    q: 'Co to jest HTTP/2 i czym różni się od HTTP/1.1?',
+    a: `<strong>HTTP/1.1:</strong> jedno żądanie na połączenie (w podstawowej wersji), pipelining rzadko używany, head-of-line blocking. Nagłówki jako plain text, bez kompresji.<br><br>
+<strong>HTTP/2:</strong><ul>
+<li><strong>Multiplexing</strong> — wiele żądań równolegle przez jedno połączenie TCP</li>
+<li><strong>Header compression (HPACK)</strong> — nagłówki skompresowane</li>
+<li><strong>Server Push</strong> — serwer może wysłać zasoby zanim klient ich zażąda</li>
+<li><strong>Binary framing</strong> — zamiast tekstu, szybsze parsowanie</li>
+<li><strong>Stream prioritization</strong></li>
+</ul>
+<strong>HTTP/3 (QUIC)</strong> — zamiast TCP używa UDP z QUIC. Eliminuje TCP head-of-line blocking. Szybszy handshake (0-RTT). Lepsza przy stratach pakietów.`
+  },
+  {
+    cat: 'spring', diff: 'easy', section: '🍃 Spring Framework',
+    q: 'Co to jest Spring Profiles? Do czego służą?',
+    a: `<strong>Spring Profiles</strong> — mechanizm aktywowania różnych konfiguracji dla różnych środowisk (dev, test, prod).<br><br>
+<pre><span class="cm">// application-prod.properties lub application-dev.properties</span>
+<span class="cm">// Aktywowanie profilu:</span>
+spring.profiles.active=prod
+
+<span class="cm">// W kodzie: bean tylko dla profilu</span>
+<span class="fn">@Profile</span>(<span class="str">"dev"</span>)
+<span class="fn">@Bean</span>
+<span class="kw">public</span> <span class="cls">DataSource</span> <span class="fn">h2DataSource</span>() { ... }
+
+<span class="fn">@Profile</span>(<span class="str">"prod"</span>)
+<span class="fn">@Bean</span>
+<span class="kw">public</span> <span class="cls">DataSource</span> <span class="fn">postgresDataSource</span>() { ... }</pre>
+<strong>Aktywowanie:</strong> <code>spring.profiles.active</code> w properties, env variable <code>SPRING_PROFILES_ACTIVE=prod</code>, lub JVM argument <code>-Dspring.profiles.active=prod</code>.`
+  },
+  {
+    cat: 'java', diff: 'med', section: '🏗️ Architektura & Wzorce',
+    q: 'Co to jest Hexagonal Architecture (Ports & Adapters)?',
+    a: `<strong>Hexagonal Architecture</strong> (Alistair Cockburn) — aplikacja ma rdzeń (core domain) otoczony portami i adapterami.<br><br>
+<strong>Rdzeń:</strong> logika biznesowa, nie zależy od żadnych frameworków/baz danych. Czysta Java.<br><br>
+<strong>Port:</strong> interfejs który definiuje jak rdzeń komunikuje się ze światem zewnętrznym. np. <code>UserRepository</code>, <code>EmailSender</code>.<br><br>
+<strong>Adapter:</strong> implementacja portu. Może być JPA adapter, HTTP adapter, Mock adapter dla testów.<br><br>
+<strong>Korzyści:</strong><ul>
+<li>Łatwe testowanie rdzenia (podmień adapter na mock)</li>
+<li>Niezależność od frameworka/bazy</li>
+<li>Jasne granice — co jest domeną, co infrastrukturą</li>
+</ul>
+<strong>Odpowiednik w Spring:</strong> logika w serwisach nie korzysta wprost z JPA entities, a przez interfejsy repozytoriów.`
+  },
+  {
+    cat: 'front', diff: 'easy', section: '🎨 Frontend & HTTP',
+    q: 'Co to jest XSS i jak się przed nim bronić?',
+    a: `<strong>XSS (Cross-Site Scripting)</strong> — atakujący wstrzykuje złośliwy JavaScript który wykonuje się w przeglądarce ofiary.<br><br>
+<strong>Typy:</strong><ul>
+<li><strong>Stored XSS</strong> — złośliwy skrypt zapisany w bazie (np. komentarz na forum), wykonywany u każdego kto go zobaczy</li>
+<li><strong>Reflected XSS</strong> — skrypt w URL, ofiara klika spreparowany link</li>
+<li><strong>DOM-based XSS</strong> — manipulacja DOM przez JS bez serwerowego odbicia</li>
+</ul>
+<strong>Obrona:</strong><ul>
+<li><strong>Escape output</strong> — encode HTML entities (&lt; → &amp;lt;) przy wyświetlaniu user input</li>
+<li><strong>Content Security Policy (CSP)</strong> — nagłówek ograniczający skąd mogą ładować się skrypty</li>
+<li><strong>HttpOnly cookies</strong> — JS nie może czytać cookie z tokenem sesji</li>
+<li><strong>Sanitize input</strong> — np. biblioteka DOMPurify</li>
+</ul>`
+  },
+  {
+    cat: 'sql', diff: 'easy', section: '🗄️ SQL & Bazy Danych',
+    q: 'Czym różni się GROUP BY od PARTITION BY?',
+    a: `<strong>GROUP BY</strong> — agreguje wiersze, redukuje liczbę wierszy w wynikach. Dostajesz jeden wiersz na grupę.<br><br>
+<strong>PARTITION BY</strong> — używane w window functions. Dzieli wiersze na grupy do obliczeń <em>bez</em> redukowania liczby wierszy. Każdy wiersz nadal jest w wynikach.<br><br>
+<pre><span class="cm">-- GROUP BY: 1 wiersz na dział</span>
+<span class="kw">SELECT</span> department, <span class="kw">AVG</span>(salary)
+<span class="kw">FROM</span> employees <span class="kw">GROUP BY</span> department;
+
+<span class="cm">-- PARTITION BY: każdy pracownik + średnia jego działu</span>
+<span class="kw">SELECT</span> name, department, salary,
+    <span class="kw">AVG</span>(salary) <span class="kw">OVER</span>(<span class="kw">PARTITION BY</span> department) <span class="kw">AS</span> dept_avg
+<span class="kw">FROM</span> employees;
+<span class="cm">-- Tyle samo wierszy co oryginalna tabela!</span></pre>`
+  },
+  {
+    cat: 'java', diff: 'easy', section: '☕ Java Core',
+    q: 'Co to jest @Override i dlaczego zawsze warto ją dodawać?',
+    a: `<code>@Override</code> — adnotacja informująca kompilator że metoda ma nadpisywać metodę z klasy nadrzędnej/interfejsu.<br><br>
+<strong>Dlaczego zawsze warto:</strong><ul>
+<li><strong>Compile-time check</strong> — jeśli literówka w nazwie metody lub zły podpis, kompilator rzuci błąd. Bez @Override — cicho tworzy nową metodę!</li>
+<li><strong>Dokumentacja intencji</strong> — czytelnik kodu wie że to override</li>
+<li><strong>Bezpieczeństwo przy refactoringu</strong> — zmiana sygnatury w klasie bazowej → błąd kompilacji</li>
+</ul>
+<pre><span class="kw">class</span> <span class="cls">Dog</span> <span class="kw">extends</span> <span class="cls">Animal</span> {
+    <span class="fn">@Override</span>
+    <span class="kw">public void</span> <span class="fn">speak</span>() { <span class="cm">// błąd kompilacji jeśli Animal nie ma speak()</span>
+        System.out.<span class="fn">println</span>(<span class="str">"Woof!"</span>);
+    }
+}</pre>`
+  },
+  {
+    cat: 'front', diff: 'easy', section: '🎨 Frontend & HTTP',
+    q: 'Co to jest responsive design? Czym są media queries?',
+    a: `<strong>Responsive Web Design</strong> — techniki które sprawiają że strona dobrze wygląda na wszystkich rozmiarach ekranów: desktop, tablet, mobile.<br><br>
+<strong>Media Queries (CSS)</strong> — stosuj różne style w zależności od szerokości viewport:<br>
+<pre><span class="cm">/* Desktop first */</span>
+.container { width: 1200px; }
+
+@media (max-width: 768px) {
+    .container { width: 100%; padding: 0 16px; }
+}
+
+@media (max-width: 480px) {
+    .text { font-size: 14px; }
+}
+
+<span class="cm">/* Mobile first (zalecane) */</span>
+.container { width: 100%; }
+
+@media (min-width: 768px) { .container { width: 720px; } }
+@media (min-width: 1200px) { .container { width: 1140px; } }</pre>
+<strong>viewport meta tag</strong> — niezbędny: <code>&lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;</code>`
+  }
+];
+
+// ─────────────────────────────────────────
+//  STATE
+// ─────────────────────────────────────────
+let currentCat = 'all';
+let answered = new Set(JSON.parse(localStorage.getItem('qa-answered') || '[]'));
+
+function saveAnswered() {
+  localStorage.setItem('qa-answered', JSON.stringify([...answered]));
+}
+
+// ─────────────────────────────────────────
+//  COUNTS
+// ─────────────────────────────────────────
+function updateCounts() {
+  const cats = ['java','spring','sql','front'];
+  cats.forEach(c => {
+    const cnt = QUESTIONS.filter(q => q.cat === c).length;
+    document.getElementById(`cnt-${c}`).textContent = `(${cnt})`;
+  });
+  document.getElementById('cnt-all').textContent = `(${QUESTIONS.length})`;
+}
+
+// ─────────────────────────────────────────
+//  RENDER
+// ─────────────────────────────────────────
+function render() {
+  const main = document.getElementById('questions-main');
+  const searchVal = document.getElementById('search-input').value.toLowerCase();
+
+  // Group by section
+  const sections = {};
+  QUESTIONS.forEach((q, i) => {
+    if (!sections[q.section]) sections[q.section] = [];
+    sections[q.section].push({ ...q, idx: i });
+  });
+
+  let html = '';
+  let visibleCount = 0;
+
+  Object.entries(sections).forEach(([section, qs]) => {
+    const visible = qs.filter(q => {
+      const catMatch = currentCat === 'all' || q.cat === currentCat;
+      const searchMatch = !searchVal ||
+        q.q.toLowerCase().includes(searchVal) ||
+        q.a.toLowerCase().replace(/<[^>]+>/g,'').includes(searchVal);
+      return catMatch && searchMatch;
+    });
+
+    if (visible.length === 0) return;
+    visibleCount += visible.length;
+
+    const catColors = { java:'var(--java)', spring:'var(--spring)', sql:'var(--sql)', front:'var(--front)' };
+    const firstCat = visible[0].cat;
+    const color = catColors[firstCat] || 'var(--acc)';
+
+    html += `<div class="sec-head">
+      <div class="sec-dot" style="background:${color}"></div>
+      <div class="sec-title">${section}</div>
+      <div class="sec-count">${visible.length} pytań</div>
+    </div>`;
+
+    visible.forEach((q) => {
+      const isAnswered = answered.has(q.idx);
+      const diffClass = `diff-${q.diff}`;
+      const diffLabel = { easy:'Łatwe', med:'Średnie', hard:'Trudne', senior:'Senior' }[q.diff];
+      html += `
+        <div class="q-card${isAnswered ? ' answered' : ''}" id="qc-${q.idx}">
+          <div class="q-head" onclick="toggleQ(${q.idx})">
+            <div class="q-num">#${String(q.idx+1).padStart(3,'0')}</div>
+            <div class="q-main">
+              <div class="q-text">${q.q}</div>
+              <div class="q-meta">
+                <span class="q-tag ${q.cat}">${{java:'Java',spring:'Spring',sql:'SQL',front:'Frontend'}[q.cat]}</span>
+                <span class="q-diff ${diffClass}">${diffLabel}</span>
+              </div>
+            </div>
+            <div class="q-right">
+              <div class="q-check${isAnswered ? ' done' : ''}" onclick="toggleAnswered(event,${q.idx})">${isAnswered ? '✓' : ''}</div>
+              <div class="q-arrow">▾</div>
+            </div>
+          </div>
+          <div class="q-answer">
+            <div class="q-answer-inner">${q.a}</div>
+          </div>
+        </div>`;
+    });
+  });
+
+  main.innerHTML = html || '';
+  document.getElementById('empty-state').style.display = visibleCount === 0 ? 'block' : 'none';
+  updateProgress();
+}
+
+// ─────────────────────────────────────────
+//  TOGGLE QUESTION
+// ─────────────────────────────────────────
+function toggleQ(idx) {
+  const card = document.getElementById(`qc-${idx}`);
+  const wasOpen = card.classList.contains('open');
+  // close all
+  document.querySelectorAll('.q-card.open').forEach(c => c.classList.remove('open'));
+  if (!wasOpen) card.classList.add('open');
+}
+
+// ─────────────────────────────────────────
+//  TOGGLE ANSWERED
+// ─────────────────────────────────────────
+function toggleAnswered(e, idx) {
+  e.stopPropagation();
+  if (answered.has(idx)) {
+    answered.delete(idx);
+  } else {
+    answered.add(idx);
+  }
+  saveAnswered();
+  const card = document.getElementById(`qc-${idx}`);
+  const check = card.querySelector('.q-check');
+  if (answered.has(idx)) {
+    card.classList.add('answered');
+    check.classList.add('done');
+    check.textContent = '✓';
+  } else {
+    card.classList.remove('answered');
+    check.classList.remove('done');
+    check.textContent = '';
+  }
+  updateProgress();
+}
+
+// ─────────────────────────────────────────
+//  FILTER
+// ─────────────────────────────────────────
+function filterCat(cat) {
+  currentCat = cat;
+  document.querySelectorAll('.tpill').forEach(p => p.classList.remove('active'));
+  document.querySelector(`.tpill.${cat === 'all' ? 'all' : cat}`).classList.add('active');
+  render();
+}
+
+function filterSearch() {
+  render();
+}
+
+// ─────────────────────────────────────────
+//  PROGRESS
+// ─────────────────────────────────────────
+function updateProgress() {
+  const total = QUESTIONS.length;
+  const done = answered.size;
+  const pct = Math.round((done / total) * 100);
+  document.getElementById('answered-count').textContent = done;
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-text').textContent = `${done} / ${total}`;
+}
+
+// ─────────────────────────────────────────
+//  INIT
+// ─────────────────────────────────────────
+updateCounts();
+render();
+updateProgress();
+</script>
+</body>
+</html>

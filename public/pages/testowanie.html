@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Testowanie — Testing Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #fafbfc;
+  --s1: #ffffff;
+  --s2: #f6f8fa;
+  --bd: #d0d7de;
+  --bd2: #afb8c1;
+  --tx: #24292f;
+  --tx2: #57606a;
+  --mt: #6e7781;
+  --pass: #1a7f37;
+  --pass-bg: #dafbe1;
+  --fail: #cf222e;
+  --fail-bg: #ffebe9;
+  --warn: #9a6700;
+  --warn-bg: #fff8c5;
+  --info: #0969da;
+  --info-bg: #ddf4ff;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--tx);
+  font-family: 'Inter', sans-serif;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* BACK TO MENU */
+.back-to-menu{position:fixed;top:20px;left:20px;z-index:9999;background:rgba(0,0,0,0.8);backdrop-filter:blur(10px);border:2px solid rgba(255,255,255,0.2);border-radius:50px;padding:12px 24px;display:flex;align-items:center;gap:10px;text-decoration:none;color:#fff;font-family:inherit;font-size:0.85rem;font-weight:600;letter-spacing:1px;transition:all .3s ease;box-shadow:0 4px 20px rgba(0,0,0,0.3)}
+.back-to-menu:hover{background:rgba(255,255,255,0.15);border-color:rgba(255,255,255,0.4);transform:translateX(-3px);box-shadow:0 6px 30px rgba(0,0,0,0.5)}
+.back-arrow{font-size:1.2rem;transition:transform .3s ease}
+.back-to-menu:hover .back-arrow{transform:translateX(-3px)}
+
+/* HEADER */
+.hdr {
+  background: linear-gradient(135deg, #f6f8fa 0%, #ffffff 100%);
+  border-bottom: 3px solid var(--bd);
+  padding: 80px 64px 60px;
+  position: relative;
+}
+
+.hdr-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: var(--pass-bg);
+  border: 1px solid var(--pass);
+  border-radius: 20px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: var(--pass);
+  margin-bottom: 24px;
+}
+
+.check-icon {
+  width: 16px;
+  height: 16px;
+  background: var(--pass);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 10px;
+}
+
+h1 {
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -2px;
+  margin-bottom: 16px;
+  color: var(--tx);
+}
+
+.hdr-subtitle {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.85rem;
+  color: var(--tx2);
+  letter-spacing: 1px;
+  margin-bottom: 24px;
+}
+
+.hdr-desc {
+  font-size: 1rem;
+  color: var(--tx2);
+  max-width: 680px;
+  line-height: 1.8;
+}
+
+/* STATS BAR */
+.stats-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 40px;
+  padding-top: 32px;
+  border-top: 1px solid var(--bd);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--mt);
+}
+
+.stat-value {
+  font-size: 1.8rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.stat.pass .stat-value { color: var(--pass); }
+.stat.fail .stat-value { color: var(--fail); }
+.stat.warn .stat-value { color: var(--warn); }
+
+/* NAV */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--bd);
+  padding: 0 64px;
+  display: flex;
+  overflow-x: auto;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.nav a {
+  color: var(--tx2);
+  text-decoration: none;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  padding: 14px 16px;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+}
+
+.nav a:hover {
+  color: var(--pass);
+  border-bottom-color: var(--pass);
+}
+
+/* MAIN */
+.main {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 64px 24px 120px;
+}
+
+.sec {
+  margin-bottom: 88px;
+  animation: rise 0.5s ease backwards;
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.sec:nth-child(1){animation-delay:.04s}
+.sec:nth-child(2){animation-delay:.07s}
+.sec:nth-child(3){animation-delay:.10s}
+.sec:nth-child(4){animation-delay:.13s}
+.sec:nth-child(5){animation-delay:.16s}
+.sec:nth-child(6){animation-delay:.19s}
+.sec:nth-child(7){animation-delay:.22s}
+
+.sec-ey {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--mt);
+  margin-bottom: 8px;
+}
+
+.sec-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  letter-spacing: -1px;
+  line-height: 1.1;
+  margin-bottom: 12px;
+  color: var(--tx);
+}
+
+.sec-desc {
+  font-size: 0.95rem;
+  color: var(--tx2);
+  max-width: 720px;
+  line-height: 1.8;
+  margin-bottom: 32px;
+}
+
+.sec-rule {
+  height: 2px;
+  background: linear-gradient(90deg, var(--bd), transparent);
+  margin-bottom: 32px;
+}
+
+/* GRID */
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.g3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+
+@media (max-width: 900px) {
+  .g2, .g3 { grid-template-columns: 1fr; }
+  .hdr { padding: 60px 24px 40px; }
+  .nav { padding: 0 20px; }
+  h1 { font-size: 2.5rem; }
+}
+
+/* CARD */
+.card {
+  background: var(--s1);
+  border: 1px solid var(--bd);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s;
+}
+
+.card:hover {
+  border-color: var(--bd2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.cl {
+  padding: 12px 18px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--bd);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cl-pass { background: var(--pass-bg); color: var(--pass); }
+.cl-fail { background: var(--fail-bg); color: var(--fail); }
+.cl-warn { background: var(--warn-bg); color: var(--warn); }
+.cl-info { background: var(--info-bg); color: var(--info); }
+
+/* CODE */
+.code {
+  background: #f6f8fa;
+  border: 1px solid var(--bd);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.cbar {
+  background: #eaeef2;
+  padding: 10px 16px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--mt);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--bd);
+}
+
+pre {
+  padding: 20px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.8rem;
+  line-height: 1.8;
+  overflow-x: auto;
+  color: var(--tx);
+}
+
+.kw { color: #cf222e; font-weight: 600; }
+.fn { color: #8250df; }
+.str { color: #0a3069; }
+.num { color: #0969da; }
+.cmt { color: var(--mt); font-style: italic; }
+.hl { color: var(--tx); font-weight: 600; }
+.ok { color: var(--pass); font-weight: 700; }
+.bad { color: var(--fail); font-weight: 700; }
+
+/* TABLE */
+.t { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+.t th {
+  background: var(--s2);
+  color: var(--tx);
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid var(--bd);
+}
+.t td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--bd);
+  color: var(--tx2);
+  vertical-align: top;
+  line-height: 1.6;
+}
+.t tr:last-child td { border-bottom: none; }
+.t tr:hover { background: var(--s2); }
+.t td:first-child { color: var(--tx); font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem; font-weight: 600; }
+
+/* ALERT */
+.alert {
+  border-left: 4px solid;
+  padding: 16px 20px;
+  border-radius: 0 8px 8px 0;
+  font-size: 0.9rem;
+  line-height: 1.8;
+  margin: 16px 0;
+}
+
+.alert strong {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 700;
+}
+
+.alert.pass { border-color: var(--pass); background: var(--pass-bg); color: var(--tx); }
+.alert.pass strong { color: var(--pass); }
+.alert.fail { border-color: var(--fail); background: var(--fail-bg); color: var(--tx); }
+.alert.fail strong { color: var(--fail); }
+.alert.warn { border-color: var(--warn); background: var(--warn-bg); color: var(--tx); }
+.alert.warn strong { color: var(--warn); }
+.alert.info { border-color: var(--info); background: var(--info-bg); color: var(--tx); }
+.alert.info strong { color: var(--info); }
+
+/* TEST PYRAMID */
+.pyramid {
+  background: var(--s1);
+  border: 1px solid var(--bd);
+  border-radius: 12px;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.pyramid-level {
+  width: 100%;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 600;
+  transition: transform 0.2s;
+  position: relative;
+}
+
+.pyramid-level:hover {
+  transform: scale(1.02);
+}
+
+.pyramid-label {
+  font-size: 0.95rem;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+
+.pyramid-desc {
+  font-size: 0.7rem;
+  opacity: 0.8;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+}
+
+.pyramid-e2e {
+  max-width: 30%;
+  background: var(--fail-bg);
+  color: var(--fail);
+  border: 2px solid var(--fail);
+}
+
+.pyramid-integration {
+  max-width: 60%;
+  background: var(--warn-bg);
+  color: var(--warn);
+  border: 2px solid var(--warn);
+}
+
+.pyramid-unit {
+  max-width: 90%;
+  background: var(--pass-bg);
+  color: var(--pass);
+  border: 2px solid var(--pass);
+}
+
+code {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.85em;
+  background: var(--s2);
+  border: 1px solid var(--bd);
+  border-radius: 4px;
+  padding: 2px 6px;
+  color: var(--fail);
+}
+
+/* TEST TYPES */
+.test-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.test-card {
+  background: var(--s1);
+  border: 2px solid var(--bd);
+  border-radius: 12px;
+  padding: 24px;
+  transition: all 0.2s;
+}
+
+.test-card:hover {
+  border-color: var(--pass);
+  box-shadow: 0 4px 12px rgba(26, 127, 55, 0.1);
+}
+
+.test-icon {
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+}
+
+.test-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--tx);
+}
+
+.test-desc {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--tx2);
+  line-height: 1.7;
+  margin-bottom: 12px;
+}
+
+.test-example {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.7rem;
+  padding: 8px 12px;
+  background: var(--s2);
+  border-radius: 4px;
+  color: var(--mt);
+}
+
+/* COVERAGE BAR */
+.coverage-bar {
+  background: var(--s2);
+  border-radius: 8px;
+  height: 32px;
+  overflow: hidden;
+  position: relative;
+  margin: 12px 0;
+}
+
+.coverage-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--pass), #2da44e);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: white;
+  transition: width 1s ease-out;
+}
+</style>
+</head>
+<body>
+
+<a href="index.html" class="back-to-menu"><span class="back-arrow">←</span><span>MENU</span></a>
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="hdr-badge">
+    <div class="check-icon">✓</div>
+    <span>TESTING GUIDE</span>
+  </div>
+  
+  <h1>Testowanie<br>Oprogramowania</h1>
+  
+  <div class="hdr-subtitle">// unit · integration · e2e · tdd · coverage · best practices</div>
+  
+  <p class="hdr-desc">
+    Testy to nie opcja — to fundament profesjonalnego kodu. Bez testów nie masz pewności że cokolwiek działa. 
+    Poznaj piramidę testów, naucz się pisać testy jednostkowe, integracyjne i E2E. TDD, coverage, mocking — wszystko co musisz wiedzieć.
+  </p>
+
+  <div class="stats-bar">
+    <div class="stat pass">
+      <div class="stat-label">Passing Tests</div>
+      <div class="stat-value">847</div>
+    </div>
+    <div class="stat fail">
+      <div class="stat-label">Failed</div>
+      <div class="stat-value">0</div>
+    </div>
+    <div class="stat warn">
+      <div class="stat-label">Coverage</div>
+      <div class="stat-value">94%</div>
+    </div>
+  </div>
+</header>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="#dlaczego">Dlaczego testować</a>
+  <a href="#piramida">Piramida testów</a>
+  <a href="#typy">Typy testów</a>
+  <a href="#unit">Unit testy</a>
+  <a href="#integration">Integration</a>
+  <a href="#e2e">E2E</a>
+  <a href="#tdd">TDD</a>
+  <a href="#dobre-praktyki">Dobre praktyki</a>
+</nav>
+
+<!-- MAIN -->
+<main class="main">
+
+<!-- DLACZEGO TESTOWAĆ -->
+<section class="sec" id="dlaczego">
+  <div class="sec-ey">01 — fundamenty</div>
+  <div class="sec-title">Dlaczego w ogóle testować?</div>
+  <p class="sec-desc">Testy to pewność że twój kod działa — teraz i za rok. Refactoring bez testów to gra w rosyjską ruletkę. Jedno źle zmienione miejsce i cała aplikacja pada.</p>
+  <div class="sec-rule"></div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="cl cl-fail">❌ Bez testów</div>
+      <div style="padding:20px">
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:12px;font-size:0.9rem;color:var(--tx2)">
+          <li style="display:flex;gap:10px"><span style="color:var(--fail)">✗</span> Zmiana kodu = lęk przed crashem produkcji</li>
+          <li style="display:flex;gap:10px"><span style="color:var(--fail)">✗</span> Ręczne testowanie po każdej zmianie = godziny</li>
+          <li style="display:flex;gap:10px"><span style="color:var(--fail)">✗</span> Nowy developer nie ma pojęcia czy coś zepsuł</li>
+          <li style="display:flex;gap:10px"><span style="color:var(--fail)">✗</span> Refactoring = loteria</li>
+          <li style="display:flex;gap:10px"><span style="color:var(--fail)">✗</span> Regresja (stary bug wraca) — nie wiesz kiedy</li>
+          <li style="display:flex;gap:10px"><span style="color:var(--fail)">✗</span> Deployment = stres</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="cl cl-pass">✓ Z testami</div>
+      <div style="padding:20px">
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:12px;font-size:0.9rem;color:var(--tx2)">
+          <li style="display:flex;gap:10px"><span style="color:var(--pass)">✓</span> Pewność że kod działa (proof)</li>
+          <li style="display:flex;gap:10px"><span style="color:var(--pass)">✓</span> Refactoring bez strachu — testy pokażą błędy</li>
+          <li style="display:flex;gap:10px"><span style="color:var(--pass)">✓</span> Dokumentacja "jak używać" — testy pokazują API</li>
+          <li style="display:flex;gap:10px"><span style="color:var(--pass)">✓</span> Catching bugs wcześnie = tanie naprawy</li>
+          <li style="display:flex;gap:10px"><span style="color:var(--pass)">✓</span> CI/CD — deploy automatyczny bo testy pilnują</li>
+          <li style="display:flex;gap:10px"><span style="color:var(--pass)">✓</span> Onboarding nowych devów — widzą jak działa</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert info" style="margin-top:20px">
+    <strong>Złota zasada: kod bez testów to legacy code</strong>
+    Michael Feathers: "Legacy code to kod bez testów". Możesz mieć piękny, czysty kod napisany wczoraj — jeśli nie ma testów, to legacy. Nikt nie będzie go chciał zmieniać bo lęk przed zepsuciem.
+  </div>
+</section>
+
+<!-- PIRAMIDA TESTÓW -->
+<section class="sec" id="piramida">
+  <div class="sec-ey">02 — strategia</div>
+  <div class="sec-title">Piramida Testów</div>
+  <p class="sec-desc">Nie wszystkie testy są równe. Piramida mówi ile jakiego typu testów powinieneś mieć. Większość to testy jednostkowe — szybkie i tanie. Na szczycie E2E — wolne ale kompleksowe.</p>
+  <div class="sec-rule"></div>
+
+  <div class="pyramid">
+    <div class="pyramid-level pyramid-e2e">
+      <div class="pyramid-label">E2E / UI Tests</div>
+      <div class="pyramid-desc">Wolne · Drogie · Kruche · Mało (5-10%)</div>
+    </div>
+    
+    <div class="pyramid-level pyramid-integration">
+      <div class="pyramid-label">Integration Tests</div>
+      <div class="pyramid-desc">Średnie · Testują moduły razem (20-30%)</div>
+    </div>
+    
+    <div class="pyramid-level pyramid-unit">
+      <div class="pyramid-label">Unit Tests</div>
+      <div class="pyramid-desc">Szybkie · Tanie · Stabilne · Dużo (60-70%)</div>
+    </div>
+  </div>
+
+  <div class="g2" style="margin-top:24px">
+    <div class="alert pass">
+      <strong>✓ Dobre pokrycie</strong>
+      70% unit, 20% integration, 10% E2E. Szybki feedback loop — większość błędów łapana na unit testach (sekundy). Integration weryfikuje współpracę modułów. E2E sprawdza kluczowe scenariusze user flow.
+    </div>
+    
+    <div class="alert fail">
+      <strong>✗ Ice cream cone (anti-pattern)</strong>
+      Odwrócona piramida: dużo E2E, mało unit. Pipeline trwa 30 minut, testy często failują bez powodu (flaky), debugowanie koszmarne. Drogie, wolne, kruchse.
+    </div>
+  </div>
+</section>
+
+<!-- TYPY TESTÓW -->
+<section class="sec" id="typy">
+  <div class="sec-ey">03 — rodzaje</div>
+  <div class="sec-title">Typy Testów</div>
+  <p class="sec-desc">Każdy typ testuje coś innego i ma inne zastosowanie. Wybieraj mądrze co testujesz i na którym poziomie.</p>
+  <div class="sec-rule"></div>
+
+  <div class="test-grid">
+    <div class="test-card">
+      <div class="test-icon">🧪</div>
+      <div class="test-name">Unit Tests</div>
+      <div class="test-desc">Testują pojedynczą funkcję/metodę w izolacji. Mockujesz wszystkie zależności. Najszybsze, najwięcej.</div>
+      <div class="test-example">JUnit, Jest, pytest</div>
+    </div>
+
+    <div class="test-card">
+      <div class="test-icon">🔗</div>
+      <div class="test-name">Integration Tests</div>
+      <div class="test-desc">Testują współpracę kilku modułów razem. Np. service + repository + database. Wolniejsze niż unit.</div>
+      <div class="test-example">@SpringBootTest, Testcontainers</div>
+    </div>
+
+    <div class="test-card">
+      <div class="test-icon">🌐</div>
+      <div class="test-name">E2E Tests</div>
+      <div class="test-desc">Symulują prawdziwego użytkownika w przeglądarce. Klikają, wypełniają formularze. Wolne ale kompleksowe.</div>
+      <div class="test-example">Selenium, Cypress, Playwright</div>
+    </div>
+
+    <div class="test-card">
+      <div class="test-icon">💥</div>
+      <div class="test-name">Smoke Tests</div>
+      <div class="test-desc">Szybkie testy "czy aplikacja w ogóle działa". Uruchom po deploymencie — czy główne funkcje żyją.</div>
+      <div class="test-example">Health endpoint check</div>
+    </div>
+
+    <div class="test-card">
+      <div class="test-icon">📊</div>
+      <div class="test-name">Performance Tests</div>
+      <div class="test-desc">Czy aplikacja wytrzymuje obciążenie. Load testing, stress testing, spike testing.</div>
+      <div class="test-example">JMeter, k6, Gatling</div>
+    </div>
+
+    <div class="test-card">
+      <div class="test-icon">🔐</div>
+      <div class="test-name">Security Tests</div>
+      <div class="test-desc">Skanowanie podatności: SQL injection, XSS, broken auth. OWASP ZAP, penetration testing.</div>
+      <div class="test-example">OWASP ZAP, Burp Suite</div>
+    </div>
+  </div>
+</section>
+
+<!-- UNIT TESTY -->
+<section class="sec" id="unit">
+  <div class="sec-ey">04 — fundament piramidy</div>
+  <div class="sec-title">Unit Tests — Testy Jednostkowe</div>
+  <p class="sec-desc">Testują najmniejszą możliwą jednostkę kodu — pojedynczą funkcję czy metodę. Wszystkie zależności są zamockowane. Szybkie, deterministyczne, łatwe do pisania.</p>
+  <div class="sec-rule"></div>
+
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><span>Klasa do testowania — Calculator.java</span></div>
+      <pre><span class="kw">public class</span> <span class="hl">Calculator</span> {
+  
+  <span class="kw">public int</span> <span class="fn">add</span>(<span class="kw">int</span> a, <span class="kw">int</span> b) {
+    <span class="kw">return</span> a + b;
+  }
+  
+  <span class="kw">public int</span> <span class="fn">divide</span>(<span class="kw">int</span> a, <span class="kw">int</span> b) {
+    <span class="kw">if</span> (b == <span class="num">0</span>) {
+      <span class="kw">throw new</span> <span class="hl">IllegalArgumentException</span>(
+        <span class="str">"Cannot divide by zero"</span>
+      );
+    }
+    <span class="kw">return</span> a / b;
+  }
+}</pre>
+    </div>
+
+    <div class="code">
+      <div class="cbar"><span>Test — CalculatorTest.java (JUnit 5)</span></div>
+      <pre><span class="kw">import</span> org.junit.jupiter.api.*;
+<span class="kw">import static</span> org.junit.jupiter.api.Assertions.*;
+
+<span class="kw">class</span> <span class="hl">CalculatorTest</span> {
+  
+  <span class="kw">private</span> Calculator calculator;
+  
+  <span class="kw">@BeforeEach</span>
+  <span class="kw">void</span> <span class="fn">setUp</span>() {
+    calculator = <span class="kw">new</span> Calculator();
+  }
+  
+  <span class="kw">@Test</span>
+  <span class="kw">void</span> <span class="fn">add_shouldReturnSum</span>() {
+    <span class="cmt">// given</span>
+    <span class="kw">int</span> a = <span class="num">5</span>, b = <span class="num">3</span>;
+    
+    <span class="cmt">// when</span>
+    <span class="kw">int</span> result = calculator.<span class="fn">add</span>(a, b);
+    
+    <span class="cmt">// then</span>
+    <span class="ok">assertEquals(<span class="num">8</span>, result);</span>
+  }
+  
+  <span class="kw">@Test</span>
+  <span class="kw">void</span> <span class="fn">divide_shouldThrowWhenDivideByZero</span>() {
+    <span class="cmt">// given</span>
+    <span class="kw">int</span> a = <span class="num">10</span>, b = <span class="num">0</span>;
+    
+    <span class="cmt">// when & then</span>
+    <span class="ok">assertThrows(</span>
+      <span class="hl">IllegalArgumentException</span>.<span class="kw">class</span>,
+      () -> calculator.<span class="fn">divide</span>(a, b)
+    <span class="ok">);</span>
+  }
+}</pre>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <div class="cl cl-info">📋 AAA Pattern — Given/When/Then</div>
+    <table class="t">
+      <tr><th>Krok</th><th>Co robisz</th><th>Przykład</th></tr>
+      <tr>
+        <td>Arrange (Given)</td>
+        <td>Przygotuj dane testowe, zmockuj zależności</td>
+        <td><code>int a = 5, b = 3;</code></td>
+      </tr>
+      <tr>
+        <td>Act (When)</td>
+        <td>Wywołaj testowaną metodę</td>
+        <td><code>int result = calc.add(a, b);</code></td>
+      </tr>
+      <tr>
+        <td>Assert (Then)</td>
+        <td>Sprawdź czy wynik jest poprawny</td>
+        <td><code>assertEquals(8, result);</code></td>
+      </tr>
+    </table>
+  </div>
+</section>
+
+<!-- INTEGRATION TESTS -->
+<section class="sec" id="integration">
+  <div class="sec-ey">05 — moduły razem</div>
+  <div class="sec-title">Integration Tests</div>
+  <p class="sec-desc">Testują jak kilka komponentów współpracuje. Np. Controller + Service + Repository + prawdziwa baza danych. Wolniejsze niż unit ale łapią błędy integracyjne.</p>
+  <div class="sec-rule"></div>
+
+  <div class="code">
+    <div class="cbar"><span>UserServiceIntegrationTest.java — Spring Boot + Testcontainers</span></div>
+    <pre><span class="kw">@SpringBootTest</span>
+<span class="kw">@Testcontainers</span>
+<span class="kw">class</span> <span class="hl">UserServiceIntegrationTest</span> {
+  
+  <span class="cmt">// Testcontainers uruchamia prawdziwą bazę w Dockerze!</span>
+  <span class="kw">@Container</span>
+  <span class="kw">static</span> PostgreSQLContainer&lt;?&gt; postgres = 
+    <span class="kw">new</span> PostgreSQLContainer&lt;&gt;(<span class="str">"postgres:16-alpine"</span>);
+  
+  <span class="kw">@Autowired</span>
+  <span class="kw">private</span> UserService userService;
+  
+  <span class="kw">@Autowired</span>
+  <span class="kw">private</span> UserRepository userRepository;
+  
+  <span class="kw">@Test</span>
+  <span class="kw">void</span> <span class="fn">createUser_shouldSaveToDatabase</span>() {
+    <span class="cmt">// given</span>
+    <span class="kw">var</span> request = <span class="kw">new</span> CreateUserRequest(
+      <span class="str">"<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="ea80858284aa8f928b879a868fc4898587">[email&#160;protected]</a>"</span>, <span class="str">"John Doe"</span>
+    );
+    
+    <span class="cmt">// when</span>
+    <span class="kw">var</span> user = userService.<span class="fn">createUser</span>(request);
+    
+    <span class="cmt">// then — sprawdź w bazie!</span>
+    <span class="kw">var</span> saved = userRepository.<span class="fn">findById</span>(user.getId());
+    <span class="ok">assertTrue(saved.isPresent());</span>
+    <span class="ok">assertEquals(<span class="str">"<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="177d787f7957726f767a677b723974787a">[email&#160;protected]</a>"</span>, saved.get().getEmail());</span>
+  }
+  
+  <span class="kw">@AfterEach</span>
+  <span class="kw">void</span> <span class="fn">cleanUp</span>() {
+    userRepository.<span class="fn">deleteAll</span>(); <span class="cmt">// wyczyść po teście</span>
+  }
+}</pre>
+  </div>
+
+  <div class="alert pass" style="margin-top:16px">
+    <strong>✓ Testcontainers — prawdziwa baza w Dockerze</strong>
+    Nie mockuj bazy danych w integration testach! Testcontainers uruchamia prawdziwy Postgres/MySQL/MongoDB w kontenerze Docker. Test działa na prawdziwej bazie → łapiesz błędy SQL, problemy z indeksami, constraint violations.
+  </div>
+</section>
+
+<!-- E2E TESTS -->
+<section class="sec" id="e2e">
+  <div class="sec-ey">06 — cały flow użytkownika</div>
+  <div class="sec-title">E2E Tests — End-to-End</div>
+  <p class="sec-desc">Symulują prawdziwego użytkownika. Otwierają przeglądarkę, klikają przyciski, wypełniają formularze. Najwolniejsze ale testują cały system razem — frontend + backend + baza.</p>
+  <div class="sec-rule"></div>
+
+  <div class="code">
+    <div class="cbar"><span>login.spec.js — Playwright (JavaScript)</span></div>
+    <pre><span class="kw">import</span> { test, expect } <span class="kw">from</span> <span class="str">'@playwright/test'</span>;
+
+<span class="fn">test</span>(<span class="str">'user can log in successfully'</span>, <span class="kw">async</span> ({ page }) => {
+  <span class="cmt">// given — otwórz stronę logowania</span>
+  <span class="kw">await</span> page.<span class="fn">goto</span>(<span class="str">'http://localhost:3000/login'</span>);
+  
+  <span class="cmt">// when — wypełnij formularz</span>
+  <span class="kw">await</span> page.<span class="fn">fill</span>(<span class="str">'input[name="email"]'</span>, <span class="str">'<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="077362747347627f666a776b622964686a">[email&#160;protected]</a>'</span>);
+  <span class="kw">await</span> page.<span class="fn">fill</span>(<span class="str">'input[name="password"]'</span>, <span class="str">'password123'</span>);
+  <span class="kw">await</span> page.<span class="fn">click</span>(<span class="str">'button[type="submit"]'</span>);
+  
+  <span class="cmt">// then — sprawdź czy przekierowano na dashboard</span>
+  <span class="kw">await</span> <span class="ok">expect</span>(page).<span class="fn">toHaveURL</span>(<span class="str">'http://localhost:3000/dashboard'</span>);
+  
+  <span class="cmt">// i czy pojawił się user menu</span>
+  <span class="kw">const</span> userName = page.<span class="fn">locator</span>(<span class="str">'.user-menu .name'</span>);
+  <span class="kw">await</span> <span class="ok">expect</span>(userName).<span class="fn">toHaveText</span>(<span class="str">'Test User'</span>);
+});</pre>
+  </div>
+
+  <div class="g2" style="margin-top:20px">
+    <div class="alert warn">
+      <strong>⚠️ E2E są kruche (flaky)</strong>
+      Testy E2E często failują bez powodu: timing issues, wolny load strony, animacje, race conditions. Musisz używać explicit waits, retry logic, stabilnych selektorów. Nie testuj wszystkiego przez E2E!
+    </div>
+
+    <div class="card">
+      <div class="cl cl-info">🎯 Co testować przez E2E</div>
+      <ul style="padding:20px;list-style:none;display:flex;flex-direction:column;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:0.8rem;color:var(--tx2)">
+        <li>✓ Krytyczne user flows (login, checkout, payment)</li>
+        <li>✓ Happy path głównych funkcji</li>
+        <li>✓ Smoke tests po deploymencie</li>
+        <li>✗ Edge cases (za wolne)</li>
+        <li>✗ Wszystkie kombinacje (za drogie)</li>
+        <li>✗ Walidacja formularzy (unit testy)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- TDD -->
+<section class="sec" id="tdd">
+  <div class="sec-ey">07 — metodologia</div>
+  <div class="sec-title">TDD — Test-Driven Development</div>
+  <p class="sec-desc">Najpierw piszesz test (który failuje), potem kod który go naprawia. Red → Green → Refactor. Wymusza myślenie o API przed implementacją.</p>
+  <div class="sec-rule"></div>
+
+  <div class="card">
+    <div class="cl cl-fail">🔴 RED → 🟢 GREEN → 🔵 REFACTOR</div>
+    <div style="padding:24px">
+      <div style="display:flex;flex-direction:column;gap:20px">
+        <div>
+          <div style="font-weight:700;color:var(--fail);margin-bottom:8px;font-family:'IBM Plex Mono',monospace;font-size:0.85rem">1. 🔴 RED — Napisz test który failuje</div>
+          <div style="font-size:0.85rem;color:var(--tx2);line-height:1.7">Zanim napiszesz kod, napisz test który sprawdza czy funkcja działa. Test będzie czerwony (fail) bo funkcja jeszcze nie istnieje.</div>
+          <pre style="background:var(--s2);padding:12px;border-radius:6px;margin-top:8px;font-size:0.75rem"><span class="kw">@Test</span>
+<span class="kw">void</span> <span class="fn">getUserById_shouldReturnUser</span>() {
+  <span class="bad">// test failuje — metoda nie istnieje!</span>
+  User user = userService.<span class="fn">getUserById</span>(<span class="num">1L</span>);
+  <span class="ok">assertNotNull(user);</span>
+}</pre>
+        </div>
+
+        <div>
+          <div style="font-weight:700;color:var(--pass);margin-bottom:8px;font-family:'IBM Plex Mono',monospace;font-size:0.85rem">2. 🟢 GREEN — Napisz minimalny kod żeby test przeszedł</div>
+          <div style="font-size:0.85rem;color:var(--tx2);line-height:1.7">Napisz najprostszy możliwy kod który sprawi że test przejdzie. Nie optymalizuj, nie dodawaj funkcji — tylko żeby było zielone.</div>
+          <pre style="background:var(--s2);padding:12px;border-radius:6px;margin-top:8px;font-size:0.75rem"><span class="kw">public</span> User <span class="fn">getUserById</span>(Long id) {
+  <span class="ok">// minimalny kod — test przechodzi!</span>
+  <span class="kw">return</span> userRepository.<span class="fn">findById</span>(id).orElse(<span class="kw">null</span>);
+}</pre>
+        </div>
+
+        <div>
+          <div style="font-weight:700;color:var(--info);margin-bottom:8px;font-family:'IBM Plex Mono',monospace;font-size:0.85rem">3. 🔵 REFACTOR — Popraw kod, testy pilnują</div>
+          <div style="font-size:0.85rem;color:var(--tx2);line-height:1.7">Teraz możesz refactorować — poprawić strukturę, wyciągnąć metody, usunąć duplikację. Testy zagwarantują że nic nie zepsułeś.</div>
+          <pre style="background:var(--s2);padding:12px;border-radius:6px;margin-top:8px;font-size:0.75rem"><span class="kw">public</span> User <span class="fn">getUserById</span>(Long id) {
+  <span class="ok">// refactor — rzuć wyjątek zamiast null</span>
+  <span class="kw">return</span> userRepository.<span class="fn">findById</span>(id)
+    .orElseThrow(() -> <span class="kw">new</span> NotFoundException(<span class="str">"User not found"</span>));
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="g2" style="margin-top:20px">
+    <div class="alert pass">
+      <strong>✓ Korzyści z TDD</strong>
+      Wymusza prosty design (trudno testować = źle zaprojektowane). Masz testy od razu (nie "napiszę później"). API przemyślane przed implementacją. Pewność że każda linia kodu działa.
+    </div>
+
+    <div class="alert warn">
+      <strong>⚠️ TDD nie zawsze</strong>
+      TDD świetne dla logiki biznesowej, algorytmów, utils. Gorsze dla UI, eksperymentów, prototypów. Nie dogmatyzuj — używaj gdy pomaga, pomiń gdy przeszkadza.
+    </div>
+  </div>
+</section>
+
+<!-- DOBRE PRAKTYKI -->
+<section class="sec" id="dobre-praktyki">
+  <div class="sec-ey">08 — best practices</div>
+  <div class="sec-title">Dobre Praktyki Testowania</div>
+  <p class="sec-desc">Pisanie testów to skill. Złe testy są gorsze niż brak testów — dają fałszywe poczucie bezpieczeństwa i spowalniają development.</p>
+  <div class="sec-rule"></div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="cl cl-pass">✓ DO</div>
+      <div style="padding:18px;display:flex;flex-direction:column;gap:12px;font-size:0.85rem;color:var(--tx2)">
+        <div><strong style="color:var(--tx)">Test behaviors, not implementation</strong><br>Testuj "co robi" nie "jak robi". Zmiana implementacji nie powinna psuć testów.</div>
+        <div><strong style="color:var(--tx)">Jeden assert per test (lub kilka related)</strong><br>Test powinien testować jedną rzecz. Łatwiej debugować failure.</div>
+        <div><strong style="color:var(--tx)">Testy muszą być deterministyczne</strong><br>Zawsze ten sam wynik. Nie zależą od czasu, random, sieci, filesystem.</div>
+        <div><strong style="color:var(--tx)">Szybkie unit testy</strong><br>Cały suite unit testów &lt; 10 sekund. Wolne = nie uruchamiasz = bezużyteczne.</div>
+        <div><strong style="color:var(--tx)">Nazwa testu = dokumentacja</strong><br><code>shouldReturnUserWhenValidId()</code> mówi co test robi.</div>
+        <div><strong style="color:var(--tx)">Arrange/Act/Assert pattern</strong><br>Given/When/Then. Struktura czytelna dla każdego.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="cl cl-fail">✗ DON'T</div>
+      <div style="padding:18px;display:flex;flex-direction:column;gap:12px;font-size:0.85rem;color:var(--tx2)">
+        <div><strong style="color:var(--tx)">Testować private methods</strong><br>Testuj public API. Private to szczegół implementacji.</div>
+        <div><strong style="color:var(--tx)">Testować gettery/settery</strong><br>Testy getterów/setterów to marnowanie czasu. Zero value.</div>
+        <div><strong style="color:var(--tx)">Jeden wielki test na wszystko</strong><br>Test 200 linii testujący 10 rzeczy = nie wiesz co padło.</div>
+        <div><strong style="color:var(--tx)">Testy zależne od kolejności</strong><br>Test A musi być przed testem B = kruche. Każdy test izolowany.</div>
+        <div><strong style="color:var(--tx)">Ignorować flaky tests</strong><br>Test który czasem failuje = zaufanie do testów spada. Fix it ASAP.</div>
+        <div><strong style="color:var(--tx)">100% coverage za wszelką cenę</strong><br>Coverage to metryka, nie cel. 80% dobrego pokrycia > 100% bezsensownych testów.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <div class="cl cl-info">📊 Test Coverage — ile wystarczy?</div>
+    <div style="padding:20px">
+      <div style="margin-bottom:16px;font-size:0.9rem;color:var(--tx2)">
+        Coverage pokazuje ile % kodu jest wykonywane przez testy. <strong>NIE mówi czy testy są dobre</strong> — tylko czy kod jest uruchamiany.
+      </div>
+      
+      <div style="margin-bottom:8px;font-family:'IBM Plex Mono',monospace;font-size:0.75rem;color:var(--mt)">Logika biznesowa (UserService, OrderCalculator)</div>
+      <div class="coverage-bar">
+        <div class="coverage-fill" style="width: 90%;">90%+ Coverage</div>
+      </div>
+
+      <div style="margin-bottom:8px;font-family:'IBM Plex Mono',monospace;font-size:0.75rem;color:var(--mt)">Controllers (REST endpoints)</div>
+      <div class="coverage-bar">
+        <div class="coverage-fill" style="width: 80%;background:linear-gradient(90deg, var(--warn), #bf8700);">80%+ Coverage</div>
+      </div>
+
+      <div style="margin-bottom:8px;font-family:'IBM Plex Mono',monospace;font-size:0.75rem;color:var(--mt)">Utils, helpers</div>
+      <div class="coverage-bar">
+        <div class="coverage-fill" style="width: 85%;background:linear-gradient(90deg, var(--pass), #2da44e);">85%+ Coverage</div>
+      </div>
+
+      <div style="margin-bottom:8px;font-family:'IBM Plex Mono',monospace;font-size:0.75rem;color:var(--mt)">DTOs, Entities (getters/setters)</div>
+      <div class="coverage-bar">
+        <div class="coverage-fill" style="width: 30%;background:linear-gradient(90deg, var(--bd2), var(--mt));">30%+ OK (nie ma co testować)</div>
+      </div>
+
+      <div style="margin-top:16px;padding:12px;background:var(--info-bg);border-radius:6px;font-size:0.85rem;color:var(--tx2)">
+        <strong style="color:var(--info)">Cel:</strong> 80% overall coverage. Krytyczna logika biznesowa 90%+. Nie gonić 100% — diminishing returns.
+      </div>
+    </div>
+  </div>
+
+  <div class="alert pass" style="margin-

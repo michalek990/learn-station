@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CI/CD — Automatyzacja</title>
+<link href="https://fonts.googleapis.com/css2?family=Azeret+Mono:wght@400;500;600;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:   #080a08;
+  --s1:   #0d110d;
+  --s2:   #121812;
+  --s3:   #192019;
+  --bd:   #243024;
+  --bd2:  #2e3e2e;
+  --tx:   #e8f0e8;
+  --tx2:  #8a9e8a;
+  --mt:   #4a5e4a;
+  --gr:   #4cff7e;   /* pipeline green */
+  --gr2:  #1aff55;
+  --gr3:  #00cc44;
+  --yw:   #ffe066;   /* warning yellow */
+  --rd:   #ff4466;   /* error red */
+  --bl:   #44aaff;   /* info blue */
+  --pu:   #bb88ff;   /* purple */
+  --or:   #ff8844;   /* orange */
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--tx);
+  font-family: 'Syne', sans-serif;
+  overflow-x: hidden;
+}
+
+/* ══════════════════════════ HEADER */
+.hdr {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 80px 64px;
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid var(--bd);
+}
+
+/* scanlines texture */
+.hdr::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(76,255,126,0.012) 2px,
+    rgba(76,255,126,0.012) 4px
+  );
+  pointer-events: none; z-index: 0;
+}
+
+.hdr-glow1 {
+  position: absolute;
+  width: 700px; height: 400px;
+  background: radial-gradient(ellipse, rgba(76,255,126,0.06) 0%, transparent 70%);
+  top: 0; left: -200px; pointer-events: none;
+}
+.hdr-glow2 {
+  position: absolute;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(68,170,255,0.04) 0%, transparent 70%);
+  bottom: 100px; right: 100px; pointer-events: none;
+}
+
+.hdr-inner { position: relative; z-index: 1; max-width: 960px; }
+
+.hdr-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: 'Azeret Mono', monospace;
+  font-size: 0.65rem; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--gr); margin-bottom: 28px;
+}
+.hdr-badge::before {
+  content: '';
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--gr);
+  box-shadow: 0 0 8px var(--gr);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.4)} }
+
+h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(3.5rem, 8vw, 7rem);
+  font-weight: 800;
+  line-height: 0.92;
+  letter-spacing: -3px;
+  margin-bottom: 8px;
+}
+h1 .t1 { color: var(--tx); display: block; }
+h1 .t2 { color: var(--gr); display: block; }
+h1 .t3 { display: block; font-size: .38em; font-weight: 400; letter-spacing: 0; color: var(--mt); margin-top: 12px; line-height: 1.5; }
+
+.hdr-sub {
+  font-family: 'Azeret Mono', monospace;
+  font-size: 0.82rem; color: var(--tx2);
+  max-width: 560px; line-height: 1.9; margin-bottom: 40px;
+}
+
+.hdr-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+.pill {
+  font-family: 'Azeret Mono', monospace;
+  font-size: 0.6rem; letter-spacing: 1.5px; text-transform: uppercase;
+  padding: 5px 12px; border-radius: 2px; border: 1px solid;
+}
+.pg { color: var(--gr);  border-color: rgba(76,255,126,0.25); background: rgba(76,255,126,0.04); }
+.pb { color: var(--bl);  border-color: rgba(68,170,255,0.25); background: rgba(68,170,255,0.04); }
+.py { color: var(--yw);  border-color: rgba(255,224,102,0.25); background: rgba(255,224,102,0.04); }
+.pp { color: var(--pu);  border-color: rgba(187,136,255,0.25); background: rgba(187,136,255,0.04); }
+.po { color: var(--or);  border-color: rgba(255,136,68,0.25); background: rgba(255,136,68,0.04); }
+
+/* ANIMATED PIPELINE (hero) */
+.pipeline-hero {
+  margin-top: 48px;
+  background: var(--s1);
+  border: 1px solid var(--bd);
+  border-radius: 12px;
+  padding: 28px 24px;
+  position: relative;
+  overflow: hidden;
+}
+.pipeline-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg, rgba(76,255,126,0.03) 0%, transparent 100%);
+  pointer-events: none;
+}
+
+.pipeline-label {
+  font-family: 'Azeret Mono', monospace;
+  font-size: 0.6rem; letter-spacing: 3px; color: var(--mt);
+  text-transform: uppercase; margin-bottom: 20px;
+}
+
+.pipeline-track {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.pipe-stage {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 8px; flex-shrink: 0;
+}
+
+.pipe-node {
+  width: 52px; height: 52px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem;
+  position: relative;
+  transition: transform .2s;
+}
+.pipe-node:hover { transform: scale(1.1); }
+
+.pipe-node.success { background: rgba(76,255,126,0.1); border: 2px solid var(--gr); }
+.pipe-node.running { background: rgba(68,170,255,0.1); border: 2px solid var(--bl); }
+.pipe-node.pending { background: var(--s2); border: 2px solid var(--bd2); }
+
+.pipe-name {
+  font-family: 'Azeret Mono', monospace;
+  font-size: 0.58rem; color: var(--tx2); text-align: center;
+  letter-spacing: .5px; white-space: nowrap;
+}
+
+.pipe-conn {
+  width: 40px; height: 2px; flex-shrink: 0;
+  margin-bottom: 22px;
+  position: relative;
+  overflow: hidden;
+}
+.pipe-conn-line { width: 100%; height: 100%; background: var(--bd2); }
+.pipe-conn-anim {
+  position: absolute; top: 0; left: -100%;
+  width: 60%; height: 100%;
+  background: linear-gradient(90deg, transparent, var(--gr), transparent);
+  animation: flow 1.8s ease-in-out infinite;
+}
+@keyframes flow { 0%{left:-60%} 100%{left:160%} }
+.pipe-conn.done .pipe-conn-line { background: var(--gr3); }
+.pipe-conn.done .pipe-conn-anim { display: none; }
+.pipe-conn.waiting .pipe-conn-anim { opacity: 0.3; }
+
+.pipe-node .status-dot {
+  position: absolute; top: -4px; right: -4px;
+  width: 12px; height: 12px; border-radius: 50%;
+  border: 2px solid var(--s1);
+}
+.status-dot.ok  { background: var(--gr); }
+.status-dot.run { background: var(--bl); animation: pulse 1.2s infinite; }
+.status-dot.pnd { background: var(--bd2); }
+
+/* ══════════════════════════ NAV */
+.nav {
+  position: sticky; top: 0; z-index: 200;
+  background: rgba(8,10,8,.96); backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--bd);
+  padding: 0 64px; display: flex; overflow-x: auto;
+}
+.nav a {
+  color: var(--mt); text-decoration: none;
+  font-family: 'Azeret Mono', monospace;
+  font-size: 0.62rem; letter-spacing: 1px;
+  padding: 13px 12px; white-space: nowrap;
+  border-bottom: 2px solid transparent; transition: all .2s;
+}
+.nav a:hover { color: var(--gr); border-bottom-color: var(--gr); }
+
+/* ══════════════════════════ MAIN */
+.main { max-width: 1280px; margin: 0 auto; padding: 64px 24px 120px; }
+
+.sec { margin-bottom: 88px; animation: rise .5s ease backwards; }
+@keyframes rise { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+.sec:nth-child(1){animation-delay:.04s} .sec:nth-child(2){animation-delay:.07s}
+.sec:nth-child(3){animation-delay:.10s} .sec:nth-child(4){animation-delay:.13s}
+.sec:nth-child(5){animation-delay:.16s} .sec:nth-child(6){animation-delay:.19s}
+.sec:nth-child(7){animation-delay:.22s}
+
+.sec-ey {
+  font-family: 'Azeret Mono', monospace;
+  font-size: 0.6rem; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--mt); margin-bottom: 6px;
+}
+.sec-title {
+  font-size: 2.4rem; font-weight: 800; letter-spacing: -1.5px;
+  line-height: 1; margin-bottom: 10px;
+}
+.sec-desc {
+  font-family: 'Azeret Mono', monospace;
+  font-size: 0.78rem; color: var(--tx2); max-width: 640px;
+  line-height: 1.85; margin-bottom: 32px;
+}
+.sec-rule { height: 1px; background: linear-gradient(90deg, var(--bd2), transparent); margin-bottom: 32px; }
+
+/* ══════════════════════════ GRID */
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.g3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+@media(max-width:900px) {
+  .g2,.g3 { grid-template-columns: 1fr; }
+  .hdr { padding: 60px 20px; min-height: auto; }
+  .nav { padding: 0 16px; }
+  .main { padding: 40px 16px 80px; }
+  h1 { font-size: 3.2rem; }
+}
+
+/* ══════════════════════════ CARD */
+.card { background: var(--s1); border: 1px solid var(--bd); border-radius: 10px; overflow: hidden; transition: border-color .2s; }
+.card:hover { border-color: var(--bd2); }
+.cl {
+  padding: 10px 16px;
+  font-family: 'Azeret Mono', monospace;
+  font-size: 0.6rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
+  border-bottom: 1px solid var(--bd); display: flex; align-items: center; gap: 6px;
+}
+.cg { color: var(--gr); background: rgba(76,255,126,0.04); }
+.cb { color: var(--bl); background: rgba(68,170,255,0.04); }
+.cy { color: var(--yw); background: rgba(255,224,102,0.04); }
+.cr { color: var(--rd); background: rgba(255,68,102,0.04); }
+.cp { color: var(--pu); background: rgba(187,136,255,0.04); }
+.co { color: var(--or); background: rgba(255,136,68,0.04); }
+
+/* ══════════════════════════ CODE */
+.code { background: #030504; border-radius: 8px; overflow: hidden; }
+.cbar {
+  background: #080c08; padding: 8px 14px;
+  font-family: 'Azeret Mono', monospace; font-size: 0.58rem; color: var(--mt);
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--bd);
+}
+.dots { display:flex; gap:5px; }
+.dot  { width:7px; height:7px; border-radius:50%; }
+
+pre {
+  padding: 18px; font-family: 'Azeret Mono', monospace;
+  font-size: 0.74rem; line-height: 1.85; overflow-x: auto; color: #6a846a;
+}
+.kw  { color: var(--bl); font-weight: 600; }
+.str { color: var(--gr); }
+.num { color: var(--yw); }
+.cmt { color: #2e3e2e; font-style: italic; }
+.h1  { color: var(--tx); }
+.h2  { color: var(--gr); }
+.h3  { color: var(--yw); }
+.h4  { color: var(--pu); }
+.h5  { color: var(--or); }
+.h6  { color: var(--bl); }
+.ok  { color: var(--gr); font-weight: 700; }
+.bad { color: var(--rd); font-weight: 700; }
+
+/* ══════════════════════════ TABLE */
+.t { width: 100%; border-collapse: collapse; font-size: 0.76rem; }
+.t th {
+  background: var(--s2); color: var(--mt); padding: 9px 14px; text-align: left;
+  font-size: 0.58rem; letter-spacing: 2px; text-transform: uppercase;
+  border-bottom: 1px solid var(--bd); font-family: 'Azeret Mono', monospace;
+}
+.t td { padding: 9px 14px; border-bottom: 1px solid var(--bd); color: var(--tx2); vertical-align: top; line-height: 1.6; }
+.t tr:last-child td { border-bottom: none; }
+.t tr:hover td { background: var(--s2); }
+.t td:first-child { color: var(--bl); font-family: 'Azeret Mono', monospace; font-size: 0.7rem; }
+
+/* ══════════════════════════ ALERT */
+.alert {
+  border-left: 3px solid; padding: 12px 16px; border-radius: 0 6px 6px 0;
+  font-family: 'Azeret Mono', monospace; font-size: 0.76rem; line-height: 1.8; color: var(--tx2); margin: 12px 0;
+}
+.alert strong { display: block; margin-bottom: 3px; }
+.alert.g { border-color: var(--gr); background: rgba(76,255,126,0.03); }
+.alert.g strong { color: var(--gr); }
+.alert.b { border-color: var(--bl); background: rgba(68,170,255,0.03); }
+.alert.b strong { color: var(--bl); }
+.alert.y { border-color: var(--yw); background: rgba(255,224,102,0.03); }
+.alert.y strong { color: var(--yw); }
+.alert.r { border-color: var(--rd); background: rgba(255,68,102,0.03); }
+.alert.r strong { color: var(--rd); }
+
+/* ══════════════════════════ DIAGRAM */
+.diag {
+  background: #030504; border-radius: 8px; padding: 20px;
+  font-family: 'Azeret Mono', monospace; font-size: 0.72rem;
+  line-height: 2; color: var(--mt); overflow-x: auto;
+}
+.diag .h1{color:var(--gr);font-weight:700} .diag .h2{color:var(--bl)}
+.diag .h3{color:var(--yw)} .diag .h4{color:var(--pu)}
+.diag .h5{color:var(--or)} .diag .hw{color:var(--tx)}
+.diag .ok{color:var(--gr)} .diag .bad{color:var(--rd)}
+
+code {
+  font-family: 'Azeret Mono', monospace; font-size: .82em;
+  background: var(--s3); border: 1px solid var(--bd2);
+  border-radius: 3px; padding: 1px 5px; color: var(--bl);
+}
+
+/* ══════════════════════════ STEP TIMELINE */
+.timeline { display: flex; flex-direction: column; gap: 0; }
+.tl-item { display: flex; align-items: flex-start; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--bd); }
+.tl-item:last-child { border-bottom: none; }
+.tl-num {
+  width: 32px; height: 32px; border-radius: 6px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Azeret Mono', monospace; font-weight: 700; font-size: 0.75rem;
+  margin-top: 2px;
+}
+.tl-body { flex: 1; }
+.tl-title { font-weight: 700; font-size: 0.88rem; margin-bottom: 3px; }
+.tl-desc  { font-family: 'Azeret Mono', monospace; font-size: 0.72rem; color: var(--tx2); line-height: 1.7; }
+
+/* ══════════════════════════ FLOW CHART (INLINE SVG STYLE) */
+.flow-wrap { padding: 20px; overflow-x: auto; }
+
+/* ══════════════════════════ ENV BADGES */
+.env-row { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--bd); }
+.env-row:last-child { border-bottom: none; }
+.env-badge {
+  font-family: 'Azeret Mono', monospace; font-size: 0.65rem; font-weight: 700;
+  padding: 4px 10px; border-radius: 3px; flex-shrink: 0; width: 100px; text-align: center;
+}
+.env-desc { font-family: 'Azeret Mono', monospace; font-size: 0.72rem; color: var(--tx2); flex: 1; line-height: 1.6; }
+
+/* ══════════════════════════ STRATEGY CARDS */
+.strat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.strat-card {
+  background: var(--s1); border: 1px solid var(--bd); border-radius: 8px; padding: 20px;
+  position: relative; overflow: hidden; transition: border-color .2s, transform .2s;
+}
+.strat-card:hover { border-color: var(--bd2); transform: translateY(-2px); }
+.strat-icon { font-size: 2rem; margin-bottom: 10px; }
+.strat-name { font-weight: 800; font-size: 1rem; margin-bottom: 4px; }
+.strat-sub { font-family: 'Azeret Mono', monospace; font-size: 0.62rem; color: var(--mt); margin-bottom: 10px; }
+.strat-desc { font-family: 'Azeret Mono', monospace; font-size: 0.72rem; color: var(--tx2); line-height: 1.75; }
+.strat-badge {
+  position: absolute; top: 12px; right: 12px;
+  font-family: 'Azeret Mono', monospace; font-size: 0.55rem;
+  padding: 2px 7px; border-radius: 2px; letter-spacing: 1px;
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════ HEADER -->
+<header class="hdr">
+  <div class="hdr-glow1"></div>
+  <div class="hdr-glow2"></div>
+  <div class="hdr-inner">
+
+    <div class="hdr-badge">pipeline aktywny — budowanie...</div>
+
+    <h1>
+      <span class="t1">CI/CD</span>
+      <span class="t2">Automatyzacja</span>
+      <span class="t3">Continuous Integration · Continuous Delivery · GitHub Actions · Docker · Deployment</span>
+    </h1>
+    <p class="hdr-sub" style="margin-top:24px">
+      Kod który piszesz trafia na produkcję automatycznie — bez ręcznego klikania. Testy uruchamiają się same. Błędy są wykrywane zanim dotrą do użytkowników.
+    </p>
+    <div class="hdr-pills">
+      <span class="pill pg">GitHub Actions</span>
+      <span class="pill pb">Docker Build</span>
+      <span class="pill py">Testy automatyczne</span>
+      <span class="pill pp">Strategie deployment</span>
+      <span class="pill po">Środowiska (dev/staging/prod)</span>
+    </div>
+
+    <!-- ANIMATED PIPELINE -->
+    <div class="pipeline-hero">
+      <div class="pipeline-label">// aktywny pipeline — main branch</div>
+      <div class="pipeline-track">
+
+        <div class="pipe-stage">
+          <div class="pipe-node success"><span>📝</span><div class="status-dot ok"></div></div>
+          <div class="pipe-name">git push</div>
+        </div>
+        <div class="pipe-conn done"><div class="pipe-conn-line"></div></div>
+
+        <div class="pipe-stage">
+          <div class="pipe-node success"><span>🔍</span><div class="status-dot ok"></div></div>
+          <div class="pipe-name">checkout</div>
+        </div>
+        <div class="pipe-conn done"><div class="pipe-conn-line"></div></div>
+
+        <div class="pipe-stage">
+          <div class="pipe-node success"><span>🔨</span><div class="status-dot ok"></div></div>
+          <div class="pipe-name">build</div>
+        </div>
+        <div class="pipe-conn done"><div class="pipe-conn-line"></div></div>
+
+        <div class="pipe-stage">
+          <div class="pipe-node success"><span>🧪</span><div class="status-dot ok"></div></div>
+          <div class="pipe-name">test</div>
+        </div>
+        <div class="pipe-conn">
+          <div class="pipe-conn-line"></div>
+          <div class="pipe-conn-anim"></div>
+        </div>
+
+        <div class="pipe-stage">
+          <div class="pipe-node running"><span>🐳</span><div class="status-dot run"></div></div>
+          <div class="pipe-name">docker build</div>
+        </div>
+        <div class="pipe-conn waiting">
+          <div class="pipe-conn-line"></div>
+          <div class="pipe-conn-anim"></div>
+        </div>
+
+        <div class="pipe-stage">
+          <div class="pipe-node pending"><span>📦</span><div class="status-dot pnd"></div></div>
+          <div class="pipe-name">push image</div>
+        </div>
+        <div class="pipe-conn waiting">
+          <div class="pipe-conn-line"></div>
+          <div class="pipe-conn-anim"></div>
+        </div>
+
+        <div class="pipe-stage">
+          <div class="pipe-node pending"><span>🚀</span><div class="status-dot pnd"></div></div>
+          <div class="pipe-name">deploy</div>
+        </div>
+        <div class="pipe-conn waiting">
+          <div class="pipe-conn-line"></div>
+          <div class="pipe-conn-anim"></div>
+        </div>
+
+        <div class="pipe-stage">
+          <div class="pipe-node pending"><span>✅</span><div class="status-dot pnd"></div></div>
+          <div class="pipe-name">live!</div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</header>
+
+<!-- ════════════════════════════════ NAV -->
+<nav class="nav">
+  <a href="#czym">Czym jest CI/CD</a>
+  <a href="#flow">Pełny flow</a>
+  <a href="#actions">GitHub Actions</a>
+  <a href="#docker">Docker w pipeline</a>
+  <a href="#envs">Środowiska</a>
+  <a href="#strategie">Strategie deploy</a>
+  <a href="#secrets">Sekrety</a>
+  <a href="#monitoring">Monitoring</a>
+</nav>
+
+<!-- ════════════════════════════════ MAIN -->
+<main class="main">
+
+<!-- ── CZYM JEST CI/CD ─────────────────── -->
+<section class="sec" id="czym">
+  <div class="sec-ey">01 — pojęcia</div>
+  <div class="sec-title">Czym jest CI/CD?</div>
+  <p class="sec-desc">Trzy pojęcia które brzmią podobnie ale oznaczają różne etapy automatyzacji. Każde rozwiązuje inny problem.</p>
+  <div class="sec-rule"></div>
+
+  <div class="g3" style="margin-bottom:24px">
+    <div class="card">
+      <div class="cl cg">⚙️ CI — Continuous Integration</div>
+      <div style="padding:18px">
+        <div style="font-size:0.85rem;color:var(--tx);font-weight:700;margin-bottom:8px">Ciągła integracja</div>
+        <div class="diag" style="font-size:0.7rem">
+<span class="h1">Developer pushe kod</span>
+        <span class="mt">↓</span>
+<span class="hw">Automatycznie uruchamiają się:</span>
+ → <span class="h2">testy jednostkowe</span>
+ → <span class="h2">testy integracyjne</span>
+ → <span class="h3">analiza kodu (linting)</span>
+ → <span class="h3">sprawdzanie coverage</span>
+        <span class="mt">↓</span>
+<span class="ok">✅ przeszło</span> lub <span class="bad">❌ błąd</span>
+        </div>
+        <div style="margin-top:10px;font-family:'Azeret Mono',monospace;font-size:0.7rem;color:var(--tx2)">Cel: wykryć błędy <strong style="color:var(--gr)">zanim trafią do gałęzi głównej</strong>.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="cl cb">📦 CD — Continuous Delivery</div>
+      <div style="padding:18px">
+        <div style="font-size:0.85rem;color:var(--tx);font-weight:700;margin-bottom:8px">Ciągłe dostarczanie</div>
+        <div class="diag" style="font-size:0.7rem">
+<span class="h1">CI przeszło pomyślnie</span>
+        <span class="mt">↓</span>
+<span class="hw">Automatycznie tworzony jest:</span>
+ → <span class="h6">artefakt (JAR, WAR, ZIP)</span>
+ → <span class="h6">obraz Docker</span>
+ → <span class="h6">gotowy do deploymentu</span>
+        <span class="mt">↓</span>
+<span class="h3">Deploy na staging/UAT</span>
+        <span class="mt">↓</span>
+<span class="h3">Oczekuje na zatwierdzenie</span>
+        </div>
+        <div style="margin-top:10px;font-family:'Azeret Mono',monospace;font-size:0.7rem;color:var(--tx2)">Cel: kod jest <strong style="color:var(--bl)">zawsze gotowy do wdrożenia</strong> na produkcję.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="cl cp">🚀 CD — Continuous Deployment</div>
+      <div style="padding:18px">
+        <div style="font-size:0.85rem;color:var(--tx);font-weight:700;margin-bottom:8px">Ciągłe wdrożenie</div>
+        <div class="diag" style="font-size:0.7rem">
+<span class="h1">Delivery przeszło</span>
+        <span class="mt">↓</span>
+<span class="hw">Automatycznie wdrożone:</span>
+ → <span class="h4">na produkcję bez ręcznego</span>
+ → <span class="h4">zatwierdzenia człowieka!</span>
+        <span class="mt">↓</span>
+<span class="ok">✅ kod żyje na produkcji</span>
+<span class="mt">w ciągu minut od push'a</span>
+        </div>
+        <div style="margin-top:10px;font-family:'Azeret Mono',monospace;font-size:0.7rem;color:var(--tx2)">Cel: <strong style="color:var(--pu)">zero ręcznych kroków</strong> — push → produkcja automatycznie.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert g">
+    <strong>CI/CD = fabryka oprogramowania</strong>
+    Bez CI/CD: developer ręcznie buduje, ręcznie testuje, ręcznie wgrywa na serwer. Z CI/CD: push do gałęzi głównej → 5 minut → kod na produkcji. Każda firma powyżej 2 programistów powinna to mieć.
+  </div>
+</section>
+
+<!-- ── PEŁNY FLOW ──────────────────────── -->
+<section class="sec" id="flow">
+  <div class="sec-ey">02 — od kodu do produkcji</div>
+  <div class="sec-title">Pełny flow CI/CD</div>
+  <p class="sec-desc">Każdy krok po kolei — od napisania kodu do działającej aplikacji na produkcji.</p>
+  <div class="sec-rule"></div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="cl cg">🔄 Etapy pipeline krok po kroku</div>
+      <div class="timeline" style="padding:4px 16px">
+        <div class="tl-item">
+          <div class="tl-num" style="background:rgba(76,255,126,0.1);color:var(--gr)">1</div>
+          <div class="tl-body">
+            <div class="tl-title">git push / pull request</div>
+            <div class="tl-desc">Developer pushuje zmiany. Pipeline startuje automatycznie dzięki webhook'owi z GitHub/GitLab.</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-num" style="background:rgba(76,255,126,0.1);color:var(--gr)">2</div>
+          <div class="tl-body">
+            <div class="tl-title">Checkout + setup środowiska</div>
+            <div class="tl-desc">Runner pobiera kod z repo, instaluje zależności (Maven/Gradle/npm), konfiguruje JDK/Node.</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-num" style="background:rgba(76,255,126,0.1);color:var(--gr)">3</div>
+          <div class="tl-body">
+            <div class="tl-title">Kompilacja / Build</div>
+            <div class="tl-desc"><code>mvn package</code> lub <code>gradle build</code>. Sprawdza czy kod w ogóle się kompiluje. Tworzy artefakt (JAR/WAR).</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-num" style="background:rgba(68,170,255,0.1);color:var(--bl)">4</div>
+          <div class="tl-body">
+            <div class="tl-title">Testy automatyczne</div>
+            <div class="tl-desc">Unit testy (JUnit), integracyjne, E2E. Jeśli cokolwiek padnie — pipeline zatrzymuje się i powiadamia.</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-num" style="background:rgba(68,170,255,0.1);color:var(--bl)">5</div>
+          <div class="tl-body">
+            <div class="tl-title">Analiza kodu (Code Quality)</div>
+            <div class="tl-desc">SonarQube, Checkstyle, SpotBugs. Sprawdza code coverage, security issues, code smells.</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-num" style="background:rgba(187,136,255,0.1);color:var(--pu)">6</div>
+          <div class="tl-body">
+            <div class="tl-title">Docker build + push</div>
+            <div class="tl-desc">Tworzy obraz Docker z aplikacją. Taguje wersją (commit SHA lub tag). Pushuje do Docker Registry (GHCR, Docker Hub, ECR).</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-num" style="background:rgba(255,224,102,0.1);color:var(--yw)">7</div>
+          <div class="tl-body">
+            <div class="tl-title">Deploy na staging</div>
+            <div class="tl-desc">Automatyczny deploy na środowisko testowe. Smoke testy, testy E2E. Opcjonalnie: manualne zatwierdzenie QA.</div>
+          </div>
+        </div>
+        <div class="tl-item" style="border:none">
+          <div class="tl-num" style="background:rgba(76,255,126,0.15);color:var(--gr)">8</div>
+          <div class="tl-body">
+            <div class="tl-title">Deploy na produkcję 🚀</div>
+            <div class="tl-desc">Automatyczny (Continuous Deployment) lub po ręcznym zatwierdzeniu (Continuous Delivery). Monitoring + alerty.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="diag">
+<span class="mt">── UPROSZCZONY SCHEMAT ──────────────────────</span>
+
+Developer                    GitHub Actions
+    <span class="h6">│</span>                               <span class="h6">│</span>
+    <span class="h6">├─ git push ─────────────────────►</span>
+    <span class="h6">│</span>                               <span class="h6">│</span>
+    <span class="h6">│</span>                      <span class="h2">checkout repo</span>
+    <span class="h6">│</span>                      <span class="h2">setup Java/Node</span>
+    <span class="h6">│</span>                      <span class="h2">mvn test</span>
+    <span class="h6">│</span>                          <span class="h6">│</span>
+    <span class="h6">│</span>                          <span class="h3">┌─ FAIL → notify ─► email/Slack</span>
+    <span class="h6">│</span>                          <span class="h3">└─ PASS ─►</span>
+    <span class="h6">│</span>                      <span class="h4">docker build</span>
+    <span class="h6">│</span>                      <span class="h4">docker push → GHCR</span>
+    <span class="h6">│</span>                          <span class="h6">│</span>
+    <span class="h6">│</span>                          <span class="h6">▼</span>
+    <span class="h6">│</span>                      <span class="h5">ssh deploy.sh</span>
+    <span class="h6">│</span>                      <span class="h5">docker pull + up</span>
+    <span class="h6">│</span>                          <span class="h6">│</span>
+    <span class="h6">◄─── notify ─────────────────</span>
+<span class="ok">✅ deployed: v1.4.2 (2m 14s)</span>
+      </div>
+
+      <div class="alert b">
+        <strong>Fail Fast — zatrzymaj się przy pierwszym błędzie</strong>
+        Dobry pipeline zatrzymuje się i powiadamia od razu gdy cokolwiek padnie. Nie ma sensu budować obrazu Docker jeśli testy nie przeszły. Kolejność kroków ma znaczenie — najtańsze (najszybsze) sprawdzenia najpierw.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── GITHUB ACTIONS ──────────────────── -->
+<section class="sec" id="actions">
+  <div class="sec-ey">03 — narzędzie</div>
+  <div class="sec-title">GitHub Actions — konfiguracja</div>
+  <p class="sec-desc">Pliki YAML w katalogu <code>.github/workflows/</code>. Każdy plik = jeden workflow. Triggerowany przez eventy (push, PR, schedule, ręcznie).</p>
+  <div class="sec-rule"></div>
+
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="dots"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div></div><span>.github/workflows/ci.yml — kompletny CI</span></div>
+      <pre><span class="h4">name</span>: <span class="str">CI — Build and Test</span>
+
+<span class="cmt"># Kiedy uruchamiać</span>
+<span class="h4">on</span>:
+  <span class="h4">push</span>:
+    <span class="h4">branches</span>: [<span class="str">main</span>, <span class="str">develop</span>]
+  <span class="h4">pull_request</span>:
+    <span class="h4">branches</span>: [<span class="str">main</span>]
+
+<span class="h4">jobs</span>:
+  <span class="h4">build-and-test</span>:
+    <span class="h4">runs-on</span>: <span class="str">ubuntu-latest</span>
+
+    <span class="h4">steps</span>:
+      <span class="cmt"># 1. Pobierz kod</span>
+      - <span class="h4">name</span>: <span class="str">Checkout code</span>
+        <span class="h4">uses</span>: <span class="str">actions/checkout@v4</span>
+
+      <span class="cmt"># 2. Skonfiguruj Java</span>
+      - <span class="h4">name</span>: <span class="str">Setup Java 21</span>
+        <span class="h4">uses</span>: <span class="str">actions/setup-java@v4</span>
+        <span class="h4">with</span>:
+          <span class="h4">java-version</span>: <span class="str">'21'</span>
+          <span class="h4">distribution</span>: <span class="str">'temurin'</span>
+
+      <span class="cmt"># 3. Cache Maven dependencies</span>
+      - <span class="h4">name</span>: <span class="str">Cache Maven</span>
+        <span class="h4">uses</span>: <span class="str">actions/cache@v4</span>
+        <span class="h4">with</span>:
+          <span class="h4">path</span>: <span class="str">~/.m2/repository</span>
+          <span class="h4">key</span>: <span class="str">maven-${{ hashFiles('pom.xml') }}</span>
+
+      <span class="cmt"># 4. Build + testy</span>
+      - <span class="h4">name</span>: <span class="str">Build and test</span>
+        <span class="h4">run</span>: <span class="str">mvn --batch-mode verify</span>
+
+      <span class="cmt"># 5. Raport testów jeśli fail</span>
+      - <span class="h4">name</span>: <span class="str">Test report</span>
+        <span class="h4">uses</span>: <span class="str">dorny/test-reporter@v1</span>
+        <span class="h4">if</span>: <span class="str">always()</span>  <span class="cmt"># nawet przy fail!</span>
+        <span class="h4">with</span>:
+          <span class="h4">reporter</span>: <span class="str">java-junit</span>
+          <span class="h4">path</span>: <span class="str">target/surefire-reports/*.xml</span></pre>
+    </div>
+
+    <div class="code">
+      <div class="cbar"><div class="dots"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div></div><span>.github/workflows/cd.yml — deploy na VPS</span></div>
+      <pre><span class="h4">name</span>: <span class="str">CD — Deploy to Production</span>
+
+<span class="h4">on</span>:
+  <span class="h4">push</span>:
+    <span class="h4">branches</span>: [<span class="str">main</span>]
+
+<span class="h4">jobs</span>:
+  <span class="h4">deploy</span>:
+    <span class="h4">runs-on</span>: <span class="str">ubuntu-latest</span>
+    <span class="cmt"># Uruchom tylko po CI</span>
+    <span class="h4">needs</span>: <span class="str">build-and-test</span>
+
+    <span class="h4">steps</span>:
+      - <span class="h4">uses</span>: <span class="str">actions/checkout@v4</span>
+
+      <span class="cmt"># Zaloguj do GitHub Container Registry</span>
+      - <span class="h4">name</span>: <span class="str">Login to GHCR</span>
+        <span class="h4">uses</span>: <span class="str">docker/login-action@v3</span>
+        <span class="h4">with</span>:
+          <span class="h4">registry</span>: <span class="str">ghcr.io</span>
+          <span class="h4">username</span>: <span class="str">${{ github.actor }}</span>
+          <span class="h4">password</span>: <span class="str">${{ secrets.GITHUB_TOKEN }}</span>
+
+      <span class="cmt"># Zbuduj i push obraz Docker</span>
+      - <span class="h4">name</span>: <span class="str">Build and push Docker image</span>
+        <span class="h4">uses</span>: <span class="str">docker/build-push-action@v5</span>
+        <span class="h4">with</span>:
+          <span class="h4">push</span>: <span class="str">true</span>
+          <span class="h4">tags</span>: |
+            <span class="str">ghcr.io/${{ github.repo }}/app:latest</span>
+            <span class="str">ghcr.io/${{ github.repo }}/app:${{ github.sha }}</span>
+
+      <span class="cmt"># Wdróż na VPS przez SSH</span>
+      - <span class="h4">name</span>: <span class="str">Deploy to VPS</span>
+        <span class="h4">uses</span>: <span class="str">appleboy/ssh-action@v1</span>
+        <span class="h4">with</span>:
+          <span class="h4">host</span>:     <span class="str">${{ secrets.VPS_HOST }}</span>
+          <span class="h4">username</span>: <span class="str">${{ secrets.VPS_USER }}</span>
+          <span class="h4">key</span>:      <span class="str">${{ secrets.SSH_PRIVATE_KEY }}</span>
+          <span class="h4">script</span>: |
+            <span class="str">cd /opt/app</span>
+            <span class="str">docker compose pull</span>
+            <span class="str">docker compose up -d --no-build</span>
+            <span class="str">docker image prune -f</span></pre>
+    </div>
+  </div>
+
+  <div style="margin-top:20px">
+    <div class="card">
+      <div class="cl cy">⚡ Ważne koncepty GitHub Actions</div>
+      <table class="t">
+        <tr><th>Pojęcie</th><th>Co to jest</th><th>Przykład</th></tr>
+        <tr><td>workflow</td><td>Cały plik YAML — zestaw jobów uruchamianych razem</td><td><code>ci.yml</code>, <code>deploy.yml</code></td></tr>
+        <tr><td>job</td><td>Zestaw stepów uruchamianych na jednym runnerze. Joby działają równolegle chyba że ustawisz <code>needs</code></td><td><code>build-and-test</code>, <code>deploy</code></td></tr>
+        <tr><td>step</td><td>Jeden krok w jobiu — komenda shell lub gotowa akcja</td><td><code>run: mvn test</code></td></tr>
+        <tr><td>action</td><td>Gotowy klocek wielokrotnego użytku z GitHub Marketplace</td><td><code>actions/checkout@v4</code></td></tr>
+        <tr><td>runner</td><td>Maszyna wirtualna gdzie uruchomiany jest job</td><td><code>ubuntu-latest</code>, <code>windows-latest</code></td></tr>
+        <tr><td>secrets</td><td>Zaszyfrowane zmienne — hasła, klucze SSH, tokeny</td><td><code>${{ secrets.DB_PASSWORD }}</code></td></tr>
+        <tr><td>artifacts</td><td>Pliki wygenerowane w pipeline (JAR, raport testów) do pobrania</td><td><code>actions/upload-artifact</code></td></tr>
+        <tr><td>matrix</td><td>Uruchom ten sam job na wielu konfiguracjach jednocześnie</td><td>Java 17 + Java 21 + Java 23</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ── DOCKER W PIPELINE ───────────────── -->
+<section class="sec" id="docker">
+  <div class="sec-ey">04 — konteneryzacja</div>
+  <div class="sec-title">Docker w pipeline</div>
+  <p class="sec-desc">Docker gwarantuje że aplikacja działa tak samo na każdym środowisku. "Działa u mnie" znika — obraz Docker działa wszędzie identycznie.</p>
+  <div class="sec-rule"></div>
+
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="dots"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div></div><span>Dockerfile — multi-stage build</span></div>
+      <pre><span class="cmt"># ── ETAP 1: Builder ──────────────────────</span>
+<span class="kw">FROM</span> <span class="str">maven:3.9-amazoncorretto-21</span> <span class="kw">AS</span> builder
+
+<span class="kw">WORKDIR</span> /build
+
+<span class="cmt"># Najpierw tylko pom.xml — cache zależności!</span>
+<span class="kw">COPY</span> pom.xml .
+<span class="kw">RUN</span> mvn dependency:go-offline
+
+<span class="cmt"># Teraz kod — jak zmienisz kod, zależności</span>
+<span class="cmt"># NIE będą pobierane od nowa (cache hit)</span>
+<span class="kw">COPY</span> src ./src
+<span class="kw">RUN</span> mvn package -DskipTests
+
+<span class="cmt"># ── ETAP 2: Runtime ──────────────────────</span>
+<span class="cmt"># Znacznie mniejszy obraz! Bez Maven, JDK</span>
+<span class="kw">FROM</span> <span class="str">amazoncorretto:21-alpine</span>
+
+<span class="cmt"># Nie uruchamiaj jako root!</span>
+<span class="kw">RUN</span> addgroup -S app && adduser -S app -G app
+<span class="kw">USER</span> app
+
+<span class="kw">WORKDIR</span> /app
+<span class="kw">COPY</span> --from=builder /build/target/app.jar app.jar
+
+<span class="kw">EXPOSE</span> 8080
+
+<span class="cmt"># Health check wbudowany w obraz</span>
+<span class="kw">HEALTHCHECK</span> --interval=30s --timeout=3s \
+  <span class="kw">CMD</span> wget -qO- http://localhost:8080/actuator/health || exit 1
+
+<span class="kw">ENTRYPOINT</span> [<span class="str">"java"</span>, <span class="str">"-jar"</span>, <span class="str">"app.jar"</span>]</pre>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="code">
+        <div class="cbar"><div class="dots"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div></div><span>docker-compose.yml — na serwerze produkcyjnym</span></div>
+        <pre><span class="h4">services</span>:
+  <span class="h4">app</span>:
+    <span class="h4">image</span>: <span class="str">ghcr.io/user/myapp:latest</span>
+    <span class="h4">restart</span>: <span class="str">always</span>
+    <span class="h4">ports</span>:
+      - <span class="str">"127.0.0.1:8080:8080"</span> <span class="cmt"># tylko lokalnie!</span>
+    <span class="h4">environment</span>:
+      - <span class="str">SPRING_PROFILES_ACTIVE=prod</span>
+      - <span class="str">DB_URL=${DB_URL}</span>        <span class="cmt"># z .env</span>
+      - <span class="str">DB_PASSWORD=${DB_PASSWORD}</span>
+    <span class="h4">healthcheck</span>:
+      <span class="h4">test</span>: [<span class="str">"CMD"</span>, <span class="str">"wget"</span>, <span class="str">"-qO-"</span>,
+             <span class="str">"http://localhost:8080/health"</span>]
+      <span class="h4">interval</span>: <span class="str">30s</span>
+      <span class="h4">retries</span>: <span class="num">3</span>
+    <span class="h4">depends_on</span>:
+      <span class="h4">db</span>:
+        <span class="h4">condition</span>: <span class="str">service_healthy</span>
+
+  <span class="h4">db</span>:
+    <span class="h4">image</span>: <span class="str">postgres:16-alpine</span>
+    <span class="h4">restart</span>: <span class="str">always</span>
+    <span class="h4">environment</span>:
+      - <span class="str">POSTGRES_DB=myapp</span>
+      - <span class="str">POSTGRES_PASSWORD=${DB_PASSWORD}</span>
+    <span class="h4">volumes</span>:
+      - <span class="str">pgdata:/var/lib/postgresql/data</span>
+
+<span class="h4">volumes</span>:
+  <span class="h4">pgdata</span>: <span class="cmt"># dane przeżywają restart kontenera</span></pre>
+      </div>
+
+      <div class="alert g">
+        <strong>Multi-stage build — po co?</strong>
+        Etap 1 (builder): pełny JDK + Maven = ~600MB. Etap 2 (runtime): tylko JRE Alpine = ~90MB. Mniejszy obraz = szybszy pull, mniejsza powierzchnia ataku, tańsze przechowywanie. Kopiujesz tylko gotowy JAR, nie cały toolchain.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── ŚRODOWISKA ──────────────────────── -->
+<section class="sec" id="envs">
+  <div class="sec-ey">05 — środowiska</div>
+  <div class="sec-title">dev → staging → production</div>
+  <p class="sec-desc">Każde środowisko ma inne dane, inne konfiguracje. Nigdy nie testujesz na produkcji. Staging to klon produkcji z prawdziwymi danymi.</p>
+  <div class="sec-rule"></div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="cl cg">🏗️ Środowiska — różnice</div>
+      <div style="padding:16px">
+        <div class="env-row">
+          <div class="env-badge" style="background:rgba(76,255,126,0.1);color:var(--gr);border:1px solid rgba(76,255,126,0.3)">LOCAL / DEV</div>
+          <div class="env-desc">Komputer developera. H2 in-memory lub lokalny Docker. Hot-reload. Debug mode. Dummy dane. Każdy ma swoje — nie kolidują ze sobą.</div>
+        </div>
+        <div class="env-row">
+          <div class="env-badge" style="background:rgba(68,170,255,0.1);color:var(--bl);border:1px solid rgba(68,170,255,0.3)">STAGING / UAT</div>
+          <div class="env-desc">Identyczny z produkcją (ta sama konfiguracja, podobne dane). Tutaj QA testuje nowe funkcje. Deploy automatyczny po CI. Testowy Stripe/płatności.</div>
+        </div>
+        <div class="env-row" style="border:none">
+          <div class="env-badge" style="background:rgba(255,68,102,0.1);color:var(--rd);border:1px solid rgba(255,68,102,0.3)">PRODUCTION</div>
+          <div class="env-desc">Prawdziwi użytkownicy. Deploy tylko po zatwierdzeniu lub ręcznie. Logi, monitoring, alerty. Backupy. Nigdy nie debugujesz tu bezpośrednio.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="code">
+      <div class="cbar"><div class="dots"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div></div><span>Spring Boot — profile środowisk</span></div>
+      <pre><span class="cmt"># application.yml — bazowy</span>
+<span class="h4">spring</span>:
+  <span class="h4">application</span>:
+    <span class="h4">name</span>: <span class="str">myapp</span>
+
+<span class="cmt">---</span>
+<span class="cmt"># application-dev.yml</span>
+<span class="h4">spring</span>:
+  <span class="h4">datasource</span>:
+    <span class="h4">url</span>: <span class="str">jdbc:h2:mem:devdb</span>
+  <span class="h4">jpa</span>:
+    <span class="h4">show-sql</span>: <span class="kw">true</span>
+<span class="h4">logging</span>:
+  <span class="h4">level.root</span>: <span class="str">DEBUG</span>
+
+<span class="cmt">---</span>
+<span class="cmt"># application-prod.yml</span>
+<span class="h4">spring</span>:
+  <span class="h4">datasource</span>:
+    <span class="h4">url</span>: <span class="str">${DB_URL}</span>         <span class="cmt"># z env var!</span>
+    <span class="h4">password</span>: <span class="str">${DB_PASSWORD}</span>
+  <span class="h4">jpa</span>:
+    <span class="h4">show-sql</span>: <span class="kw">false</span>
+<span class="h4">logging</span>:
+  <span class="h4">level.root</span>: <span class="str">WARN</span>
+
+<span class="cmt"># Aktywuj przez env var:</span>
+<span class="h2">SPRING_PROFILES_ACTIVE=prod</span>
+
+<span class="cmt"># Lub w GitHub Actions:</span>
+<span class="h4">env</span>:
+  <span class="h2">SPRING_PROFILES_ACTIVE</span>: <span class="str">prod</span>
+  <span class="h2">DB_URL</span>: <span class="str">${{ secrets.PROD_DB_URL }}</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ── STRATEGIE DEPLOY ────────────────── -->
+<section class="sec" id="strategie">
+  <div class="sec-ey">06 — bez downtime</div>
+  <div class="sec-title">Strategie deployment</div>
+  <p class="sec-desc">Jak wdrożyć nową wersję bez przerwy w działaniu serwisu. Każda strategia ma inne ryzyko i koszt.</p>
+  <div class="sec-rule"></div>
+
+  <div class="strat-grid">
+    <div class="strat-card">
+      <div class="strat-badge" style="background:rgba(255,68,102,0.15);color:var(--rd)">RYZYKO: HIGH</div>
+      <div class="strat-icon">💥</div>
+      <div class="strat-name">Big Bang</div>
+      <div class="strat-sub">// stop → deploy → start</div>
+      <div class="strat-desc">Zatrzymaj stary, uruchom nowy. Prosta, ale zawsze jest downtime. OK dla małych projektów w nocy. Rollback trudny.</div>
+    </div>
+
+    <div class="strat-card">
+      <div class="strat-badge" style="background:rgba(255,224,102,0.15);color:var(--yw)">RYZYKO: MED</div>
+      <div class="strat-icon">🔄</div>
+      <div class="strat-name">Rolling Deploy</div>
+      <div class="strat-sub">// instancja po instancji</div>
+      <div class="strat-desc">Aktualizujesz instancje jedna po drugiej. Load balancer przekierowuje ruch do już zaktualizowanych. Brak downtime. Przez chwilę działają dwie wersje jednocześnie.</div>
+    </div>
+
+    <div class="strat-card">
+      <div class="strat-badge" style="background:rgba(76,255,126,0.15);color:var(--gr)">RYZYKO: LOW</div>
+      <div class="strat-icon">🔵🟢</div>
+      <div class="strat-name">Blue-Green</div>
+      <div class="strat-sub">// dwa identyczne środowiska</div>
+      <div class="strat-desc">Blue = stara produkcja, Green = nowa. Deploy na Green, testuj, przełącz ruch (DNS/LB). Rollback = zmień z powrotem na Blue. Droższe — podwójne zasoby.</div>
+    </div>
+
+    <div class="strat-card">
+      <div class="strat-badge" style="background:rgba(76,255,126,0.15);color:var(--gr)">RYZYKO: VERY LOW</div>
+      <div class="strat-icon">🐦</div>
+      <div class="strat-name">Canary</div>
+      <div class="strat-sub">// powolne przełączanie ruchu</div>
+      <div class="strat-desc">Wyślij 5% ruchu na nową wersję, obserwuj metryki. Jeśli OK → 20% → 50% → 100%. Błąd u 5% userów zamiast 100%. Rollback = cofnij do 0%.</div>
+    </div>
+
+    <div class="strat-card">
+      <div class="strat-badge" style="background:rgba(68,170,255,0.15);color:var(--bl)">FEATURE FLAGS</div>
+      <div class="strat-icon">🏳️</div>
+      <div class="strat-name">Feature Flags</div>
+      <div class="strat-sub">// kod żyje, feature wyłączona</div>
+      <div class="strat-desc">Nowa funkcja jest w kodzie ale wyłączona flagą. Włączasz dla wybranych userów (beta testers) bez ponownego deployu. Rollback = wyłącz flagę.</div>
+    </div>
+  </div>
+
+  <div class="code" style="margin-top:20px">
+    <div class="cbar"><div class="dots"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div></div><span>Blue-Green na VPS z Docker Compose</span></div>
+    <pre><span class="cmt">#!/bin/bash — deploy.sh</span>
+
+<span class="h1">CURRENT</span>=$(docker compose ps --services | head -1)
+<span class="h1">NEW_IMAGE</span>=<span class="str">"ghcr.io/user/app:$1"</span>  <span class="cmt"># $1 = nowy tag</span>
+
+<span class="cmt"># Uruchom nową wersję na innym porcie</span>
+<span class="h2">docker run -d --name app_new</span> \
+  -p <span class="num">127.0.0.1:8081:8080</span> \
+  -e SPRING_PROFILES_ACTIVE=prod \
+  <span class="str">$NEW_IMAGE</span>
+
+<span class="cmt"># Poczekaj na health check</span>
+<span class="kw">for</span> i in <span class="str">$(seq 1 30)</span>; do
+  <span class="kw">if</span> curl -sf http://localhost:<span class="num">8081</span>/actuator/health; <span class="kw">then</span>
+    <span class="h2">echo "Health check OK!"</span>; <span class="kw">break</span>
+  <span class="kw">fi</span>
+  sleep <span class="num">2</span>
+<span class="kw">done</span>
+
+<span class="cmt"># Przełącz nginx na nową instancję</span>
+<span class="h3">sed -i 's/8080/8081/' /etc/nginx/sites-enabled/app</span>
+<span class="h3">nginx -s reload</span>
+
+<span class="cmt"># Zatrzymaj starą instancję</span>
+<span class="h5">docker stop app_old && docker rm app_old</span>
+<span class="h2">docker rename app_new app_old</span></pre>
+  </div>
+</section>
+
+<!-- ── SEKRETY ─────────────────────────── -->
+<section class="sec" id="secrets">
+  <div class="sec-ey">07 — bezpieczeństwo</div>
+  <div class="sec-title">Zarządzanie sekretami</div>
+  <p class="sec-desc">Hasła, klucze API, certyfikaty — nigdy w kodzie, nigdy w repozytorium. Zawsze w zmiennych środowiskowych lub dedykowanych narzędziach.</p>
+  <div class="sec-rule"></div>
+
+  <div class="g2">
+    <div>
+      <div class="code">
+        <div class="cbar"><div class="dots"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div></div><span>GitHub Secrets — jak ustawić i używać</span></div>
+        <pre><span class="cmt"># Dodaj secret w GitHub:</span>
+<span class="cmt"># Settings → Secrets and variables → Actions</span>
+<span class="cmt"># → New repository secret</span>
+<span class="cmt">#</span>
+<span class="cmt"># Nazwa: VPS_HOST  Wartość: 123.45.67.89</span>
+<span class="cmt"># Nazwa: SSH_PRIVATE_KEY  Wartość: (klucz)</span>
+<span class="cmt"># Nazwa: DB_PASSWORD  Wartość: (hasło)</span>
+
+<span class="cmt"># W workflow — używasz przez ${{ secrets.XXX }}</span>
+<span class="h4">steps</span>:
+  - <span class="h4">name</span>: <span class="str">Deploy</span>
+    <span class="h4">env</span>:
+      <span class="h3">HOST</span>: <span class="str">${{ secrets.VPS_HOST }}</span>
+      <span class="h3">KEY</span>:  <span class="str">${{ secrets.SSH_PRIVATE_KEY }}</span>
+    <span class="h4">run</span>: |
+      <span class="str">echo "$KEY" > /tmp/key && chmod 600 /tmp/key</span>
+      <span class="str">ssh -i /tmp/key user@$HOST "cd /app && ./deploy.sh"</span>
+
+<span class="cmt"># NIGDY nie rób tego!</span>
+<span class="bad">password: "moje_haslo123"</span>     <span class="cmt"># ❌ w kodzie!</span>
+<span class="bad">DB_PASS=haslo123</span>               <span class="cmt"># ❌ w .env w repo!</span>
+
+<span class="cmt"># .gitignore — obowiązkowo:</span>
+<span class="ok">.env</span>
+<span class="ok">.env.local</span>
+<span class="ok">.env.prod</span>
+<span class="ok">*.pem</span>
+<span class="ok">*.key</span></pre>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="card">
+        <div class="cl cr">🔑 Klucze SSH do deploymentu</div>
+        <div style="padding:16px">
+          <div class="diag" style="font-size:0.7rem">
+<span class="cmt">1. Wygeneruj parę kluczy (lokalnie):</span>
+<span class="h2">ssh-keygen -t ed25519 -C "github-ci-deploy"</span>
+   <span class="mt">→ tworzy: deploy_key (prywatny)</span>
+   <span class="mt">→         deploy_key.pub (publiczny)</span>
+
+<span class="cmt">2. Klucz publiczny → na serwer VPS:</span>
+<span class="h3">cat deploy_key.pub >> ~/.ssh/authorized_keys</span>
+
+<span class="cmt">3. Klucz prywatny → do GitHub Secrets:</span>
+<span class="h5">cat deploy_key | pbcopy</span>
+   GitHub → Settings → Secrets
+   → <span class="h1">SSH_PRIVATE_KEY</span> = (wklejasz)
+
+<span class="cmt">4. W Actions używasz:</span>
+<span class="h6">${{ secrets.SSH_PRIVATE_KEY }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="alert r">
+        <strong>🚨 Wyciek sekretów — co robić?</strong>
+        Jeśli przez pomyłkę wrzuciłeś secret do repo: 1) Natychmiast zmień/unieważnij klucz/hasło. 2) Wyczyść historię git (<code>git filter-repo</code>). 3) Force-push. 4) Poinformuj zespół. Samo usunięcie pliku z git nie wystarczy — historia git pamięta wszystko.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── MONITORING ──────────────────────── -->
+<section class="sec" id="monitoring">
+  <div class="sec-ey">08 — po deploymencie</div>
+  <div class="sec-title">Monitoring i powiadomienia</div>
+  <p class="sec-desc">Deploy to nie koniec — musisz wiedzieć czy aplikacja działa poprawnie. Monitoring + alerty = spokojny sen.</p>
+  <div class="sec-rule"></div>
+
+  <div class="g3">
+    <div class="code">
+      <div class="cbar"><div class="dots"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div></div><span>Health check endpoint</span></div>
+      <pre><span class="cmt">// Spring Boot Actuator</span>
+<span class="cmt">// Dodaj do pom.xml:</span>
+&lt;<span class="h4">dependency</span>&gt;
+  &lt;<span class="h4">groupId</span>&gt;org.springframework.boot&lt;/<span class="h4">groupId</span>&gt;
+  &lt;<span class="h4">artifactId</span>&gt;
+    spring-boot-starter-actuator
+  &lt;/<span class="h4">artifactId</span>&gt;
+&lt;/<span class="h4">dependency</span>&gt;
+
+<span class="cmt"># application.yml</span>
+<span class="h4">management</span>:
+  <span class="h4">endpoints</span>:
+    <span class="h4">web</span>:
+      <span class="h4">exposure</span>:
+        <span class="h4">include</span>: <span class="str">health,info,metrics</span>
+
+<span class="cmt"># Dostępne endpointy:</span>
+<span class="h2">GET /actuator/health</span>
+<span class="cmt">→ {"status": "UP"}</span>
+<span class="h2">GET /actuator/metrics</span>
+<span class="h2">GET /actuator/info</span></pre>
+    </div>
+
+    <div class="code">
+      <div class="cbar"><div class="dots"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div></div><span>Powiadomienie na Slack</span></div>
+      <pre><span class="cmt"># W GitHub Actions — na końcu workflow</span>
+- <span class="h4">name</span>: <span class="str">Notify Slack on success</span>
+  <span class="h4">if</span>: <span class="str">success()</span>
+  <span class="h4">uses</span>: <span class="str">slackapi/slack-github-action@v1</span>
+  <span class="h4">with</span>:
+    <span class="h4">slack-bot-token</span>: <span class="str">${{ secrets.SLACK_TOKEN }}</span>
+    <span class="h4">channel-id</span>: <span class="str">deploys</span>
+    <span class="h4">slack-message</span>: |
+      <span class="str">✅ Deployed ${{ github.sha }}</span>
+      <span class="str">by ${{ github.actor }}</span>
+      <span class="str">https://myapp.com</span>
+
+- <span class="h4">name</span>: <span class="str">Notify Slack on failure</span>
+  <span class="h4">if</span>: <span class="str">failure()</span>
+  <span class="h4">uses</span>: <span class="str">slackapi/slack-github-action@v1</span>
+  <span class="h4">with</span>:
+    <span class="h4">slack-bot-token</span>: <span class="str">${{ secrets.SLACK_TOKEN }}</span>
+    <span class="h4">channel-id</span>: <span class="str">alerts</span>
+    <span class="h4">slack-message</span>: |
+      <span class="str">❌ DEPLOY FAILED!</span>
+      <span class="str">Branch: ${{ github.ref }}</span>
+      <span class="str">See: ${{ github.server_url }}/...</span></pre>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="card">
+        <div class="cl cb">📊 Co monitorować po deploymencie</div>
+        <table class="t">
+          <tr><th>Metryka</th><th>Co obserwujesz</th></tr>
+          <tr><td>HTTP 5xx rate</td><td>% błędów serwera — powinno być ~0%</td></tr>
+          <tr><td>Response time</td><td>P95/P99 latencja — czy deploy nie spowolnił</td></tr>
+          <tr><td>Error rate</td><td>Logi błędów — nowe exception po deploymencie?</td></tr>
+          <tr><td>CPU / RAM</td><td>Czy nowa wersja nie zużywa więcej zasobów</td></tr>
+          <tr><td>Health endpoint</td><td><code>/actuator/health</code> — czy aplikacja żyje</td></tr>
+        </table>
+      </div>
+
+      <div class="alert g">
+        <strong>Złota zasada: deploy z możliwością rollbacku w &lt;5 minut</strong>
+        Trzymaj poprzedni tag obrazu Docker. W razie problemów: <code>docker compose set image app=old_tag && docker compose up -d</code>. Nie kasuj poprzednich obrazów od razu po deploymencie — poczekaj 24h.
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <div class="cl cg">✅ Kompletny checklist CI/CD dla projektu</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:0">
+      <div style="padding:16px;border-right:1px solid var(--bd)">
+        <div style="font-family:'Azeret Mono',monospace;font-size:0.58rem;color:var(--mt);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px">CI Pipeline</div>
+        <div style="display:flex;flex-direction:column;gap:7px;font-family:'Azeret Mono',monospace;font-size:0.72rem;color:var(--tx2)">
+          <div>☐ Workflow uruchamia się na push do main</div>
+          <div>☐ Workflow uruchamia się na pull_request</div>
+          <div>☐ Cache zależności Maven/npm</div>
+          <div>☐ Testy unit i integracyjne uruchamiają się</div>
+          <div>☐ Pipeline zatrzymuje się przy błędzie testu</div>
+          <div>☐ Raport testów dostępny w Actions UI</div>
+          <div>☐ Code coverage sprawdzany (min 70%?)</div>
+        </div>
+      </div>
+      <div style="padding:16px;border-right:1px solid var(--bd)">
+        <div style="font-family:'Azeret Mono',monospace;font-size:0.58rem;color:var(--mt);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px">CD Pipeline</div>
+        <div style="display:flex;flex-direction:column;gap:7px;font-family:'Azeret Mono',monospace;font-size:0.72rem;color:var(--tx2)">
+          <div>☐ Docker build działa lokalnie</div>
+          <div>☐ Multi-stage Dockerfile (mały obraz)</div>
+          <div>☐ Obraz pushowany do rejestru z sha tagiem</div>
+          <div>☐ Deploy tylko po przejściu CI</div>
+          <div>☐ Health check po deploymencie</div>
+          <div>☐ Powiadomienie na Slack/email po deploy</div>
+          <div>☐ Powiadomienie przy deploy fail</div>
+        </div>
+      </div>
+      <div style="padding:16px">
+        <div style="font-family:'Azeret Mono',monospace;font-size:0.58rem;color:var(--mt);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px">Bezpieczeństwo</div>
+        <div style="display:flex;flex-direction:column;gap:7px;font-family:'Azeret Mono',monospace;font-size:0.72rem;color:var(--tx2)">
+          <div>☐ Żadnych sekretów w kodzie ani YAML</div>
+          <div>☐ .env w .gitignore</div>
+          <div>☐ SSH key do VPS w GitHub Secrets</div>
+          <div>☐ App container NIE działa jako root</div>
+          <div>☐ Port bazy danych tylko na 127.0.0.1</div>
+          <div>☐ Stare obrazy Docker czyszczone</div>
+          <div>☐ Poprzedni tag zachowany (rollback)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+</body>
+</html>

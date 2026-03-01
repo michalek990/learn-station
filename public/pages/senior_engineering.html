@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Senior Engineering Practices — Kompletna Wiedza</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ffffff;--s1:#f8f9fa;--s2:#f1f3f5;--s3:#e9ecef;
+  --bd:#dee2e6;--bd2:#ced4da;--tx:#1a1a2e;--tx2:#495057;--mt:#6c757d;
+  --k1:#f97316;--k2:#ea6c0a;
+  --green:#16a34a;--teal:#0d9488;--violet:#7c3aed;--rose:#e11d48;
+  --amber:#d97706;--pink:#c026d3;--sky:#0284c7;--orange:#ea580c;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;line-height:1.65;overflow-x:hidden}
+.back{position:fixed;top:22px;left:22px;z-index:9999;background:rgba(255,255,255,.95);backdrop-filter:blur(14px);border:1px solid var(--bd2);border-radius:40px;padding:10px 20px;display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--tx2);font-family:'IBM Plex Mono',monospace;font-size:.72rem;font-weight:500;letter-spacing:1px;transition:all .25s}
+.back:hover{color:var(--k1);border-color:var(--k1)}
+.hdr{min-height:500px;padding:110px 80px 80px;position:relative;overflow:hidden;display:flex;align-items:flex-end}
+.hdr-bg{position:absolute;inset:0;background:var(--s1)}
+.hdr-bg::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 55% at 3% 100%,rgba(45,212,191,.12) 0%,transparent 55%),radial-gradient(ellipse 50% 65% at 97% 5%,rgba(167,139,250,.09) 0%,transparent 50%),radial-gradient(ellipse 45% 50% at 50% 50%,rgba(74,222,128,.04) 0%,transparent 60%)}
+.hdr-grid{position:absolute;inset:0;background-image:linear-gradient(var(--bd) 1px,transparent 1px),linear-gradient(90deg,var(--bd) 1px,transparent 1px);background-size:48px 48px;opacity:.13;mask-image:radial-gradient(ellipse 85% 90% at 50% 50%,black,transparent)}
+.hdr-content{position:relative;max-width:1400px;width:100%}
+.hdr-tier{display:inline-flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:.65rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--k1);margin-bottom:28px;padding:7px 16px;border:1px solid rgba(45,212,191,.35);border-radius:4px;background:rgba(45,212,191,.07)}
+.tier-dot{width:6px;height:6px;border-radius:50%;background:var(--k1);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+h1{font-size:clamp(2.6rem,6vw,5.5rem);font-weight:800;line-height:.9;letter-spacing:-4px;margin-bottom:28px}
+h1 em{font-style:normal;background:linear-gradient(135deg,var(--teal),var(--violet));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+h1 small{display:block;font-size:.36em;letter-spacing:-1px;color:var(--tx2);font-weight:500;margin-top:14px;-webkit-text-fill-color:var(--tx2)}
+.hdr-desc{font-size:1rem;color:var(--tx2);max-width:680px;line-height:1.9}
+.hdr-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.chip{font-family:'IBM Plex Mono',monospace;font-size:.63rem;font-weight:600;letter-spacing:.5px;padding:5px 12px;border-radius:3px;border:1px solid}
+.ck{color:var(--k1);border-color:rgba(45,212,191,.4);background:rgba(45,212,191,.07)}
+.cg{color:var(--green);border-color:rgba(74,222,128,.35);background:rgba(74,222,128,.05)}
+.ct{color:var(--teal);border-color:rgba(45,212,191,.35);background:rgba(45,212,191,.05)}
+.cv{color:var(--violet);border-color:rgba(167,139,250,.35);background:rgba(167,139,250,.07)}
+.cr{color:var(--rose);border-color:rgba(251,113,133,.35);background:rgba(251,113,133,.05)}
+.ca{color:var(--amber);border-color:rgba(251,191,36,.35);background:rgba(251,191,36,.05)}
+.co{color:var(--orange);border-color:rgba(251,146,60,.35);background:rgba(251,146,60,.05)}
+.cs{color:var(--sky);border-color:rgba(56,189,248,.35);background:rgba(56,189,248,.05)}
+.nav{position:sticky;top:0;z-index:300;background:rgba(255,255,255,.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--bd);display:flex;overflow-x:auto;scrollbar-width:none;padding:0 80px}
+.nav::-webkit-scrollbar{display:none}
+.nav-a{color:var(--mt);text-decoration:none;font-family:'IBM Plex Mono',monospace;font-size:.63rem;font-weight:600;letter-spacing:.5px;padding:14px 12px;white-space:nowrap;border-bottom:2px solid transparent;transition:all .18s}
+.nav-a:hover{color:var(--k1);border-bottom-color:var(--k1)}
+.main{max-width:1400px;margin:0 auto;padding:80px 24px 160px}
+.chapter{margin-bottom:100px;animation:fadeUp .5s ease backwards}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.chapter:nth-child(1){animation-delay:.04s}.chapter:nth-child(2){animation-delay:.08s}
+.chapter:nth-child(3){animation-delay:.12s}.chapter:nth-child(4){animation-delay:.16s}
+.chapter:nth-child(5){animation-delay:.20s}.chapter:nth-child(6){animation-delay:.24s}
+.chapter:nth-child(7){animation-delay:.28s}
+.ch-head{display:flex;align-items:flex-start;gap:22px;margin-bottom:36px;padding-bottom:28px;border-bottom:1px solid var(--bd)}
+.ch-num{font-family:'IBM Plex Mono',monospace;font-size:.62rem;font-weight:700;letter-spacing:3px;color:var(--mt);padding-top:6px;white-space:nowrap}
+.ch-info{flex:1}
+.ch-cat{font-family:'IBM Plex Mono',monospace;font-size:.58rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:6px}
+.ch-title{font-size:1.9rem;font-weight:800;letter-spacing:-1px;line-height:1.1;margin-bottom:10px}
+.ch-desc{font-size:.9rem;color:var(--tx2);max-width:840px;line-height:1.9}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:1100px){.g4{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:900px){.g2,.g3,.g4{grid-template-columns:1fr}.hdr{padding:80px 24px 56px}.nav{padding:0 16px}h1{font-size:2.6rem;letter-spacing:-2px}}
+.card{background:var(--s1);border:1px solid var(--bd);border-radius:8px;overflow:hidden;transition:border-color .2s,box-shadow .2s}
+.card:hover{border-color:var(--bd2);box-shadow:0 6px 28px rgba(0,0,0,.5)}
+.card-h{padding:11px 18px;font-family:'IBM Plex Mono',monospace;font-size:.66rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:8px}
+.card-b{padding:18px}
+.code{background:#f4f4f5;border:1px solid var(--bd);border-radius:8px;overflow:hidden}
+.cbar{background:var(--s1);border-bottom:1px solid var(--bd);padding:9px 16px;font-family:'IBM Plex Mono',monospace;font-size:.64rem;color:var(--mt);display:flex;align-items:center;gap:7px}
+.fdot{width:7px;height:7px;border-radius:50%}
+pre{padding:20px;font-family:'IBM Plex Mono',monospace;font-size:.77rem;line-height:1.75;overflow-x:auto;color:#374151}
+.kw{color:#c678dd}.cls{color:#e5c07b}.fn{color:#61afef}.str{color:#98c379}
+.cm{color:#1e3040;font-style:italic}.num{color:#d19a66}.ann{color:#e06c75}
+.prop{color:#5eead4}
+.alert{padding:16px 20px;border-radius:6px;border-left:3px solid;font-size:.87rem;line-height:1.85;color:var(--tx2)}
+.alert strong{color:var(--tx)}
+.alert-label{font-family:'IBM Plex Mono',monospace;font-size:.58rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;display:block;margin-bottom:6px}
+.al-k{background:rgba(45,212,191,.05);border-color:var(--k1)}.al-k .alert-label{color:var(--k1)}
+.al-green{background:rgba(74,222,128,.05);border-color:var(--green)}.al-green .alert-label{color:var(--green)}
+.al-rose{background:rgba(251,113,133,.05);border-color:var(--rose)}.al-rose .alert-label{color:var(--rose)}
+.al-violet{background:rgba(167,139,250,.05);border-color:var(--violet)}.al-violet .alert-label{color:var(--violet)}
+.al-teal{background:rgba(45,212,191,.05);border-color:var(--teal)}.al-teal .alert-label{color:var(--teal)}
+.al-amber{background:rgba(251,191,36,.05);border-color:var(--amber)}.al-amber .alert-label{color:var(--amber)}
+.al-orange{background:rgba(251,146,60,.05);border-color:var(--orange)}.al-orange .alert-label{color:var(--orange)}
+.al-sky{background:rgba(56,189,248,.05);border-color:var(--sky)}.al-sky .alert-label{color:var(--sky)}
+.tbl{width:100%;border-collapse:collapse;font-size:.84rem}
+.tbl th{background:var(--s2);color:var(--tx2);font-family:'IBM Plex Mono',monospace;font-size:.63rem;letter-spacing:2px;text-transform:uppercase;font-weight:700;padding:11px 16px;text-align:left;border-bottom:1px solid var(--bd)}
+.tbl td{padding:11px 16px;border-bottom:1px solid var(--bd);color:var(--tx2);vertical-align:top;line-height:1.75}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:var(--s2);color:var(--tx)}
+.tbl code{font-family:'IBM Plex Mono',monospace;font-size:.76rem;color:var(--k2);background:rgba(45,212,191,.1);padding:2px 7px;border-radius:3px}
+.ritem{display:flex;gap:16px;padding:12px 0;border-bottom:1px solid var(--bd);align-items:flex-start}
+.ritem:last-child{border-bottom:none}
+.ritem-key{font-family:'IBM Plex Mono',monospace;font-size:.76rem;white-space:nowrap;padding-top:2px;min-width:180px;flex-shrink:0}
+.ritem-val{font-size:.85rem;color:var(--tx2);line-height:1.75}
+.ritem-val code{font-family:'IBM Plex Mono',monospace;font-size:.76rem;color:var(--k2);background:rgba(45,212,191,.1);padding:1px 6px;border-radius:3px}
+.ritem-val strong{color:var(--tx)}
+.strip{border:1px solid var(--bd);border-radius:8px;padding:18px 22px;font-size:.87rem;color:var(--tx2);line-height:1.85;display:flex;gap:16px;align-items:flex-start}
+.strip-icon{font-size:1.3rem;flex-shrink:0;padding-top:2px}
+.strip strong{color:var(--tx)}
+.gap8{margin-top:8px}.gap12{margin-top:12px}.gap16{margin-top:16px}.gap24{margin-top:24px}
+.footer{border-top:1px solid var(--bd);background:var(--s1);padding:36px 80px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;font-family:'IBM Plex Mono',monospace;font-size:.68rem;color:var(--mt)}
+.footer-title{color:var(--k1);font-weight:700}
+/* custom */
+.severity{display:inline-flex;align-items:center;gap:5px;font-family:'IBM Plex Mono',monospace;font-size:.62rem;font-weight:700;padding:2px 8px;border-radius:3px}
+.sev-blocker{background:rgba(251,113,133,.15);color:var(--rose);border:1px solid rgba(251,113,133,.4)}
+.sev-major{background:rgba(251,191,36,.12);color:var(--amber);border:1px solid rgba(251,191,36,.35)}
+.sev-minor{background:rgba(56,189,248,.1);color:var(--sky);border:1px solid rgba(56,189,248,.3)}
+.sev-nit{background:rgba(74,222,128,.1);color:var(--green);border:1px solid rgba(74,222,128,.3)}
+.adr-block{background:var(--s1);border:1px solid var(--bd);border-radius:8px;overflow:hidden}
+.adr-header{background:var(--s2);padding:12px 18px;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center}
+.adr-status{font-family:'IBM Plex Mono',monospace;font-size:.6rem;font-weight:700;letter-spacing:2px;padding:3px 10px;border-radius:3px}
+.adr-status.accepted{background:rgba(74,222,128,.12);color:var(--green);border:1px solid rgba(74,222,128,.3)}
+.adr-status.proposed{background:rgba(251,191,36,.1);color:var(--amber);border:1px solid rgba(251,191,36,.3)}
+.adr-status.deprecated{background:rgba(251,113,133,.1);color:var(--rose);border:1px solid rgba(251,113,133,.3)}
+.adr-body{padding:18px;font-size:.84rem;color:var(--tx2);line-height:1.85}
+.adr-section{font-family:'IBM Plex Mono',monospace;font-size:.6rem;font-weight:700;letter-spacing:2px;color:var(--k1);text-transform:uppercase;margin:12px 0 4px}
+.debt-badge{display:inline-flex;align-items:center;gap:4px;font-family:'IBM Plex Mono',monospace;font-size:.62rem;font-weight:700;padding:2px 8px;border-radius:20px}
+.db-high{background:rgba(251,113,133,.15);color:var(--rose)}
+.db-med{background:rgba(251,191,36,.12);color:var(--amber)}
+.db-low{background:rgba(74,222,128,.1);color:var(--green)}
+.mentor-card{background:var(--s2);border:1px solid var(--bd);border-radius:6px;padding:14px 16px;font-size:.84rem;color:var(--tx2);line-height:1.75}
+.mentor-card strong{color:var(--tx)}
+.mentor-card .label{font-family:'IBM Plex Mono',monospace;font-size:.6rem;font-weight:700;letter-spacing:2px;color:var(--k1);display:block;margin-bottom:5px}
+.framework-box{background:var(--s2);border:1px solid var(--bd2);border-radius:6px;padding:14px 18px}
+.fw-title{font-family:'IBM Plex Mono',monospace;font-size:.65rem;font-weight:700;letter-spacing:2px;margin-bottom:10px}
+.fw-step{display:flex;gap:12px;padding:8px 0;border-bottom:1px solid var(--bd);align-items:flex-start;font-size:.84rem;color:var(--tx2);line-height:1.7}
+.fw-step:last-child{border-bottom:none}
+.fw-n{font-family:'IBM Plex Mono',monospace;font-size:.7rem;font-weight:700;min-width:22px;padding-top:2px}
+.fw-step strong{color:var(--tx)}
+</style>
+</head>
+<body>
+<a class="back" href="#">← MENU</a>
+<header class="hdr">
+  <div class="hdr-bg"></div><div class="hdr-grid"></div>
+  <div class="hdr-content">
+    <div class="hdr-tier"><div class="tier-dot"></div> Senior Engineering · Leadership · Craftsmanship</div>
+    <h1><em>Senior Engineering</em><small>Code Review · Tech Debt · Refactoring · Mentoring · Architektura · ADR</small></h1>
+    <p class="hdr-desc">Umiejętności które odróżniają seniora od mida — nie tylko kod, ale cały cykl jakości. Jak prowadzić skuteczny code review, zarządzać długiem technicznym, refaktoryzować bezpiecznie, mentorować innych i podejmować decyzje architektoniczne które przetrwają lata.</p>
+    <div class="hdr-chips">
+      <span class="chip ck">● Code Review</span>
+      <span class="chip ca">Tech Debt</span>
+      <span class="chip cv">Refactoring</span>
+      <span class="chip cg">Mentoring</span>
+      <span class="chip cs">Decyzje Arch.</span>
+      <span class="chip cr">ADR</span>
+    </div>
+  </div>
+</header>
+<nav class="nav">
+  <a class="nav-a" href="#code-review">Code Review</a>
+  <a class="nav-a" href="#tech-debt">Tech Debt</a>
+  <a class="nav-a" href="#refactoring">Refactoring</a>
+  <a class="nav-a" href="#mentoring">Mentoring</a>
+  <a class="nav-a" href="#arch-decisions">Decyzje Arch.</a>
+  <a class="nav-a" href="#adr">ADR</a>
+  <a class="nav-a" href="#documentation">Dokumentacja</a>
+</nav>
+<main class="main">
+
+<!-- ══ 01 CODE REVIEW ══ -->
+<section class="chapter" id="code-review">
+  <div class="ch-head">
+    <div class="ch-num">01 / 07</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--k1)">Code Review</div>
+      <div class="ch-title">Code Review — jak robić go dobrze jako senior</div>
+      <div class="ch-desc">Code review to nie tylko "szukanie bugów" — to narzędzie transferu wiedzy, utrzymania spójności architektury i podnoszenia jakości całego zespołu. Senior prowadzi review które uczy, nie demotywuje, i skupia się na tym co ważne.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div>
+      <div class="card">
+        <div class="card-h" style="color:var(--k1)">🎯 Co sprawdzać — priorytety</div>
+        <div class="card-b">
+          <div class="ritem">
+            <div class="ritem-key" style="color:var(--rose)"><span class="severity sev-blocker">BLOCKER</span></div>
+            <div class="ritem-val"><strong>Bezpieczeństwo</strong> — SQL injection, XSS, hardcoded secrets, brak autoryzacji, wrażliwe dane w logach, nieprawidłowe uprawnienia. <strong>Poprawność</strong> — race conditions, NPE, off-by-one, utrata danych, złe warunki brzegowe. <strong>Data integrity</strong> — brak transakcji gdzie potrzeba, błędna logika biznesowa.</div>
+          </div>
+          <div class="ritem">
+            <div class="ritem-key" style="color:var(--amber)"><span class="severity sev-major">MAJOR</span></div>
+            <div class="ritem-val"><strong>Architektura</strong> — naruszenie granic modułów, tight coupling, brak abstrakcji tam gdzie potrzeba (lub niepotrzebna abstrakcja). <strong>Performance</strong> — N+1 queries, brak indeksów, zbędne alokacje w hot path, blokujące I/O. <strong>Testowalność</strong> — brak testów dla krytycznej logiki, testy które testują implementację nie zachowanie.</div>
+          </div>
+          <div class="ritem">
+            <div class="ritem-key" style="color:var(--sky)"><span class="severity sev-minor">MINOR</span></div>
+            <div class="ritem-val"><strong>Czytelność</strong> — niejasne nazwy, zbyt długie metody (&gt;20 linii), deep nesting (&gt;3 poziomy), brak komentarzy do nieoczywistej logiki. <strong>Spójność</strong> — inne konwencje niż reszta projektu, własne rozwiązania gdy istnieje firmowy standard.</div>
+          </div>
+          <div class="ritem">
+            <div class="ritem-key" style="color:var(--green)"><span class="severity sev-nit">NIT</span></div>
+            <div class="ritem-val">Styl, formatowanie (jeśli linter nie pilnuje), drobne preferencje. Wyraźnie oznaczaj jako "nit:" — autor wie że może zignorować. Nie blokuj PR z powodu nitów.</div>
+          </div>
+        </div>
+      </div>
+      <div class="gap12"></div>
+      <div class="alert al-green">
+        <span class="alert-label">Złota zasada — "why" nie "what"</span>
+        Zły komentarz: <em>"Zmień to na HashMap"</em><br>
+        Dobry komentarz: <em>"Rozważ HashMap zamiast ArrayList — wyszukiwanie po userId będzie O(1) zamiast O(n). Przy 10k userów to może być odczuwalne."</em><br><br>
+        Zawsze tłumacz <strong>dlaczego</strong> coś jest problemem i co zyskujemy zmianą. Review to mentoring przy skali.
+      </div>
+    </div>
+    <div>
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--k1)"></div> Przykłady dobrych i złych komentarzy review</div>
+        <pre><span class="cm">// ════════════════════════════════════════════════════</span>
+<span class="cm">// ❌ ŹLE — ocenianie, niejasne, demotywujące</span>
+<span class="cm">// ════════════════════════════════════════════════════</span>
+
+<span class="cm">// "To jest złe."</span>
+<span class="cm">// "Dlaczego tak to napisałeś?"</span>
+<span class="cm">// "Przepisz to."</span>
+<span class="cm">// "Nikt tak nie robi."</span>
+<span class="cm">// "Senior by tak nie napisał."</span>
+
+<span class="cm">// ════════════════════════════════════════════════════</span>
+<span class="cm">// ✅ DOBRZE — konkretne, edukacyjne, z kontekstem</span>
+<span class="cm">// ════════════════════════════════════════════════════</span>
+
+<span class="cm">// BLOCKER: ten endpoint nie sprawdza czy zalogowany user</span>
+<span class="cm">// jest właścicielem zasobu — każdy może edytować cudzy profil.</span>
+<span class="cm">// Dodaj: if (!resource.getOwnerId().equals(currentUser.getId()))</span>
+<span class="cm">//   throw new ForbiddenException()</span>
+
+<span class="cm">// MAJOR: N+1 query problem. Dla każdego order ładujesz</span>
+<span class="cm">// produkty osobnym zapytaniem → przy 100 orderach = 101 queries.</span>
+<span class="cm">// Zamiast tego użyj JOIN lub @BatchSize(size=50) na kolekcji.</span>
+
+<span class="cm">// MINOR: nazwa `data` jest zbyt ogólna — w tym kontekście</span>
+<span class="cm">// to lista zamówień. Proponuję `pendingOrders` lub `orderBatch`.</span>
+
+<span class="cm">// NIT: możesz użyć Optional.orElseThrow() zamiast</span>
+<span class="cm">// if (x == null) throw — bardziej idiomatic Java.</span>
+
+<span class="cm">// ✅ Pochwała — też ważna!</span>
+<span class="cm">// Świetne podejście z event sourcing tutaj — uniknąłeś</span>
+<span class="cm">// problemu lost update przy concurrent edits. 👍</span>
+
+<span class="cm">// ════════════════════════════════════════════════════</span>
+<span class="cm">// Pytania zamiast nakazów gdy masz wątpliwości:</span>
+<span class="cm">// ════════════════════════════════════════════════════</span>
+
+<span class="cm">// "Co się stanie gdy userId będzie null tutaj?"</span>
+<span class="cm">// "Czy rozważałeś przypadek gdy lista jest pusta?"</span>
+<span class="cm">// "Mam pytanie: czy intentionally nie obsługujemy</span>
+<span class="cm">//  tutaj wyjątku? Czy to może prowadzić do silent failure?"</span></pre>
+      </div>
+      <div class="gap12"></div>
+      <div class="card">
+        <div class="card-h" style="color:var(--k1)">⏱️ Proces i dobre praktyki</div>
+        <div class="card-b" style="font-size:.83rem;color:var(--tx2);line-height:1.85">
+          <table class="tbl">
+            <tr><th>Praktyka</th><th>Dlaczego</th></tr>
+            <tr><td><strong>PR &lt; 400 linii</strong></td><td>Powyżej tego reviewer traci skupienie — efektywność spada do 0. Podziel na mniejsze PRy.</td></tr>
+            <tr><td><strong>Review w ciągu 24h</strong></td><td>Context switching jest drogi. Im szybciej feedback, tym tańsza iteracja.</td></tr>
+            <tr><td><strong>Synchronous dla >10 komentarzy</strong></td><td>Wiele komentarzy = nieporozumienie na poziomie podejścia. Zadzwoń, nie pisz 20 komentarzy.</td></tr>
+            <tr><td><strong>Oznaczaj blokery wyraźnie</strong></td><td>Autor musi wiedzieć co <em>musi</em> zmienić vs co to propozycja.</td></tr>
+            <tr><td><strong>Rozróżniaj opinie od faktów</strong></td><td>"Moim zdaniem lepsza byłaby X" vs "Brak obsługi błędu jest błędem".</td></tr>
+            <tr><td><strong>Approve z zastrzeżeniami</strong></td><td>Jeśli tylko masz nitpicki — zatwierdź i zostaw komentarz, nie blokuj.</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="gap16"></div>
+  <div class="g3">
+    <div class="card">
+      <div class="card-h" style="color:var(--k1)">👁️ Czego NIE sprawdzać w review</div>
+      <div class="card-b" style="font-size:.83rem;color:var(--tx2);line-height:1.75">
+        <p><strong style="color:var(--rose)">Formatowanie kodu</strong> — od tego jest linter (Checkstyle, Spotless, Prettier). Nie trać czasu seniora na wcięcia.</p>
+        <p style="margin-top:8px"><strong style="color:var(--rose)">Styl osobisty</strong> — jeśli działa i jest czytelne, nie narzucaj własnych preferencji jako standardu.</p>
+        <p style="margin-top:8px"><strong style="color:var(--rose)">Zbyt szczegółowe implementacyjne decyzje</strong> — jeśli cel jest osiągnięty i kod jest czytelny, autor mógł mieć powód.</p>
+        <p style="margin-top:8px"><strong style="color:var(--rose)">Przerabianie całego PRa</strong> — scope review = scope PRa. Nie żądaj refaktorów spoza zakresu zmiany.</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--k1)">🔧 Automatyzacja — co delegate do narzędzi</div>
+      <div class="card-b" style="font-size:.83rem;color:var(--tx2);line-height:1.75">
+        <p><strong style="color:var(--green)">SonarQube / SonarCloud</strong> — code smells, pokrycie testami, duplikacja, security hotspots. Blokuj merge jeśli quality gate nie przechodzi.</p>
+        <p style="margin-top:8px"><strong style="color:var(--green)">SpotBugs / PMD</strong> — statyczna analiza dla Java: null pointer, resource leaks, concurrency bugs.</p>
+        <p style="margin-top:8px"><strong style="color:var(--green)">Checkstyle / Spotless</strong> — formatowanie i konwencje kodu. Zero dyskusji o stylu.</p>
+        <p style="margin-top:8px"><strong style="color:var(--green)">OWASP Dependency-Check / Dependabot</strong> — znane CVE w zależnościach. Automatyczne alerty i PRy.</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--k1)">🧠 Psychologia review</div>
+      <div class="card-b" style="font-size:.83rem;color:var(--tx2);line-height:1.75">
+        <p><strong>Krytykuj kod, nie autora</strong> — "ten kod nie obsługuje X" zamiast "nie obsłużyłeś X".</p>
+        <p style="margin-top:8px"><strong>Dawaj komplementy</strong> — szczególnie juniorom. Pozytywne wzmocnienie działa. "Dobre podejście z X".</p>
+        <p style="margin-top:8px"><strong>Traktuj własne sugestie jako opcje</strong> — "rozważ", "co myślisz o", "możliwe jest też" zamiast "zmień na".</p>
+        <p style="margin-top:8px"><strong>Bądź otwarty na odpowiedź</strong> — autor może znać kontekst który Ty nie znasz. Dyskusja &gt; dyktowanie.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 02 TECH DEBT ══ -->
+<section class="chapter" id="tech-debt">
+  <div class="ch-head">
+    <div class="ch-num">02 / 07</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--amber)">Tech Debt</div>
+      <div class="ch-title">Dług techniczny — identyfikacja, kategoryzacja, zarządzanie</div>
+      <div class="ch-desc">Technical debt to nieunikniony koszt decyzji podjętych pod presją czasu lub niewiedzą. Problemem nie jest istnienie długu — problem to <em>niezarządzany</em> dług który rośnie compound interest. Senior potrafi go mierzyć, priorytetyzować i "sprzedać" go biznesowi.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-h" style="color:var(--amber)">📊 Kwadrant długu technicznego (Fowler)</div>
+      <div class="card-b" style="font-size:.83rem">
+        <table class="tbl">
+          <tr><th>→</th><th>Reckless (nierozważny)</th><th>Prudent (roztropny)</th></tr>
+          <tr>
+            <td><strong>Deliberate (celowy)</strong></td>
+            <td style="color:var(--rose)">"Nie mamy czasu na design" — najgorszy typ. Świadoma rezygnacja z jakości bez planu spłaty.</td>
+            <td style="color:var(--amber)">"Shipmujemy teraz, refaktorujemy potem" — akceptowalny gdy jest realny plan i termin.</td>
+          </tr>
+          <tr>
+            <td><strong>Inadvertent (nieświadomy)</strong></td>
+            <td style="color:var(--rose)">"Co to są warstwy?" — brak wiedzy i refleksji. Edukacja i review pomagają.</td>
+            <td style="color:var(--green)">"Teraz wiemy lepiej jak to zrobić" — naturalny efekt uczenia się. Akceptowalny.</td>
+          </tr>
+        </table>
+        <p style="margin-top:12px;font-size:.82rem;color:var(--tx2)">Cel: minimalizuj Reckless/Deliberate. Akceptuj Prudent/Deliberate krótkoterminowo z jawnym <strong>TODO + ticket</strong>. Akceptuj Prudent/Inadvertent — to naturalna ewolucja.</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--amber)">🔍 Jak identyfikować i mierzyć</div>
+      <div class="card-b" style="font-size:.83rem;color:var(--tx2);line-height:1.85">
+        <div class="ritem"><div class="ritem-key" style="color:var(--amber)">SonarQube Metrics</div><div class="ritem-val">Technical Debt Ratio (%), Code Smell count, Coverage %, Duplication %. Skonfiguruj Quality Gate — automatyczne ostrzeżenia przy regresji.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--amber)">Change Failure Rate</div><div class="ritem-val">Jak często deploy prowadzi do incydentów lub hotfixów? Wysoki rate = dług w testach, brak observability lub krucha architektura.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--amber)">Cognitive Complexity</div><div class="ritem-val">Metryka SonarQube — ile wysiłku żeby zrozumieć metodę. &gt;15 = problem. Koreluje z liczbą bugów lepiej niż cyclomatic complexity.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--amber)">DORA Metrics</div><div class="ritem-val">Lead time for changes, Deployment frequency, MTTR, Change failure rate — pośrednio mierzą jakość i dług.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--amber)">Hotspot analysis</div><div class="ritem-val"><code>git log --format='%H %s' -- path/to/file | wc -l</code> — pliki z największą liczbą commitów = hotspoty = wysoki koszt długu.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="gap16"></div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-h" style="color:var(--amber)">💰 Jak "sprzedać" dług biznesowi</div>
+      <div class="card-b" style="font-size:.83rem;color:var(--tx2);line-height:1.85">
+        <p>Biznes rozumie pieniądze i czas, nie "code smells". Tłumacz dług na język biznesu:</p>
+        <div class="gap8"></div>
+        <div style="background:var(--s2);border:1px solid var(--bd);border-radius:5px;padding:12px;font-size:.81rem">
+          <p style="color:var(--rose);font-weight:700;margin-bottom:6px">❌ Źle (technicznie):</p>
+          <p>"Mamy silnie sprzężony monolit z wysoką cyclomatic complexity i brak dependency injection w serwisach domenowych."</p>
+          <div class="gap8"></div>
+          <p style="color:var(--green);font-weight:700;margin-bottom:6px">✅ Dobrze (biznesowo):</p>
+          <p>"Każda nowa funkcja w module płatności zajmuje 3 sprinty zamiast 1, bo kod jest trudny do zmiany bez ryzyka regresji. Szacujemy że inwestycja 2 tygodni refactoringu zmniejszy czas dostarczenia feature'ów o 40% i liczbę bugów produkcyjnych o połowę."</p>
+        </div>
+        <div class="gap8"></div>
+        <p><strong style="color:var(--tx)">Techniki argumentacji:</strong></p>
+        <p>• <strong>Velocity chart</strong> — pokaż jak velocity spada z kwartału na kwartał przez dług</p>
+        <p>• <strong>Incident cost</strong> — policz koszt ostatnich 3 incydentów spowodowanych długiem</p>
+        <p>• <strong>Feature lead time trend</strong> — podobne feature'y zajmują coraz więcej czasu</p>
+        <p>• <strong>Onboarding time</strong> — jak długo trwa wdrożenie nowego dewelopera</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--amber)">🗓️ Strategie spłaty długu</div>
+      <div class="card-b" style="font-size:.83rem;color:var(--tx2);line-height:1.85">
+        <div class="ritem"><div class="ritem-key" style="color:var(--amber)">Boy Scout Rule</div><div class="ritem-val">"Zostaw obóz czystszym niż go zastałeś." Przy każdym dotyku pliku — małe poprawki: rename, extract method, usuń dead code. Dług spada organicznie bez dedykowanego sprintu.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--amber)">20% rule</div><div class="ritem-val">Rezerwuj 20% capacity sprintu na dług techniczny. Stała pozycja w definicji sprintu. Biznes planuje z 80% feature capacity.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--amber)">Debt Sprint</div><div class="ritem-val">Co N sprintów — jeden dedykowany tech debt sprint. Transparentny dla biznesu. Ryzyko: traktowany jako "opcja" do cięcia przy deadlines.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--amber)">Strangler Fig</div><div class="ritem-val">Nowe funkcje piszesz we właściwy sposób, stopniowo zastępując stary kod. Nie przepisujesz wszystkiego naraz — za duże ryzyko. Wzorzec Martina Fowlera.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--amber)">Opportunistic</div><div class="ritem-val">Spłacaj dług przy okazji related feature'ów — wychodzi naturalnie, minimalny friction z PM.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="gap12"></div>
+  <div class="alert al-amber">
+    <span class="alert-label">Priorytetyzacja — Impact vs Effort matrix</span>
+    Nie cały dług jest równy. Priorytetyzuj po: <strong>Frequency</strong> (jak często dotykamy tego kodu?) × <strong>Impact</strong> (jak bardzo spowalnia? ile bugów powoduje?) × <strong>Risk</strong> (czy jest niebezpieczny?). Dług w rzadko używanym module legacy który nikt nie dotyka = niski priorytet. Dług w module płatności który jest zmieniany co sprint = krytyczny priorytet. Użyj <strong>Tech Debt backlog</strong> — osobna lista z priorytetami, reviewed co kwartał z leadem technicznym.
+  </div>
+</section>
+
+<!-- ══ 03 REFACTORING ══ -->
+<section class="chapter" id="refactoring">
+  <div class="ch-head">
+    <div class="ch-num">03 / 07</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--violet)">Refactoring</div>
+      <div class="ch-title">Strategie refaktoryzacji — bezpiecznie, stopniowo, bez regresji</div>
+      <div class="ch-desc">Refactoring = zmiana struktury kodu bez zmiany jego zachowania. Kluczowe słowo: <strong>bez zmiany zachowania</strong>. Bezpieczny refactoring wymaga testów przed zmianą, małych kroków i weryfikacji na każdym etapie. Nie "przepisz wszystko" — to prawie zawsze błąd.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--violet)"></div> Kluczowe techniki refaktoryzacji — Java</div>
+      <pre><span class="cm">// ══ 1. EXTRACT METHOD — najczęstszy refactor ══════════════════</span>
+<span class="cm">// Przed: długa metoda robiąca zbyt wiele</span>
+<span class="kw">public void</span> <span class="fn">processOrder</span>(<span class="cls">Order</span> order) {
+    <span class="cm">// validate</span>
+    <span class="kw">if</span> (order.<span class="fn">getItems</span>().<span class="fn">isEmpty</span>()) <span class="kw">throw new</span> <span class="cls">IllegalArgumentException</span>();
+    <span class="kw">if</span> (order.<span class="fn">getCustomer</span>() == <span class="kw">null</span>) <span class="kw">throw new</span> <span class="cls">IllegalArgumentException</span>();
+    <span class="cm">// calculate total</span>
+    <span class="kw">double</span> total = <span class="num">0</span>;
+    <span class="kw">for</span> (<span class="cls">OrderItem</span> i : order.<span class="fn">getItems</span>()) total += i.<span class="fn">getPrice</span>() * i.<span class="fn">getQty</span>();
+    <span class="cm">// apply discount</span>
+    <span class="kw">if</span> (order.<span class="fn">getCustomer</span>().<span class="fn">isPremium</span>()) total *= <span class="num">0.9</span>;
+    <span class="cm">// save ... 30 more lines</span>
+}
+
+<span class="cm">// Po: czytelne, testowalne w izolacji</span>
+<span class="kw">public void</span> <span class="fn">processOrder</span>(<span class="cls">Order</span> order) {
+    <span class="fn">validateOrder</span>(order);
+    <span class="kw">double</span> total = <span class="fn">calculateTotal</span>(order);
+    <span class="fn">saveOrder</span>(order, total);
+}
+<span class="kw">private void</span> <span class="fn">validateOrder</span>(<span class="cls">Order</span> order) { ... }
+<span class="kw">private double</span> <span class="fn">calculateTotal</span>(<span class="cls">Order</span> order) { ... }
+
+<span class="cm">// ══ 2. STRANGLER FIG — stopniowe zastępowanie ════════════════</span>
+<span class="cm">// Nie przepisuj — owijaj i przekierowuj</span>
+<span class="kw">public class</span> <span class="cls">PaymentServiceFacade</span> {
+    <span class="kw">private final</span> <span class="cls">LegacyPaymentService</span> legacy;
+    <span class="kw">private final</span> <span class="cls">NewPaymentService</span> newService;
+    <span class="kw">private final</span> <span class="cls">FeatureFlags</span> flags;
+
+    <span class="kw">public</span> <span class="cls">PaymentResult</span> <span class="fn">processPayment</span>(<span class="cls">Payment</span> payment) {
+        <span class="kw">if</span> (flags.<span class="fn">isEnabled</span>(<span class="str">"new-payment-service"</span>)) {
+            <span class="kw">return</span> newService.<span class="fn">process</span>(payment);  <span class="cm">// nowy</span>
+        }
+        <span class="kw">return</span> legacy.<span class="fn">process</span>(payment);           <span class="cm">// stary</span>
+    }
+}
+<span class="cm">// Feature flag → stopniowe włączanie (1% → 10% → 100%)</span>
+<span class="cm">// Rollback w sekundy bez deployu</span>
+
+<span class="cm">// ══ 3. EXTRACT SERVICE — rozdzielenie odpowiedzialności ══════</span>
+<span class="cm">// Przed: serwis który robi za dużo (1000+ linii)</span>
+<span class="kw">public class</span> <span class="cls">UserService</span> {
+    <span class="cm">// logika rejestracji, autentykacji, profilu,</span>
+    <span class="cm">// wysyłania emaili, zarządzania rolami... ← BŁĄD SRP</span>
+}
+<span class="cm">// Po: rozdziel po domenach (Small Incremental Changes!)</span>
+<span class="kw">class</span> <span class="cls">UserRegistrationService</span> { ... }
+<span class="kw">class</span> <span class="cls">UserProfileService</span>      { ... }
+<span class="kw">class</span> <span class="cls">UserAuthService</span>         { ... }
+<span class="kw">class</span> <span class="cls">UserRoleService</span>         { ... }
+
+<span class="cm">// ══ 4. REPLACE CONDITIONAL WITH POLYMORPHISM ═════════════════</span>
+<span class="cm">// Przed: rozrastający się switch po typie</span>
+<span class="kw">double</span> <span class="fn">calculate</span>(<span class="cls">Employee</span> e) {
+    <span class="kw">return switch</span> (e.<span class="fn">getType</span>()) {
+        <span class="kw">case</span> ENGINEER  -> e.salary * 1.1;
+        <span class="kw">case</span> MANAGER   -> e.salary * 1.2 + bonus;
+        <span class="kw">case</span> DIRECTOR  -> e.salary * 1.5 + bonus + stock;
+    };
+}
+<span class="cm">// Po: każdy typ odpowiada za siebie</span>
+<span class="kw">interface</span> <span class="ifc">Employee</span> { <span class="kw">double</span> <span class="fn">calculatePay</span>(); }
+<span class="kw">class</span> <span class="cls">Engineer</span>  <span class="kw">implements</span> <span class="ifc">Employee</span> { ... }
+<span class="kw">class</span> <span class="cls">Manager</span>   <span class="kw">implements</span> <span class="ifc">Employee</span> { ... }
+<span class="cm">// Dodanie nowego typu = nowa klasa, bez modyfikacji istniejących (OCP)</span></pre>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-h" style="color:var(--violet)">🪜 Bezpieczny proces refaktoringu</div>
+        <div class="card-b">
+          <div class="framework-box">
+            <div class="fw-title" style="color:var(--violet)">REFACTORING CHECKLIST</div>
+            <div class="fw-step"><div class="fw-n" style="color:var(--violet)">01</div><div><strong>Napisz testy PRZED zmianą</strong> — jeśli nie ma testów, napisz characterization tests (opisują obecne zachowanie, nie pożądane). To siatka bezpieczeństwa dla refactoringu.</div></div>
+            <div class="fw-step"><div class="fw-n" style="color:var(--violet)">02</div><div><strong>Małe, atomowe kroki</strong> — każdy krok = jeden commit. "Extract method" to jeden commit. Każdy krok musi przejść testy. Nie łącz refactoringu z bugfixami — osobny PR.</div></div>
+            <div class="fw-step"><div class="fw-n" style="color:var(--violet)">03</div><div><strong>Jeden typ refactoru na raz</strong> — nie rób rename + extract + move jednocześnie. Przy błędzie nie wiesz co go spowodowało.</div></div>
+            <div class="fw-step"><div class="fw-n" style="color:var(--violet)">04</div><div><strong>Feature flag dla dużych zmian</strong> — Strangler Fig pattern. Nowy kod obok starego, przełącznik feature flag. Bezpieczny rollback.</div></div>
+            <div class="fw-step"><div class="fw-n" style="color:var(--violet)">05</div><div><strong>Refactoring ≠ nowe feature'y</strong> — absolutnie separuj. PR refactoringowy zawiera ZERO nowej funkcjonalności. Ułatwia review i bisectowanie błędów.</div></div>
+            <div class="fw-step"><div class="fw-n" style="color:var(--violet)">06</div><div><strong>Zdefiniuj "done"</strong> — jaki jest cel? Lepsza testowalność? Szybsze zmiany? Bez celu refactoring nigdy się nie kończy i rośnie w scope.</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="gap12"></div>
+      <div class="alert al-rose">
+        <span class="alert-label">Największy błąd — "Big Bang Rewrite"</span>
+        "Przepiszemy wszystko od nowa w 3 miesiące" — to prawie zawsze katastrofa. Nowy kod ma własne bugi. Stary kod ma utajone reguły biznesowe których nikt nie pamięta. Przez 3 miesiące produkt stoi. Po 3 miesiącach jest 6 miesięcy opóźnienia. <strong>Joel Spolsky: "Things You Should Never Do"</strong>. Zamiast tego: Strangler Fig, stopniowe zastępowanie, migration scripts. Wyjątek: naprawdę martwy kod legacy który nie jest aktywnie rozwijany i masz pełne zrozumienie wymagań.
+      </div>
+      <div class="gap12"></div>
+      <div class="card">
+        <div class="card-h" style="color:var(--violet)">📚 Code Smells → technika refactoru</div>
+        <div class="card-b" style="font-size:.84rem">
+          <table class="tbl">
+            <tr><th>Code Smell</th><th>Technika</th></tr>
+            <tr><td>Long Method (&gt;20 linii)</td><td>Extract Method</td></tr>
+            <tr><td>God Class (1000+ linii)</td><td>Extract Class, Move Method</td></tr>
+            <tr><td>Duplicate Code</td><td>Extract Method/Superclass, Template Method</td></tr>
+            <tr><td>Long Parameter List (&gt;3-4)</td><td>Introduce Parameter Object, Builder</td></tr>
+            <tr><td>Switch Statement</td><td>Replace Conditional with Polymorphism</td></tr>
+            <tr><td>Feature Envy (metoda używa głównie pól innej klasy)</td><td>Move Method</td></tr>
+            <tr><td>Data Clumps (te same parametry razem)</td><td>Extract Class (ValueObject)</td></tr>
+            <tr><td>Primitive Obsession</td><td>Replace Primitive with Object</td></tr>
+            <tr><td>Dead Code</td><td>Delete (z odwagą — git pamięta)</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 04 MENTORING ══ -->
+<section class="chapter" id="mentoring">
+  <div class="ch-head">
+    <div class="ch-num">04 / 07</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--green)">Mentoring</div>
+      <div class="ch-title">Mentoring — jak efektywnie rozwijać innych developerów</div>
+      <div class="ch-desc">Mentoring to jeden z największych <strong>multiplicatorów</strong> wartości seniora. Zamiast robić rzeczy sam — uczysz innych jak je robić. Senior który efektywnie mentoruje = 3x developer. Kluczowe: dawaj zadania z "productive struggle", nie dawaj gotowych odpowiedzi zbyt szybko.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-h" style="color:var(--green)">🌱 Framework mentoringu — od nowicjusza do seniora</div>
+      <div class="card-b" style="font-size:.83rem;color:var(--tx2)">
+        <div style="background:var(--s2);border:1px solid var(--bd);border-radius:6px;overflow:hidden;margin-bottom:12px">
+          <table class="tbl">
+            <tr><th>Poziom</th><th>Styl wsparcia</th><th>Twoja rola</th></tr>
+            <tr><td><strong style="color:var(--rose)">Junior</strong><br>0-2 lata</td><td>High direction, high support</td><td><strong>Instruktor</strong> — konkretne zadania, step-by-step guidance, pair programming, częste check-iny (codziennie), jasne kryteria sukcesu.</td></tr>
+            <tr><td><strong style="color:var(--amber)">Mid</strong><br>2-5 lat</td><td>Low direction, high support</td><td><strong>Coach</strong> — samodzielne zadania z wyzwaniem, pytania zamiast odpowiedzi, code review jako nauczanie, 2x tygodniowo check-in.</td></tr>
+            <tr><td><strong style="color:var(--green)">Senior+</strong><br>5+ lat</td><td>Low direction, low support</td><td><strong>Peer/Sounding Board</strong> — dyskusje architektoniczne, challenge ich założeń, dziel się doświadczeniami z błędów, mentoring mniej formalny.</td></tr>
+          </table>
+        </div>
+        <p><strong style="color:var(--tx)">Situational Leadership (Blanchard)</strong> — dopasuj styl do poziomu kompetencji i zaangażowania konkretnej osoby, nie tylko stanowiska.</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--green)">💬 Techniki mentoringu w praktyce</div>
+      <div class="card-b" style="font-size:.83rem">
+        <div class="ritem"><div class="ritem-key" style="color:var(--green)">Pair Programming</div><div class="ritem-val">Driver + Navigator. Zmieniajcie role. <strong>Watch me do it → Do it together → You do it alone.</strong> Najszybszy transfer wiedzy, ale kosztowny czasowo — używaj strategicznie dla nowych konceptów.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--green)">Pytania Sokratejskie</div><div class="ritem-val">"Co się stanie gdy..." / "Jak byś to przetestował?" / "Jakie są alternatywy?" Zamiast dawać odpowiedź — prowadź do niej pytaniami. Podopieczny uczy się myśleć, nie zapamiętywać.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--green)">Deleguj z kontekstem</div><div class="ritem-val">Nie: "Zrób feature X." Tak: "Mamy problem Y — użytkownicy robią Z. Jednym rozwiązaniem jest feature X, ale mogą być inne. Zbadaj i zaproponuj." Rozwijasz myślenie systemowe.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--green)">Deliberate Feedback</div><div class="ritem-val">SBI: <strong>S</strong>ituation (konkretna sytuacja) → <strong>B</strong>ehavior (co zrobiłeś) → <strong>I</strong>mpact (jaki efekt). Feedback bliski zdarzeniu, konkretny, prywatny jeśli negatywny.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--green)">1:1 Meetings</div><div class="ritem-val">Regular 30-45 min. Nie status update — to mentee prowadzi agendę. Pytaj: "Co cię blokuje?", "Z czego jesteś dumny z ostatniego tygodnia?", "Czego chcesz się nauczyć?"</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="gap16"></div>
+  <div class="g3">
+    <div class="mentor-card">
+      <span class="label">ANTI-PATTERN — Seagull Manager</span>
+      <strong>Problem:</strong> wlatać, natychmiast dawać odpowiedź, wylatywać. Podopieczny nie uczy się myśleć — tylko czeka na ciebie.<br><br>
+      <strong>Fix:</strong> daj 24h na samodzielne badanie przed udzieleniem odpowiedzi. "Spróbuj to zbadać, wróć do mnie jutro z tym co znalazłeś."
+    </div>
+    <div class="mentor-card">
+      <span class="label">ANTI-PATTERN — Perfectionist Blocker</span>
+      <strong>Problem:</strong> robisz za podopiecznego "bo to szybciej" lub blokujesz ich PRy z zbyt wieloma komentarzami.<br><br>
+      <strong>Fix:</strong> akceptuj 80% rozwiązania jeśli działa. Dług komentarzami nie pomaga — wybierz 1-2 najważniejsze lekcje z danego PR.
+    </div>
+    <div class="mentor-card">
+      <span class="label">PRODUCTIVE STRUGGLE — klucz</span>
+      Pozwól podopiecznemu zmagać się z problemem przez rozsądny czas zanim pomożesz. Frustracja i próby są częścią uczenia się — interweniuj gdy są stuck &gt;2h bez postępu, nie po 20 minutach.
+    </div>
+  </div>
+  <div class="gap12"></div>
+  <div class="alert al-green">
+    <span class="alert-label">Individual Development Plan (IDP)</span>
+    Co kwartał wspólnie z podopiecznym twórz plan rozwoju: <strong>cel</strong> (co chce osiągnąć za 6-12 miesięcy), <strong>luki</strong> (co musi rozwinąć żeby tam dojść), <strong>akcje</strong> (konkretne zadania, kursy, projekty), <strong>miernik</strong> (jak wiemy że osiągnęliśmy?). Bez IDP mentoring jest reaktywny — reaguje na problemy. Z IDP jest proaktywny — buduje konkretną ścieżkę.
+  </div>
+</section>
+
+<!-- ══ 05 ARCHITECTURAL DECISIONS ══ -->
+<section class="chapter" id="arch-decisions">
+  <div class="ch-head">
+    <div class="ch-num">05 / 07</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--sky)">Decyzje Architektoniczne</div>
+      <div class="ch-title">Jak podejmować decyzje architektoniczne — framework</div>
+      <div class="ch-desc">Decyzje architektoniczne są <strong>kosztowne do odwrócenia</strong> — dlatego wymagają struktury, danych i komunikacji. Senior nie podejmuje decyzji solo bez kontekstu — angażuje stakeholderów, analizuje trade-offy i dokumentuje <em>dlaczego</em> tak, a nie inaczej.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-h" style="color:var(--sky)">🧭 Framework decyzji architektonicznych</div>
+      <div class="card-b">
+        <div class="framework-box">
+          <div class="fw-title" style="color:var(--sky)">PROCESS — od problemu do decyzji</div>
+          <div class="fw-step"><div class="fw-n" style="color:var(--sky)">01</div><div><strong>Zdefiniuj problem, nie rozwiązanie</strong> — "potrzebujemy Kafki" to nie problem. "Mamy 50k eventów/s i obecna synchroniczna komunikacja powoduje latencję 3s i cascade failures" — to problem.</div></div>
+          <div class="fw-step"><div class="fw-n" style="color:var(--sky)">02</div><div><strong>Zbierz constraints</strong> — co jest nienaruszalne? Budżet, czas dostarczenia, kompetencje zespołu, compliance, SLA. Constraints redukują przestrzeń rozwiązań.</div></div>
+          <div class="fw-step"><div class="fw-n" style="color:var(--sky)">03</div><div><strong>Generuj opcje (min 3)</strong> — zawsze minimum 3 opcje: status quo (koszt braku działania!), opcja minimalna, opcja docelowa. Monitoruj bias konfirmacji — celowo szukaj argumentów przeciw faworytowi.</div></div>
+          <div class="fw-step"><div class="fw-n" style="color:var(--sky)">04</div><div><strong>Analiza trade-offów</strong> — dla każdej opcji: pros, cons, risks, cost, reversibility. Nie szukasz "najlepszej" — szukasz "najlepszej w tych constraints". Nie ma silver bullet.</div></div>
+          <div class="fw-step"><div class="fw-n" style="color:var(--sky)">05</div><div><strong>Angażuj stakeholderów</strong> — RFC (Request for Comments) do zespołu, tech lead, DevOps jeśli dotyczy infrastruktury. Decyzje podjęte kolektywnie mają lepszy buy-in i mniej blind spots.</div></div>
+          <div class="fw-step"><div class="fw-n" style="color:var(--sky)">06</div><div><strong>PoC dla dużych ryzyk</strong> — jeśli nie wiesz czy A jest lepsze od B w waszym kontekście — timebox'd PoC (3-5 dni). Dane > opinie.</div></div>
+          <div class="fw-step"><div class="fw-n" style="color:var(--sky)">07</div><div><strong>Udokumentuj jako ADR</strong> — dlaczego podjęto tę decyzję, jakie były opcje, co zdecydowało. Przyszły ty będzie ci wdzięczny. Patrz rozdział ADR.</div></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-h" style="color:var(--sky)">⚖️ Trade-off Matrix — przykład</div>
+        <div class="card-b" style="font-size:.83rem">
+          <p style="color:var(--tx2);margin-bottom:10px">Przykład: wybór message broker dla systemu zamówień</p>
+          <table class="tbl">
+            <tr><th>Kryterium</th><th>Waga</th><th>Kafka</th><th>RabbitMQ</th><th>Azure SB</th></tr>
+            <tr><td>Throughput</td><td>30%</td><td style="color:var(--green)">10</td><td style="color:var(--amber)">6</td><td style="color:var(--amber)">7</td></tr>
+            <tr><td>Team skills</td><td>25%</td><td style="color:var(--rose)">3</td><td style="color:var(--green)">8</td><td style="color:var(--amber)">7</td></tr>
+            <tr><td>Managed infra</td><td>20%</td><td style="color:var(--amber)">5</td><td style="color:var(--amber)">5</td><td style="color:var(--green)">10</td></tr>
+            <tr><td>Cost</td><td>15%</td><td style="color:var(--amber)">6</td><td style="color:var(--green)">9</td><td style="color:var(--amber)">7</td></tr>
+            <tr><td>Ecosystem fit</td><td>10%</td><td style="color:var(--amber)">7</td><td style="color:var(--amber)">6</td><td style="color:var(--green)">10</td></tr>
+            <tr><td><strong>Wynik</strong></td><td>100%</td><td>6.3</td><td><strong style="color:var(--green)">6.7</strong></td><td>8.1</td></tr>
+          </table>
+          <p style="margin-top:10px;font-size:.81rem;color:var(--tx2)">Azure Service Bus wygrywa ze względu na managed infrastructure i ecosystem fit (jesteśmy na Azure). Kafka byłaby lepsza przy 10x większym throughput, ale przy obecnej skali overhead operacyjny nie jest uzasadniony.</p>
+        </div>
+      </div>
+      <div class="gap12"></div>
+      <div class="card">
+        <div class="card-h" style="color:var(--sky)">🚩 Bias i pułapki decyzyjne</div>
+        <div class="card-b" style="font-size:.83rem;color:var(--tx2);line-height:1.85">
+          <div class="ritem"><div class="ritem-key" style="color:var(--rose)">Hype Driven</div><div class="ritem-val">"Wszyscy używają Kafki / Kubernetes / GraphQL" — nie jest argumentem. Twoje wymagania są inne niż Netflix.</div></div>
+          <div class="ritem"><div class="ritem-key" style="color:var(--rose)">Resume Driven</div><div class="ritem-val">Wybierasz technologię żeby ją mieć w CV, nie bo rozwiązuje problem lepiej. Uczciwie pytaj siebie: "Czy wybrałbym to samo anonimowo?"</div></div>
+          <div class="ritem"><div class="ritem-key" style="color:var(--rose)">Sunk Cost Bias</div><div class="ritem-val">"Już 3 miesiące pracujemy na X, nie możemy teraz zmienić." Przeszły koszt nie jest argumentem za złą decyzją. Oceń przyszłość, nie przeszłość.</div></div>
+          <div class="ritem"><div class="ritem-key" style="color:var(--rose)">Authority Bias</div><div class="ritem-val">"CTO powiedział że..." — decyzja techniczna powinna być oparta na danych, nie autorytecie. Szanuj hierarchy, ale wychylaj się z danych jeśli direction jest błędna.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 06 ADR ══ -->
+<section class="chapter" id="adr">
+  <div class="ch-head">
+    <div class="ch-num">06 / 07</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--rose)">Architecture Decision Records</div>
+      <div class="ch-title">ADR — jak dokumentować decyzje architektoniczne</div>
+      <div class="ch-desc"><strong>Architecture Decision Records</strong> to krótkie dokumenty które rejestrują <em>dlaczego</em> podjęto daną decyzję — kontekst, rozważane opcje, konsekwencje. ADR rozwiązuje problem "cargo cult code" — nikt nie wie dlaczego coś jest tak zrobione, więc nie zmienia z obawy przed nieznanym.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="adr-block">
+      <div class="adr-header">
+        <div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:.62rem;color:var(--mt)">docs/adr/</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:.8rem;font-weight:700;color:var(--tx)">0012-use-azure-service-bus-for-async-communication.md</div>
+        </div>
+        <span class="adr-status accepted">ACCEPTED</span>
+      </div>
+      <div class="adr-body">
+        <div class="adr-section">TITLE</div>
+        <p>ADR-0012: Użycie Azure Service Bus do asynchronicznej komunikacji między mikroserwisami</p>
+
+        <div class="adr-section">DATE & AUTHORS</div>
+        <p>2024-11-15 | Jan Kowalski (tech lead), Anna Nowak (arch)</p>
+
+        <div class="adr-section">STATUS</div>
+        <p><strong>Accepted</strong> — zastępuje ADR-0007 (direct HTTP calls) | Supersedes: ADR-0007</p>
+
+        <div class="adr-section">CONTEXT</div>
+        <p>Order Service wywołuje synchronicznie Inventory Service i Payment Service przez REST. Przy awarii jednego serwisu cascade failure blokuje cały flow zamówień. Obserwujemy 15% błędów zamówień przy incydentach Inventory Service. Throughput wynosi ~500 zamówień/min w peak hours.</p>
+
+        <div class="adr-section">DECISION DRIVERS</div>
+        <p>• Eliminacja cascade failures między serwisami<br>
+        • Utrzymanie zamówień przy chwilowej niedostępności downstream serwisów<br>
+        • Team ma zero doświadczenia z self-hosted Kafka (constraint)<br>
+        • Jesteśmy już na Azure (ecosystem constraint)</p>
+
+        <div class="adr-section">CONSIDERED OPTIONS</div>
+        <p><strong>Option A: Azure Service Bus (Topics + Subscriptions)</strong> — managed, wbudowany dead-letter queue, retry policies, sessions ordering. Koszt: ~$10/mln wiadomości.<br><br>
+        <strong>Option B: Apache Kafka (managed — Azure Event Hubs)</strong> — wyższy throughput, replay, partycje. Overhead operacyjny, team nie zna. Przerost dla naszego throughput.<br><br>
+        <strong>Option C: Status quo — synchroniczny REST</strong> — zero kosztu zmiany. Nie rozwiązuje cascade failures. Rosnący tech debt.</p>
+
+        <div class="adr-section">DECISION</div>
+        <p>Wybieramy <strong>Azure Service Bus (Option A)</strong>. Throughput 500 zam/min nie uzasadnia Kafki. Managed service eliminuje overhead operacyjny. Dead-letter queue daje naturalną obsługę błędów. Ecosystem fit z Azure.</p>
+
+        <div class="adr-section">CONSEQUENCES</div>
+        <p><strong>Positive:</strong> brak cascade failures, at-least-once delivery, retry out-of-box, ordering per session.<br>
+        <strong>Negative:</strong> eventual consistency (order confirmed przed payment confirmed), złożoność testowania asynchronicznego, potrzeba implementacji idempotency w consumers.<br>
+        <strong>Risks:</strong> Service Bus SLA 99.9% — potrzeba dead-letter queue monitoring.</p>
+
+        <div class="adr-section">LINKS</div>
+        <p>Azure Service Bus docs · RFC-0031 (dyskusja) · Ticket ARCH-142</p>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-h" style="color:var(--rose)">📁 Struktura ADR w projekcie</div>
+        <div class="card-b" style="font-size:.83rem;color:var(--tx2);line-height:1.85">
+          <div class="code" style="margin-bottom:12px">
+            <div class="cbar"><div class="fdot" style="background:var(--rose)"></div> Struktura plików</div>
+            <pre style="font-size:.74rem">docs/
+  adr/
+    0001-use-spring-boot.md          <span class="cm"># ✅</span>
+    0002-postgresql-as-main-db.md    <span class="cm"># ✅</span>
+    0003-jwt-for-authentication.md  <span class="cm"># ✅</span>
+    0011-move-to-microservices.md    <span class="cm"># ✅</span>
+    0012-azure-service-bus.md        <span class="cm"># ✅ (powyżej)</span>
+    0013-api-versioning-strategy.md  <span class="cm"># proposed</span>
+  arc42/                             <span class="cm"># arc42 template</span>
+    README.md
+  openapi/                           <span class="cm"># API specs</span>
+    order-api-v2.yaml</pre>
+          </div>
+          <p><strong style="color:var(--tx)">Narzędzia:</strong></p>
+          <p>• <strong>adr-tools</strong> (CLI) — <code>adr new "Use Redis for caching"</code> tworzy plik z numerem i templatem</p>
+          <p>• <strong>Log4brains</strong> — web UI dla ADRów z search i timeline</p>
+          <p>• <strong>Confluence</strong> — jeśli firma używa, warto też tam mieć ADRy z linkami do PRów</p>
+          <p>• <strong>GitHub/GitLab</strong> — ADR jako MD w repo = wersjonowane razem z kodem, review przez PRy</p>
+          <div class="gap8"></div>
+          <p><strong style="color:var(--tx)">Statusy ADR:</strong></p>
+          <p><span class="adr-status proposed" style="display:inline-block;margin:2px">PROPOSED</span> → <span class="adr-status accepted" style="display:inline-block;margin:2px">ACCEPTED</span> → <span class="adr-status deprecated" style="display:inline-block;margin:2px">DEPRECATED</span></p>
+          <p style="margin-top:6px">DEPRECATED nie znaczy błędna decyzja — znaczy że kontekst się zmienił. Stare ADRy zostawiasz (historia), dodajesz link do nowego.</p>
+        </div>
+      </div>
+      <div class="gap12"></div>
+      <div class="alert al-rose">
+        <span class="alert-label">Kiedy pisać ADR</span>
+        <strong>Pisz ADR gdy:</strong> decyzja jest trudna do odwrócenia, wielu ludzi będzie dotkniętych zmianą, była nieoczywista kontrowersja przy podejmowaniu decyzji, decyzja wpływa na strukturę systemu lub sposób pracy zespołu.<br><br>
+        <strong>Nie pisz ADR dla:</strong> oczywistych decyzji implementacyjnych, rutynowych wyborów bibliotek bez alternatyw, rzeczy które można łatwo zmienić bez kosztów.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 07 DOKUMENTACJA SYSTEMÓW ══ -->
+<section class="chapter" id="documentation">
+  <div class="ch-head">
+    <div class="ch-num">07 / 07</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--orange)">Dokumentacja Systemów</div>
+      <div class="ch-title">Dokumentowanie systemów — co, jak, gdzie i ile</div>
+      <div class="ch-desc">Dokumentacja ma jedną zasadę: <strong>minimalna wystarczająca</strong> — wystarczająca żeby nowy developer mógł pracować efektywnie, minimalna żeby nie było drugiej pracy w utrzymaniu (kod się zmienia, dokumentacja gnije). Dobra dokumentacja opisuje <em>dlaczego</em>, nie <em>co</em> — co jest w kodzie.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-h" style="color:var(--orange)">📖 Co dokumentować — hierarchia</div>
+      <div class="card-b">
+        <div class="ritem"><div class="ritem-key" style="color:var(--orange)">README.md</div><div class="ritem-val"><strong>Obowiązkowe.</strong> Jak uruchomić lokalnie (prerequisites, steps), krótki opis co robi serwis, linki do dalszej dokumentacji, główne konwencje. Max 1-2 strony. Nowy dev powinien uruchomić w &lt;30 min.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--orange)">ADR</div><div class="ritem-val"><strong>Obowiązkowe.</strong> Dlaczego kluczowe decyzje architektoniczne są takie a nie inne. Patrz rozdział ADR. Chronione przed gniciem bo decyzje są historyczne.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--orange)">OpenAPI / AsyncAPI</div><div class="ritem-val"><strong>Obowiązkowe dla API.</strong> Kontrakty między serwisami. Generuj z kodu (SpringDoc) — zawsze aktualne. AsyncAPI dla event-driven (Kafka, Service Bus topics).</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--orange)">Architecture Overview</div><div class="ritem-val"><strong>Zalecane.</strong> C4 Model poziom 1-2 (System Context + Container diagram). Opisuje jak serwis się wpisuje w większy ekosystem. Aktualizuj przy dużych zmianach, nie przy każdym commicie.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--orange)">Runbook / Playbook</div><div class="ritem-val"><strong>Zalecane dla krytycznych serwisów.</strong> Co robić przy incydencie: jak sprawdzić health, typowe błędy i ich przyczyny, jak restartować, gdzie są logi, kogo kontaktować. Ratuje życie o 3 w nocy.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--orange)">Komentarze w kodzie</div><div class="ritem-val"><strong>Selektywnie.</strong> Tylko dla nieoczywistej logiki biznesowej, obejść znanych bugów (z linkiem do issue), skomplikowanych algorytmów. Nie komentuj "// increment i" przed <code>i++</code>.</div></div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-h" style="color:var(--orange)">🏗️ C4 Model — 4 poziomy abstrakcji</div>
+        <div class="card-b" style="font-size:.83rem;color:var(--tx2);line-height:1.85">
+          <div class="ritem"><div class="ritem-key" style="color:var(--orange)">L1 System Context</div><div class="ritem-val">Twój system w kontekście użytkowników i zewnętrznych systemów. Dla non-technical stakeholders. Jeden diagram — gdzie jesteśmy w ekosystemie.</div></div>
+          <div class="ritem"><div class="ritem-key" style="color:var(--orange)">L2 Container</div><div class="ritem-val">Główne "kontenery" (nie Docker!) — serwisy, bazy danych, frontendy. Jak komunikują się ze sobą. Dla tech leads i devops. <strong>Najważniejszy poziom.</strong></div></div>
+          <div class="ritem"><div class="ritem-key" style="color:var(--orange)">L3 Component</div><div class="ritem-val">Wewnętrzna struktura jednego kontenera — główne moduły/komponenty. Dla developerów pracujących w tym serwisie. Rzadziej potrzebny.</div></div>
+          <div class="ritem"><div class="ritem-key" style="color:var(--orange)">L4 Code</div><div class="ritem-val">UML klas i sekwencji. Prawie zawsze zbyt droge w utrzymaniu. Generuj automatycznie (PlantUML z kodu) lub nie rób wcale.</div></div>
+        </div>
+      </div>
+      <div class="gap12"></div>
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--orange)"></div> C4 — diagram kodu (Structurizr DSL / PlantUML)</div>
+        <pre><span class="cm">// Structurizr DSL — C4 as Code (wersjonowane z projektem)</span>
+workspace {
+  model {
+    user = person <span class="str">"Customer"</span> <span class="str">"Składa zamówienia"</span>
+
+    orderSystem = softwareSystem <span class="str">"Order System"</span> {
+      orderApi = container <span class="str">"Order API"</span> {
+        technology <span class="str">"Spring Boot 3, Java 21"</span>
+      }
+      orderDb = container <span class="str">"Order DB"</span> {
+        technology <span class="str">"Azure PostgreSQL Flexible"</span>
+        tags <span class="str">"Database"</span>
+      }
+      orderCache = container <span class="str">"Cache"</span> {
+        technology <span class="str">"Azure Cache for Redis"</span>
+        tags <span class="str">"Database"</span>
+      }
+    }
+
+    paymentSystem = softwareSystem <span class="str">"Payment System"</span> {
+      tags <span class="str">"External"</span>
+    }
+
+    user -> orderApi <span class="str">"Tworzy zamówienie"</span> <span class="str">"HTTPS/REST"</span>
+    orderApi -> orderDb <span class="str">"Zapisuje"</span> <span class="str">"JDBC"</span>
+    orderApi -> orderCache <span class="str">"Cache"</span> <span class="str">"Redis Protocol"</span>
+    orderApi -> paymentSystem <span class="str">"Inicjuje płatność"</span> <span class="str">"Service Bus"</span>
+  }
+
+  views {
+    systemContext orderSystem <span class="str">"SystemContext"</span> { include * }
+    container orderSystem <span class="str">"Containers"</span> { include * }
+    theme default
+  }
+}</pre>
+      </div>
+      <div class="gap12"></div>
+      <div class="alert al-orange">
+        <span class="alert-label">Docs as Code — złoty standard</span>
+        Dokumentacja w tym samym repozytorium co kod (Markdown / AsciiDoc). Review przez PR — tak jak kod. Diagramy w tekście (PlantUML, Mermaid, Structurizr) — wersjonowane, diffowalne. <strong>Nigdy nie trzymaj kluczowej dokumentacji tylko w Confluence</strong> — Confluence gnije szybciej niż repo, jest niedostępny bez VPN, i nie jest code-reviewable. Confluence dobry dla procesów i decyzji biznesowych — nie dla dokumentacji technicznej serwisów.
+      </div>
+    </div>
+  </div>
+  <div class="gap16"></div>
+  <div class="strip" style="border-color:var(--k1);background:rgba(45,212,191,.04)">
+    <div class="strip-icon">🏆</div>
+    <div><strong>Senior Engineer — pełen obraz:</strong> Code review to nie polowanie na błędy — to mentoring przy skali. Dług techniczny tłumaczysz biznesowi przez velocity i incydent cost, nie "code smells". Refaktorujesz małymi krokami z testami jako siatką bezpieczeństwa — nigdy Big Bang Rewrite. Mentorujesz przez productive struggle i pytania sokratejskie, nie przez dawanie odpowiedzi. Decyzje architektoniczne podejmujesz z frameworkiem — problem → constraints → opcje → trade-offs → RFC → PoC → ADR. Dokumentujesz <em>dlaczego</em>, nie <em>co</em> — ADR + README + OpenAPI + C4. Wszystko jako kod w repo, wersjonowane, reviewowane. <strong>Senior to multiplikator — jeden senior podnosi cały zespół</strong>.</div>
+  </div>
+</section>
+
+</main>
+<footer class="footer">
+  <div><span class="footer-title">Senior Engineering Practices</span> — Kompendium</div>
+  <div>Code Review · Tech Debt · Refactoring · Mentoring · Arch Decisions · ADR · Dokumentacja</div>
+</footer>
+</body>
+</html>

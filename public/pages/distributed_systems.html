@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Systemy Rozproszone & Komunikacja — Senior Java Developer</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ffffff;--s1:#f8f9fa;--s2:#f1f3f5;--s3:#e9ecef;
+  --bd:#dee2e6;--bd2:#ced4da;--tx:#1a1a2e;--tx2:#495057;--mt:#6c757d;
+  --k1:#f97316;--k2:#ea6c0a;
+  --green:#16a34a;--teal:#0d9488;--violet:#7c3aed;--rose:#e11d48;
+  --amber:#d97706;--pink:#c026d3;--sky:#0284c7;--orange:#ea580c;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;line-height:1.65;overflow-x:hidden}
+.back{position:fixed;top:22px;left:22px;z-index:9999;background:rgba(255,255,255,.95);backdrop-filter:blur(14px);border:1px solid var(--bd2);border-radius:40px;padding:10px 20px;display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--tx2);font-family:'IBM Plex Mono',monospace;font-size:.72rem;font-weight:500;letter-spacing:1px;transition:all .25s}
+.back:hover{color:var(--p1);border-color:var(--p1)}
+.hdr{min-height:500px;padding:110px 80px 80px;position:relative;overflow:hidden;display:flex;align-items:flex-end}
+.hdr-bg{position:absolute;inset:0;background:var(--s1)}
+.hdr-bg::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 55% at 3% 100%,rgba(74,222,128,.12) 0%,transparent 55%),radial-gradient(ellipse 50% 65% at 97% 5%,rgba(45,212,191,.1) 0%,transparent 50%),radial-gradient(ellipse 45% 50% at 50% 50%,rgba(167,139,250,.05) 0%,transparent 60%)}
+.hdr-grid{position:absolute;inset:0;background-image:linear-gradient(var(--bd) 1px,transparent 1px),linear-gradient(90deg,var(--bd) 1px,transparent 1px);background-size:48px 48px;opacity:.13;mask-image:radial-gradient(ellipse 85% 90% at 50% 50%,black,transparent)}
+.hdr-content{position:relative;max-width:1400px;width:100%}
+.hdr-tier{display:inline-flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:.65rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--p1);margin-bottom:28px;padding:7px 16px;border:1px solid rgba(74,222,128,.35);border-radius:4px;background:rgba(74,222,128,.07)}
+.tier-dot{width:6px;height:6px;border-radius:50%;background:var(--p1);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+h1{font-size:clamp(2.8rem,7vw,6rem);font-weight:800;line-height:.9;letter-spacing:-4px;margin-bottom:28px}
+h1 em{font-style:normal;background:linear-gradient(135deg,var(--p1),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+h1 small{display:block;font-size:.36em;letter-spacing:-1px;color:var(--tx2);font-weight:500;margin-top:14px;-webkit-text-fill-color:var(--tx2)}
+.hdr-desc{font-size:1rem;color:var(--tx2);max-width:680px;line-height:1.9}
+.hdr-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.chip{font-family:'IBM Plex Mono',monospace;font-size:.63rem;font-weight:600;letter-spacing:.5px;padding:5px 12px;border-radius:3px;border:1px solid}
+.cg{color:var(--green);border-color:rgba(74,222,128,.4);background:rgba(74,222,128,.07)}
+.ct{color:var(--teal);border-color:rgba(45,212,191,.35);background:rgba(45,212,191,.05)}
+.cv{color:var(--violet);border-color:rgba(167,139,250,.35);background:rgba(167,139,250,.07)}
+.cr{color:var(--rose);border-color:rgba(251,113,133,.35);background:rgba(251,113,133,.05)}
+.ca{color:var(--amber);border-color:rgba(251,191,36,.35);background:rgba(251,191,36,.05)}
+.co{color:var(--orange);border-color:rgba(251,146,60,.35);background:rgba(251,146,60,.05)}
+.cs{color:var(--sky);border-color:rgba(56,189,248,.35);background:rgba(56,189,248,.05)}
+.nav{position:sticky;top:0;z-index:300;background:rgba(8,15,13,.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--bd);display:flex;overflow-x:auto;scrollbar-width:none;padding:0 80px}
+.nav::-webkit-scrollbar{display:none}
+.nav-a{color:var(--mt);text-decoration:none;font-family:'IBM Plex Mono',monospace;font-size:.63rem;font-weight:600;letter-spacing:.5px;padding:14px 12px;white-space:nowrap;border-bottom:2px solid transparent;transition:all .18s}
+.nav-a:hover{color:var(--p1);border-bottom-color:var(--p1)}
+.main{max-width:1400px;margin:0 auto;padding:80px 24px 160px}
+.chapter{margin-bottom:100px;animation:fadeUp .5s ease backwards}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.chapter:nth-child(1){animation-delay:.04s}.chapter:nth-child(2){animation-delay:.08s}
+.chapter:nth-child(3){animation-delay:.12s}.chapter:nth-child(4){animation-delay:.16s}
+.chapter:nth-child(5){animation-delay:.20s}.chapter:nth-child(6){animation-delay:.24s}
+.chapter:nth-child(7){animation-delay:.28s}.chapter:nth-child(8){animation-delay:.32s}
+.chapter:nth-child(9){animation-delay:.36s}.chapter:nth-child(10){animation-delay:.40s}
+.ch-head{display:flex;align-items:flex-start;gap:22px;margin-bottom:36px;padding-bottom:28px;border-bottom:1px solid var(--bd)}
+.ch-num{font-family:'IBM Plex Mono',monospace;font-size:.62rem;font-weight:700;letter-spacing:3px;color:var(--mt);padding-top:6px;white-space:nowrap}
+.ch-info{flex:1}
+.ch-cat{font-family:'IBM Plex Mono',monospace;font-size:.58rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:6px}
+.ch-title{font-size:1.9rem;font-weight:800;letter-spacing:-1px;line-height:1.1;margin-bottom:10px}
+.ch-desc{font-size:.9rem;color:var(--tx2);max-width:840px;line-height:1.9}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:1100px){.g4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:900px){.g2,.g3,.g4{grid-template-columns:1fr}.hdr{padding:80px 24px 56px}.nav{padding:0 16px}h1{font-size:2.8rem;letter-spacing:-2px}}
+.card{background:var(--s1);border:1px solid var(--bd);border-radius:8px;overflow:hidden;transition:border-color .2s,box-shadow .2s}
+.card:hover{border-color:var(--bd2);box-shadow:0 6px 28px rgba(0,0,0,.5)}
+.card-h{padding:11px 18px;font-family:'IBM Plex Mono',monospace;font-size:.66rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:8px}
+.card-b{padding:18px}
+.code{background:#020a04;border:1px solid var(--bd);border-radius:8px;overflow:hidden}
+.cbar{background:var(--s1);border-bottom:1px solid var(--bd);padding:9px 16px;font-family:'IBM Plex Mono',monospace;font-size:.64rem;color:var(--mt);display:flex;align-items:center;gap:7px}
+.fdot{width:7px;height:7px;border-radius:50%}
+pre{padding:20px;font-family:'IBM Plex Mono',monospace;font-size:.77rem;line-height:1.75;overflow-x:auto;color:#374151}
+.kw{color:#c678dd}.cls{color:#e5c07b}.fn{color:#61afef}.str{color:#98c379}
+.cm{color:#1a4030;font-style:italic}.num{color:#d19a66}.ann{color:#e06c75}
+.ifc{color:#56b6c2}.tp{color:#e5c07b}
+.alert{padding:16px 20px;border-radius:6px;border-left:3px solid;font-size:.87rem;line-height:1.85;color:var(--tx2)}
+.alert strong{color:var(--tx)}
+.alert-label{font-family:'IBM Plex Mono',monospace;font-size:.58rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;display:block;margin-bottom:6px}
+.al-green{background:rgba(74,222,128,.05);border-color:var(--green)}.al-green .alert-label{color:var(--green)}
+.al-teal{background:rgba(45,212,191,.05);border-color:var(--teal)}.al-teal .alert-label{color:var(--teal)}
+.al-rose{background:rgba(251,113,133,.05);border-color:var(--rose)}.al-rose .alert-label{color:var(--rose)}
+.al-violet{background:rgba(167,139,250,.05);border-color:var(--violet)}.al-violet .alert-label{color:var(--violet)}
+.al-amber{background:rgba(251,191,36,.05);border-color:var(--amber)}.al-amber .alert-label{color:var(--amber)}
+.al-orange{background:rgba(251,146,60,.05);border-color:var(--orange)}.al-orange .alert-label{color:var(--orange)}
+.al-sky{background:rgba(56,189,248,.05);border-color:var(--sky)}.al-sky .alert-label{color:var(--sky)}
+.tbl{width:100%;border-collapse:collapse;font-size:.84rem}
+.tbl th{background:var(--s2);color:var(--tx2);font-family:'IBM Plex Mono',monospace;font-size:.63rem;letter-spacing:2px;text-transform:uppercase;font-weight:700;padding:11px 16px;text-align:left;border-bottom:1px solid var(--bd)}
+.tbl td{padding:11px 16px;border-bottom:1px solid var(--bd);color:var(--tx2);vertical-align:top;line-height:1.75}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:var(--s2);color:var(--tx)}
+.tbl code{font-family:'IBM Plex Mono',monospace;font-size:.76rem;color:var(--p1);background:rgba(74,222,128,.1);padding:2px 7px;border-radius:3px}
+.ritem{display:flex;gap:16px;padding:12px 0;border-bottom:1px solid var(--bd);align-items:flex-start}
+.ritem:last-child{border-bottom:none}
+.ritem-key{font-family:'IBM Plex Mono',monospace;font-size:.76rem;white-space:nowrap;padding-top:2px;min-width:160px;flex-shrink:0}
+.ritem-val{font-size:.85rem;color:var(--tx2);line-height:1.75}
+.ritem-val code{font-family:'IBM Plex Mono',monospace;font-size:.76rem;color:var(--p1);background:rgba(74,222,128,.1);padding:1px 6px;border-radius:3px}
+.ritem-val strong{color:var(--tx)}
+.strip{border:1px solid var(--bd);border-radius:8px;padding:18px 22px;font-size:.87rem;color:var(--tx2);line-height:1.85;display:flex;gap:16px;align-items:flex-start}
+.strip-icon{font-size:1.3rem;flex-shrink:0;padding-top:2px}
+.strip strong{color:var(--tx)}
+.gap8{margin-top:8px}.gap12{margin-top:12px}.gap16{margin-top:16px}.gap24{margin-top:24px}
+.footer{border-top:1px solid var(--bd);background:var(--s1);padding:36px 80px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;font-family:'IBM Plex Mono',monospace;font-size:.68rem;color:var(--mt)}
+.footer-title{color:var(--p1);font-weight:700}
+</style>
+</head>
+<body>
+<a class="back" href="#">← MENU</a>
+<header class="hdr">
+  <div class="hdr-bg"></div><div class="hdr-grid"></div>
+  <div class="hdr-content">
+    <div class="hdr-tier"><div class="tier-dot"></div> Distributed Systems · Senior Track</div>
+    <h1><em>Systemy Rozproszone</em><small>Komunikacja · Messaging · Spójność · Odporność na awarie</small></h1>
+    <p class="hdr-desc">Kompletny przewodnik po systemach rozproszonych — CAP Theorem, REST vs gRPC vs Messaging, Apache Kafka, wzorce odporności (Circuit Breaker, Retry, Bulkhead), transakcje rozproszone (Saga, 2PC), observability i service mesh.</p>
+    <div class="hdr-chips">
+      <span class="chip cg">● CAP Theorem</span>
+      <span class="chip ct">REST vs gRPC</span>
+      <span class="chip cv">Apache Kafka</span>
+      <span class="chip ca">Saga Pattern</span>
+      <span class="chip cr">Circuit Breaker</span>
+      <span class="chip cs">Service Mesh</span>
+      <span class="chip co">Observability</span>
+    </div>
+  </div>
+</header>
+<nav class="nav">
+  <a class="nav-a" href="#fundamentals">Fundamenty</a>
+  <a class="nav-a" href="#communication">REST vs gRPC vs MQ</a>
+  <a class="nav-a" href="#kafka">Apache Kafka</a>
+  <a class="nav-a" href="#consistency">Spójność i transakcje</a>
+  <a class="nav-a" href="#saga">Saga Pattern</a>
+  <a class="nav-a" href="#resilience">Resilience Patterns</a>
+  <a class="nav-a" href="#service-discovery">Service Discovery</a>
+  <a class="nav-a" href="#observability">Observability</a>
+  <a class="nav-a" href="#service-mesh">Service Mesh</a>
+  <a class="nav-a" href="#cqrs-es">CQRS &amp; Event Sourcing</a>
+</nav>
+<main class="main">
+
+<!-- ══ 01 FUNDAMENTALS ══ -->
+<section class="chapter" id="fundamentals">
+  <div class="ch-head">
+    <div class="ch-num">01 / 10</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--green)">Fundamenty Systemów Rozproszonych</div>
+      <div class="ch-title">CAP Theorem, BASE, Fallacies of Distributed Computing</div>
+      <div class="ch-desc">Zanim zbudujesz rozproszony system — zrozum fundamenty. CAP Theorem definiuje ograniczenia każdego systemu sieciowego. 8 Fallacies to najczęstsze błędne założenia które prowadzą do katastrof produkcyjnych.</div>
+    </div>
+  </div>
+  <div class="g3">
+    <div class="card">
+      <div class="card-h" style="color:var(--green)">🔺 CAP Theorem</div>
+      <div class="card-b" style="font-size:.84rem;color:var(--tx2);line-height:1.85">
+        <p>W systemie rozproszonym możesz zagwarantować <strong style="color:var(--tx)">maksymalnie 2 z 3</strong>:</p>
+        <div style="margin:12px 0;display:flex;flex-direction:column;gap:10px">
+          <div style="background:rgba(74,222,128,.06);border:1px solid rgba(74,222,128,.2);border-radius:5px;padding:10px">
+            <strong style="color:var(--green)">C — Consistency</strong>
+            <p style="margin-top:4px;font-size:.8rem">Każdy odczyt widzi najnowszy zapis lub błąd. Wszyscy klienci widzą te same dane w tym samym czasie.</p>
+          </div>
+          <div style="background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.2);border-radius:5px;padding:10px">
+            <strong style="color:var(--sky)">A — Availability</strong>
+            <p style="margin-top:4px;font-size:.8rem">Każde żądanie otrzymuje odpowiedź (nie błąd), ale niekoniecznie najnowsze dane.</p>
+          </div>
+          <div style="background:rgba(167,139,250,.06);border:1px solid rgba(167,139,250,.2);border-radius:5px;padding:10px">
+            <strong style="color:var(--violet)">P — Partition Tolerance</strong>
+            <p style="margin-top:4px;font-size:.8rem">System działa mimo utraty/opóźnienia komunikacji między węzłami. <strong>W sieci jest ZAWSZE możliwa.</strong></p>
+          </div>
+        </div>
+        <p style="font-size:.8rem"><strong style="color:var(--tx)">Praktycznie:</strong> P jest obowiązkowe → wybierasz CP lub AP.</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--teal)">⚖️ CP vs AP — przykłady</div>
+      <div class="card-b" style="font-size:.84rem;color:var(--tx2);line-height:1.85">
+        <div class="ritem">
+          <div class="ritem-key" style="color:var(--teal)">CP — bazy</div>
+          <div class="ritem-val"><strong>PostgreSQL, MySQL, MongoDB (domyślnie), ZooKeeper, etcd, Consul</strong> — spójność ponad dostępność</div>
+        </div>
+        <div class="ritem">
+          <div class="ritem-key" style="color:var(--amber)">AP — bazy</div>
+          <div class="ritem-val"><strong>Cassandra, CouchDB, DynamoDB, DNS</strong> — dostępność ponad spójność. Eventual consistency.</div>
+        </div>
+        <div class="ritem">
+          <div class="ritem-key" style="color:var(--green)">ACID</div>
+          <div class="ritem-val">Atomicity, Consistency, Isolation, Durability — gwarancje transakcji RDBMS. Trudne w dist. systemach.</div>
+        </div>
+        <div class="ritem">
+          <div class="ritem-key" style="color:var(--violet)">BASE</div>
+          <div class="ritem-val"><strong>B</strong>asically Available, <strong>S</strong>oft state, <strong>E</strong>ventually consistent — alternatywa dla ACID w NoSQL.</div>
+        </div>
+        <div class="ritem">
+          <div class="ritem-key" style="color:var(--rose)">PACELC</div>
+          <div class="ritem-val">Rozszerzenie CAP: przy braku partycji → Latency vs Consistency. Ważne w praktyce!</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--rose)">💀 8 Fallacies — pułapki</div>
+      <div class="card-b" style="font-size:.82rem;color:var(--tx2);line-height:1.75">
+        <p style="color:var(--tx);font-size:.79rem;margin-bottom:8px">Błędne założenia o sieciach (Deutsch, Gosling, 1994-1997):</p>
+        <div class="ritem" style="padding:8px 0"><div class="ritem-key" style="color:var(--rose);min-width:20px">1.</div><div class="ritem-val">Sieć jest niezawodna</div></div>
+        <div class="ritem" style="padding:8px 0"><div class="ritem-key" style="color:var(--rose);min-width:20px">2.</div><div class="ritem-val">Latencja wynosi 0</div></div>
+        <div class="ritem" style="padding:8px 0"><div class="ritem-key" style="color:var(--rose);min-width:20px">3.</div><div class="ritem-val">Przepustowość jest nieskończona</div></div>
+        <div class="ritem" style="padding:8px 0"><div class="ritem-key" style="color:var(--rose);min-width:20px">4.</div><div class="ritem-val">Sieć jest bezpieczna</div></div>
+        <div class="ritem" style="padding:8px 0"><div class="ritem-key" style="color:var(--rose);min-width:20px">5.</div><div class="ritem-val">Topologia sieci się nie zmienia</div></div>
+        <div class="ritem" style="padding:8px 0"><div class="ritem-key" style="color:var(--rose);min-width:20px">6.</div><div class="ritem-val">Jest jeden administrator</div></div>
+        <div class="ritem" style="padding:8px 0"><div class="ritem-key" style="color:var(--rose);min-width:20px">7.</div><div class="ritem-val">Koszt transportu wynosi 0</div></div>
+        <div class="ritem" style="padding:8px 0"><div class="ritem-key" style="color:var(--rose);min-width:20px">8.</div><div class="ritem-val">Sieć jest jednorodna</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="gap16"></div>
+  <div class="alert al-amber">
+    <span class="alert-label">Idempotency — kluczowe pojęcie</span>
+    W systemach rozproszonych żądanie może być dostarczone więcej niż raz (sieć nie jest niezawodna). <strong>Operacja idempotentna</strong> — wielokrotne wykonanie daje ten sam wynik co jednokrotne. HTTP: GET, PUT, DELETE są idempotentne. POST nie jest. Zawsze projektuj API z myślą o idempotencji — użyj <code>Idempotency-Key</code> w nagłówku dla operacji finansowych.
+  </div>
+</section>
+
+<!-- ══ 02 COMMUNICATION ══ -->
+<section class="chapter" id="communication">
+  <div class="ch-head">
+    <div class="ch-num">02 / 10</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--teal)">Komunikacja między serwisami</div>
+      <div class="ch-title">REST vs gRPC vs Message Queue — kiedy co wybrać</div>
+      <div class="ch-desc">Trzy główne paradygmaty komunikacji w mikroserwisach. Synchroniczna (REST, gRPC) vs Asynchroniczna (MQ, Kafka). Wybór zależy od wymagań: latencja, coupling, throughput, failure isolation.</div>
+    </div>
+  </div>
+  <div class="g3">
+    <div class="card">
+      <div class="card-h" style="color:var(--teal)">🌐 REST / HTTP</div>
+      <div class="card-b" style="font-size:.84rem;color:var(--tx2);line-height:1.85">
+        <div class="ritem"><div class="ritem-key" style="color:var(--teal)">Protokół</div><div class="ritem-val">HTTP/1.1, HTTP/2. JSON lub XML. Human-readable.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--teal)">Zalety</div><div class="ritem-val">Powszechny, łatwy debug, fire-and-forget, stateless, cache-able (GET).</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--teal)">Wady</div><div class="ritem-val">Loose contract (OpenAPI pomaga), narzut JSON parsowania, HTTP/1.1 no multiplexing.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--teal)">Kiedy</div><div class="ritem-val">Public API, browser clients, niska częstotliwość, proste integracje, CRUD.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--teal)">HTTP Metody</div><div class="ritem-val">GET (read), POST (create), PUT/PATCH (update), DELETE. Status codes: 2xx/4xx/5xx.</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--violet)">⚡ gRPC</div>
+      <div class="card-b" style="font-size:.84rem;color:var(--tx2);line-height:1.85">
+        <div class="ritem"><div class="ritem-key" style="color:var(--violet)">Protokół</div><div class="ritem-val">HTTP/2. Protobuf (binary) — 3-10x szybszy niż JSON.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--violet)">Zalety</div><div class="ritem-val">Silny kontrakt (.proto file), streaming (bidirectional!), multiplexing, code generation dla wielu języków.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--violet)">Wady</div><div class="ritem-val">Trudny debug (binary), słaba browserowa obsługa, potrzeba Protobuf toolchain.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--violet)">Kiedy</div><div class="ritem-val">Internal service-to-service, high throughput, multi-language (polyglot), real-time streaming.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--violet)">Typy RPC</div><div class="ritem-val">Unary, Server streaming, Client streaming, Bidirectional streaming.</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--amber)">📨 Message Queue / Async</div>
+      <div class="card-b" style="font-size:.84rem;color:var(--tx2);line-height:1.85">
+        <div class="ritem"><div class="ritem-key" style="color:var(--amber)">Technologie</div><div class="ritem-val">Apache Kafka, RabbitMQ, AWS SQS/SNS, ActiveMQ, Azure Service Bus.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--amber)">Zalety</div><div class="ritem-val">Temporal decoupling, buffer na obciążenie, retry + dead letter, fan-out, event sourcing.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--amber)">Wady</div><div class="ritem-val">Eventual consistency, trudniejszy debugging, ordering gwarancje zależne od implementacji.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--amber)">Kiedy</div><div class="ritem-val">Long-running operations, email/notifications, event-driven arch., inter-BC communication, load leveling.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="gap16"></div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--violet)"></div> gRPC — definicja i implementacja (Java)</div>
+      <pre><span class="cm">// ── orders.proto — kontrakt ───────────────────────────────────</span>
+<span class="cm">// syntax = "proto3";</span>
+<span class="cm">// package orders;</span>
+<span class="cm">//</span>
+<span class="cm">// service OrderService {</span>
+<span class="cm">//   rpc PlaceOrder (PlaceOrderRequest) returns (OrderResponse);</span>
+<span class="cm">//   rpc StreamOrders (CustomerId) returns (stream OrderEvent);</span>
+<span class="cm">// }</span>
+<span class="cm">// message PlaceOrderRequest {</span>
+<span class="cm">//   string customer_id = 1;</span>
+<span class="cm">//   repeated OrderItem items = 2;</span>
+<span class="cm">// }</span>
+
+<span class="cm">// ── Java implementacja serwera ────────────────────────────────</span>
+<span class="ann">@GrpcService</span>
+<span class="kw">public class</span> <span class="cls">OrderGrpcService</span> <span class="kw">extends</span> <span class="cls">OrderServiceGrpc</span>.<span class="cls">OrderServiceImplBase</span> {
+
+  <span class="ann">@Override</span>
+  <span class="kw">public void</span> <span class="fn">placeOrder</span>(<span class="cls">PlaceOrderRequest</span> request,
+      <span class="cls">StreamObserver</span>&lt;<span class="cls">OrderResponse</span>&gt; responseObserver) {
+    <span class="cm">// protobuf → domain</span>
+    <span class="cls">Order</span> order = <span class="fn">mapToDomain</span>(request);
+    <span class="cls">OrderId</span> id = orderService.<span class="fn">placeOrder</span>(order);
+    <span class="cm">// domain → protobuf</span>
+    <span class="cls">OrderResponse</span> response = <span class="cls">OrderResponse</span>.<span class="fn">newBuilder</span>()
+        .<span class="fn">setOrderId</span>(id.<span class="fn">getValue</span>())
+        .<span class="fn">setStatus</span>(<span class="str">"PLACED"</span>)
+        .<span class="fn">build</span>();
+    responseObserver.<span class="fn">onNext</span>(response);
+    responseObserver.<span class="fn">onCompleted</span>();
+  }
+}
+
+<span class="cm">// ── Java klient gRPC ──────────────────────────────────────────</span>
+<span class="cls">ManagedChannel</span> channel = <span class="cls">ManagedChannelBuilder</span>
+    .<span class="fn">forAddress</span>(<span class="str">"order-service"</span>, <span class="num">9090</span>)
+    .<span class="fn">usePlaintext</span>()
+    .<span class="fn">build</span>();
+<span class="cls">OrderServiceGrpc</span>.<span class="cls">OrderServiceBlockingStub</span> stub =
+    <span class="cls">OrderServiceGrpc</span>.<span class="fn">newBlockingStub</span>(channel);
+<span class="cls">OrderResponse</span> response = stub.<span class="fn">placeOrder</span>(request);</pre>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--teal)">📊 Porównanie protokołów</div>
+      <div class="card-b">
+        <table class="tbl">
+          <tr><th>Cecha</th><th>REST</th><th>gRPC</th><th>Messaging</th></tr>
+          <tr><td>Coupling</td><td>Luźne</td><td>Silne (proto)</td><td>Bardzo luźne</td></tr>
+          <tr><td>Latencja</td><td>Średnia</td><td>Niska</td><td>Wysoka (async)</td></tr>
+          <tr><td>Throughput</td><td>Średni</td><td>Bardzo wysoki</td><td>Bardzo wysoki</td></tr>
+          <tr><td>Debugging</td><td>Łatwy</td><td>Trudny</td><td>Średni</td></tr>
+          <tr><td>Streaming</td><td>SSE/WebSocket</td><td>Native</td><td>Native</td></tr>
+          <tr><td>Failure isolation</td><td>Słaba</td><td>Słaba</td><td>Dobra</td></tr>
+          <tr><td>Browser support</td><td>✅ Native</td><td>⚠️ grpc-web</td><td>❌ (pośrednik)</td></tr>
+        </table>
+        <div class="gap12"></div>
+        <div class="alert al-teal">
+          <span class="alert-label">GraphQL — kiedy rozważyć</span>
+          Gdy klient potrzebuje elastycznych zapytań (unikasz over/under-fetching). Dobry dla BFF (Backend for Frontend). Wady: n+1 problem, cachowanie trudniejsze niż REST.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 03 KAFKA ══ -->
+<section class="chapter" id="kafka">
+  <div class="ch-head">
+    <div class="ch-num">03 / 10</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--violet)">Apache Kafka</div>
+      <div class="ch-title">Kafka — distributed log, core concepts i Spring integration</div>
+      <div class="ch-desc">Apache Kafka to rozproszony, persystentny log — nie kolejka! Wiadomości są trzymane i mogą być odczytane wielokrotnie przez różnych konsumentów. Zaprojektowany dla milionów wiadomości/sekundę.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-h" style="color:var(--violet)">🗂️ Kafka — fundamentalne pojęcia</div>
+      <div class="card-b">
+        <div class="ritem"><div class="ritem-key" style="color:var(--violet)">Topic</div><div class="ritem-val">Kanał komunikacji — "orders", "payments". Producer pisze do topicu, Consumer czyta.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--violet)">Partition</div><div class="ritem-val">Topic = N partycji. Ordering gwarantowany TYLKO w obrębie jednej partycji. Klucz → partycja.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--violet)">Offset</div><div class="ritem-val">Numer wiadomości w partycji — Consumer commituje offset po przetworzeniu.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--violet)">Consumer Group</div><div class="ritem-val">Partycje rozdzielane między instancje w grupie — load balancing. Każda partycja → jeden consumer w grupie.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--violet)">Retention</div><div class="ritem-val">Wiadomości nie znikają po odczytaniu! Domyślnie 7 dni lub max rozmiar. Event replay możliwy.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--violet)">Replication Factor</div><div class="ritem-val">Kopia partycji na N brokerach. RF=3 → wytrzymuje 2 awarie brokerów.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--violet)">ISR</div><div class="ritem-val">In-Sync Replicas — repliki zgodne z liderem. <code>min.insync.replicas=2</code> → durability.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--violet)">acks</div><div class="ritem-val"><code>0</code>=fire&forget, <code>1</code>=leader ack, <code>all</code>=wszystkie ISR. <code>acks=all</code> + <code>RF=3</code> = bezpieczne.</div></div>
+      </div>
+    </div>
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--violet)"></div> Spring Kafka — Producer i Consumer</div>
+      <pre><span class="cm">// ── application.yml ───────────────────────────────────────────</span>
+<span class="cm">// spring:</span>
+<span class="cm">//   kafka:</span>
+<span class="cm">//     bootstrap-servers: kafka:9092</span>
+<span class="cm">//     producer:</span>
+<span class="cm">//       key-serializer: org.apache.kafka.common.serialization.StringSerializer</span>
+<span class="cm">//       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer</span>
+<span class="cm">//       acks: all</span>
+<span class="cm">//       retries: 3</span>
+<span class="cm">//     consumer:</span>
+<span class="cm">//       group-id: order-service</span>
+<span class="cm">//       auto-offset-reset: earliest</span>
+<span class="cm">//       enable-auto-commit: false  ← ważne! manual commit</span>
+
+<span class="cm">// ── Producer ──────────────────────────────────────────────────</span>
+<span class="ann">@Service</span>
+<span class="kw">public class</span> <span class="cls">OrderEventProducer</span> {
+  <span class="kw">private final</span> <span class="cls">KafkaTemplate</span>&lt;<span class="tp">String</span>, <span class="cls">OrderEvent</span>&gt; kafkaTemplate;
+
+  <span class="kw">public void</span> <span class="fn">publishOrderPlaced</span>(<span class="cls">Order</span> order) {
+    <span class="cls">OrderPlacedEvent</span> event = <span class="kw">new</span> <span class="fn">OrderPlacedEvent</span>(
+        order.<span class="fn">getId</span>().<span class="fn">getValue</span>(),
+        order.<span class="fn">getCustomerId</span>().<span class="fn">getValue</span>(),
+        order.<span class="fn">getTotal</span>()
+    );
+    <span class="cm">// key = orderId → ta sama partycja dla jednego zamówienia</span>
+    kafkaTemplate.<span class="fn">send</span>(<span class="str">"orders.placed"</span>, event.orderId(), event)
+        .<span class="fn">whenComplete</span>((result, ex) -> {
+          <span class="kw">if</span> (ex != <span class="kw">null</span>) log.<span class="fn">error</span>(<span class="str">"Kafka send failed"</span>, ex);
+          <span class="kw">else</span> log.<span class="fn">info</span>(<span class="str">"Sent to partition {}"</span>,
+               result.<span class="fn">getRecordMetadata</span>().<span class="fn">partition</span>());
+        });
+  }
+}
+
+<span class="cm">// ── Consumer ──────────────────────────────────────────────────</span>
+<span class="ann">@Component</span>
+<span class="kw">public class</span> <span class="cls">PaymentEventConsumer</span> {
+
+  <span class="ann">@KafkaListener</span>(topics = <span class="str">"orders.placed"</span>,
+                  groupId = <span class="str">"payment-service"</span>)
+  <span class="kw">public void</span> <span class="fn">handleOrderPlaced</span>(
+      <span class="ann">@Payload</span> <span class="cls">OrderPlacedEvent</span> event,
+      <span class="ann">@Header</span>(<span class="cls">KafkaHeaders</span>.<span class="ann">RECEIVED_PARTITION</span>) <span class="kw">int</span> partition,
+      <span class="cls">Acknowledgment</span> ack) {
+
+    <span class="kw">try</span> {
+      paymentService.<span class="fn">processPayment</span>(event);
+      ack.<span class="fn">acknowledge</span>(); <span class="cm">// commit offset po sukcesie</span>
+    } <span class="kw">catch</span> (<span class="cls">RetryableException</span> e) {
+      <span class="cm">// nie commit → retry</span>
+      <span class="kw">throw</span> e;
+    } <span class="kw">catch</span> (<span class="cls">Exception</span> e) {
+      ack.<span class="fn">acknowledge</span>(); <span class="cm">// commit + wyślij do DLQ</span>
+      deadLetterProducer.<span class="fn">send</span>(event, e);
+    }
+  }
+}
+
+<span class="cm">// ── Dead Letter Queue setup ────────────────────────────────────</span>
+<span class="ann">@Bean</span>
+<span class="kw">public</span> <span class="cls">DefaultErrorHandler</span> <span class="fn">errorHandler</span>(<span class="cls">DeadLetterPublishingRecoverer</span> recoverer) {
+  <span class="kw">return new</span> <span class="fn">DefaultErrorHandler</span>(recoverer,
+      <span class="kw">new</span> <span class="fn">FixedBackOff</span>(<span class="num">1000L</span>, <span class="num">3</span>)); <span class="cm">// 3 retry co 1s</span>
+}</pre>
+    </div>
+  </div>
+  <div class="gap16"></div>
+  <div class="g4">
+    <div class="alert al-violet">
+      <span class="alert-label">Partycje i skalowanie</span>
+      <code>partitions = max_consumers_in_group</code>. Więcej partycji = więcej równoległości, ale większy overhead dla brokerów. Nie możesz zmniejszyć liczby partycji — planuj z zapasem.
+    </div>
+    <div class="alert al-green">
+      <span class="alert-label">Exactly-once Semantics</span>
+      Kafka 0.11+: <code>enable.idempotence=true</code> + <code>transactional.id</code>. Używaj przy operacjach finansowych. Duży overhead — rozważ at-least-once + idempotent consumer.
+    </div>
+    <div class="alert al-amber">
+      <span class="alert-label">Consumer Lag</span>
+      Opóźnienie konsumenta względem producenta. Monitoruj przez <code>kafka-consumer-groups.sh</code> lub metryki. Duży lag = problem z wydajnością lub awaria konsumenta.
+    </div>
+    <div class="alert al-teal">
+      <span class="alert-label">Kafka vs RabbitMQ</span>
+      Kafka = log, retention, replay, high throughput, ordering. RabbitMQ = routing (exchanges), ttl per message, priorytet, lepszy do task queues. Kafka dla event streaming, Rabbit dla task distribution.
+    </div>
+  </div>
+</section>
+
+<!-- ══ 04 CONSISTENCY ══ -->
+<section class="chapter" id="consistency">
+  <div class="ch-head">
+    <div class="ch-num">04 / 10</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--amber)">Spójność i Transakcje Rozproszone</div>
+      <div class="ch-title">Distributed Transactions — 2PC, Outbox Pattern, Eventual Consistency</div>
+      <div class="ch-desc">Transakcja obejmująca kilka serwisów to jeden z najtrudniejszych problemów w distributed systems. Klasyczne 2PC jest zbyt wolne i podatne na błędy. Nowoczesne podejście: Outbox Pattern + Saga.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-h" style="color:var(--amber)">🔄 Modele spójności</div>
+      <div class="card-b" style="font-size:.84rem;color:var(--tx2);line-height:1.85">
+        <div class="ritem"><div class="ritem-key" style="color:var(--amber)">Strong Consistency</div><div class="ritem-val">Każdy odczyt widzi ostatni zapis. Wymaga koordynacji (kosztowne). RDBMS w single-node.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--amber)">Eventual Consistency</div><div class="ritem-val">Wszystkie węzły dojdą do tego samego stanu <em>w końcu</em>. Cassandra, DynamoDB, DNS.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--amber)">Causal Consistency</div><div class="ritem-val">Operacje powiązane przyczynowo są widoczne w kolejności. Kompromis między strong a eventual.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--amber)">Monotonic Read</div><div class="ritem-val">Nigdy nie cofasz się do starszego stanu. Raz widziałeś rekord v2 — nie zobaczysz v1.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--rose)">2PC (Two Phase Commit)</div><div class="ritem-val"><strong>Prepare + Commit.</strong> Koordynator zbiera gotowość wszystkich uczestników, potem commituje lub rollback. Problem: koordynator może failować w środku. Używaj tylko gdy musisz (legacy).</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--green)">Outbox Pattern</div><div class="ritem-val"><strong>Rozwiązanie!</strong> Zapisz event do tabeli outbox w tej samej transakcji co dane. Osobny process publikuje do Kafki.</div></div>
+      </div>
+    </div>
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--amber)"></div> Transactional Outbox Pattern</div>
+      <pre><span class="cm">// Problem: jak atomowo zapisać Order + opublikować event?</span>
+<span class="cm">// Zapis do DB i wysyłka do Kafki nie są w jednej transakcji!</span>
+<span class="cm">// Rozwiązanie: Outbox — event idzie do tabeli w tej samej tx</span>
+
+<span class="cm">// ── Tabela outbox (SQL) ───────────────────────────────────────</span>
+<span class="cm">// CREATE TABLE outbox_events (</span>
+<span class="cm">//   id           UUID PRIMARY KEY,</span>
+<span class="cm">//   aggregate_id VARCHAR(255) NOT NULL,</span>
+<span class="cm">//   event_type   VARCHAR(255) NOT NULL,</span>
+<span class="cm">//   payload      JSONB NOT NULL,</span>
+<span class="cm">//   created_at   TIMESTAMPTZ DEFAULT NOW(),</span>
+<span class="cm">//   published    BOOLEAN DEFAULT FALSE</span>
+<span class="cm">// );</span>
+
+<span class="cm">// ── Zapis w jednej transakcji ────────────────────────────────</span>
+<span class="ann">@Service</span>
+<span class="kw">public class</span> <span class="cls">PlaceOrderService</span> {
+  <span class="kw">private final</span> <span class="cls">OrderRepository</span> orderRepo;
+  <span class="kw">private final</span> <span class="cls">OutboxRepository</span> outboxRepo;
+
+  <span class="ann">@Transactional</span>
+  <span class="kw">public</span> <span class="cls">OrderId</span> <span class="fn">placeOrder</span>(<span class="cls">PlaceOrderCommand</span> cmd) {
+    <span class="cls">Order</span> order = <span class="cls">Order</span>.<span class="fn">create</span>(cmd);
+    orderRepo.<span class="fn">save</span>(order); <span class="cm">// zapisz dane</span>
+
+    <span class="cm">// zapisz event w tej samej transakcji!</span>
+    <span class="cls">OutboxEvent</span> event = <span class="cls">OutboxEvent</span>.<span class="fn">builder</span>()
+        .<span class="fn">id</span>(<span class="cls">UUID</span>.<span class="fn">randomUUID</span>())
+        .<span class="fn">aggregateId</span>(order.<span class="fn">getId</span>().<span class="fn">getValue</span>())
+        .<span class="fn">eventType</span>(<span class="str">"OrderPlaced"</span>)
+        .<span class="fn">payload</span>(objectMapper.<span class="fn">writeValueAsString</span>(order))
+        .<span class="fn">build</span>();
+    outboxRepo.<span class="fn">save</span>(event);
+
+    <span class="kw">return</span> order.<span class="fn">getId</span>();
+    <span class="cm">// commit → oba zapisy atomowe!</span>
+  }
+}
+
+<span class="cm">// ── Outbox Relay (osobny serwis/wątek) ───────────────────────</span>
+<span class="ann">@Scheduled</span>(fixedDelay = <span class="num">1000</span>)
+<span class="kw">public void</span> <span class="fn">publishPendingEvents</span>() {
+  outboxRepo.<span class="fn">findUnpublished</span>(<span class="cls">Pageable</span>.<span class="fn">ofSize</span>(<span class="num">100</span>))
+      .<span class="fn">forEach</span>(event -> {
+        kafkaTemplate.<span class="fn">send</span>(event.<span class="fn">getEventType</span>(), event.<span class="fn">getPayload</span>());
+        outboxRepo.<span class="fn">markPublished</span>(event.<span class="fn">getId</span>());
+      });
+}
+<span class="cm">// Alternatywa: Debezium CDC — czyta WAL Postgresa, zero pollingu!</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 05 SAGA ══ -->
+<section class="chapter" id="saga">
+  <div class="ch-head">
+    <div class="ch-num">05 / 10</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--rose)">Transakcje Rozproszone</div>
+      <div class="ch-title">Saga Pattern — Choreography vs Orchestration</div>
+      <div class="ch-desc">Saga to sekwencja lokalnych transakcji z kompensującymi akcjami w razie błędu. Dwie implementacje: Choreography (eventy, luźne powiązanie) i Orchestration (centralny koordynator, łatwiejszy monitoring).</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-h" style="color:var(--rose)">🎭 Saga Choreography vs Orchestration</div>
+      <div class="card-b" style="font-size:.84rem;color:var(--tx2);line-height:1.85">
+        <div style="margin-bottom:14px">
+          <strong style="color:var(--green)">Choreography — tańczą razem bez dyrygenta</strong>
+          <p style="margin-top:6px;font-size:.82rem">Każdy serwis reaguje na event i publikuje następny. Luźne powiązanie, łatwe dodawanie uczestników. Wada: trudny debuging (śledzenie przez wiele eventów), ryzyko cykli.</p>
+          <p style="margin-top:6px;font-size:.78rem;color:var(--teal)">OrderPlaced → PaymentService (PaymentProcessed) → InventoryService (ItemsReserved) → ShippingService (ShipmentScheduled)</p>
+        </div>
+        <div>
+          <strong style="color:var(--violet)">Orchestration — dyrygent zarządza</strong>
+          <p style="margin-top:6px;font-size:.82rem">Centralny Saga Orchestrator wydaje polecenia serwis po serwisie. Łatwiejszy monitoring i rollback. Wada: single point of logic, coupling do orchestratora.</p>
+          <p style="margin-top:6px;font-size:.78rem;color:var(--teal)">OrderSaga → placeOrder → processPayment → reserveItems → scheduleShipping → DONE</p>
+        </div>
+        <div class="gap12"></div>
+        <table class="tbl">
+          <tr><th></th><th>Choreography</th><th>Orchestration</th></tr>
+          <tr><td>Coupling</td><td>Luźne</td><td>Ścisłe (do saga)</td></tr>
+          <tr><td>Debugowanie</td><td>Trudne</td><td>Łatwe</td></tr>
+          <tr><td>Testowanie</td><td>Trudniejsze</td><td>Prostsze</td></tr>
+          <tr><td>Dodawanie kroków</td><td>Łatwe</td><td>Zmiana saga</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--rose)"></div> Saga Orchestration — implementacja</div>
+      <pre><span class="cm">// Saga Orchestrator zarządza krokami i kompensacjami</span>
+
+<span class="ann">@Component</span>
+<span class="kw">public class</span> <span class="cls">PlaceOrderSaga</span> {
+  <span class="kw">private final</span> <span class="cls">PaymentService</span> paymentService;
+  <span class="kw">private final</span> <span class="cls">InventoryService</span> inventoryService;
+  <span class="kw">private final</span> <span class="cls">ShippingService</span> shippingService;
+
+  <span class="ann">@Transactional</span>
+  <span class="kw">public void</span> <span class="fn">execute</span>(<span class="cls">PlaceOrderCommand</span> cmd) {
+    <span class="cls">SagaState</span> state = <span class="kw">new</span> <span class="fn">SagaState</span>(cmd);
+
+    <span class="kw">try</span> {
+      <span class="cm">// Krok 1 — płatność</span>
+      <span class="cls">PaymentId</span> paymentId = paymentService.<span class="fn">charge</span>(cmd.<span class="fn">getPayment</span>());
+      state.<span class="fn">setPaymentId</span>(paymentId);
+
+      <span class="cm">// Krok 2 — rezerwacja towaru</span>
+      <span class="kw">try</span> {
+        <span class="cls">ReservationId</span> resId = inventoryService.<span class="fn">reserve</span>(cmd.<span class="fn">getItems</span>());
+        state.<span class="fn">setReservationId</span>(resId);
+      } <span class="kw">catch</span> (<span class="cls">OutOfStockException</span> e) {
+        <span class="cm">// Kompensacja — oddaj płatność</span>
+        paymentService.<span class="fn">refund</span>(state.<span class="fn">getPaymentId</span>());
+        <span class="kw">throw new</span> <span class="fn">SagaFailedException</span>(<span class="str">"Brak towaru, płatność zwrócona"</span>, e);
+      }
+
+      <span class="cm">// Krok 3 — wysyłka</span>
+      <span class="kw">try</span> {
+        shippingService.<span class="fn">schedule</span>(state.<span class="fn">getReservationId</span>(), cmd.<span class="fn">getAddress</span>());
+      } <span class="kw">catch</span> (<span class="cls">Exception</span> e) {
+        <span class="cm">// Kompensacje w odwrotnej kolejności!</span>
+        inventoryService.<span class="fn">cancelReservation</span>(state.<span class="fn">getReservationId</span>());
+        paymentService.<span class="fn">refund</span>(state.<span class="fn">getPaymentId</span>());
+        <span class="kw">throw new</span> <span class="fn">SagaFailedException</span>(<span class="str">"Błąd wysyłki, rollback"</span>, e);
+      }
+
+    } <span class="kw">catch</span> (<span class="cls">SagaFailedException</span> e) {
+      <span class="cm">// log, alert, DLQ</span>
+      sagaRepo.<span class="fn">markFailed</span>(state.<span class="fn">getSagaId</span>(), e.<span class="fn">getMessage</span>());
+      <span class="kw">throw</span> e;
+    }
+  }
+}
+
+<span class="cm">// Produkcyjnie: Axon Framework, Spring State Machine</span>
+<span class="cm">// lub Conductor, Temporal.io dla długich saga</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 06 RESILIENCE ══ -->
+<section class="chapter" id="resilience">
+  <div class="ch-head">
+    <div class="ch-num">06 / 10</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--orange)">Resilience Patterns</div>
+      <div class="ch-title">Circuit Breaker, Retry, Bulkhead, Timeout, Rate Limiting</div>
+      <div class="ch-desc">W systemach rozproszonych serwisy czasowo zawodzą. Wzorce odporności zapobiegają kaskadowym awariom (cascade failure) — jeden serwis nie wysypuje całego systemu. Biblioteka: Resilience4j.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--orange)"></div> Resilience4j — Circuit Breaker, Retry, Bulkhead</div>
+      <pre><span class="cm">// ── application.yml ───────────────────────────────────────────</span>
+<span class="cm">// resilience4j:</span>
+<span class="cm">//   circuitbreaker:</span>
+<span class="cm">//     instances:</span>
+<span class="cm">//       paymentService:</span>
+<span class="cm">//         slidingWindowSize: 10</span>
+<span class="cm">//         failureRateThreshold: 50    # 50% failures → OPEN</span>
+<span class="cm">//         waitDurationInOpenState: 30s</span>
+<span class="cm">//         permittedCallsInHalfOpenState: 5</span>
+<span class="cm">//   retry:</span>
+<span class="cm">//     instances:</span>
+<span class="cm">//       paymentService:</span>
+<span class="cm">//         maxAttempts: 3</span>
+<span class="cm">//         waitDuration: 500ms</span>
+<span class="cm">//         exponentialBackoffMultiplier: 2  # 500ms, 1s, 2s</span>
+<span class="cm">//         retryExceptions: java.net.ConnectException</span>
+<span class="cm">//   bulkhead:</span>
+<span class="cm">//     instances:</span>
+<span class="cm">//       paymentService:</span>
+<span class="cm">//         maxConcurrentCalls: 20  # max równoległych wywołań</span>
+
+<span class="cm">// ── Adnotacje Resilience4j ────────────────────────────────────</span>
+<span class="ann">@Service</span>
+<span class="kw">public class</span> <span class="cls">PaymentClient</span> {
+
+  <span class="ann">@CircuitBreaker</span>(name = <span class="str">"paymentService"</span>, fallbackMethod = <span class="str">"fallback"</span>)
+  <span class="ann">@Retry</span>(name = <span class="str">"paymentService"</span>)
+  <span class="ann">@Bulkhead</span>(name = <span class="str">"paymentService"</span>)
+  <span class="ann">@TimeLimiter</span>(name = <span class="str">"paymentService"</span>) <span class="cm">// timeout</span>
+  <span class="kw">public</span> <span class="cls">CompletableFuture</span>&lt;<span class="cls">PaymentResult</span>&gt; <span class="fn">charge</span>(<span class="cls">PaymentRequest</span> req) {
+    <span class="kw">return</span> httpClient.<span class="fn">post</span>(<span class="str">"/payments"</span>, req);
+  }
+
+  <span class="cm">// Fallback — co gdy CB jest OPEN lub retry się skończą</span>
+  <span class="kw">private</span> <span class="cls">CompletableFuture</span>&lt;<span class="cls">PaymentResult</span>&gt; <span class="fn">fallback</span>(
+      <span class="cls">PaymentRequest</span> req, <span class="cls">Exception</span> ex) {
+    log.<span class="fn">warn</span>(<span class="str">"Payment service unavailable, queuing: {}"</span>, ex.<span class="fn">getMessage</span>());
+    <span class="cm">// Wyślij do kolejki do późniejszego przetwarzania</span>
+    paymentQueue.<span class="fn">enqueue</span>(req);
+    <span class="kw">return</span> <span class="cls">CompletableFuture</span>.<span class="fn">completedFuture</span>(
+        <span class="cls">PaymentResult</span>.<span class="fn">pending</span>(<span class="str">"Przetwarzanie opóźnione"</span>));
+  }
+}
+
+<span class="cm">// ── Stany Circuit Breaker ────────────────────────────────────</span>
+<span class="cm">// CLOSED → normalne działanie, liczy błędy</span>
+<span class="cm">// OPEN   → failfast, nie woluje downstream</span>
+<span class="cm">// HALF-OPEN → testuje kilka wywołań, decyduje</span></pre>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--orange)">🛡️ Wzorce odporności — przegląd</div>
+      <div class="card-b" style="font-size:.84rem;color:var(--tx2);line-height:1.85">
+        <div class="ritem">
+          <div class="ritem-key" style="color:var(--orange)">Circuit Breaker</div>
+          <div class="ritem-val"><strong>Zapobiega kaskadowym awariom.</strong> Failfast gdy downstream jest niedostępny — zamiast czekać na timeout. 3 stany: CLOSED/OPEN/HALF-OPEN.</div>
+        </div>
+        <div class="ritem">
+          <div class="ritem-key" style="color:var(--orange)">Retry + Backoff</div>
+          <div class="ritem-val">Ponawia nieudane wywołania. <strong>Exponential backoff + jitter</strong> = unikanie thundering herd. Tylko dla idempotentnych operacji!</div>
+        </div>
+        <div class="ritem">
+          <div class="ritem-key" style="color:var(--orange)">Bulkhead</div>
+          <div class="ritem-val">Izolacja zasobów — jeden slow/broken service nie wyczerpuje thread pool dla innych. Threadpool lub semaphore bulkhead.</div>
+        </div>
+        <div class="ritem">
+          <div class="ritem-key" style="color:var(--orange)">Timeout</div>
+          <div class="ritem-val">Zawsze definiuj timeout! Bez timeoutu jeden zawieszony serwis blokuje wątki na wieki. Hierarchia timeoutów: DB &lt; service &lt; gateway.</div>
+        </div>
+        <div class="ritem">
+          <div class="ritem-key" style="color:var(--orange)">Rate Limiting</div>
+          <div class="ritem-val">Ogranicz liczbę żądań per klient/IP. Algorytmy: Token Bucket, Leaky Bucket, Sliding Window. Implementacja: Redis + Resilience4j lub API Gateway.</div>
+        </div>
+        <div class="ritem">
+          <div class="ritem-key" style="color:var(--orange)">Fallback</div>
+          <div class="ritem-val">Degraded mode — gdy serwis niedostępny zwróć cache, wartość domyślną lub zakolejkuj do późniejszego przetworzenia.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="gap16"></div>
+  <div class="alert al-orange">
+    <span class="alert-label">Kaskadowa awaria — jak zapobiegać</span>
+    Service A wywołuje B, B wywołuje C. C zawodzi → B czeka na timeout → wątek B zablokowany → A czeka → cały system zawieszony. <strong>Rozwiązanie:</strong> Circuit Breaker + Bulkhead + Timeout na każdym poziomie. Nigdy nie ufaj zewnętrznemu serwisowi — zawsze zakładaj że może failować.
+  </div>
+</section>
+
+<!-- ══ 07 SERVICE DISCOVERY ══ -->
+<section class="chapter" id="service-discovery">
+  <div class="ch-head">
+    <div class="ch-num">07 / 10</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--teal)">Service Discovery i Load Balancing</div>
+      <div class="ch-title">Jak serwisy się znajdują — Client vs Server-side Discovery</div>
+      <div class="ch-desc">W dynamicznych środowiskach (Kubernetes, cloud) adresy IP serwisów się zmieniają. Service Discovery pozwala znaleźć aktualny adres serwisu przez jego logiczną nazwę. Load Balancing rozdziela ruch.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-h" style="color:var(--teal)">🔍 Service Discovery — typy</div>
+      <div class="card-b" style="font-size:.84rem;color:var(--tx2);line-height:1.85">
+        <div style="margin-bottom:14px">
+          <strong style="color:var(--green)">Client-side Discovery</strong>
+          <p style="margin-top:6px;font-size:.82rem">Klient odpytuje Service Registry (Eureka, Consul), dostaje listę instancji, sam wybiera (load balancing). Spring Cloud Netflix Eureka + Ribbon (legacy) lub Spring Cloud LoadBalancer.</p>
+        </div>
+        <div style="margin-bottom:14px">
+          <strong style="color:var(--violet)">Server-side Discovery (preferowane)</strong>
+          <p style="margin-top:6px;font-size:.82rem">Klient wysyła żądanie do Load Balancer (AWS ALB, NGINX, Kubernetes Service). LB pyta Registry i przekierowuje. Klient nie wie nic o Service Discovery.</p>
+        </div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--teal)">Kubernetes</div><div class="ritem-val">Wbudowany Service Discovery przez DNS. <code>http://order-service:8080</code> → kube-proxy → Pod. Domyślny wybór dla nowych projektów.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--teal)">Consul</div><div class="ritem-val">Service Registry + Config Store + Health Checking. Dobry poza Kubernetes lub w multi-cloud.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--teal)">Eureka</div><div class="ritem-val">Netflix OSS, Spring Cloud. AP — dostępny nawet przy partycji. Legacy — dziś Kubernetes wygrywa.</div></div>
+      </div>
+    </div>
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--teal)"></div> Spring Cloud — Load Balancing i Discovery</div>
+      <pre><span class="cm">// ── Spring Cloud LoadBalancer (nowoczesne) ────────────────────</span>
+<span class="ann">@Configuration</span>
+<span class="kw">public class</span> <span class="cls">WebClientConfig</span> {
+
+  <span class="ann">@Bean</span>
+  <span class="ann">@LoadBalanced</span> <span class="cm">// ← magia — ResolvesServiceId przez registry</span>
+  <span class="kw">public</span> <span class="cls">WebClient</span>.<span class="cls">Builder</span> <span class="fn">webClientBuilder</span>() {
+    <span class="kw">return</span> <span class="cls">WebClient</span>.<span class="fn">builder</span>();
+  }
+}
+
+<span class="ann">@Service</span>
+<span class="kw">public class</span> <span class="cls">PaymentClient</span> {
+  <span class="kw">private final</span> <span class="cls">WebClient</span>.<span class="cls">Builder</span> webClientBuilder;
+
+  <span class="kw">public</span> <span class="cls">Mono</span>&lt;<span class="cls">PaymentResult</span>&gt; <span class="fn">charge</span>(<span class="cls">PaymentRequest</span> req) {
+    <span class="cm">// "payment-service" = nazwa serwisu w registrze</span>
+    <span class="cm">// @LoadBalanced WebClient resolwuje do realnego IP</span>
+    <span class="kw">return</span> webClientBuilder.<span class="fn">build</span>()
+        .<span class="fn">post</span>()
+        .<span class="fn">uri</span>(<span class="str">"http://payment-service/api/payments"</span>)
+        .<span class="fn">bodyValue</span>(req)
+        .<span class="fn">retrieve</span>()
+        .<span class="fn">bodyToMono</span>(<span class="cls">PaymentResult</span>.<span class="kw">class</span>);
+  }
+}
+
+<span class="cm">// ── Kubernetes — wbudowany discovery przez DNS ─────────────────</span>
+<span class="cm">// kubectl expose deployment order-service --port=8080</span>
+<span class="cm">// → Tworzy Service object z stałym DNS</span>
+<span class="cm">// → order-service.default.svc.cluster.local</span>
+<span class="cm">// → Aplikacja używa: http://order-service:8080</span>
+
+<span class="cm">// ── Load Balancing Algorytmy ──────────────────────────────────</span>
+<span class="cm">// Round Robin: 1→2→3→1→2→3 (default w wielu LB)</span>
+<span class="cm">// Least Connections: wybiera najmniej obciążony</span>
+<span class="cm">// Random: losowy wybór</span>
+<span class="cm">// Weighted: wagi per instancja (np. nowa wolniejsza)</span>
+<span class="cm">// Consistent Hashing: ten sam klucz → ta sama instancja</span>
+<span class="cm">//   (przydatne przy cache lokalnym w serwisie)</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 08 OBSERVABILITY ══ -->
+<section class="chapter" id="observability">
+  <div class="ch-head">
+    <div class="ch-num">08 / 10</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--sky)">Observability</div>
+      <div class="ch-title">Logs, Metrics, Traces — Three Pillars of Observability</div>
+      <div class="ch-desc">W systemach rozproszonych bez obserwowalności jesteś ślepy. Trzy filary: Logs (co się stało), Metrics (jak wiele / jak szybko), Traces (przez jakie serwisy przeszło żądanie). Niezbędne na produkcji.</div>
+    </div>
+  </div>
+  <div class="g3">
+    <div class="card">
+      <div class="card-h" style="color:var(--sky)">📝 Structured Logging</div>
+      <div class="card-b" style="font-size:.84rem;color:var(--tx2);line-height:1.85">
+        <p><strong style="color:var(--tx)">Structured logs</strong> (JSON) — nie plain text. Każde pole to klucz-wartość. Łatwe filtrowanie i indeksowanie w ELK/Loki.</p>
+        <div class="code" style="margin-top:10px;border:none;background:transparent">
+          <pre style="padding:0;font-size:.74rem;background:#020a04;border:1px solid var(--bd);border-radius:5px;padding:10px">{
+  <span class="str">"timestamp"</span>: <span class="str">"2025-01-15T10:30:00Z"</span>,
+  <span class="str">"level"</span>: <span class="str">"INFO"</span>,
+  <span class="str">"traceId"</span>: <span class="str">"abc123"</span>,
+  <span class="str">"spanId"</span>: <span class="str">"def456"</span>,
+  <span class="str">"service"</span>: <span class="str">"order-service"</span>,
+  <span class="str">"orderId"</span>: <span class="str">"ord-789"</span>,
+  <span class="str">"message"</span>: <span class="str">"Order placed"</span>
+}</pre>
+        </div>
+        <p style="margin-top:10px"><strong>Stack:</strong> Logback/SLF4J + JSON encoder → Filebeat → Elasticsearch → Kibana. Lub Grafana Loki (lżejszy).</p>
+        <p style="margin-top:8px"><strong>Zawsze loguj:</strong> traceId, requestId, userId, czas operacji. Nigdy: hasła, PII bez maskowania.</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--teal)">📊 Metryki — Micrometer + Prometheus</div>
+      <div class="card-b" style="font-size:.84rem;color:var(--tx2);line-height:1.85">
+        <p><strong style="color:var(--tx)">Micrometer</strong> = fasada jak SLF4J, ale dla metryk. Spring Boot Actuator integruje go automatycznie.</p>
+        <div class="ritem"><div class="ritem-key" style="color:var(--teal)">Counter</div><div class="ritem-val">Monotonicznie rosnące. Liczba żądań, błędów. <code>Counter.increment()</code></div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--teal)">Gauge</div><div class="ritem-val">Aktualna wartość. Liczba wątków, rozmiar kolejki.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--teal)">Timer</div><div class="ritem-val">Czas trwania + liczba wywołań. Percentyle (p95, p99).</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--teal)">Histogram</div><div class="ritem-val">Rozkład wartości. Request size, response time.</div></div>
+        <p style="margin-top:10px"><strong>Golden Signals (SRE):</strong> Latency, Traffic, Errors, Saturation. Monitoruj te 4 dla każdego serwisu.</p>
+        <p style="margin-top:6px"><strong>Stack:</strong> Prometheus (scrape) → Grafana (dashboard + alerts)</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--violet)">🔍 Distributed Tracing</div>
+      <div class="card-b" style="font-size:.84rem;color:var(--tx2);line-height:1.85">
+        <p><strong style="color:var(--tx)">Trace</strong> = pełna ścieżka żądania przez wszystkie serwisy. <strong>Span</strong> = jedna operacja w jednym serwisie.</p>
+        <div class="ritem"><div class="ritem-key" style="color:var(--violet)">traceId</div><div class="ritem-val">Unikalny dla całego żądania — propagowany przez nagłówki HTTP (W3C Traceparent)</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--violet)">spanId</div><div class="ritem-val">Unikalny dla operacji w jednym serwisie. Drzewiasta struktura.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--violet)">Micrometer Tracing</div><div class="ritem-val">Spring Boot 3 — automatyczna propagacja traceId. Wcześniej Sleuth.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--violet)">Backends</div><div class="ritem-val">Zipkin (prosta konfiguracja), Jaeger (CNCF, Kubernetes-native), Tempo (Grafana stack)</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--violet)">OpenTelemetry</div><div class="ritem-val">Standard CNCF — jeden SDK dla logs+metrics+traces. Vendor-neutral. Kierunek przyszłości.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="gap16"></div>
+  <div class="code">
+    <div class="cbar"><div class="fdot" style="background:var(--sky)"></div> Spring Boot 3 — Micrometer Tracing + Custom Metrics</div>
+    <pre><span class="cm">// ── Custom Counter + Timer ────────────────────────────────────</span>
+<span class="ann">@Service</span>
+<span class="kw">public class</span> <span class="cls">OrderService</span> {
+  <span class="kw">private final</span> <span class="cls">Counter</span> ordersPlaced;
+  <span class="kw">private final</span> <span class="cls">Counter</span> ordersFailed;
+  <span class="kw">private final</span> <span class="cls">Timer</span> orderTimer;
+
+  <span class="kw">public</span> <span class="fn">OrderService</span>(<span class="cls">MeterRegistry</span> registry) {
+    ordersPlaced = <span class="cls">Counter</span>.<span class="fn">builder</span>(<span class="str">"orders.placed"</span>)
+        .<span class="fn">tag</span>(<span class="str">"region"</span>, <span class="str">"eu-west"</span>)
+        .<span class="fn">description</span>(<span class="str">"Total orders placed"</span>)
+        .<span class="fn">register</span>(registry);
+    ordersFailed = registry.<span class="fn">counter</span>(<span class="str">"orders.failed"</span>);
+    orderTimer = registry.<span class="fn">timer</span>(<span class="str">"orders.place.duration"</span>);
+  }
+
+  <span class="kw">public</span> <span class="cls">OrderId</span> <span class="fn">placeOrder</span>(<span class="cls">PlaceOrderCommand</span> cmd) {
+    <span class="kw">return</span> orderTimer.<span class="fn">record</span>(() -> {
+      <span class="kw">try</span> {
+        <span class="cls">OrderId</span> id = <span class="fn">doPlaceOrder</span>(cmd);
+        ordersPlaced.<span class="fn">increment</span>();
+        <span class="kw">return</span> id;
+      } <span class="kw">catch</span> (<span class="cls">Exception</span> e) {
+        ordersFailed.<span class="fn">increment</span>();
+        <span class="kw">throw</span> e;
+      }
+    });
+  }
+}
+
+<span class="cm">// ── Distributed Tracing w Spring Boot 3 ──────────────────────</span>
+<span class="cm">// pom.xml:</span>
+<span class="cm">// spring-boot-starter-actuator</span>
+<span class="cm">// micrometer-tracing-bridge-brave (lub otel)</span>
+<span class="cm">// zipkin-reporter-brave</span>
+
+<span class="cm">// application.yml:</span>
+<span class="cm">// management.tracing.sampling.probability: 1.0  # 100% w dev</span>
+<span class="cm">// management.zipkin.tracing.endpoint: http://zipkin:9411/api/v2/spans</span>
+
+<span class="cm">// traceId jest automatycznie propagowany przez RestTemplate/WebClient/FeignClient!</span>
+<span class="cm">// Pojawia się w logach: [order-service,abc123def,456789]</span>
+
+<span class="cm">// ── Health Checks — Spring Actuator ──────────────────────────</span>
+<span class="cm">// /actuator/health → UP/DOWN dla Kubernetes liveness/readiness</span>
+<span class="cm">// /actuator/metrics → wszystkie metryki Micrometer</span>
+<span class="cm">// /actuator/prometheus → Prometheus scrape endpoint</span>
+<span class="ann">@Component</span>
+<span class="kw">public class</span> <span class="cls">KafkaHealthIndicator</span> <span class="kw">implements</span> <span class="ifc">HealthIndicator</span> {
+  <span class="ann">@Override</span>
+  <span class="kw">public</span> <span class="cls">Health</span> <span class="fn">health</span>() {
+    <span class="kw">return</span> kafkaAdmin.<span class="fn">isConnected</span>()
+        ? <span class="cls">Health</span>.<span class="fn">up</span>().<span class="fn">withDetail</span>(<span class="str">"kafka"</span>, <span class="str">"Connected"</span>).<span class="fn">build</span>()
+        : <span class="cls">Health</span>.<span class="fn">down</span>().<span class="fn">withDetail</span>(<span class="str">"kafka"</span>, <span class="str">"Disconnected"</span>).<span class="fn">build</span>();
+  }
+}</pre>
+  </div>
+</section>
+
+<!-- ══ 09 SERVICE MESH ══ -->
+<section class="chapter" id="service-mesh">
+  <div class="ch-head">
+    <div class="ch-num">09 / 10</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--amber)">Service Mesh i API Gateway</div>
+      <div class="ch-title">Istio, Linkerd — infrastruktura jako kod komunikacji</div>
+      <div class="ch-desc">Service Mesh przenosi cross-cutting concerns (mTLS, circuit breaking, tracing, retry) z kodu aplikacji do infrastruktury. Sidecar proxy (Envoy) przy każdym Podzie obsługuje całą komunikację sieciową.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-h" style="color:var(--amber)">🕸️ Service Mesh — architektura</div>
+      <div class="card-b" style="font-size:.84rem;color:var(--tx2);line-height:1.85">
+        <p><strong style="color:var(--tx)">Sidecar Pattern:</strong> Każdy Pod = kontener aplikacji + kontener Envoy proxy. Aplikacja nie wie o sidecarze — cały ruch przez proxy.</p>
+        <div class="gap12"></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--amber)">Data Plane</div><div class="ritem-val">Envoy sidecar proxies — obsługują faktyczny ruch. Zero zmian w aplikacji.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--amber)">Control Plane</div><div class="ritem-val">Istio/Linkerd — konfiguruje i zarządza sidecarami przez K8s CRDs.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--amber)">mTLS</div><div class="ritem-val">Wzajemna auth TLS między serwisami — zero trust networking. Automatyczne certyfikaty.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--amber)">Traffic management</div><div class="ritem-val">A/B testing, canary deployments, traffic mirroring — bez zmiany kodu.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--amber)">Istio vs Linkerd</div><div class="ritem-val">Istio = więcej features, większy overhead. Linkerd = prostszy, lżejszy, Rust-based proxy.</div></div>
+        <div class="gap16"></div>
+        <div class="alert al-amber">
+          <span class="alert-label">Kiedy NIE potrzebujesz Service Mesh</span>
+          Mały zespół, mało serwisów, brak ekspertyzy Kubernetes. Service Mesh to dodatkowa złożoność — najpierw rozwiąż problemy w kodzie, potem w infrastrukturze.
+        </div>
+      </div>
+    </div>
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--amber)"></div> API Gateway — Spring Cloud Gateway</div>
+      <pre><span class="cm">// API Gateway = jeden punkt wejścia dla klientów</span>
+<span class="cm">// Routing, Auth, Rate Limiting, SSL termination</span>
+
+<span class="cm">// ── application.yml — Spring Cloud Gateway ────────────────────</span>
+<span class="cm">// spring:</span>
+<span class="cm">//   cloud:</span>
+<span class="cm">//     gateway:</span>
+<span class="cm">//       routes:</span>
+<span class="cm">//         - id: order-service</span>
+<span class="cm">//           uri: lb://order-service  # Load Balanced</span>
+<span class="cm">//           predicates:</span>
+<span class="cm">//             - Path=/api/orders/**</span>
+<span class="cm">//           filters:</span>
+<span class="cm">//             - StripPrefix=1</span>
+<span class="cm">//             - AddRequestHeader=X-Internal, true</span>
+<span class="cm">//             - CircuitBreaker=name:orders,fallbackUri:/fallback</span>
+<span class="cm">//             - RequestRateLimiter=redis-rate-limiter</span>
+
+<span class="cm">// ── Custom Global Filter ──────────────────────────────────────</span>
+<span class="ann">@Component</span>
+<span class="kw">public class</span> <span class="cls">AuthenticationFilter</span> <span class="kw">implements</span> <span class="ifc">GlobalFilter</span>, <span class="ifc">Ordered</span> {
+
+  <span class="ann">@Override</span>
+  <span class="kw">public</span> <span class="cls">Mono</span>&lt;<span class="cls">Void</span>&gt; <span class="fn">filter</span>(<span class="cls">ServerWebExchange</span> exchange,
+      <span class="cls">GatewayFilterChain</span> chain) {
+    <span class="tp">String</span> token = exchange.<span class="fn">getRequest</span>().<span class="fn">getHeaders</span>()
+        .<span class="fn">getFirst</span>(<span class="str">"Authorization"</span>);
+
+    <span class="kw">if</span> (token == <span class="kw">null</span> || !<span class="fn">isValid</span>(token)) {
+      exchange.<span class="fn">getResponse</span>().<span class="fn">setStatusCode</span>(<span class="cls">HttpStatus</span>.<span class="ann">UNAUTHORIZED</span>);
+      <span class="kw">return</span> exchange.<span class="fn">getResponse</span>().<span class="fn">setComplete</span>();
+    }
+
+    <span class="cm">// Dodaj user info jako nagłówek dla downstream serwisów</span>
+    <span class="cls">String</span> userId = <span class="fn">extractUserId</span>(token);
+    <span class="cls">ServerHttpRequest</span> mutated = exchange.<span class="fn">getRequest</span>().<span class="fn">mutate</span>()
+        .<span class="fn">header</span>(<span class="str">"X-User-Id"</span>, userId)
+        .<span class="fn">build</span>();
+    <span class="kw">return</span> chain.<span class="fn">filter</span>(exchange.<span class="fn">mutate</span>().<span class="fn">request</span>(mutated).<span class="fn">build</span>());
+  }
+
+  <span class="ann">@Override</span>
+  <span class="kw">public int</span> <span class="fn">getOrder</span>() { <span class="kw">return</span> -<span class="num">1</span>; } <span class="cm">// najwyższy priorytet</span>
+}
+
+<span class="cm">// ── Rate Limiting z Redis ─────────────────────────────────────</span>
+<span class="ann">@Bean</span>
+<span class="kw">public</span> <span class="cls">RedisRateLimiter</span> <span class="fn">redisRateLimiter</span>() {
+  <span class="cm">// 100 żądań/sekundę, burst do 200</span>
+  <span class="kw">return new</span> <span class="fn">RedisRateLimiter</span>(<span class="num">100</span>, <span class="num">200</span>, <span class="num">1</span>);
+}</pre>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 10 CQRS & EVENT SOURCING ══ -->
+<section class="chapter" id="cqrs-es">
+  <div class="ch-head">
+    <div class="ch-num">10 / 10</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--green)">CQRS &amp; Event Sourcing</div>
+      <div class="ch-title">Command Query Responsibility Segregation + Event Sourcing</div>
+      <div class="ch-desc">CQRS oddziela ścieżkę zapisu (Commands) od ścieżki odczytu (Queries) — różne modele, różne bazy. Event Sourcing przechowuje historię zdarzeń zamiast aktualnego stanu. Używaj świadomie — duży overhead.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--green)"></div> CQRS — Command i Query side</div>
+      <pre><span class="cm">// ── Command Side — zapis, logika biznesowa ────────────────────</span>
+<span class="kw">public record</span> <span class="cls">PlaceOrderCommand</span>(<span class="cls">CustomerId</span> customerId,
+    <span class="tp">List</span>&lt;<span class="cls">OrderItem</span>&gt; items, <span class="cls">PaymentDetails</span> payment) {}
+
+<span class="ann">@Service</span>
+<span class="kw">public class</span> <span class="cls">OrderCommandHandler</span> {
+  <span class="kw">private final</span> <span class="ifc">OrderRepository</span> repo; <span class="cm">// write model</span>
+  <span class="kw">private final</span> <span class="cls">EventBus</span> eventBus;
+
+  <span class="kw">public</span> <span class="cls">OrderId</span> <span class="fn">handle</span>(<span class="cls">PlaceOrderCommand</span> cmd) {
+    <span class="cls">Order</span> order = <span class="cls">Order</span>.<span class="fn">create</span>(cmd);
+    repo.<span class="fn">save</span>(order);
+    eventBus.<span class="fn">publish</span>(order.<span class="fn">pullEvents</span>());
+    <span class="kw">return</span> order.<span class="fn">getId</span>();
+  }
+}
+
+<span class="cm">// ── Query Side — odczyt, denormalizowany widok ───────────────</span>
+<span class="cm">// Listener buduje własny, zoptymalizowany model odczytu</span>
+<span class="ann">@EventListener</span>
+<span class="kw">public void</span> <span class="fn">on</span>(<span class="cls">OrderPlacedEvent</span> event) {
+  <span class="cm">// Zapisz do read model (MongoDB, Elasticsearch, Redis)</span>
+  <span class="cls">OrderView</span> view = <span class="cls">OrderView</span>.<span class="fn">builder</span>()
+      .<span class="fn">orderId</span>(event.<span class="fn">orderId</span>())
+      .<span class="fn">customerName</span>(<span class="fn">fetchCustomerName</span>(event.<span class="fn">customerId</span>()))
+      .<span class="fn">status</span>(<span class="str">"PLACED"</span>)
+      .<span class="fn">total</span>(event.<span class="fn">total</span>())
+      .<span class="fn">placedAt</span>(event.<span class="fn">occurredAt</span>())
+      .<span class="fn">build</span>();
+  orderViewRepo.<span class="fn">save</span>(view); <span class="cm">// zoptymalizowana projekcja</span>
+}
+
+<span class="cm">// ── Query Handler — tylko SELECT, zero logiki biznesowej ──────</span>
+<span class="ann">@Service</span>
+<span class="kw">public class</span> <span class="cls">OrderQueryHandler</span> {
+  <span class="kw">private final</span> <span class="cls">OrderViewRepository</span> viewRepo; <span class="cm">// read model</span>
+
+  <span class="kw">public</span> <span class="tp">List</span>&lt;<span class="cls">OrderView</span>&gt; <span class="fn">getOrdersByCustomer</span>(<span class="cls">CustomerId</span> id) {
+    <span class="kw">return</span> viewRepo.<span class="fn">findByCustomerId</span>(id.<span class="fn">getValue</span>());
+  }
+  <span class="kw">public</span> <span class="cls">OrderView</span> <span class="fn">getOrder</span>(<span class="cls">OrderId</span> id) {
+    <span class="kw">return</span> viewRepo.<span class="fn">findById</span>(id.<span class="fn">getValue</span>())
+        .<span class="fn">orElseThrow</span>(<span class="cls">OrderNotFoundException</span>::<span class="kw">new</span>);
+  }
+}</pre>
+    </div>
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--green)"></div> Event Sourcing — stan jako historia zdarzeń</div>
+      <pre><span class="cm">// Zamiast: SELECT * FROM orders WHERE id=?</span>
+<span class="cm">// Event Sourcing: odtwórz stan z sekwencji eventów</span>
+
+<span class="cm">// ── Event Store (tabela) ──────────────────────────────────────</span>
+<span class="cm">// CREATE TABLE event_store (</span>
+<span class="cm">//   id            UUID PRIMARY KEY,</span>
+<span class="cm">//   aggregate_id  VARCHAR(255) NOT NULL,</span>
+<span class="cm">//   aggregate_type VARCHAR(255) NOT NULL,</span>
+<span class="cm">//   version       BIGINT NOT NULL,  ← optimistic locking!</span>
+<span class="cm">//   event_type    VARCHAR(255) NOT NULL,</span>
+<span class="cm">//   payload       JSONB NOT NULL,</span>
+<span class="cm">//   created_at    TIMESTAMPTZ DEFAULT NOW()</span>
+<span class="cm">// );</span>
+
+<span class="cm">// ── Aggregate z event sourcing ────────────────────────────────</span>
+<span class="kw">public class</span> <span class="cls">Order</span> {
+  <span class="kw">private</span> <span class="cls">OrderId</span> id;
+  <span class="kw">private</span> <span class="cls">OrderStatus</span> status;
+  <span class="kw">private</span> <span class="tp">List</span>&lt;<span class="cls">OrderItem</span>&gt; items;
+  <span class="kw">private long</span> version = <span class="num">0</span>;
+
+  <span class="cm">// Odtworzenie stanu z historii eventów</span>
+  <span class="kw">public static</span> <span class="cls">Order</span> <span class="fn">reconstitute</span>(<span class="tp">List</span>&lt;<span class="cls">DomainEvent</span>&gt; history) {
+    <span class="cls">Order</span> order = <span class="kw">new</span> <span class="fn">Order</span>();
+    history.<span class="fn">forEach</span>(order::<span class="fn">apply</span>);
+    <span class="kw">return</span> order;
+  }
+
+  <span class="kw">private void</span> <span class="fn">apply</span>(<span class="cls">DomainEvent</span> event) {
+    version++;
+    <span class="kw">switch</span> (event) {
+      <span class="kw">case</span> <span class="cls">OrderPlacedEvent</span> e -> {
+        <span class="kw">this</span>.id = <span class="kw">new</span> <span class="fn">OrderId</span>(e.<span class="fn">orderId</span>());
+        <span class="kw">this</span>.status = <span class="cls">OrderStatus</span>.<span class="ann">PLACED</span>;
+        <span class="kw">this</span>.items = e.<span class="fn">items</span>();
+      }
+      <span class="kw">case</span> <span class="cls">OrderConfirmedEvent</span> e ->
+        <span class="kw">this</span>.status = <span class="cls">OrderStatus</span>.<span class="ann">CONFIRMED</span>;
+      <span class="kw">case</span> <span class="cls">OrderCancelledEvent</span> e ->
+        <span class="kw">this</span>.status = <span class="cls">OrderStatus</span>.<span class="ann">CANCELLED</span>;
+      <span class="kw">default</span> -> {}
+    }
+  }
+}
+
+<span class="cm">// ── Snapshot — optymalizacja dla długich historii ──────────────</span>
+<span class="cm">// Snapshoty co N eventów → nie odtwarzaj od początku</span>
+<span class="cm">// Axon Framework automatyzuje Event Sourcing w Spring</span></pre>
+    </div>
+  </div>
+  <div class="gap16"></div>
+  <div class="g3">
+    <div class="alert al-green">
+      <span class="alert-label">CQRS — kiedy stosować</span>
+      Gdy read/write mają różne wymagania (np. złożone raporty vs proste zapisy). Nie stosuj wszędzie — dla CRUD to over-engineering. Dobrze łączy się z DDD i Event Sourcing.
+    </div>
+    <div class="alert al-teal">
+      <span class="alert-label">Event Sourcing — zalety</span>
+      Pełny audit log "w cenie". Temporal queries (stan w dowolnym punkcie historii). Replay eventów do nowych projekcji. Naturalne dla systemów finansowych i audit-heavy.
+    </div>
+    <div class="alert al-rose">
+      <span class="alert-label">Event Sourcing — wady</span>
+      Eventual consistency read models. Trudny schema evolution eventów. "Eventual" queries utrudniają proste UI. Myśl dwa razy zanim użyjesz — frameworki: Axon, EventStoreDB.
+    </div>
+  </div>
+  <div class="gap16"></div>
+  <div class="strip" style="border-color:var(--green);background:rgba(74,222,128,.04)">
+    <div class="strip-icon">🏆</div>
+    <div><strong>Senior w distributed systems:</strong> Rozumiesz CAP Theorem i konsekwencje wyborów. Wiesz kiedy REST, kiedy gRPC, kiedy Messaging. Używasz Outbox Pattern dla at-least-once delivery. Implementujesz Circuit Breaker + Retry + Bulkhead. Masz metryki, logi i trace w każdym serwisie. Saga dla transakcji rozproszonych. CQRS gdy read != write. I przede wszystkim — wiesz kiedy NIE używać tych wzorców.</div>
+  </div>
+</section>
+
+</main>
+<footer class="footer">
+  <div><span class="footer-title">Systemy Rozproszone &amp; Komunikacja</span> — Kompendium Senior Java Developer</div>
+  <div>CAP · Kafka · Saga · Circuit Breaker · Observability · CQRS</div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,1599 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Docker &amp; Kubernetes — Kompletna Wiedza</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ffffff;--s1:#f8f9fa;--s2:#f1f3f5;--s3:#e9ecef;
+  --bd:#dee2e6;--bd2:#ced4da;--tx:#1a1a2e;--tx2:#495057;--mt:#6c757d;
+  --k1:#f97316;--k2:#ea6c0a;
+  --green:#16a34a;--teal:#0d9488;--violet:#7c3aed;--rose:#e11d48;
+  --amber:#d97706;--pink:#c026d3;--sky:#0284c7;--orange:#ea580c;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;line-height:1.65;overflow-x:hidden}
+.back{position:fixed;top:22px;left:22px;z-index:9999;background:rgba(255,255,255,.95);backdrop-filter:blur(14px);border:1px solid var(--bd2);border-radius:40px;padding:10px 20px;display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--tx2);font-family:'IBM Plex Mono',monospace;font-size:.72rem;font-weight:500;letter-spacing:1px;transition:all .25s}
+.back:hover{color:var(--k1);border-color:var(--k1)}
+.hdr{min-height:500px;padding:110px 80px 80px;position:relative;overflow:hidden;display:flex;align-items:flex-end}
+.hdr-bg{position:absolute;inset:0;background:var(--s1)}
+.hdr-bg::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 55% at 3% 100%,rgba(56,189,248,.13) 0%,transparent 55%),radial-gradient(ellipse 50% 65% at 97% 5%,rgba(74,222,128,.09) 0%,transparent 50%),radial-gradient(ellipse 45% 50% at 50% 50%,rgba(167,139,250,.04) 0%,transparent 60%)}
+.hdr-grid{position:absolute;inset:0;background-image:linear-gradient(var(--bd) 1px,transparent 1px),linear-gradient(90deg,var(--bd) 1px,transparent 1px);background-size:48px 48px;opacity:.13;mask-image:radial-gradient(ellipse 85% 90% at 50% 50%,black,transparent)}
+.hdr-content{position:relative;max-width:1400px;width:100%}
+.hdr-tier{display:inline-flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:.65rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--k1);margin-bottom:28px;padding:7px 16px;border:1px solid rgba(56,189,248,.35);border-radius:4px;background:rgba(56,189,248,.07)}
+.tier-dot{width:6px;height:6px;border-radius:50%;background:var(--k1);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+h1{font-size:clamp(2.8rem,7vw,6rem);font-weight:800;line-height:.9;letter-spacing:-4px;margin-bottom:28px}
+h1 em{font-style:normal;background:linear-gradient(135deg,var(--sky),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+h1 small{display:block;font-size:.36em;letter-spacing:-1px;color:var(--tx2);font-weight:500;margin-top:14px;-webkit-text-fill-color:var(--tx2)}
+.hdr-desc{font-size:1rem;color:var(--tx2);max-width:680px;line-height:1.9}
+.hdr-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.chip{font-family:'IBM Plex Mono',monospace;font-size:.63rem;font-weight:600;letter-spacing:.5px;padding:5px 12px;border-radius:3px;border:1px solid}
+.ck{color:var(--k1);border-color:rgba(56,189,248,.4);background:rgba(56,189,248,.07)}
+.cg{color:var(--green);border-color:rgba(74,222,128,.35);background:rgba(74,222,128,.05)}
+.ct{color:var(--teal);border-color:rgba(45,212,191,.35);background:rgba(45,212,191,.05)}
+.cv{color:var(--violet);border-color:rgba(167,139,250,.35);background:rgba(167,139,250,.07)}
+.cr{color:var(--rose);border-color:rgba(251,113,133,.35);background:rgba(251,113,133,.05)}
+.ca{color:var(--amber);border-color:rgba(251,191,36,.35);background:rgba(251,191,36,.05)}
+.co{color:var(--orange);border-color:rgba(251,146,60,.35);background:rgba(251,146,60,.05)}
+.cs{color:var(--sky);border-color:rgba(56,189,248,.35);background:rgba(56,189,248,.05)}
+.nav{position:sticky;top:0;z-index:300;background:rgba(255,255,255,.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--bd);display:flex;overflow-x:auto;scrollbar-width:none;padding:0 80px}
+.nav::-webkit-scrollbar{display:none}
+.nav-a{color:var(--mt);text-decoration:none;font-family:'IBM Plex Mono',monospace;font-size:.63rem;font-weight:600;letter-spacing:.5px;padding:14px 12px;white-space:nowrap;border-bottom:2px solid transparent;transition:all .18s}
+.nav-a:hover{color:var(--k1);border-bottom-color:var(--k1)}
+.main{max-width:1400px;margin:0 auto;padding:80px 24px 160px}
+.chapter{margin-bottom:100px;animation:fadeUp .5s ease backwards}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.chapter:nth-child(1){animation-delay:.04s}.chapter:nth-child(2){animation-delay:.08s}
+.chapter:nth-child(3){animation-delay:.12s}.chapter:nth-child(4){animation-delay:.16s}
+.chapter:nth-child(5){animation-delay:.20s}.chapter:nth-child(6){animation-delay:.24s}
+.chapter:nth-child(7){animation-delay:.28s}.chapter:nth-child(8){animation-delay:.32s}
+.chapter:nth-child(9){animation-delay:.36s}.chapter:nth-child(10){animation-delay:.40s}
+.chapter:nth-child(11){animation-delay:.44s}.chapter:nth-child(12){animation-delay:.48s}
+.chapter:nth-child(13){animation-delay:.52s}
+.ch-head{display:flex;align-items:flex-start;gap:22px;margin-bottom:36px;padding-bottom:28px;border-bottom:1px solid var(--bd)}
+.ch-num{font-family:'IBM Plex Mono',monospace;font-size:.62rem;font-weight:700;letter-spacing:3px;color:var(--mt);padding-top:6px;white-space:nowrap}
+.ch-info{flex:1}
+.ch-cat{font-family:'IBM Plex Mono',monospace;font-size:.58rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:6px}
+.ch-title{font-size:1.9rem;font-weight:800;letter-spacing:-1px;line-height:1.1;margin-bottom:10px}
+.ch-desc{font-size:.9rem;color:var(--tx2);max-width:840px;line-height:1.9}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:1100px){.g4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:900px){.g2,.g3,.g4{grid-template-columns:1fr}.hdr{padding:80px 24px 56px}.nav{padding:0 16px}h1{font-size:2.8rem;letter-spacing:-2px}}
+.card{background:var(--s1);border:1px solid var(--bd);border-radius:8px;overflow:hidden;transition:border-color .2s,box-shadow .2s}
+.card:hover{border-color:var(--bd2);box-shadow:0 6px 28px rgba(0,0,0,.5)}
+.card-h{padding:11px 18px;font-family:'IBM Plex Mono',monospace;font-size:.66rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:8px}
+.card-b{padding:18px}
+.code{background:#f4f4f5;border:1px solid var(--bd);border-radius:8px;overflow:hidden}
+.cbar{background:var(--s1);border-bottom:1px solid var(--bd);padding:9px 16px;font-family:'IBM Plex Mono',monospace;font-size:.64rem;color:var(--mt);display:flex;align-items:center;gap:7px}
+.fdot{width:7px;height:7px;border-radius:50%}
+pre{padding:20px;font-family:'IBM Plex Mono',monospace;font-size:.77rem;line-height:1.75;overflow-x:auto;color:#374151}
+.kw{color:#c678dd}.cls{color:#e5c07b}.fn{color:#61afef}.str{color:#98c379}
+.cm{color:#1e3040;font-style:italic}.num{color:#d19a66}.ann{color:#e06c75}
+.ifc{color:#56b6c2}.tp{color:#e5c07b}.prop{color:#7dd3fc}
+.alert{padding:16px 20px;border-radius:6px;border-left:3px solid;font-size:.87rem;line-height:1.85;color:var(--tx2)}
+.alert strong{color:var(--tx)}
+.alert-label{font-family:'IBM Plex Mono',monospace;font-size:.58rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;display:block;margin-bottom:6px}
+.al-k{background:rgba(56,189,248,.05);border-color:var(--k1)}.al-k .alert-label{color:var(--k1)}
+.al-green{background:rgba(74,222,128,.05);border-color:var(--green)}.al-green .alert-label{color:var(--green)}
+.al-rose{background:rgba(251,113,133,.05);border-color:var(--rose)}.al-rose .alert-label{color:var(--rose)}
+.al-violet{background:rgba(167,139,250,.05);border-color:var(--violet)}.al-violet .alert-label{color:var(--violet)}
+.al-teal{background:rgba(45,212,191,.05);border-color:var(--teal)}.al-teal .alert-label{color:var(--teal)}
+.al-amber{background:rgba(251,191,36,.05);border-color:var(--amber)}.al-amber .alert-label{color:var(--amber)}
+.al-orange{background:rgba(251,146,60,.05);border-color:var(--orange)}.al-orange .alert-label{color:var(--orange)}
+.al-sky{background:rgba(56,189,248,.05);border-color:var(--sky)}.al-sky .alert-label{color:var(--sky)}
+.tbl{width:100%;border-collapse:collapse;font-size:.84rem}
+.tbl th{background:var(--s2);color:var(--tx2);font-family:'IBM Plex Mono',monospace;font-size:.63rem;letter-spacing:2px;text-transform:uppercase;font-weight:700;padding:11px 16px;text-align:left;border-bottom:1px solid var(--bd)}
+.tbl td{padding:11px 16px;border-bottom:1px solid var(--bd);color:var(--tx2);vertical-align:top;line-height:1.75}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:var(--s2);color:var(--tx)}
+.tbl code{font-family:'IBM Plex Mono',monospace;font-size:.76rem;color:var(--k2);background:rgba(56,189,248,.1);padding:2px 7px;border-radius:3px}
+.ritem{display:flex;gap:16px;padding:12px 0;border-bottom:1px solid var(--bd);align-items:flex-start}
+.ritem:last-child{border-bottom:none}
+.ritem-key{font-family:'IBM Plex Mono',monospace;font-size:.76rem;white-space:nowrap;padding-top:2px;min-width:170px;flex-shrink:0}
+.ritem-val{font-size:.85rem;color:var(--tx2);line-height:1.75}
+.ritem-val code{font-family:'IBM Plex Mono',monospace;font-size:.76rem;color:var(--k2);background:rgba(56,189,248,.1);padding:1px 6px;border-radius:3px}
+.ritem-val strong{color:var(--tx)}
+.strip{border:1px solid var(--bd);border-radius:8px;padding:18px 22px;font-size:.87rem;color:var(--tx2);line-height:1.85;display:flex;gap:16px;align-items:flex-start}
+.strip-icon{font-size:1.3rem;flex-shrink:0;padding-top:2px}
+.strip strong{color:var(--tx)}
+.gap8{margin-top:8px}.gap12{margin-top:12px}.gap16{margin-top:16px}.gap24{margin-top:24px}
+.footer{border-top:1px solid var(--bd);background:var(--s1);padding:36px 80px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;font-family:'IBM Plex Mono',monospace;font-size:.68rem;color:var(--mt)}
+.footer-title{color:var(--k1);font-weight:700}
+.arch-box{background:var(--s2);border:1px solid var(--bd2);border-radius:6px;padding:14px 18px;font-family:'IBM Plex Mono',monospace;font-size:.74rem;line-height:1.9}
+.layer{border:1px solid;border-radius:5px;padding:8px 12px;margin:4px 0;font-size:.7rem;font-weight:700}
+</style>
+</head>
+<body>
+<a class="back" href="#">← MENU</a>
+<header class="hdr">
+  <div class="hdr-bg"></div><div class="hdr-grid"></div>
+  <div class="hdr-content">
+    <div class="hdr-tier"><div class="tier-dot"></div> Docker · Kubernetes · Container Orchestration</div>
+    <h1><em>Docker &amp; Kubernetes</em><small>Kontenery, orkiestracja i konfiguracja zasobów — od podstaw do produkcji</small></h1>
+    <p class="hdr-desc">Wszystko o konteneryzacji i orkiestracji — architektura Dockera, budowanie obrazów, Docker Compose, architektura K8s, kluczowe obiekty (Pod, Deployment, Service, Ingress), konfiguracja zasobów, storage, RBAC, Helm i dobre praktyki produkcyjne.</p>
+    <div class="hdr-chips">
+      <span class="chip ck">● Docker Core</span>
+      <span class="chip ca">Dockerfile</span>
+      <span class="chip cg">Docker Compose</span>
+      <span class="chip ct">K8s Architektura</span>
+      <span class="chip cv">Workloads</span>
+      <span class="chip cr">Networking</span>
+      <span class="chip cs">Storage &amp; Config</span>
+      <span class="chip co">Helm &amp; Produkcja</span>
+    </div>
+  </div>
+</header>
+<nav class="nav">
+  <a class="nav-a" href="#docker-core">Docker Core</a>
+  <a class="nav-a" href="#dockerfile">Dockerfile</a>
+  <a class="nav-a" href="#compose">Docker Compose</a>
+  <a class="nav-a" href="#k8s-arch">K8s Architektura</a>
+  <a class="nav-a" href="#workloads">Workloads</a>
+  <a class="nav-a" href="#networking">Networking</a>
+  <a class="nav-a" href="#config-storage">Config &amp; Storage</a>
+  <a class="nav-a" href="#resources">Zasoby &amp; Autoscaling</a>
+  <a class="nav-a" href="#rbac">RBAC &amp; Security</a>
+  <a class="nav-a" href="#helm">Helm</a>
+  <a class="nav-a" href="#spring-k8s">Spring na K8s</a>
+  <a class="nav-a" href="#production">Produkcja</a>
+</nav>
+<main class="main">
+
+<!-- ══ 01 DOCKER CORE ══ -->
+<section class="chapter" id="docker-core">
+  <div class="ch-head">
+    <div class="ch-num">01 / 12</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--sky)">Docker — Fundament</div>
+      <div class="ch-title">Docker — architektura, obrazy, kontenery</div>
+      <div class="ch-desc">Docker to platforma do budowania i uruchamiania <strong>kontenerów</strong> — izolowanych procesów współdzielących jądro systemu operacyjnego hosta. Lżejsze od VM, szybkie do uruchomienia, przenośne. Oparte na przestrzeniach nazw Linuksa i cgroups.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-h" style="color:var(--sky)">🏗️ Kluczowe koncepty</div>
+      <div class="card-b">
+        <div class="ritem"><div class="ritem-key" style="color:var(--sky)">Image</div><div class="ritem-val">Niemutowalny snapshot systemu plików + metadane (CMD, ENV, EXPOSE). Warstwowy (union filesystem). Bazuje na innych obrazach (<code>FROM</code>).</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--sky)">Container</div><div class="ritem-val">Uruchomiona instancja image. Izolowany proces z własnym namespace (PID, NET, MNT, UTS, IPC, USER). Efemeryczny — dane giną po usunięciu.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--sky)">Registry</div><div class="ritem-val">Repozytorium obrazów — Docker Hub, GitHub Container Registry, AWS ECR, GCR, Harbor (self-hosted). <code>docker pull/push</code></div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--sky)">Layer</div><div class="ritem-val">Każda instrukcja Dockerfile tworzy warstwę. Warstwy są cachowane i współdzielone między obrazami. Niezmienne po stworzeniu.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--sky)">Volume</div><div class="ritem-val">Persystentny storage zarządzany przez Docker. Przeżywa usunięcie kontenera. Typy: named volume, bind mount, tmpfs.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--sky)">Network</div><div class="ritem-val">Wirtualna sieć między kontenerami. Tryby: bridge (domyślny), host, none, overlay (Swarm/K8s). DNS między kontenerami w tej samej sieci.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--sky)">Docker Daemon</div><div class="ritem-val">Serwer zarządzający kontenerami (dockerd). Klient CLI (<code>docker</code>) komunikuje się przez socket. Alternatywy: containerd, Podman (rootless).</div></div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-h" style="color:var(--sky)">⚡ Docker vs VM vs Bare Metal</div>
+        <div class="card-b" style="font-size:.84rem">
+          <table class="tbl">
+            <tr><th>Cecha</th><th>Bare Metal</th><th>VM</th><th>Container</th></tr>
+            <tr><td>Izolacja</td><td>Brak</td><td>Pełna (hypervisor)</td><td><strong style="color:var(--sky)">Namespace + cgroups</strong></td></tr>
+            <tr><td>Startup</td><td>Minuty</td><td>Sekundy–minuty</td><td><strong style="color:var(--green)">Milisekundy</strong></td></tr>
+            <tr><td>Rozmiar</td><td>—</td><td>GB (cały OS)</td><td><strong style="color:var(--green)">MB (tylko różnica)</strong></td></tr>
+            <tr><td>Overhead</td><td>0%</td><td>5–15%</td><td><strong style="color:var(--green)">&lt;1%</strong></td></tr>
+            <tr><td>Przenośność</td><td>Niska</td><td>Średnia</td><td><strong style="color:var(--green)">Bardzo wysoka</strong></td></tr>
+            <tr><td>Bezpieczeństwo</td><td>Zależy od OS</td><td>Silna (VM escape trudny)</td><td>Słabsza (shared kernel)</td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="gap12"></div>
+      <div class="arch-box">
+        <div style="font-size:.65rem;color:var(--sky);font-weight:700;letter-spacing:2px;margin-bottom:12px">ARCHITEKTURA DOCKER</div>
+        <div class="layer" style="border-color:rgba(56,189,248,.4);background:rgba(56,189,248,.05);color:var(--sky)">🖥️ Docker CLI / API Client</div>
+        <div style="text-align:center;font-size:.8rem;color:var(--mt)">↕ REST API (unix socket / tcp)</div>
+        <div class="layer" style="border-color:rgba(251,191,36,.4);background:rgba(251,191,36,.05);color:var(--amber)">⚙️ Docker Daemon (dockerd)</div>
+        <div style="text-align:center;font-size:.8rem;color:var(--mt)">↕</div>
+        <div class="layer" style="border-color:rgba(74,222,128,.4);background:rgba(74,222,128,.05);color:var(--green)">📦 containerd (container runtime)</div>
+        <div style="text-align:center;font-size:.8rem;color:var(--mt)">↕ OCI</div>
+        <div class="layer" style="border-color:rgba(167,139,250,.4);background:rgba(167,139,250,.05);color:var(--violet)">🔧 runc (OCI runtime — tworzy kontenery)</div>
+        <div style="text-align:center;font-size:.8rem;color:var(--mt)">↕</div>
+        <div class="layer" style="border-color:rgba(251,113,133,.4);background:rgba(251,113,133,.05);color:var(--rose)">🐧 Linux Kernel (namespaces + cgroups)</div>
+      </div>
+    </div>
+  </div>
+  <div class="gap16"></div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--sky)"></div> Docker CLI — najważniejsze komendy</div>
+      <pre><span class="cm"># ══ Obrazy ════════════════════════════════════════════════════</span>
+docker pull openjdk:<span class="num">21</span>-jre-slim          <span class="cm"># pobierz obraz</span>
+docker images                               <span class="cm"># lista obrazów lokalnych</span>
+docker build -t myapp:<span class="num">1.0</span> .               <span class="cm"># zbuduj z Dockerfile</span>
+docker build --no-cache -t myapp:latest .  <span class="cm"># bez cache</span>
+docker tag myapp:<span class="num">1.0</span> registry.io/myapp:<span class="num">1.0</span>
+docker push registry.io/myapp:<span class="num">1.0</span>
+docker rmi myapp:<span class="num">1.0</span>                     <span class="cm"># usuń obraz</span>
+docker image prune -a                      <span class="cm"># usuń wszystkie nieużywane</span>
+
+<span class="cm"># ══ Kontenery ════════════════════════════════════════════════</span>
+docker run -d \                            <span class="cm"># -d = detached (tło)</span>
+  --name order-service \
+  -p <span class="num">8080</span>:<span class="num">8080</span> \                          <span class="cm"># host:container port</span>
+  -e SPRING_PROFILES_ACTIVE=prod \        <span class="cm"># env variable</span>
+  -v /host/data:/app/data \               <span class="cm"># bind mount</span>
+  --memory=<span class="str">"512m"</span> --cpus=<span class="str">"0.5"</span> \       <span class="cm"># limity zasobów</span>
+  --restart=unless-stopped \              <span class="cm"># polityka restartów</span>
+  --network=app-network \                 <span class="cm"># sieć</span>
+  myapp:<span class="num">1.0</span>
+
+docker ps                                 <span class="cm"># uruchomione kontenery</span>
+docker ps -a                              <span class="cm"># wszystkie (też zatrzymane)</span>
+docker logs -f order-service              <span class="cm"># logi (follow)</span>
+docker logs --tail <span class="num">100</span> order-service
+docker exec -it order-service /bin/sh     <span class="cm"># wejdź do kontenera</span>
+docker inspect order-service              <span class="cm"># pełna konfiguracja JSON</span>
+docker stats                              <span class="cm"># live CPU/RAM per kontener</span>
+docker stop order-service                 <span class="cm"># SIGTERM → SIGKILL po 10s</span>
+docker rm order-service                   <span class="cm"># usuń kontener</span>
+
+<span class="cm"># ══ Volumes ═══════════════════════════════════════════════════</span>
+docker volume create mydata
+docker volume ls
+docker run -v mydata:/data myapp:<span class="num">1.0</span>
+docker volume rm mydata
+
+<span class="cm"># ══ Sieci ══════════════════════════════════════════════════════</span>
+docker network create app-network
+docker network connect app-network order-service
+docker network inspect app-network</pre>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--sky)">🔍 Inspekcja i debugowanie</div>
+      <div class="card-b">
+        <div class="ritem"><div class="ritem-key" style="color:var(--sky)">docker exec</div><div class="ritem-val"><code>docker exec -it &lt;name&gt; /bin/sh</code> — wejście do działającego kontenera. Preferuj <code>/bin/sh</code> jeśli brak bash (slim images).</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--sky)">docker logs</div><div class="ritem-val"><code>-f</code> follow, <code>--since 5m</code> ostatnie 5 minut, <code>--tail 50</code> ostatnie 50 linii. Logi z stdout/stderr kontenera.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--sky)">docker stats</div><div class="ritem-val">Live CPU %, Memory Usage/Limit, Network I/O, Block I/O. Szybki health check wszystkich kontenerów.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--sky)">docker inspect</div><div class="ritem-val">Pełne JSON z konfiguracją kontenera/obrazu/sieci. <code>docker inspect -f '{{.NetworkSettings.IPAddress}}' name</code> — tylko IP.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--sky)">docker history</div><div class="ritem-val"><code>docker history myapp:1.0</code> — warstwy obrazu i ich rozmiar. Pomaga wykryć dlaczego obraz jest duży.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--sky)">docker diff</div><div class="ritem-val">Zmiany w systemie plików kontenera vs. obraz bazowy. A=Added, C=Changed, D=Deleted.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--sky)">docker cp</div><div class="ritem-val"><code>docker cp container:/app/logs/app.log ./</code> — kopiuj pliki z/do kontenera bez exec.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 02 DOCKERFILE ══ -->
+<section class="chapter" id="dockerfile">
+  <div class="ch-head">
+    <div class="ch-num">02 / 12</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--amber)">Dockerfile</div>
+      <div class="ch-title">Dockerfile — budowanie obrazów, multi-stage, optymalizacja</div>
+      <div class="ch-desc">Dockerfile to przepis na obraz — sekwencja instrukcji tworzących warstwy. Każda instrukcja = warstwa (cache). <strong>Multi-stage builds</strong> drastycznie zmniejszają rozmiar obrazów produkcyjnych — builder ma narzędzia, final image tylko runtime.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--amber)"></div> Dockerfile — Spring Boot multi-stage (produkcyjny)</div>
+      <pre><span class="cm"># ══ Stage 1: Build ════════════════════════════════════════════</span>
+<span class="cm"># Duży obraz z Maven/JDK — zostaje TYLKO w build stage</span>
+<span class="kw">FROM</span> eclipse-temurin:<span class="num">21</span>-jdk-alpine <span class="kw">AS</span> builder
+<span class="kw">WORKDIR</span> /workspace/app
+
+<span class="cm"># Kopiuj POM najpierw (cache dependencies — zmiana kodu nie rebuilda deps!)</span>
+<span class="kw">COPY</span> pom.xml .
+<span class="kw">COPY</span> .mvn/ .mvn/
+<span class="kw">COPY</span> mvnw .
+<span class="kw">RUN</span> ./mvnw dependency:go-offline -q
+
+<span class="cm"># Teraz kopiuj kod źródłowy</span>
+<span class="kw">COPY</span> src src
+
+<span class="cm"># Buduj aplikację (bez testów = szybciej w CI gdy testy są osobno)</span>
+<span class="kw">RUN</span> ./mvnw package -DskipTests -q
+
+<span class="cm"># Rozpakuj Spring Boot JAR na warstwy (Spring Boot Layered JARs)</span>
+<span class="kw">RUN</span> java -Djarmode=layertools \
+    -jar target/*.jar extract \
+    --destination target/extracted
+
+<span class="cm"># ══ Stage 2: Runtime ══════════════════════════════════════════</span>
+<span class="cm"># Mały obraz tylko z JRE — to trafia na produkcję!</span>
+<span class="kw">FROM</span> eclipse-temurin:<span class="num">21</span>-jre-alpine <span class="kw">AS</span> runtime
+
+<span class="cm"># Security: nie uruchamiaj jako root!</span>
+<span class="kw">RUN</span> addgroup -S spring &amp;&amp; adduser -S spring -G spring
+<span class="kw">USER</span> spring:spring
+
+<span class="kw">WORKDIR</span> /app
+
+<span class="cm"># Spring Boot Layered JARs — dependencies (rzadko się zmieniają) = oddzielna warstwa</span>
+<span class="cm"># Dzięki temu push/pull zmienia tylko warstwy z kodem aplikacji!</span>
+<span class="kw">COPY</span> --from=builder /workspace/app/target/extracted/dependencies/ ./
+<span class="kw">COPY</span> --from=builder /workspace/app/target/extracted/spring-boot-loader/ ./
+<span class="kw">COPY</span> --from=builder /workspace/app/target/extracted/snapshot-dependencies/ ./
+<span class="kw">COPY</span> --from=builder /workspace/app/target/extracted/application/ ./
+
+<span class="cm"># Health check</span>
+<span class="kw">HEALTHCHECK</span> --interval=<span class="num">30s</span> --timeout=<span class="num">3s</span> --start-period=<span class="num">60s</span> --retries=<span class="num">3</span> \
+  <span class="kw">CMD</span> wget -q --spider http://localhost:<span class="num">8080</span>/actuator/health || exit <span class="num">1</span>
+
+<span class="kw">EXPOSE</span> <span class="num">8080</span>
+
+<span class="cm"># Użyj exec form (nie shell form!) — prawidłowe przekazywanie sygnałów</span>
+<span class="kw">ENTRYPOINT</span> [<span class="str">"java"</span>,
+  <span class="str">"-XX:+UseContainerSupport"</span>,
+  <span class="str">"-XX:MaxRAMPercentage=75.0"</span>,
+  <span class="str">"-Djava.security.egd=file:/dev/./urandom"</span>,
+  <span class="str">"org.springframework.boot.loader.launch.JarLauncher"</span>
+]</pre>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-h" style="color:var(--amber)">📋 Instrukcje Dockerfile</div>
+        <div class="card-b">
+          <div class="ritem"><div class="ritem-key" style="color:var(--amber)">FROM</div><div class="ritem-val">Obraz bazowy. <code>FROM scratch</code> = pusty obraz (Go binaries). Zawsze pinuj wersję: <code>openjdk:21-jre-slim</code> nie <code>openjdk:latest</code>.</div></div>
+          <div class="ritem"><div class="ritem-key" style="color:var(--amber)">RUN</div><div class="ritem-val">Wykonaj komendę w nowej warstwie. Łącz komendy przez <code>&amp;&amp;</code> żeby nie tworzyć zbędnych warstw. <code>rm -rf /var/cache/apk/*</code> w tej samej warstwie.</div></div>
+          <div class="ritem"><div class="ritem-key" style="color:var(--amber)">COPY vs ADD</div><div class="ritem-val"><strong>Zawsze COPY</strong> (explicit). ADD ma ukryte funkcje (rozpakowanie .tar, URL) — używaj tylko gdy potrzebujesz tych funkcji.</div></div>
+          <div class="ritem"><div class="ritem-key" style="color:var(--amber)">ENV</div><div class="ritem-val">Zmienne środowiskowe dostępne w runtime. Nadpisywane przez <code>docker run -e</code> lub K8s env. Nie używaj do sekretów!</div></div>
+          <div class="ritem"><div class="ritem-key" style="color:var(--amber)">ARG</div><div class="ritem-val">Zmienne tylko w czasie build (<code>docker build --build-arg VERSION=1.0</code>). Nie są dostępne w runtime. Używaj do wersji, tagów.</div></div>
+          <div class="ritem"><div class="ritem-key" style="color:var(--amber)">ENTRYPOINT vs CMD</div><div class="ritem-val"><code>ENTRYPOINT</code> = komenda bazowa (nie nadpisywana łatwo). <code>CMD</code> = domyślne argumenty (łatwo nadpisywane). Razem: ENTRYPOINT=executable, CMD=default args.</div></div>
+          <div class="ritem"><div class="ritem-key" style="color:var(--amber)">USER</div><div class="ritem-val">Uruchom jako non-root! Domyślnie Docker uruchamia jako root — ogromne ryzyko bezpieczeństwa. Zawsze <code>USER appuser</code>.</div></div>
+        </div>
+      </div>
+      <div class="gap12"></div>
+      <div class="alert al-amber">
+        <span class="alert-label">Optymalizacja — cache warstw</span>
+        Kolejność instrukcji ma <strong>ogromne znaczenie</strong> dla cache. Częste zmiany = na końcu. Wolno zmieniające się = na początku.<br>
+        <strong>Złe:</strong> COPY . . → RUN mvn dependency:go-offline<br>
+        <strong>Dobre:</strong> COPY pom.xml . → RUN mvn dependency:go-offline → COPY src src<br>
+        Zmiana kodu nie reinstaluje dependencies!
+      </div>
+      <div class="gap12"></div>
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--amber)"></div> .dockerignore — co wykluczyć</div>
+        <pre><span class="cm"># .dockerignore</span>
+.git
+.gitignore
+target/
+*.md
+.mvn/wrapper/maven-wrapper.jar
+<span class="cm"># Nie kopiuj sekretów!</span>
+.env
+*.pem
+*.key
+application-local.yml</pre>
+      </div>
+    </div>
+  </div>
+  <div class="gap16"></div>
+  <div class="g4">
+    <div class="card">
+      <div class="card-h" style="color:var(--amber)">🏔️ Alpine vs Slim vs Distroless</div>
+      <div class="card-b" style="font-size:.82rem;color:var(--tx2);line-height:1.85">
+        <p><strong style="color:var(--tx)">Alpine</strong> (~5MB base) — musl libc, minimalne narzędzia. Małe obrazy, ale czasem problemy z Java (JVM zakłada glibc).</p>
+        <p style="margin-top:8px"><strong style="color:var(--tx)">Slim</strong> (~80MB) — Debian/Ubuntu stripped. Najbezpieczniejszy wybór dla JVM.</p>
+        <p style="margin-top:8px"><strong style="color:var(--tx)">Distroless</strong> — tylko runtime (bez powłoki, pakietów). Najmniejsza powierzchnia ataku. Google's recommendation.</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--amber)">📦 Multi-stage korzyści</div>
+      <div class="card-b" style="font-size:.82rem;color:var(--tx2);line-height:1.85">
+        <p>Typowy Spring Boot JAR: ~50MB</p>
+        <p style="margin-top:8px"><strong style="color:var(--rose)">single-stage (JDK)</strong>: ~400MB+</p>
+        <p><strong style="color:var(--amber)">single-stage (JRE)</strong>: ~250MB</p>
+        <p><strong style="color:var(--green)">multi-stage layered</strong>: ~120MB</p>
+        <p style="margin-top:8px">Mniejszy obraz = szybszy pull, mniejsza powierzchnia ataku, tańszy registry storage.</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--amber)">⚙️ JVM w kontenerze</div>
+      <div class="card-b" style="font-size:.82rem;color:var(--tx2);line-height:1.85">
+        <p><strong style="color:var(--rose)">Problem:</strong> Stara JVM czytała RAM hosta, nie kontenera → OOM Killer.</p>
+        <p style="margin-top:8px"><code>-XX:+UseContainerSupport</code> — JVM widzi limity cgroup (domyślnie od Java 10)</p>
+        <p><code>-XX:MaxRAMPercentage=75.0</code> — użyj 75% RAM limitu kontenera</p>
+        <p style="margin-top:8px">Zawsze ustaw limit pamięci w K8s/Docker!</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--amber)">🔒 Security best practices</div>
+      <div class="card-b" style="font-size:.82rem;color:var(--tx2);line-height:1.85">
+        <p>• Non-root user (<code>USER</code>)</p>
+        <p>• Read-only filesystem: <code>--read-only</code></p>
+        <p>• No privileged: nigdy <code>--privileged</code></p>
+        <p>• Skanuj obraz: <code>trivy image myapp:1.0</code></p>
+        <p>• Pinuj dokładne wersje bazowe (nie latest)</p>
+        <p>• Secrets przez env lub mounted secrets, <strong>nigdy w Dockerfile</strong></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 03 DOCKER COMPOSE ══ -->
+<section class="chapter" id="compose">
+  <div class="ch-head">
+    <div class="ch-num">03 / 12</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--green)">Docker Compose</div>
+      <div class="ch-title">Docker Compose — środowisko lokalne i integracyjne</div>
+      <div class="ch-desc">Docker Compose to narzędzie do definiowania i uruchamiania <strong>multi-container aplikacji</strong> w jednym pliku YAML. Idealne dla środowisk lokalnych i testów integracyjnych. Compose v2 (plugin) zastąpił v1 (python).</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--green)"></div> docker-compose.yml — Spring Boot + PostgreSQL + Kafka + ELK</div>
+      <pre><span class="cm"># docker-compose.yml</span>
+services:
+  <span class="cm"># ── Aplikacja Spring Boot ──────────────────────────────────</span>
+  order-service:
+    <span class="prop">build</span>:
+      <span class="prop">context</span>: .
+      <span class="prop">target</span>: runtime          <span class="cm"># multi-stage stage name</span>
+    <span class="prop">image</span>: order-service:<span class="str">"${VERSION:-latest}"</span>
+    <span class="prop">ports</span>:
+      - <span class="str">"8080:8080"</span>
+    <span class="prop">environment</span>:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:<span class="num">5432</span>/orders
+      SPRING_DATASOURCE_USERNAME: orders_user
+      <span class="cm"># Sekrety lepiej przez .env lub secrets:</span>
+      SPRING_DATASOURCE_PASSWORD: <span class="str">"${DB_PASSWORD}"</span>
+      KAFKA_BOOTSTRAP_SERVERS: kafka:<span class="num">9092</span>
+    <span class="prop">depends_on</span>:
+      postgres:
+        <span class="prop">condition</span>: service_healthy    <span class="cm"># czekaj na health check!</span>
+      kafka:
+        <span class="prop">condition</span>: service_healthy
+    <span class="prop">healthcheck</span>:
+      <span class="prop">test</span>: [<span class="str">"CMD"</span>, <span class="str">"wget"</span>, <span class="str">"-qO-"</span>, <span class="str">"http://localhost:8080/actuator/health"</span>]
+      <span class="prop">interval</span>: 30s
+      <span class="prop">timeout</span>: 5s
+      <span class="prop">retries</span>: 5
+      <span class="prop">start_period</span>: 60s
+    <span class="prop">networks</span>:
+      - app-network
+
+  <span class="cm"># ── PostgreSQL ─────────────────────────────────────────────</span>
+  postgres:
+    <span class="prop">image</span>: postgres:<span class="num">16</span>-alpine
+    <span class="prop">environment</span>:
+      POSTGRES_DB: orders
+      POSTGRES_USER: orders_user
+      POSTGRES_PASSWORD: <span class="str">"${DB_PASSWORD}"</span>
+    <span class="prop">volumes</span>:
+      - postgres-data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d  <span class="cm"># SQL scripts przy starcie</span>
+    <span class="prop">healthcheck</span>:
+      <span class="prop">test</span>: [<span class="str">"CMD-SHELL"</span>, <span class="str">"pg_isready -U orders_user"</span>]
+      <span class="prop">interval</span>: 10s
+      <span class="prop">timeout</span>: 5s
+      <span class="prop">retries</span>: 5
+    <span class="prop">networks</span>:
+      - app-network
+
+  <span class="cm"># ── Kafka (KRaft mode — bez ZooKeepera) ───────────────────</span>
+  kafka:
+    <span class="prop">image</span>: confluentinc/cp-kafka:<span class="num">7.6</span>.0
+    <span class="prop">environment</span>:
+      KAFKA_NODE_ID: <span class="num">1</span>
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://:<span class="num">9092</span>,CONTROLLER://:<span class="num">9093</span>
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:<span class="num">9092</span>
+      KAFKA_CONTROLLER_QUORUM_VOTERS: <span class="str">"1@kafka:9093"</span>
+      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
+    <span class="prop">healthcheck</span>:
+      <span class="prop">test</span>: kafka-topics.sh --bootstrap-server localhost:<span class="num">9092</span> --list
+      <span class="prop">interval</span>: 30s
+      <span class="prop">timeout</span>: 10s
+      <span class="prop">retries</span>: 5
+      <span class="prop">start_period</span>: 30s
+    <span class="prop">networks</span>:
+      - app-network
+
+<span class="prop">volumes</span>:
+  postgres-data:
+
+<span class="prop">networks</span>:
+  app-network:
+    <span class="prop">driver</span>: bridge</pre>
+    </div>
+    <div>
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--green)"></div> Docker Compose — komendy i wzorce</div>
+        <pre><span class="cm"># ══ Podstawowe komendy ════════════════════════════════════════</span>
+docker compose up -d              <span class="cm"># uruchom w tle</span>
+docker compose up --build -d      <span class="cm"># rebuild obrazów + uruchom</span>
+docker compose down               <span class="cm"># zatrzymaj i usuń kontenery</span>
+docker compose down -v            <span class="cm"># + usuń volumes</span>
+docker compose ps                 <span class="cm"># status serwisów</span>
+docker compose logs -f            <span class="cm"># logi wszystkich serwisów</span>
+docker compose logs -f order-service
+docker compose exec order-service /bin/sh
+docker compose restart order-service
+docker compose scale order-service=<span class="num">3</span>  <span class="cm"># skaluj repliki</span>
+
+<span class="cm"># ══ Przydatne wzorce ══════════════════════════════════════════</span>
+<span class="cm"># Override dla lokalnego developmentu:</span>
+docker compose -f docker-compose.yml \
+               -f docker-compose.override.yml up -d
+<span class="cm"># docker-compose.override.yml automatycznie mergowany</span>
+
+<span class="cm"># Profil dla serwisów opcjonalnych:</span>
+<span class="cm"># W docker-compose.yml: profiles: ["monitoring"]</span>
+docker compose --profile monitoring up -d
+
+<span class="cm"># Zmienne z pliku .env (automatycznie ładowany):</span>
+<span class="cm"># DB_PASSWORD=secret123  →  ${DB_PASSWORD} w compose</span>
+
+<span class="cm"># Testcontainers — Compose w testach Java</span>
+<span class="cm"># @Testcontainers + @Container + DockerComposeContainer</span></pre>
+      </div>
+      <div class="gap12"></div>
+      <div class="alert al-green">
+        <span class="alert-label">depends_on — pułapka</span>
+        <code>depends_on</code> bez <code>condition</code> czeka tylko na <strong>start kontenera</strong>, nie na gotowość serwisu. PostgreSQL może być "running" ale jeszcze nie przyjmować połączeń.<br>
+        Używaj <code>condition: service_healthy</code> z <code>healthcheck</code> na każdym zależnym serwisie. To eliminuje potrzebę <code>wait-for-it.sh</code> w starterach.
+      </div>
+      <div class="gap12"></div>
+      <div class="alert al-sky">
+        <span class="alert-label">Docker Compose vs Kubernetes</span>
+        Docker Compose = <strong>lokalny development</strong> i testy integracyjne. Kubernetes = <strong>produkcja, staging</strong>. Nikt nie używa Compose na produkcji (może poza małymi projektami/VPS). Testcontainers pozwala używać Docker w testach integracyjnych bez "lokalnego" Compose.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 04 K8S ARCHITEKTURA ══ -->
+<section class="chapter" id="k8s-arch">
+  <div class="ch-head">
+    <div class="ch-num">04 / 12</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--teal)">Kubernetes — Fundament</div>
+      <div class="ch-title">Kubernetes — architektura klastra, komponenty Control Plane</div>
+      <div class="ch-desc">Kubernetes to platforma orkiestracji kontenerów — automatyzuje deployment, skalowanie i zarządzanie aplikacjami. Klaster = <strong>Control Plane</strong> (zarządzanie) + <strong>Worker Nodes</strong> (uruchamianie workloadów). Deklaratywny model: opisujesz <em>co</em> chcesz, K8s realizuje.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-h" style="color:var(--teal)">🏗️ Komponenty klastra</div>
+      <div class="card-b">
+        <div style="font-size:.72rem;font-family:'IBM Plex Mono',monospace;font-weight:700;color:var(--teal);letter-spacing:2px;margin-bottom:10px">CONTROL PLANE</div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--teal)">API Server</div><div class="ritem-val">Brama do klastra — każde <code>kubectl</code> i każdy komponent rozmawia przez REST API. Waliduje, autoryzuje i persystuje do etcd.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--teal)">etcd</div><div class="ritem-val">Rozproszony key-value store — <strong>jedyne źródło prawdy</strong> o stanie klastra. Replikowany (Raft). Krytyczny — backup etcd = backup klastra.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--teal)">Scheduler</div><div class="ritem-val">Przypisuje Pody do nodów na podstawie zasobów (requests/limits), selektorów, affinity, taints/tolerations. Nie uruchamia — tylko decyduje <em>gdzie</em>.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--teal)">Controller Manager</div><div class="ritem-val">Pętla sterowania — ciągle porównuje desired state z actual state i koryguje. Zawiera: ReplicaSet, Deployment, Node, Job, ServiceAccount controllers.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--teal)">Cloud Controller</div><div class="ritem-val">Integracja z cloud providerem (AWS/GCP/Azure) — Load Balancery, storage, node lifecycle. Oddziela logikę K8s od cloud-specific.</div></div>
+        <div style="font-size:.72rem;font-family:'IBM Plex Mono',monospace;font-weight:700;color:var(--green);letter-spacing:2px;margin:14px 0 10px">WORKER NODE</div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--green)">kubelet</div><div class="ritem-val">Agent na każdym nodzie — komunikuje się z API Server, zarządza Podami przez CRI (Container Runtime Interface). Raportuje stan nodów.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--green)">kube-proxy</div><div class="ritem-val">Implementuje Services (iptables/IPVS). Routing ruchu sieciowego do właściwych Podów. Jeden per node.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--green)">Container Runtime</div><div class="ritem-val">containerd (domyślny od K8s 1.24) lub CRI-O. Uruchamia kontenery przez OCI. Docker Shim usunięty.</div></div>
+      </div>
+    </div>
+    <div>
+      <div class="arch-box">
+        <div style="font-size:.65rem;color:var(--teal);font-weight:700;letter-spacing:2px;margin-bottom:12px">ARCHITEKTURA KLASTRA KUBERNETES</div>
+        <div style="display:flex;gap:8px;margin-bottom:12px">
+          <div style="flex:1;border:1px solid rgba(45,212,191,.35);background:rgba(45,212,191,.04);border-radius:5px;padding:10px">
+            <div style="font-size:.65rem;color:var(--teal);font-weight:700;margin-bottom:8px">CONTROL PLANE</div>
+            <div style="background:rgba(45,212,191,.08);border:1px solid rgba(45,212,191,.2);border-radius:4px;padding:6px 10px;font-size:.68rem;margin:3px 0">🔌 API Server :6443</div>
+            <div style="background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:4px;padding:6px 10px;font-size:.68rem;margin:3px 0">💾 etcd :2379</div>
+            <div style="background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);border-radius:4px;padding:6px 10px;font-size:.68rem;margin:3px 0">📅 Scheduler</div>
+            <div style="background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);border-radius:4px;padding:6px 10px;font-size:.68rem;margin:3px 0">🔄 Controller Manager</div>
+          </div>
+          <div style="display:flex;flex-direction:column;justify-content:center;color:var(--mt);font-size:1.2rem;padding:0 4px">⟷</div>
+          <div style="flex:1;border:1px solid rgba(74,222,128,.35);background:rgba(74,222,128,.04);border-radius:5px;padding:10px">
+            <div style="font-size:.65rem;color:var(--green);font-weight:700;margin-bottom:8px">WORKER NODE × N</div>
+            <div style="background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.2);border-radius:4px;padding:6px 10px;font-size:.68rem;margin:3px 0">🤖 kubelet</div>
+            <div style="background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);border-radius:4px;padding:6px 10px;font-size:.68rem;margin:3px 0">🌐 kube-proxy</div>
+            <div style="background:rgba(251,146,60,.08);border:1px solid rgba(251,146,60,.2);border-radius:4px;padding:6px 10px;font-size:.68rem;margin:3px 0">📦 containerd</div>
+            <div style="background:rgba(251,113,133,.08);border:1px solid rgba(251,113,133,.2);border-radius:4px;padding:6px 10px;font-size:.68rem;margin:3px 0">🟢 Pod · Pod · Pod</div>
+          </div>
+        </div>
+        <div style="text-align:center;font-size:.68rem;color:var(--tx2)">kubectl → API Server → etcd (state) / Scheduler / Controllers</div>
+      </div>
+      <div class="gap12"></div>
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--teal)"></div> kubectl — kluczowe komendy</div>
+        <pre><span class="cm"># Kontekst i namespace</span>
+kubectl config get-contexts
+kubectl config use-context prod-cluster
+kubectl config set-context --current --namespace=myapp
+
+<span class="cm"># Podstawowa diagnostyka</span>
+kubectl get pods -n myapp -o wide
+kubectl get pods -n myapp -w            <span class="cm"># watch (live)</span>
+kubectl describe pod order-service-xyz
+kubectl logs order-service-xyz -f
+kubectl logs order-service-xyz -c init-container
+kubectl exec -it order-service-xyz -- /bin/sh
+
+<span class="cm"># Apply / Delete</span>
+kubectl apply -f deployment.yaml
+kubectl apply -f k8s/                   <span class="cm"># cały katalog</span>
+kubectl delete -f deployment.yaml
+kubectl delete pod order-service-xyz    <span class="cm"># restart poda</span>
+
+<span class="cm"># Diagnostyka</span>
+kubectl get events -n myapp --sort-by='.lastTimestamp'
+kubectl top pods -n myapp              <span class="cm"># CPU/RAM (metrics-server)</span>
+kubectl top nodes
+kubectl rollout status deployment/order-service
+kubectl rollout history deployment/order-service
+kubectl rollout undo deployment/order-service</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 05 WORKLOADS ══ -->
+<section class="chapter" id="workloads">
+  <div class="ch-head">
+    <div class="ch-num">05 / 12</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--violet)">Kubernetes Workloads</div>
+      <div class="ch-title">Pod, Deployment, StatefulSet, DaemonSet, Job — obiekty workload</div>
+      <div class="ch-desc">Workloady to obiekty K8s uruchamiające kontenery. <strong>Pod</strong> to atomowa jednostka — rzadko tworzysz bezpośrednio. <strong>Deployment</strong> zarządza bezstanowymi aplikacjami. <strong>StatefulSet</strong> dla baz danych. <strong>DaemonSet</strong> dla agentów per node.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--violet)"></div> Deployment — kompletny manifest Spring Boot</div>
+      <pre>apiVersion: apps/v1
+kind: <span class="cls">Deployment</span>
+metadata:
+  <span class="prop">name</span>: order-service
+  <span class="prop">namespace</span>: myapp
+  <span class="prop">labels</span>:
+    <span class="prop">app</span>: order-service
+    <span class="prop">version</span>: v1
+spec:
+  <span class="prop">replicas</span>: <span class="num">3</span>
+  <span class="prop">selector</span>:
+    <span class="prop">matchLabels</span>:
+      <span class="prop">app</span>: order-service
+
+  <span class="cm"># Strategia deploymentu</span>
+  <span class="prop">strategy</span>:
+    <span class="prop">type</span>: RollingUpdate
+    <span class="prop">rollingUpdate</span>:
+      <span class="prop">maxSurge</span>: <span class="num">1</span>        <span class="cm"># ile dodatkowych Podów podczas update</span>
+      <span class="prop">maxUnavailable</span>: <span class="num">0</span>  <span class="cm"># ile może być niedostępnych (0 = zero downtime)</span>
+
+  <span class="prop">template</span>:
+    <span class="prop">metadata</span>:
+      <span class="prop">labels</span>:
+        <span class="prop">app</span>: order-service
+        <span class="prop">version</span>: v1
+      <span class="prop">annotations</span>:
+        prometheus.io/scrape: <span class="str">"true"</span>
+        prometheus.io/port: <span class="str">"8080"</span>
+        prometheus.io/path: <span class="str">"/actuator/prometheus"</span>
+
+    <span class="prop">spec</span>:
+      <span class="cm"># Czas na graceful shutdown (SIGTERM → SIGKILL)</span>
+      <span class="prop">terminationGracePeriodSeconds</span>: <span class="num">60</span>
+
+      <span class="cm"># Init container — czekaj na PostgreSQL</span>
+      <span class="prop">initContainers</span>:
+        - <span class="prop">name</span>: wait-for-db
+          <span class="prop">image</span>: busybox:1.36
+          <span class="prop">command</span>: [<span class="str">'sh'</span>, <span class="str">'-c'</span>,
+            <span class="str">'until nc -z postgres 5432; do echo waiting; sleep 2; done'</span>]
+
+      <span class="prop">containers</span>:
+        - <span class="prop">name</span>: order-service
+          <span class="prop">image</span>: registry.io/order-service:<span class="num">1.5</span>.0
+          <span class="prop">imagePullPolicy</span>: Always
+
+          <span class="prop">ports</span>:
+            - <span class="prop">containerPort</span>: <span class="num">8080</span>
+              <span class="prop">name</span>: http
+
+          <span class="cm"># Zmienne środowiskowe</span>
+          <span class="prop">env</span>:
+            - <span class="prop">name</span>: SPRING_PROFILES_ACTIVE
+              <span class="prop">value</span>: <span class="str">"kubernetes"</span>
+            - <span class="prop">name</span>: DB_PASSWORD
+              <span class="prop">valueFrom</span>:
+                <span class="prop">secretKeyRef</span>:
+                  <span class="prop">name</span>: db-secret
+                  <span class="prop">key</span>: password
+            - <span class="prop">name</span>: POD_NAME
+              <span class="prop">valueFrom</span>:
+                <span class="prop">fieldRef</span>:
+                  <span class="prop">fieldPath</span>: metadata.name
+
+          <span class="prop">envFrom</span>:
+            - <span class="prop">configMapRef</span>:
+                <span class="prop">name</span>: order-service-config
+
+          <span class="cm"># Zasoby — OBOWIĄZEK na produkcji</span>
+          <span class="prop">resources</span>:
+            <span class="prop">requests</span>:
+              <span class="prop">memory</span>: <span class="str">"256Mi"</span>
+              <span class="prop">cpu</span>:    <span class="str">"100m"</span>
+            <span class="prop">limits</span>:
+              <span class="prop">memory</span>: <span class="str">"512Mi"</span>
+              <span class="prop">cpu</span>:    <span class="str">"500m"</span>
+
+          <span class="cm"># Health checks</span>
+          <span class="prop">startupProbe</span>:
+            <span class="prop">httpGet</span>:
+              <span class="prop">path</span>: /actuator/health
+              <span class="prop">port</span>: <span class="num">8080</span>
+            <span class="prop">failureThreshold</span>: <span class="num">30</span>
+            <span class="prop">periodSeconds</span>: <span class="num">10</span>        <span class="cm"># max 5 min na startup</span>
+
+          <span class="prop">livenessProbe</span>:
+            <span class="prop">httpGet</span>:
+              <span class="prop">path</span>: /actuator/health/liveness
+              <span class="prop">port</span>: <span class="num">8080</span>
+            <span class="prop">initialDelaySeconds</span>: <span class="num">0</span>
+            <span class="prop">periodSeconds</span>: <span class="num">10</span>
+            <span class="prop">failureThreshold</span>: <span class="num">3</span>
+
+          <span class="prop">readinessProbe</span>:
+            <span class="prop">httpGet</span>:
+              <span class="prop">path</span>: /actuator/health/readiness
+              <span class="prop">port</span>: <span class="num">8080</span>
+            <span class="prop">initialDelaySeconds</span>: <span class="num">0</span>
+            <span class="prop">periodSeconds</span>: <span class="num">5</span>
+
+          <span class="cm"># Graceful shutdown</span>
+          <span class="prop">lifecycle</span>:
+            <span class="prop">preStop</span>:
+              <span class="prop">exec</span>:
+                <span class="prop">command</span>: [<span class="str">"/bin/sh"</span>, <span class="str">"-c"</span>, <span class="str">"sleep 5"</span>]
+
+          <span class="prop">volumeMounts</span>:
+            - <span class="prop">name</span>: app-config
+              <span class="prop">mountPath</span>: /config
+              <span class="prop">readOnly</span>: <span class="kw">true</span>
+
+      <span class="prop">volumes</span>:
+        - <span class="prop">name</span>: app-config
+          <span class="prop">configMap</span>:
+            <span class="prop">name</span>: order-service-config</pre>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-h" style="color:var(--violet)">📋 Typy workloadów</div>
+        <div class="card-b">
+          <div class="ritem"><div class="ritem-key" style="color:var(--violet)">Pod</div><div class="ritem-val">Jeden lub kilka kontenerów współdzielących network i storage. Atomowa jednostka K8s. Efemeryczny — nie twórz bezpośrednio w prod.</div></div>
+          <div class="ritem"><div class="ritem-key" style="color:var(--violet)">Deployment</div><div class="ritem-val"><strong>Bezstanowe aplikacje</strong> (stateless). Zarządza ReplicaSet, rolling updates, rollback. To twój domyślny wybór dla Spring Boot serwisów.</div></div>
+          <div class="ritem"><div class="ritem-key" style="color:var(--violet)">StatefulSet</div><div class="ritem-val"><strong>Stanowe aplikacje</strong> — bazy danych, Kafka, Elasticsearch. Stabilne nazwy Podów (pod-0, pod-1), persistent volumes per Pod, ordered start/stop.</div></div>
+          <div class="ritem"><div class="ritem-key" style="color:var(--violet)">DaemonSet</div><div class="ritem-val">Jeden Pod <strong>na każdym nodzie</strong>. Używaj dla: Filebeat (logi), node-exporter (metryki), kube-proxy, CNI pluginy.</div></div>
+          <div class="ritem"><div class="ritem-key" style="color:var(--violet)">Job</div><div class="ritem-val"><strong>Jednorazowe zadania</strong> — migracje DB, generowanie raportów. Uruchamia się do completion. <code>parallelism</code> i <code>completions</code> dla równoległości.</div></div>
+          <div class="ritem"><div class="ritem-key" style="color:var(--violet)">CronJob</div><div class="ritem-val"><strong>Job po harmonogramie</strong> (cron syntax). Tworzy Job przy każdym uruchomieniu. Uwaga na <code>concurrencyPolicy: Forbid</code>.</div></div>
+        </div>
+      </div>
+      <div class="gap12"></div>
+      <div class="card">
+        <div class="card-h" style="color:var(--violet)">💊 Probes — kiedy co używać</div>
+        <div class="card-b" style="font-size:.83rem;color:var(--tx2);line-height:1.85">
+          <table class="tbl">
+            <tr><th>Probe</th><th>Cel</th><th>Akcja przy porażce</th></tr>
+            <tr><td><strong style="color:var(--amber)">startupProbe</strong></td><td>Aplikacja gotowa do health check. Blokuje liveness/readiness.</td><td>Kontener restartowany po <code>failureThreshold</code></td></tr>
+            <tr><td><strong style="color:var(--rose)">livenessProbe</strong></td><td>Czy aplikacja żyje? Deadlock, OOM, nieskończona pętla.</td><td>Kontener <strong>restartowany</strong></td></tr>
+            <tr><td><strong style="color:var(--green)">readinessProbe</strong></td><td>Czy aplikacja gotowa przyjmować ruch? Warms up, circuit breaker.</td><td>Pod usunięty z <strong>Service endpoints</strong> (brak ruchu)</td></tr>
+          </table>
+          <p style="margin-top:10px">⚠️ Spring Boot Actuator: <code>/actuator/health/liveness</code> i <code>/actuator/health/readiness</code> — osobne endpointy od Spring Boot 2.3+</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 06 NETWORKING ══ -->
+<section class="chapter" id="networking">
+  <div class="ch-head">
+    <div class="ch-num">06 / 12</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--green)">Kubernetes Networking</div>
+      <div class="ch-title">Service, Ingress, DNS — sieć w Kubernetes</div>
+      <div class="ch-desc">Każdy Pod ma unikalny IP. <strong>Service</strong> daje stabilny IP/DNS i load balancing do zestawu Podów. <strong>Ingress</strong> to HTTP/HTTPS router — mapuje ścieżki URL do serwisów. DNS w K8s: <code>&lt;service&gt;.&lt;namespace&gt;.svc.cluster.local</code>.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--green)"></div> Service + Ingress — manifest</div>
+      <pre><span class="cm"># ══ Service — ClusterIP (domyślny) ════════════════════════════</span>
+apiVersion: v1
+kind: <span class="cls">Service</span>
+metadata:
+  <span class="prop">name</span>: order-service
+  <span class="prop">namespace</span>: myapp
+spec:
+  <span class="prop">selector</span>:
+    <span class="prop">app</span>: order-service     <span class="cm"># musi pasować do Pod labels!</span>
+  <span class="prop">ports</span>:
+    - <span class="prop">name</span>: http
+      <span class="prop">port</span>: <span class="num">80</span>              <span class="cm"># port Service</span>
+      <span class="prop">targetPort</span>: <span class="num">8080</span>    <span class="cm"># port kontenera</span>
+      <span class="prop">protocol</span>: TCP
+  <span class="prop">type</span>: ClusterIP         <span class="cm"># tylko wewnątrz klastra</span>
+<span class="cm">---</span>
+<span class="cm"># DNS: http://order-service.myapp.svc.cluster.local</span>
+<span class="cm"># lub skrót: http://order-service (w tym samym namespace)</span>
+
+<span class="cm"># ══ Ingress — HTTP router ══════════════════════════════════════</span>
+apiVersion: networking.k8s.io/v1
+kind: <span class="cls">Ingress</span>
+metadata:
+  <span class="prop">name</span>: api-ingress
+  <span class="prop">namespace</span>: myapp
+  <span class="prop">annotations</span>:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/proxy-body-size: <span class="str">"10m"</span>
+    nginx.ingress.kubernetes.io/proxy-read-timeout: <span class="str">"60"</span>
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  <span class="prop">ingressClassName</span>: nginx
+  <span class="prop">tls</span>:
+    - <span class="prop">hosts</span>:
+        - api.example.com
+      <span class="prop">secretName</span>: api-example-tls    <span class="cm"># cert-manager wygeneruje</span>
+  <span class="prop">rules</span>:
+    - <span class="prop">host</span>: api.example.com
+      <span class="prop">http</span>:
+        <span class="prop">paths</span>:
+          - <span class="prop">path</span>: /api/orders
+            <span class="prop">pathType</span>: Prefix
+            <span class="prop">backend</span>:
+              <span class="prop">service</span>:
+                <span class="prop">name</span>: order-service
+                <span class="prop">port</span>:
+                  <span class="prop">number</span>: <span class="num">80</span>
+          - <span class="prop">path</span>: /api/products
+            <span class="prop">pathType</span>: Prefix
+            <span class="prop">backend</span>:
+              <span class="prop">service</span>:
+                <span class="prop">name</span>: product-service
+                <span class="prop">port</span>:
+                  <span class="prop">number</span>: <span class="num">80</span></pre>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-h" style="color:var(--green)">🌐 Typy Service</div>
+        <div class="card-b">
+          <div class="ritem"><div class="ritem-key" style="color:var(--green)">ClusterIP</div><div class="ritem-val">Domyślny. Wewnętrzny wirtualny IP (VIP) dostępny tylko w klastrze. Używaj dla komunikacji między serwisami. DNS: <code>service.namespace</code>.</div></div>
+          <div class="ritem"><div class="ritem-key" style="color:var(--green)">NodePort</div><div class="ritem-val">Otwiera port (30000-32767) na <strong>każdym nodzie</strong> → ruch idzie do Podów. Nieeleganckie, używaj dla debugowania lub małych projektów.</div></div>
+          <div class="ritem"><div class="ritem-key" style="color:var(--green)">LoadBalancer</div><div class="ritem-val">Cloud provider tworzy zewnętrzny Load Balancer (AWS ELB, GCP GLB). Jeden per Service = drogie! Używaj Ingress zamiast wielu LB.</div></div>
+          <div class="ritem"><div class="ritem-key" style="color:var(--green)">ExternalName</div><div class="ritem-val">DNS CNAME alias do zewnętrznej usługi. Pozwala używać K8s DNS dla zewnętrznych zasobów (np. managed DB).</div></div>
+          <div class="ritem"><div class="ritem-key" style="color:var(--green)">Headless</div><div class="ritem-val"><code>clusterIP: None</code> — DNS zwraca bezpośrednio IP Podów (nie VIP). Używany przez StatefulSet, service discovery (Consul, Kafka).</div></div>
+        </div>
+      </div>
+      <div class="gap12"></div>
+      <div class="card">
+        <div class="card-h" style="color:var(--green)">🔒 NetworkPolicy</div>
+        <div class="card-b" style="font-size:.83rem;color:var(--tx2)">
+          <p>Domyślnie w K8s każdy Pod może rozmawiać z każdym. <strong>NetworkPolicy</strong> pozwala ograniczyć ruch (wymaga CNI plugin: Calico, Cilium, Weave).</p>
+          <div class="gap8"></div>
+          <pre style="padding:12px;font-size:.72rem">apiVersion: networking.k8s.io/v1
+kind: <span class="cls">NetworkPolicy</span>
+metadata: { name: order-service-netpol }
+spec:
+  podSelector:
+    matchLabels: { app: order-service }
+  policyTypes: [Ingress, Egress]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels: { app: api-gateway }
+      ports: [{ port: 8080 }]
+  egress:
+    - to:
+        - podSelector:
+            matchLabels: { app: postgres }
+      ports: [{ port: 5432 }]</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 07 CONFIG & STORAGE ══ -->
+<section class="chapter" id="config-storage">
+  <div class="ch-head">
+    <div class="ch-num">07 / 12</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--amber)">Config &amp; Storage</div>
+      <div class="ch-title">ConfigMap, Secret, PersistentVolume — konfiguracja i storage</div>
+      <div class="ch-desc"><strong>ConfigMap</strong> — niesekretrna konfiguracja (URLs, flagi). <strong>Secret</strong> — dane wrażliwe (hasła, tokeny, certyfikaty). <strong>PersistentVolume</strong> — storage dla StatefulSets. Zasada: <em>oddziel konfigurację od kodu</em>.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--amber)"></div> ConfigMap + Secret + PVC</div>
+      <pre><span class="cm"># ══ ConfigMap — niesekretrna konfiguracja ════════════════════</span>
+apiVersion: v1
+kind: <span class="cls">ConfigMap</span>
+metadata:
+  <span class="prop">name</span>: order-service-config
+  <span class="prop">namespace</span>: myapp
+data:
+  KAFKA_BOOTSTRAP_SERVERS: <span class="str">"kafka:9092"</span>
+  LOG_LEVEL: <span class="str">"INFO"</span>
+  MAX_CONNECTIONS: <span class="str">"100"</span>
+  <span class="cm"># Cały plik konfiguracyjny jako wartość!</span>
+  application.yml: |
+    spring:
+      kafka:
+        bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+      datasource:
+        hikari:
+          maximum-pool-size: ${MAX_CONNECTIONS}
+<span class="cm">---</span>
+<span class="cm"># ══ Secret — baza64-encoded (NIE zaszyfrowane!) ═══════════════</span>
+apiVersion: v1
+kind: <span class="cls">Secret</span>
+metadata:
+  <span class="prop">name</span>: db-secret
+  <span class="prop">namespace</span>: myapp
+type: Opaque
+<span class="cm"># echo -n 'password123' | base64</span>
+data:
+  password: cGFzc3dvcmQxMjM=   <span class="cm"># base64 encoded</span>
+  username: b3JkZXJz
+<span class="cm"># LUB stringData (plain text, K8s zakoduje):</span>
+stringData:
+  jdbc-url: <span class="str">"jdbc:postgresql://postgres:5432/orders"</span>
+<span class="cm">---</span>
+<span class="cm"># ══ PersistentVolumeClaim — storage dla StatefulSet ══════════</span>
+apiVersion: v1
+kind: <span class="cls">PersistentVolumeClaim</span>
+metadata:
+  <span class="prop">name</span>: postgres-data
+  <span class="prop">namespace</span>: myapp
+spec:
+  <span class="prop">accessModes</span>:
+    - ReadWriteOnce         <span class="cm"># jeden Pod odczyt+zapis</span>
+  <span class="prop">storageClassName</span>: gp3   <span class="cm"># AWS EBS gp3</span>
+  <span class="prop">resources</span>:
+    <span class="prop">requests</span>:
+      <span class="prop">storage</span>: 20Gi
+<span class="cm">---</span>
+<span class="cm"># ══ StatefulSet z volumeClaimTemplate ════════════════════════</span>
+apiVersion: apps/v1
+kind: <span class="cls">StatefulSet</span>
+metadata:
+  <span class="prop">name</span>: postgres
+spec:
+  <span class="prop">serviceName</span>: postgres
+  <span class="prop">replicas</span>: <span class="num">1</span>
+  <span class="prop">selector</span>:
+    <span class="prop">matchLabels</span>: { app: postgres }
+  <span class="prop">template</span>:
+    <span class="prop">metadata</span>:
+      <span class="prop">labels</span>: { app: postgres }
+    <span class="prop">spec</span>:
+      <span class="prop">containers</span>:
+        - <span class="prop">name</span>: postgres
+          <span class="prop">image</span>: postgres:<span class="num">16</span>-alpine
+          <span class="prop">volumeMounts</span>:
+            - <span class="prop">name</span>: data
+              <span class="prop">mountPath</span>: /var/lib/postgresql/data
+  <span class="cm"># Każdy Pod dostaje własny PVC: data-postgres-0, data-postgres-1</span>
+  <span class="prop">volumeClaimTemplates</span>:
+    - <span class="prop">metadata</span>:
+        <span class="prop">name</span>: data
+      <span class="prop">spec</span>:
+        <span class="prop">accessModes</span>: [ReadWriteOnce]
+        <span class="prop">storageClassName</span>: gp3
+        <span class="prop">resources</span>:
+          <span class="prop">requests</span>:
+            <span class="prop">storage</span>: 50Gi</pre>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-h" style="color:var(--amber)">🔐 Zarządzanie Secretami w produkcji</div>
+        <div class="card-b" style="font-size:.83rem;color:var(--tx2);line-height:1.85">
+          <p><strong style="color:var(--rose)">Problem:</strong> Secret w K8s to tylko base64 — NIE zaszyfrowane. Ktoś z dostępem do etcd widzi wartości. <code>kubectl get secret -o yaml</code> = base64 decode = plain text.</p>
+          <div class="gap12"></div>
+          <table class="tbl">
+            <tr><th>Rozwiązanie</th><th>Opis</th></tr>
+            <tr><td><strong style="color:var(--green)">External Secrets Operator</strong></td><td>Synchronizuje z AWS Secrets Manager / GCP Secret Manager / Vault. Polecane!</td></tr>
+            <tr><td><strong style="color:var(--teal)">Sealed Secrets</strong></td><td>Bitnami. Szyfruje Secret publicznym kluczem — bezpieczne w Git (GitOps).</td></tr>
+            <tr><td><strong style="color:var(--violet)">HashiCorp Vault</strong></td><td>Dedykowany secrets management. Agent sidecar lub CSI Driver.</td></tr>
+            <tr><td><strong style="color:var(--amber)">Encryption at rest</strong></td><td>etcd encryption — wbudowane w K8s, szyfruje Secret w etcd.</td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="gap12"></div>
+      <div class="card">
+        <div class="card-h" style="color:var(--amber)">💾 Storage — tryby dostępu</div>
+        <div class="card-b" style="font-size:.83rem">
+          <table class="tbl">
+            <tr><th>AccessMode</th><th>Opis</th><th>Użycie</th></tr>
+            <tr><td><code>ReadWriteOnce</code></td><td>Jeden node, odczyt+zapis</td><td>Bazy danych (PostgreSQL, MySQL)</td></tr>
+            <tr><td><code>ReadOnlyMany</code></td><td>Wiele nodów, tylko odczyt</td><td>Pliki statyczne, konfiguracje</td></tr>
+            <tr><td><code>ReadWriteMany</code></td><td>Wiele nodów, odczyt+zapis</td><td>NFS, EFS (AWS) — shared storage</td></tr>
+            <tr><td><code>ReadWriteOncePod</code></td><td>Jeden Pod (K8s 1.22+)</td><td>Ścisła izolacja</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 08 RESOURCES & AUTOSCALING ══ -->
+<section class="chapter" id="resources">
+  <div class="ch-head">
+    <div class="ch-num">08 / 12</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--rose)">Zasoby &amp; Autoscaling</div>
+      <div class="ch-title">Requests, Limits, HPA, VPA — zarządzanie zasobami</div>
+      <div class="ch-desc">Requests i Limits to <strong>najważniejsza konfiguracja</strong> w K8s — wpływają na scheduling, QoS i stabilność klastra. HPA skaluje horyzontalnie (więcej Podów), VPA skaluje wertykalnie (więcej zasobów per Pod).</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-h" style="color:var(--rose)">⚖️ Requests vs Limits</div>
+      <div class="card-b">
+        <div class="ritem"><div class="ritem-key" style="color:var(--rose)">requests.cpu</div><div class="ritem-val"><strong>Gwarancja CPU</strong> dla Scheduler. Node musi mieć tyle wolnego CPU żeby schedulować Pod. <code>100m</code> = 0.1 vCPU (milli-CPU). Aplikacja może używać więcej jeśli dostępne.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--rose)">limits.cpu</div><div class="ritem-val"><strong>Maks CPU</strong>. Gdy aplikacja przekroczy → <strong>throttling</strong> (nie kill!). CPU jest "compressible". Uważaj: zbyt niskie limits.cpu = powolna aplikacja.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--rose)">requests.memory</div><div class="ritem-val"><strong>Gwarancja RAM</strong>. Używana do schedulowania. Aplikacja może używać więcej jeśli dostępne na nodzie.</div></div>
+        <div class="ritem"><div class="ritem-key" style="color:var(--rose)">limits.memory</div><div class="ritem-val"><strong>Maks RAM</strong>. Gdy aplikacja przekroczy → <strong>OOMKilled</strong> (kontener zabity!). Dla JVM: ustaw limits.memory wyżej niż MaxRAMPercentage × JVM heap.</div></div>
+        <div style="margin-top:14px;background:var(--s2);border:1px solid var(--bd2);border-radius:5px;padding:12px">
+          <div style="font-size:.65rem;color:var(--rose);font-weight:700;letter-spacing:2px;margin-bottom:8px">QOS CLASSES</div>
+          <div style="font-size:.82rem;color:var(--tx2);line-height:1.8">
+            <p><strong style="color:var(--green)">Guaranteed</strong> — requests == limits. Pod ostatni do ewakuacji przy presji zasobów. ✅ Używaj na produkcji.</p>
+            <p><strong style="color:var(--amber)">Burstable</strong> — requests &lt; limits. Może być evicted jeśli node pod presją.</p>
+            <p><strong style="color:var(--rose)">BestEffort</strong> — brak requests/limits. Pierwszy evicted. Nigdy na produkcji.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--rose)"></div> HPA — Horizontal Pod Autoscaler</div>
+        <pre>apiVersion: autoscaling/v2
+kind: <span class="cls">HorizontalPodAutoscaler</span>
+metadata:
+  <span class="prop">name</span>: order-service-hpa
+spec:
+  <span class="prop">scaleTargetRef</span>:
+    <span class="prop">apiVersion</span>: apps/v1
+    <span class="prop">kind</span>: Deployment
+    <span class="prop">name</span>: order-service
+
+  <span class="prop">minReplicas</span>: <span class="num">2</span>      <span class="cm"># nigdy poniżej 2 (HA)</span>
+  <span class="prop">maxReplicas</span>: <span class="num">20</span>     <span class="cm"># max skalowanie</span>
+
+  <span class="prop">metrics</span>:
+    <span class="cm"># CPU — klasyczny trigger</span>
+    - <span class="prop">type</span>: Resource
+      <span class="prop">resource</span>:
+        <span class="prop">name</span>: cpu
+        <span class="prop">target</span>:
+          <span class="prop">type</span>: Utilization
+          <span class="prop">averageUtilization</span>: <span class="num">70</span>  <span class="cm"># % requests.cpu</span>
+
+    <span class="cm"># Metryki zewnętrzne (z Prometheus via KEDA lub Adapter)</span>
+    - <span class="prop">type</span>: External
+      <span class="prop">external</span>:
+        <span class="prop">metric</span>:
+          <span class="prop">name</span>: kafka_consumer_lag
+          <span class="prop">selector</span>:
+            <span class="prop">matchLabels</span>:
+              <span class="prop">topic</span>: orders
+        <span class="prop">target</span>:
+          <span class="prop">type</span>: AverageValue
+          <span class="prop">averageValue</span>: <span class="str">"1000"</span>  <span class="cm"># max 1000 wiadomości lag/pod</span>
+
+  <span class="prop">behavior</span>:
+    <span class="prop">scaleUp</span>:
+      <span class="prop">stabilizationWindowSeconds</span>: <span class="num">30</span>     <span class="cm"># szybki scale-up</span>
+      <span class="prop">policies</span>:
+        - <span class="prop">type</span>: Pods
+          <span class="prop">value</span>: <span class="num">4</span>
+          <span class="prop">periodSeconds</span>: <span class="num">60</span>
+    <span class="prop">scaleDown</span>:
+      <span class="prop">stabilizationWindowSeconds</span>: <span class="num">300</span>    <span class="cm"># wolny scale-down (5 min)</span>
+      <span class="prop">policies</span>:
+        - <span class="prop">type</span>: Percent
+          <span class="prop">value</span>: <span class="num">10</span>
+          <span class="prop">periodSeconds</span>: <span class="num">60</span></pre>
+      </div>
+      <div class="gap12"></div>
+      <div class="alert al-rose">
+        <span class="alert-label">Requests — zasada kciuka dla Spring Boot</span>
+        Startuj ostrożnie, mierz, dostosuj. Typowe wartości na start:<br>
+        <strong>CPU requests</strong>: 100–250m (JVM idle ~10–50m, pod obciążeniem 200–500m)<br>
+        <strong>Memory requests</strong>: 256–512Mi (JVM heap 128–256Mi + overhead)<br>
+        <strong>Zawsze:</strong> requests == limits dla memory (Guaranteed QoS). CPU możesz zostawić burstable.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 09 RBAC ══ -->
+<section class="chapter" id="rbac">
+  <div class="ch-head">
+    <div class="ch-num">09 / 12</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--teal)">RBAC &amp; Security</div>
+      <div class="ch-title">RBAC, ServiceAccount, Security Context</div>
+      <div class="ch-desc">RBAC (Role-Based Access Control) — kontrola dostępu do zasobów K8s. <strong>ServiceAccount</strong> to tożsamość Poda w K8s API. <strong>SecurityContext</strong> to uprawnienia kontenera na poziomie OS — zawsze hardening!</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--teal)"></div> RBAC + ServiceAccount + SecurityContext</div>
+      <pre><span class="cm"># ══ ServiceAccount — tożsamość Poda ══════════════════════════</span>
+apiVersion: v1
+kind: <span class="cls">ServiceAccount</span>
+metadata:
+  <span class="prop">name</span>: order-service-sa
+  <span class="prop">namespace</span>: myapp
+  <span class="prop">annotations</span>:
+    <span class="cm"># AWS IRSA — ServiceAccount = IAM Role (bez hardcoded credentials!)</span>
+    eks.amazonaws.com/role-arn: arn:aws:iam::<span class="num">123456789</span>:role/order-service-role
+<span class="cm">---</span>
+<span class="cm"># ══ Role — uprawnienia w namespace ════════════════════════════</span>
+apiVersion: rbac.authorization.k8s.io/v1
+kind: <span class="cls">Role</span>
+metadata:
+  <span class="prop">name</span>: order-service-role
+  <span class="prop">namespace</span>: myapp
+rules:
+  - <span class="prop">apiGroups</span>: [<span class="str">""</span>]
+    <span class="prop">resources</span>: [configmaps]
+    <span class="prop">verbs</span>: [get, list, watch]   <span class="cm"># tylko odczyt!  </span>
+  - <span class="prop">apiGroups</span>: [<span class="str">""</span>]
+    <span class="prop">resources</span>: [secrets]
+    <span class="prop">resourceNames</span>: [db-secret]  <span class="cm"># tylko konkretny Secret</span>
+    <span class="prop">verbs</span>: [get]
+<span class="cm">---</span>
+<span class="cm"># ══ RoleBinding — przypisz Role do ServiceAccount ════════════</span>
+apiVersion: rbac.authorization.k8s.io/v1
+kind: <span class="cls">RoleBinding</span>
+metadata:
+  <span class="prop">name</span>: order-service-binding
+  <span class="prop">namespace</span>: myapp
+subjects:
+  - <span class="prop">kind</span>: ServiceAccount
+    <span class="prop">name</span>: order-service-sa
+    <span class="prop">namespace</span>: myapp
+roleRef:
+  <span class="prop">kind</span>: Role
+  <span class="prop">name</span>: order-service-role
+  <span class="prop">apiGroup</span>: rbac.authorization.k8s.io
+<span class="cm">---</span>
+<span class="cm"># ══ SecurityContext — hardening kontenera ════════════════════</span>
+<span class="prop">spec</span>:
+  <span class="prop">securityContext</span>:               <span class="cm"># poziom Pod</span>
+    <span class="prop">runAsNonRoot</span>: <span class="kw">true</span>
+    <span class="prop">runAsUser</span>: <span class="num">1000</span>
+    <span class="prop">runAsGroup</span>: <span class="num">1000</span>
+    <span class="prop">fsGroup</span>: <span class="num">2000</span>
+    <span class="prop">seccompProfile</span>:
+      <span class="prop">type</span>: RuntimeDefault
+  <span class="prop">containers</span>:
+    - <span class="prop">name</span>: order-service
+      <span class="prop">securityContext</span>:            <span class="cm"># poziom Container</span>
+        <span class="prop">allowPrivilegeEscalation</span>: <span class="kw">false</span>
+        <span class="prop">readOnlyRootFilesystem</span>: <span class="kw">true</span>
+        <span class="prop">capabilities</span>:
+          <span class="prop">drop</span>: [ALL]              <span class="cm"># usuń wszystkie Linux capabilities</span></pre>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-h" style="color:var(--teal)">🔐 RBAC — koncepty</div>
+        <div class="card-b">
+          <div class="ritem"><div class="ritem-key" style="color:var(--teal)">Role</div><div class="ritem-val">Zestaw uprawnień w <strong>konkretnym namespace</strong>. Verbs: get, list, watch, create, update, patch, delete.</div></div>
+          <div class="ritem"><div class="ritem-key" style="color:var(--teal)">ClusterRole</div><div class="ritem-val">Jak Role ale <strong>cluster-wide</strong> (lub dla non-namespaced resources jak nodes, PV, CRD).</div></div>
+          <div class="ritem"><div class="ritem-key" style="color:var(--teal)">RoleBinding</div><div class="ritem-val">Przypisuje Role do Subject (User, Group, ServiceAccount) <strong>w namespace</strong>.</div></div>
+          <div class="ritem"><div class="ritem-key" style="color:var(--teal)">ClusterRoleBinding</div><div class="ritem-val">Przypisuje ClusterRole globalnie — <strong>ostrożnie!</strong> Daje dostęp do wszystkich namespaces.</div></div>
+          <div class="ritem"><div class="ritem-key" style="color:var(--teal)">ServiceAccount</div><div class="ritem-val">Tożsamość Poda. Domyślny SA = <code>default</code> z minimalnym dostępem. Zawsze twórz dedykowane SA per aplikację. Tokeny montowane auto do <code>/var/run/secrets/kubernetes.io/serviceaccount/</code>.</div></div>
+        </div>
+      </div>
+      <div class="gap12"></div>
+      <div class="alert al-teal">
+        <span class="alert-label">Zasada minimalnych uprawnień</span>
+        Każdy Pod powinien mieć <strong>tylko tyle uprawnień ile potrzebuje</strong>. Domyślny ServiceAccount ma dostęp do K8s API — możliwy wektor ataku.<br>
+        Praktyka: dedykowany SA per serwis + minimalne Role + <code>automountServiceAccountToken: false</code> jeśli aplikacja nie używa K8s API.
+      </div>
+      <div class="gap12"></div>
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--teal)"></div> Sprawdzanie uprawnień</div>
+        <pre><span class="cm"># Czy mogę wykonać akcję?</span>
+kubectl auth can-i get pods -n myapp
+kubectl auth can-i create secrets -n myapp
+
+<span class="cm"># Co może dany ServiceAccount?</span>
+kubectl auth can-i get pods \
+  --as=system:serviceaccount:myapp:order-service-sa
+
+<span class="cm"># Lista wszystkich ról w namespace</span>
+kubectl get roles,rolebindings -n myapp</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 10 HELM ══ -->
+<section class="chapter" id="helm">
+  <div class="ch-head">
+    <div class="ch-num">10 / 12</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--violet)">Helm</div>
+      <div class="ch-title">Helm — package manager dla Kubernetes</div>
+      <div class="ch-desc">Helm to "apt/npm dla Kubernetes" — pakuje manifesty w <strong>Chart</strong> z szablonami i values. Umożliwia wersjonowanie, templating i proste zarządzanie release'ami. Standard dla deploymentów K8s i GitOps.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--violet)"></div> Helm — struktura chart + komendy</div>
+      <pre><span class="cm"># ══ Struktura Chart ════════════════════════════════════════════</span>
+order-service/
+├── Chart.yaml           <span class="cm"># metadane chart</span>
+├── values.yaml          <span class="cm"># domyślne wartości</span>
+├── values-prod.yaml     <span class="cm"># override dla produkcji</span>
+├── templates/
+│   ├── deployment.yaml
+│   ├── service.yaml
+│   ├── ingress.yaml
+│   ├── configmap.yaml
+│   ├── hpa.yaml
+│   ├── _helpers.tpl     <span class="cm"># shared templates (named templates)</span>
+│   └── NOTES.txt        <span class="cm"># wyświetlane po install</span>
+└── charts/              <span class="cm"># dependency charts</span>
+
+<span class="cm"># ══ Chart.yaml ════════════════════════════════════════════════</span>
+apiVersion: v2
+name: order-service
+description: Order Service Helm Chart
+type: application
+version: 1.2.0           <span class="cm"># wersja chart</span>
+appVersion: <span class="str">"2.1.0"</span>    <span class="cm"># wersja aplikacji</span>
+dependencies:
+  - name: postgresql
+    version: <span class="str">"~13.0"</span>
+    repository: <span class="str">"https://charts.bitnami.com/bitnami"</span>
+    condition: postgresql.enabled
+
+<span class="cm"># ══ values.yaml (fragment) ════════════════════════════════════</span>
+replicaCount: 2
+image:
+  repository: registry.io/order-service
+  tag: <span class="str">""</span>             <span class="cm"># default: .Chart.AppVersion</span>
+  pullPolicy: Always
+resources:
+  requests:
+    memory: 256Mi
+    cpu: 100m
+  limits:
+    memory: 512Mi
+    cpu: 500m
+ingress:
+  enabled: <span class="kw">true</span>
+  host: api.example.com
+hpa:
+  enabled: <span class="kw">true</span>
+  minReplicas: 2
+  maxReplicas: 20
+  targetCPUUtilization: <span class="num">70</span>
+
+<span class="cm"># ══ templates/deployment.yaml (fragment) ══════════════════════</span>
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "order-service.fullname" . }}
+  labels: {{- include "order-service.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  template:
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: <span class="str">"{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"</span>
+          resources: {{- toYaml .Values.resources | nindent 12 }}
+          {{- if .Values.ingress.enabled }}
+          <span class="cm"># conditional rendering</span>
+          {{- end }}
+
+<span class="cm"># ══ Komendy Helm ══════════════════════════════════════════════</span>
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo update
+helm search repo postgresql
+
+<span class="cm"># Install / Upgrade</span>
+helm install order-service ./order-service \
+  -n myapp --create-namespace \
+  -f values-prod.yaml \
+  --set image.tag=<span class="num">2</span>.<span class="num">1</span>.<span class="num">0</span>
+
+helm upgrade order-service ./order-service \
+  -n myapp \
+  -f values-prod.yaml \
+  --set image.tag=<span class="num">2</span>.<span class="num">2</span>.<span class="num">0</span> \
+  --atomic \              <span class="cm"># rollback automatyczny przy porażce</span>
+  --timeout <span class="num">5</span>m
+
+helm rollback order-service <span class="num">1</span>   <span class="cm"># rollback do revision 1</span>
+
+<span class="cm"># Podgląd generowanych manifestów</span>
+helm template order-service ./order-service -f values-prod.yaml
+helm diff upgrade order-service ./order-service  <span class="cm"># plugin helm-diff</span>
+
+helm list -n myapp
+helm history order-service -n myapp
+helm uninstall order-service -n myapp</pre>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-h" style="color:var(--violet)">📦 Helm — koncepty</div>
+        <div class="card-b">
+          <div class="ritem"><div class="ritem-key" style="color:var(--violet)">Chart</div><div class="ritem-val">Pakiet K8s manifestów z szablonami. Jak aplikacja w apt/npm. Można wersjonować i dystrybuować.</div></div>
+          <div class="ritem"><div class="ritem-key" style="color:var(--violet)">Release</div><div class="ritem-val">Instancja Chart zainstalowana w klastrze. Ten sam Chart możesz zainstalować wielokrotnie z różnymi nazwami.</div></div>
+          <div class="ritem"><div class="ritem-key" style="color:var(--violet)">Values</div><div class="ritem-val">Konfiguracja wstrzykiwana do szablonów. Hierarchia: domyślne <code>values.yaml</code> → override files (<code>-f</code>) → <code>--set</code> (najwyższy priorytet).</div></div>
+          <div class="ritem"><div class="ritem-key" style="color:var(--violet)">Repository</div><div class="ritem-val">Registry dla Chartów. Publiczne: ArtifactHub, Bitnami. Prywatne: Harbor, AWS ECR (OCI), Nexus.</div></div>
+          <div class="ritem"><div class="ritem-key" style="color:var(--violet)">Hooks</div><div class="ritem-val">Jobs uruchamiane przed/po install/upgrade/delete. Używaj do: migracji DB przed deploymentem, testów smoke po deploymencie.</div></div>
+        </div>
+      </div>
+      <div class="gap12"></div>
+      <div class="alert al-violet">
+        <span class="alert-label">Helm + GitOps</span>
+        W GitOps (ArgoCD, Flux) <strong>nie używasz helm install/upgrade ręcznie</strong> — Git to jedyne źródło prawdy. ArgoCD wykrywa zmiany w repo i aplikuje Chart automatycznie. Przydatne: <code>helm template</code> + <code>kubectl apply</code> dla prostszego debugowania bez Helm state.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 11 SPRING NA K8S ══ -->
+<section class="chapter" id="spring-k8s">
+  <div class="ch-head">
+    <div class="ch-num">11 / 12</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--sky)">Spring Boot na Kubernetes</div>
+      <div class="ch-title">Spring Boot + K8s — konfiguracja, graceful shutdown, health checks</div>
+      <div class="ch-desc">Spring Boot ma świetną integrację z Kubernetes przez <strong>Spring Cloud Kubernetes</strong>, Actuator health groups i wbudowany graceful shutdown. Kilka kluczowych konfiguracji sprawia że aplikacja zachowuje się poprawnie w środowisku orkiestrowanym.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--sky)"></div> application-kubernetes.yml — produkcyjna konfiguracja</div>
+      <pre><span class="cm"># application-kubernetes.yml</span>
+spring:
+  application:
+    name: order-service
+
+  <span class="cm"># Graceful shutdown — poczekaj na kończące się żądania</span>
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
+
+  <span class="cm"># ConfigMap / Secret auto-reload (Spring Cloud Kubernetes)</span>
+  cloud:
+    kubernetes:
+      config:
+        enabled: <span class="kw">true</span>
+        name: order-service-config
+        namespace: myapp
+      secrets:
+        enabled: <span class="kw">true</span>
+        name: db-secret
+      reload:
+        enabled: <span class="kw">true</span>
+        mode: event            <span class="cm"># auto-reload gdy ConfigMap zmieniony</span>
+        period: 15000
+
+  <span class="cm"># Datasource z connection pool (pod obciążeniem)</span>
+  datasource:
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 3000
+      idle-timeout: 300000
+      max-lifetime: 1200000
+
+server:
+  <span class="prop">port</span>: 8080
+  <span class="cm"># Graceful shutdown: K8s wysyła SIGTERM, Spring czeka na żądania</span>
+  shutdown: graceful
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  endpoint:
+    health:
+      probes:
+        enabled: <span class="kw">true</span>          <span class="cm"># /actuator/health/liveness + /readiness</span>
+      show-details: always
+      group:
+        liveness:
+          include: livenessState,diskSpace
+        readiness:
+          include: readinessState,db,kafka,redis  <span class="cm"># sprawdź zewnętrzne zależności</span>
+
+  <span class="cm"># Dodaj K8s info do /actuator/info</span>
+  info:
+    kubernetes:
+      enabled: <span class="kw">true</span>
+
+<span class="cm">/* ── Spring Boot Graceful Shutdown flow w K8s ──────────────</span>
+<span class="cm">   1. K8s usuwa Pod z Service endpoints (readiness fails)</span>
+<span class="cm">   2. K8s wysyła SIGTERM do kontenera</span>
+<span class="cm">   3. preStop hook: sleep 5 (bufor dla load balancerów)</span>
+<span class="cm">   4. Spring: server.shutdown=graceful — czeka na żądania</span>
+<span class="cm">   5. terminationGracePeriodSeconds=60 — max czas</span>
+<span class="cm">   6. SIGKILL jeśli czas przekroczony</span>
+<span class="cm">── ────────────────────────────────────────────────────────*/</span></pre>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-h" style="color:var(--sky)">🔧 Spring Cloud Kubernetes</div>
+        <div class="card-b" style="font-size:.83rem;color:var(--tx2);line-height:1.85">
+          <p>Biblioteka łącząca Spring Boot z K8s API. Główne funkcje:</p>
+          <div class="gap8"></div>
+          <table class="tbl">
+            <tr><th>Feature</th><th>Opis</th></tr>
+            <tr><td><strong>Config reload</strong></td><td>Auto-refresh <code>@ConfigurationProperties</code> gdy ConfigMap zmieniony</td></tr>
+            <tr><td><strong>Secret injection</strong></td><td>Montuje K8s Secrets jako Spring properties</td></tr>
+            <tr><td><strong>Service discovery</strong></td><td>Używa K8s Services zamiast Eureka</td></tr>
+            <tr><td><strong>Leader election</strong></td><td>Distributed leader election przez ConfigMap/Lease</td></tr>
+            <tr><td><strong>Pod info</strong></td><td>Pod metadata (name, namespace, labels) jako Spring beans</td></tr>
+          </table>
+          <p style="margin-top:10px">Wymaga ServiceAccount z uprawnieniami do odczytu ConfigMap/Secret.</p>
+        </div>
+      </div>
+      <div class="gap12"></div>
+      <div class="alert al-sky">
+        <span class="alert-label">12-Factor App na K8s</span>
+        Spring Boot + K8s naturalnie implementuje 12-Factor:<br>
+        📦 <strong>Config</strong> — ConfigMap/Secret, nie w kodzie<br>
+        🌐 <strong>Port binding</strong> — server.port=8080, Service mapuje<br>
+        📊 <strong>Logs</strong> — stdout/stderr → Filebeat/Fluentd<br>
+        🔄 <strong>Processes</strong> — bezstanowe Pody (state w DB/Redis)<br>
+        ⚡ <strong>Disposability</strong> — szybki start (probe startupProbe), graceful shutdown
+      </div>
+      <div class="gap12"></div>
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--sky)"></div> Debugowanie Poda w K8s</div>
+        <pre><span class="cm"># Port-forward do Poda (debug bez Ingress)</span>
+kubectl port-forward pod/order-service-xyz <span class="num">8080</span>:<span class="num">8080</span>
+kubectl port-forward svc/order-service <span class="num">8080</span>:<span class="num">80</span>
+
+<span class="cm"># Remote JVM debugging przez port-forward</span>
+<span class="cm"># (dodaj -agentlib:jdwp=transport=dt_socket,server=y,address=5005)</span>
+kubectl port-forward pod/order-service-xyz <span class="num">5005</span>:<span class="num">5005</span>
+
+<span class="cm"># Ephemeral debug container (K8s 1.23+)</span>
+kubectl debug -it order-service-xyz \
+  --image=nicolaka/netshoot \
+  --target=order-service
+
+<span class="cm"># Sprawdź dlaczego Pod jest w stanie Pending</span>
+kubectl describe pod order-service-xyz | grep -A 10 Events</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 12 PRODUKCJA ══ -->
+<section class="chapter" id="production">
+  <div class="ch-head">
+    <div class="ch-num">12 / 12</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--orange)">Produkcja &amp; Dobre Praktyki</div>
+      <div class="ch-title">Docker i K8s na produkcji — checklist i antywzorce</div>
+      <div class="ch-desc">Klaster K8s to złożony system. Najczęstsze problemy produkcyjne, antywzorce i konfiguracje których <strong>absolutnie</strong> nie wolno pominąć na produkcji.</div>
+    </div>
+  </div>
+  <div class="g3">
+    <div class="card">
+      <div class="card-h" style="color:var(--orange)">🚫 Antywzorce Docker</div>
+      <div class="card-b" style="font-size:.83rem;color:var(--tx2);line-height:1.85">
+        <p>🔴 <strong>latest tag</strong> — brak reproducibility. Zawsze pinuj: <code>openjdk:21.0.2-jre-slim</code></p>
+        <p>🔴 <strong>Root user</strong> — <code>USER root</code> domyślnie. Zawsze <code>USER appuser</code></p>
+        <p>🔴 <strong>Sekrety w Dockerfile/image</strong> — <code>docker history</code> to pokaże. Używaj ARG tylko dla build, sekrety przez env/mounted secrets</p>
+        <p>🔴 <strong>Jeden wielki RUN</strong> — brak granularności cache. Ale też nie za dużo warstw.</p>
+        <p>🔴 <strong>Brak .dockerignore</strong> — kopiujesz <code>.git</code>, <code>node_modules</code>, sekrety do obrazu</p>
+        <p>🔴 <strong>Dane w kontenerze</strong> — dane giną po usunięciu kontenera. Zawsze Volume.</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--orange)">🚫 Antywzorce Kubernetes</div>
+      <div class="card-b" style="font-size:.83rem;color:var(--tx2);line-height:1.85">
+        <p>🔴 <strong>Brak requests/limits</strong> — BestEffort QoS, OOMKilled, niestabilny klaster</p>
+        <p>🔴 <strong>1 replika</strong> — brak HA. Minimum 2 repliki z PodDisruptionBudget</p>
+        <p>🔴 <strong>latest image tag</strong> — brak determinism. <code>imagePullPolicy: Always</code> + wersjonowanie</p>
+        <p>🔴 <strong>Sekrety w ConfigMap</strong> — hasła jako plain text w ConfigMap. Użyj Secret lub ESO</p>
+        <p>🔴 <strong>Brak readinessProbe</strong> — ruch do Poda zanim gotowy = błędy 503</p>
+        <p>🔴 <strong>Brak graceful shutdown</strong> — przerwane żądania przy rolling update</p>
+        <p>🔴 <strong>Brak NetworkPolicy</strong> — każdy Pod widzi każdy. Flat network = ryzyko lateral movement</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--orange)">✅ Produkcja — checklist</div>
+      <div class="card-b" style="font-size:.83rem;color:var(--tx2);line-height:1.85">
+        <p>✅ Multi-stage Dockerfile + non-root user</p>
+        <p>✅ Pinowane wersje obrazów (nie latest)</p>
+        <p>✅ Skanowanie obrazów (trivy, Snyk)</p>
+        <p>✅ Requests == limits dla memory (Guaranteed)</p>
+        <p>✅ Min. 2 repliki + PodDisruptionBudget</p>
+        <p>✅ startupProbe + livenessProbe + readinessProbe</p>
+        <p>✅ Graceful shutdown (preStop + terminationGrace)</p>
+        <p>✅ ResourceQuota per namespace</p>
+        <p>✅ NetworkPolicy (deny-all + allowlist)</p>
+        <p>✅ Sekrety przez ESO/SealedSecrets, nie plain K8s Secret w Git</p>
+        <p>✅ RBAC: dedykowane ServiceAccount, zasada minimalnych uprawnień</p>
+        <p>✅ HPA dla stateless serwisów</p>
+        <p>✅ PodDisruptionBudget (<code>minAvailable: 1</code>)</p>
+        <p>✅ Pod Affinity/Anti-affinity — rozprosz repliki po nodach</p>
+        <p>✅ Observability: logi + metryki + traces (patrz: Observability guide)</p>
+      </div>
+    </div>
+  </div>
+  <div class="gap16"></div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--orange)"></div> PodDisruptionBudget + ResourceQuota + Affinity</div>
+      <pre><span class="cm"># ══ PodDisruptionBudget — HA podczas maintenance ══════════════</span>
+apiVersion: policy/v1
+kind: <span class="cls">PodDisruptionBudget</span>
+metadata:
+  <span class="prop">name</span>: order-service-pdb
+spec:
+  <span class="prop">minAvailable</span>: <span class="num">1</span>           <span class="cm"># zawsze min 1 pod dostępny</span>
+  <span class="prop">selector</span>:
+    <span class="prop">matchLabels</span>:
+      <span class="prop">app</span>: order-service
+<span class="cm">---</span>
+<span class="cm"># ══ ResourceQuota — limity namespace ══════════════════════════</span>
+apiVersion: v1
+kind: <span class="cls">ResourceQuota</span>
+metadata:
+  <span class="prop">name</span>: myapp-quota
+  <span class="prop">namespace</span>: myapp
+spec:
+  <span class="prop">hard</span>:
+    <span class="prop">requests.cpu</span>:    <span class="str">"10"</span>
+    <span class="prop">requests.memory</span>: 20Gi
+    <span class="prop">limits.cpu</span>:      <span class="str">"20"</span>
+    <span class="prop">limits.memory</span>:   40Gi
+    <span class="prop">pods</span>:            <span class="str">"50"</span>
+    count/secrets:   <span class="str">"20"</span>
+<span class="cm">---</span>
+<span class="cm"># ══ Pod Anti-Affinity — rozprosz po nodach ════════════════════</span>
+<span class="prop">affinity</span>:
+  <span class="prop">podAntiAffinity</span>:
+    <span class="prop">preferredDuringSchedulingIgnoredDuringExecution</span>:
+      - <span class="prop">weight</span>: <span class="num">100</span>
+        <span class="prop">podAffinityTerm</span>:
+          <span class="prop">labelSelector</span>:
+            <span class="prop">matchLabels</span>: { app: order-service }
+          <span class="prop">topologyKey</span>: kubernetes.io/hostname
+<span class="cm"># Efekt: K8s preferuje umieszczanie replik na różnych nodach</span>
+<span class="cm"># = brak single point of failure na poziomie noda</span></pre>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--orange)">🛠️ Narzędzia ekosystemu</div>
+      <div class="card-b" style="font-size:.83rem">
+        <table class="tbl">
+          <tr><th>Kategoria</th><th>Narzędzia</th></tr>
+          <tr><td><strong style="color:var(--sky)">Local K8s</strong></td><td>kind (CI-friendly), minikube, k3d, Docker Desktop</td></tr>
+          <tr><td><strong style="color:var(--green)">GitOps</strong></td><td>ArgoCD (UI + sync), Flux (GitOps-native, lightweight)</td></tr>
+          <tr><td><strong style="color:var(--violet)">Secrets Mgmt</strong></td><td>External Secrets Operator, SealedSecrets, Vault</td></tr>
+          <tr><td><strong style="color:var(--amber)">Policy</strong></td><td>OPA Gatekeeper, Kyverno — walidacja manifestów</td></tr>
+          <tr><td><strong style="color:var(--teal)">Networking</strong></td><td>Istio/Linkerd (service mesh), Cilium (eBPF CNI)</td></tr>
+          <tr><td><strong style="color:var(--rose)">Security Scan</strong></td><td>Trivy (images+manifests), Falco (runtime), kubesec</td></tr>
+          <tr><td><strong style="color:var(--orange)">kubectl plugins</strong></td><td>krew (plugin manager), stern (multi-pod logs), kubectx/kubens, k9s (TUI)</td></tr>
+          <tr><td><strong style="color:var(--sky)">Event-driven Scale</strong></td><td>KEDA — autoscaler z Kafka lag, SQS, Prometheus metrics</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="gap16"></div>
+  <div class="strip" style="border-color:var(--k1);background:rgba(56,189,248,.04)">
+    <div class="strip-icon">🏆</div>
+    <div><strong>Senior z Docker &amp; Kubernetes:</strong> Rozumiesz że K8s to nie "magiczny Docker Compose" — to złożona platforma z własną fizyką. Zawsze requests &amp; limits — bez tego klaster jest niestabilny. Graceful shutdown to obowiązek, nie opcja. Sekrety nigdy w Git bez szyfrowania. Probes to kontrakt między K8s a aplikacją — liveness i readiness mają różne semantyki. Obrazy skanowane, non-root, pinowane wersje. I pamiętaj: <strong>Kubernetes rozwiązuje problemy na skalę — na małym projekcie może być overkill</strong>.</div>
+  </div>
+</section>
+
+</main>
+<footer class="footer">
+  <div><span class="footer-title">Docker &amp; Kubernetes</span> — Kompendium Senior Java Developer</div>
+  <div>Docker · Dockerfile · Compose · K8s Architecture · Workloads · Networking · Helm · Production</div>
+</footer>
+</body>
+</html>

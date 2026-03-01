@@ -1,0 +1,1334 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Programowanie od Zera — Jak to Naprawdę Działa</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;0,700;0,900;1,300;1,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream: #fdf8f2;
+  --warm: #f5ede0;
+  --card: #ffffff;
+  --ink: #1c1612;
+  --ink2: #5a4f45;
+  --ink3: #9a8f85;
+  --line: #e8ddd4;
+  --line2: #d4c8bc;
+  --orange: #e8601c;
+  --orange-soft: #fdf0e8;
+  --orange-mid: #f5c4a4;
+  --blue: #1a5fb4;
+  --blue-soft: #e8f0fb;
+  --blue-mid: #a8c4e8;
+  --green: #2d7d46;
+  --green-soft: #e8f5ec;
+  --green-mid: #a8d4b4;
+  --purple: #7b3fa0;
+  --purple-soft: #f4eef8;
+  --purple-mid: #d0b4e0;
+  --red: #c0392b;
+  --red-soft: #fdecea;
+  --yellow: #b8860b;
+  --yellow-soft: #fdf8e8;
+  --teal: #1a7f7a;
+  --teal-soft: #e8f5f4;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--cream);
+  color: var(--ink);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* ── BACK BUTTON ── */
+.back {
+  position: fixed; top: 20px; left: 20px; z-index: 999;
+  background: white; border: 1.5px solid var(--line2);
+  border-radius: 50px; padding: 8px 18px;
+  text-decoration: none; color: var(--ink2);
+  font-size: .78rem; font-weight: 600;
+  box-shadow: 0 2px 10px rgba(0,0,0,.08);
+  transition: all .2s;
+}
+.back:hover { border-color: var(--orange); color: var(--orange); }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  padding: 80px 24px;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(170deg, #fff9f4 0%, var(--cream) 60%, #f0f8ff 100%);
+}
+
+.hero-dots {
+  position: absolute; inset: 0; pointer-events: none;
+  background-image: radial-gradient(circle, var(--line2) 1px, transparent 1px);
+  background-size: 28px 28px;
+  opacity: .5;
+}
+
+.hero-blob1 {
+  position: absolute; width: 500px; height: 500px;
+  border-radius: 60% 40% 70% 30% / 50% 60% 40% 50%;
+  background: radial-gradient(circle, rgba(232,96,28,.10) 0%, transparent 70%);
+  top: -100px; right: -100px;
+  animation: blobFloat 8s ease-in-out infinite;
+}
+.hero-blob2 {
+  position: absolute; width: 400px; height: 400px;
+  border-radius: 40% 60% 30% 70% / 60% 40% 50% 50%;
+  background: radial-gradient(circle, rgba(26,95,180,.08) 0%, transparent 70%);
+  bottom: -50px; left: -80px;
+  animation: blobFloat 10s ease-in-out infinite reverse;
+}
+@keyframes blobFloat {
+  0%, 100% { transform: translate(0,0) rotate(0deg); }
+  33% { transform: translate(15px,-20px) rotate(5deg); }
+  66% { transform: translate(-10px,10px) rotate(-3deg); }
+}
+
+.hero-inner {
+  position: relative; max-width: 800px; text-align: center;
+  animation: fadeUp .8s ease both;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--orange-soft); border: 1.5px solid var(--orange-mid);
+  border-radius: 50px; padding: 6px 16px;
+  font-size: .75rem; font-weight: 700; color: var(--orange);
+  letter-spacing: .5px; text-transform: uppercase;
+  margin-bottom: 28px;
+}
+.eyebrow-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--orange);
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.4); opacity: .7; }
+}
+
+.hero h1 {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(2.8rem, 7vw, 5.5rem);
+  font-weight: 900;
+  line-height: 1.0;
+  letter-spacing: -2px;
+  margin-bottom: 24px;
+  color: var(--ink);
+}
+.hero h1 em {
+  font-style: italic;
+  color: var(--orange);
+}
+.hero h1 .soft {
+  font-weight: 300;
+  color: var(--ink2);
+}
+
+.hero-desc {
+  font-size: 1.1rem;
+  color: var(--ink2);
+  max-width: 580px;
+  margin: 0 auto 40px;
+  line-height: 1.85;
+}
+
+.hero-tags {
+  display: flex; flex-wrap: wrap; gap: 10px;
+  justify-content: center; margin-bottom: 50px;
+}
+.tag {
+  padding: 6px 14px; border-radius: 50px;
+  font-size: .75rem; font-weight: 600;
+  border: 1.5px solid;
+}
+.tag-o { background: var(--orange-soft); color: var(--orange); border-color: var(--orange-mid); }
+.tag-b { background: var(--blue-soft); color: var(--blue); border-color: var(--blue-mid); }
+.tag-g { background: var(--green-soft); color: var(--green); border-color: var(--green-mid); }
+.tag-p { background: var(--purple-soft); color: var(--purple); border-color: var(--purple-mid); }
+
+.hero-scroll {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  color: var(--ink3); font-size: .75rem; font-weight: 600;
+  letter-spacing: 1px; text-transform: uppercase;
+}
+.scroll-arrow {
+  width: 32px; height: 32px; border: 1.5px solid var(--line2);
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; animation: bounce 2s ease-in-out infinite;
+}
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(6px); }
+}
+
+/* ── NAV ── */
+.nav {
+  position: sticky; top: 0; z-index: 200;
+  background: rgba(253,248,242,.97);
+  backdrop-filter: blur(12px);
+  border-bottom: 1.5px solid var(--line);
+  display: flex; overflow-x: auto; scrollbar-width: none;
+  padding: 0 40px;
+  box-shadow: 0 2px 16px rgba(0,0,0,.06);
+}
+.nav::-webkit-scrollbar { display: none; }
+.nav-a {
+  text-decoration: none; color: var(--ink3);
+  font-size: .72rem; font-weight: 700;
+  letter-spacing: .3px;
+  padding: 14px 14px;
+  white-space: nowrap;
+  border-bottom: 2.5px solid transparent;
+  transition: all .18s;
+}
+.nav-a:hover { color: var(--orange); border-bottom-color: var(--orange); }
+
+/* ── MAIN ── */
+.main { max-width: 1100px; margin: 0 auto; padding: 80px 24px 160px; }
+
+/* ── CHAPTER ── */
+.chapter {
+  margin-bottom: 120px;
+  animation: fadeUp .6s ease both;
+}
+.chapter:nth-child(1){animation-delay:.05s}
+.chapter:nth-child(2){animation-delay:.10s}
+.chapter:nth-child(3){animation-delay:.15s}
+.chapter:nth-child(4){animation-delay:.20s}
+.chapter:nth-child(5){animation-delay:.25s}
+.chapter:nth-child(6){animation-delay:.30s}
+.chapter:nth-child(7){animation-delay:.35s}
+.chapter:nth-child(8){animation-delay:.40s}
+
+.chapter-label {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: .68rem; font-weight: 800;
+  letter-spacing: 2.5px; text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.chapter-num {
+  font-family: 'Fraunces', serif;
+  font-size: .65rem; font-weight: 600;
+  color: var(--ink3);
+}
+
+.chapter h2 {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 900;
+  line-height: 1.1;
+  letter-spacing: -1px;
+  margin-bottom: 14px;
+  color: var(--ink);
+}
+
+.chapter-intro {
+  font-size: 1rem; color: var(--ink2);
+  max-width: 720px; line-height: 1.9;
+  margin-bottom: 48px;
+  padding-left: 20px;
+  border-left: 3px solid var(--line2);
+}
+
+/* ── BIG ANALOGY BOX ── */
+.analogy {
+  background: white;
+  border: 2px solid var(--line);
+  border-radius: 20px;
+  padding: 36px;
+  margin-bottom: 32px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0,0,0,.06);
+}
+.analogy::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 4px;
+  background: currentColor;
+  opacity: .5;
+}
+.analogy-emoji {
+  font-size: 3.5rem; margin-bottom: 16px; display: block;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,.15));
+}
+.analogy-title {
+  font-family: 'Fraunces', serif;
+  font-size: 1.4rem; font-weight: 700;
+  margin-bottom: 12px; color: var(--ink);
+}
+.analogy-body {
+  font-size: .95rem; color: var(--ink2); line-height: 1.9;
+}
+.analogy-body strong { color: var(--ink); }
+
+/* ── GRID ── */
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+@media(max-width: 900px) {
+  .g2, .g3 { grid-template-columns: 1fr; }
+  .nav { padding: 0 16px; }
+  .hero { padding: 80px 16px; }
+  .main { padding: 60px 16px 120px; }
+  .hero h1 { font-size: 2.6rem; }
+}
+
+/* ── CARD ── */
+.card {
+  background: white;
+  border: 1.5px solid var(--line);
+  border-radius: 16px;
+  padding: 28px;
+  transition: all .2s;
+  box-shadow: 0 2px 12px rgba(0,0,0,.05);
+}
+.card:hover {
+  border-color: var(--line2);
+  box-shadow: 0 8px 32px rgba(0,0,0,.10);
+  transform: translateY(-2px);
+}
+.card-icon { font-size: 2.2rem; margin-bottom: 14px; display: block; }
+.card-title {
+  font-family: 'Fraunces', serif;
+  font-size: 1.15rem; font-weight: 700;
+  margin-bottom: 8px; color: var(--ink);
+}
+.card-body { font-size: .88rem; color: var(--ink2); line-height: 1.8; }
+.card-body strong { color: var(--ink); }
+
+/* ── STEP LIST ── */
+.steps { display: flex; flex-direction: column; gap: 0; }
+.step {
+  display: flex; gap: 20px; align-items: flex-start;
+  padding: 24px 0;
+  border-bottom: 1.5px dashed var(--line);
+}
+.step:last-child { border-bottom: none; }
+.step-num {
+  flex-shrink: 0;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Fraunces', serif;
+  font-size: 1rem; font-weight: 900;
+  color: white;
+  margin-top: 2px;
+}
+.step-content {}
+.step-title {
+  font-family: 'Fraunces', serif;
+  font-size: 1.1rem; font-weight: 700;
+  margin-bottom: 6px; color: var(--ink);
+}
+.step-body { font-size: .88rem; color: var(--ink2); line-height: 1.8; }
+.step-body strong { color: var(--ink); }
+.step-body code {
+  font-family: 'Courier New', monospace;
+  font-size: .82rem; background: var(--warm);
+  padding: 1px 7px; border-radius: 4px;
+  border: 1px solid var(--line);
+  color: var(--orange);
+}
+
+/* ── LAYER DIAGRAM ── */
+.layers {
+  background: white;
+  border: 1.5px solid var(--line);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0,0,0,.07);
+}
+.layer {
+  padding: 20px 28px;
+  border-bottom: 1.5px solid var(--line);
+  display: flex; align-items: center; gap: 18px;
+  transition: background .18s;
+}
+.layer:last-child { border-bottom: none; }
+.layer:hover { background: var(--warm); }
+.layer-icon { font-size: 1.8rem; flex-shrink: 0; width: 44px; text-align: center; }
+.layer-badge {
+  font-size: .6rem; font-weight: 800;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  padding: 3px 10px; border-radius: 50px;
+  border: 1.5px solid; white-space: nowrap;
+  flex-shrink: 0; min-width: 100px; text-align: center;
+}
+.layer-text { flex: 1; }
+.layer-title {
+  font-family: 'Fraunces', serif;
+  font-weight: 700; font-size: 1rem;
+  margin-bottom: 2px; color: var(--ink);
+}
+.layer-desc { font-size: .82rem; color: var(--ink2); line-height: 1.6; }
+.layer-arrow {
+  font-size: 1.4rem; color: var(--ink3); flex-shrink: 0;
+}
+
+/* ── CODE BLOCK ── */
+.code-wrap {
+  border-radius: 16px; overflow: hidden;
+  border: 1.5px solid var(--line);
+  box-shadow: 0 4px 20px rgba(0,0,0,.08);
+  margin-bottom: 0;
+}
+.code-bar {
+  background: var(--warm);
+  border-bottom: 1.5px solid var(--line);
+  padding: 10px 18px;
+  display: flex; align-items: center; gap: 12px;
+}
+.code-dots { display: flex; gap: 6px; }
+.cd { width: 11px; height: 11px; border-radius: 50%; }
+.cd-r { background: #fc5f57; }
+.cd-y { background: #fdbc2c; }
+.cd-g { background: #34c749; }
+.code-label {
+  font-size: .68rem; font-weight: 700;
+  color: var(--ink3); letter-spacing: .5px;
+  margin-left: 4px;
+}
+pre.code {
+  background: #1e1b18;
+  padding: 24px;
+  font-family: 'Courier New', monospace;
+  font-size: .82rem; line-height: 1.8;
+  overflow-x: auto;
+  color: #c8bfb4;
+}
+.ck  { color: #d4956a; }  /* keyword — warm orange */
+.cs  { color: #87c2a0; }  /* string — green */
+.cc  { color: #6b7a6a; font-style: italic; } /* comment */
+.cn  { color: #d4b896; }  /* number */
+.cf  { color: #9bbde0; }  /* function */
+.co  { color: #c8bfb4; }  /* operator/base */
+
+/* ── HIGHLIGHT BOX ── */
+.hbox {
+  border-radius: 14px; padding: 22px 26px;
+  border-left: 4px solid;
+  margin-bottom: 0;
+}
+.hbox-title {
+  font-weight: 800; font-size: .72rem;
+  letter-spacing: 2px; text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.hbox-body { font-size: .9rem; line-height: 1.85; }
+.hbox-body strong { font-weight: 700; }
+.hbox-body code {
+  font-family: 'Courier New', monospace;
+  font-size: .82rem; background: rgba(0,0,0,.06);
+  padding: 1px 6px; border-radius: 4px;
+}
+
+.hbox-o { background: var(--orange-soft); border-color: var(--orange); color: var(--ink2); }
+.hbox-o .hbox-title { color: var(--orange); }
+.hbox-b { background: var(--blue-soft); border-color: var(--blue); color: var(--ink2); }
+.hbox-b .hbox-title { color: var(--blue); }
+.hbox-g { background: var(--green-soft); border-color: var(--green); color: var(--ink2); }
+.hbox-g .hbox-title { color: var(--green); }
+.hbox-p { background: var(--purple-soft); border-color: var(--purple); color: var(--ink2); }
+.hbox-p .hbox-title { color: var(--purple); }
+.hbox-r { background: var(--red-soft); border-color: var(--red); color: var(--ink2); }
+.hbox-r .hbox-title { color: var(--red); }
+.hbox-y { background: var(--yellow-soft); border-color: var(--yellow); color: var(--ink2); }
+.hbox-y .hbox-title { color: var(--yellow); }
+.hbox-t { background: var(--teal-soft); border-color: var(--teal); color: var(--ink2); }
+.hbox-t .hbox-title { color: var(--teal); }
+
+/* ── COMPARISON ── */
+.compare {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+}
+.compare-box {
+  border-radius: 14px; padding: 22px;
+  border: 1.5px solid;
+}
+.compare-label {
+  font-size: .65rem; font-weight: 800;
+  letter-spacing: 2px; text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.compare-content { font-size: .88rem; line-height: 1.8; color: var(--ink2); }
+.compare-content strong { color: var(--ink); }
+.cmp-bad { background: var(--red-soft); border-color: #f0b0ac; }
+.cmp-bad .compare-label { color: var(--red); }
+.cmp-good { background: var(--green-soft); border-color: var(--green-mid); }
+.cmp-good .compare-label { color: var(--green); }
+
+/* ── DIVIDER ── */
+.divider {
+  text-align: center; padding: 16px 0;
+  color: var(--ink3); font-size: 1.2rem;
+  letter-spacing: 8px;
+}
+
+/* ── BIG SUMMARY ── */
+.summary {
+  background: var(--ink);
+  border-radius: 24px;
+  padding: 48px;
+  color: white;
+  position: relative;
+  overflow: hidden;
+  margin-top: 16px;
+}
+.summary::before {
+  content: '';
+  position: absolute; top: -50%; right: -20%;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(232,96,28,.2) 0%, transparent 60%);
+  border-radius: 50%;
+}
+.summary h3 {
+  font-family: 'Fraunces', serif;
+  font-size: 1.8rem; font-weight: 900;
+  margin-bottom: 20px; position: relative;
+}
+.summary p {
+  font-size: .95rem; line-height: 1.9;
+  color: rgba(255,255,255,.75); position: relative;
+  max-width: 760px;
+}
+.summary strong { color: white; }
+
+/* ── FOOTER ── */
+.footer {
+  border-top: 1.5px solid var(--line);
+  padding: 40px 40px;
+  background: white;
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 16px;
+  font-size: .75rem; color: var(--ink3);
+  font-weight: 600;
+}
+.footer-logo {
+  font-family: 'Fraunces', serif;
+  font-size: 1rem; font-weight: 700;
+  color: var(--ink); letter-spacing: -0.5px;
+}
+
+/* ── GAP ── */
+.gap12 { margin-top: 12px; }
+.gap16 { margin-top: 16px; }
+.gap20 { margin-top: 20px; }
+.gap28 { margin-top: 28px; }
+.gap36 { margin-top: 36px; }
+
+/* ── INLINE CODE ── */
+ic {
+  font-family: 'Courier New', monospace;
+  font-size: .85em;
+  background: var(--orange-soft);
+  border: 1px solid var(--orange-mid);
+  color: var(--orange);
+  padding: 1px 7px;
+  border-radius: 5px;
+}
+</style>
+</head>
+<body>
+<a class="back" href="index.html">← Menu</a>
+
+<!-- ══════════════════════════════════════
+     HERO
+══════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-dots"></div>
+  <div class="hero-blob1"></div>
+  <div class="hero-blob2"></div>
+  <div class="hero-inner">
+    <div class="hero-eyebrow">
+      <div class="eyebrow-dot"></div>
+      Programowanie od absolutnego zera
+    </div>
+    <h1>
+      Jak to <em>naprawdę</em><br>
+      <span class="soft">działa?</span>
+    </h1>
+    <p class="hero-desc">
+      Komputer to głupia maszyna która robi dokładnie to co jej powiesz — nic więcej, nic mniej. Ta strona tłumaczy co to znaczy <em>naprawdę</em> — od elektrycznych prądzików, przez zera i jedynki, aż do aplikacji którą używasz na telefonie.
+    </p>
+    <div class="hero-tags">
+      <span class="tag tag-o">🧱 Warstwy abstrakcji</span>
+      <span class="tag tag-b">🧠 Jak myśli komputer</span>
+      <span class="tag tag-g">📦 Co to jest zmienna</span>
+      <span class="tag tag-p">🔄 Pętle i warunki</span>
+      <span class="tag tag-o">🏗️ Funkcje i klasy</span>
+      <span class="tag tag-b">🌐 Od kodu do aplikacji</span>
+    </div>
+    <div class="hero-scroll">
+      <span>Przewiń w dół</span>
+      <div class="scroll-arrow">↓</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     NAV
+══════════════════════════════════════ -->
+<nav class="nav">
+  <a class="nav-a" href="#elektrycznosc">⚡ Prąd i bity</a>
+  <a class="nav-a" href="#abstrakcja">🧱 Warstwy abstrakcji</a>
+  <a class="nav-a" href="#jezyk">💬 Języki programowania</a>
+  <a class="nav-a" href="#zmienne">📦 Zmienne i typy</a>
+  <a class="nav-a" href="#logika">🔀 Logika i warunki</a>
+  <a class="nav-a" href="#petle">🔄 Pętle</a>
+  <a class="nav-a" href="#funkcje">🔧 Funkcje</a>
+  <a class="nav-a" href="#klasy">🏗️ Klasy i obiekty</a>
+  <a class="nav-a" href="#jak-dziala">🌐 Od kodu do ekranu</a>
+</nav>
+
+<main class="main">
+
+<!-- ══ 01 ELEKTRYCZNOŚĆ ══ -->
+<section class="chapter" id="elektrycznosc">
+  <div class="chapter-label" style="color: var(--orange)">
+    <span class="chapter-num">01 / 09</span>
+    ⚡ Absolutne podstawy
+  </div>
+  <h2>Komputer to tylko prąd i tranzystory</h2>
+  <p class="chapter-intro">
+    Żeby rozumieć programowanie, musisz zrozumieć jedną rzecz: <strong>komputer nie jest inteligentny</strong>. To maszyna która potrafi tylko jedno — sprawdzić czy przez jakiś drucik płynie prąd, czy nie płynie. To wszystko. Reszta to magia abstrakcji.
+  </p>
+
+  <div class="analogy" style="color: var(--orange)">
+    <span class="analogy-emoji">💡</span>
+    <div class="analogy-title">Wyobraź sobie żarówkę</div>
+    <div class="analogy-body">
+      Żarówka może być <strong>włączona (1)</strong> albo <strong>wyłączona (0)</strong>. Komputer ma miliardy takich "żarówek" — nazywają się <strong>tranzystorami</strong>. Każdy tranzystor to jeden bit — jeden fragment informacji. Twój procesor ma ich dziś <strong>ponad 50 miliardów</strong> — wszystkie na kawałku krzemu wielkości paznokcia.
+    </div>
+  </div>
+
+  <div class="g3 gap28">
+    <div class="card">
+      <span class="card-icon">0️⃣1️⃣</span>
+      <div class="card-title">Bit — atom informacji</div>
+      <div class="card-body">
+        Najmniejsza możliwa porcja informacji. Może mieć wartość <strong>0</strong> (brak prądu) albo <strong>1</strong> (jest prąd). Nic pomiędzy. Dosłownie wszystko w komputerze — zdjęcia, muzyka, kod — to ciągi zer i jedynek.
+      </div>
+    </div>
+    <div class="card">
+      <span class="card-icon">📦</span>
+      <div class="card-title">Bajt — 8 bitów razem</div>
+      <div class="card-body">
+        8 bitów daje bajt. 8 żarówek ułożonych w rząd to 256 różnych kombinacji (<strong>2⁸ = 256</strong>). Bajtem możemy zakodować jedną literę, jedną liczbę 0–255, jeden piksel w bardzo prostej grafice.
+      </div>
+    </div>
+    <div class="card">
+      <span class="card-icon">🔢</span>
+      <div class="card-title">Jak wygląda litera "A"?</div>
+      <div class="card-body">
+        W systemie ASCII litera "A" to liczba <strong>65</strong>. W binarnym: <strong>01000001</strong>. Komputer nie wie co to "A" — widzi tylko ten wzór prądu. To my nadaliśmy mu znaczenie.
+      </div>
+    </div>
+  </div>
+
+  <div class="gap28">
+    <div class="hbox hbox-o">
+      <div class="hbox-title">🤯 Kluczowa myśl</div>
+      <div class="hbox-body">
+        <strong>Wszystko co widzisz na ekranie to zera i jedynki.</strong> Zdjęcie Twojej rodziny? Ciąg bitów. Piosenka na Spotify? Ciąg bitów. Ten tekst który czytasz? Ciąg bitów. Cały internet? Bity lecące przez kabelki i powietrze. Programowanie to sztuka nadawania tym bitom znaczenia.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 02 ABSTRAKCJA ══ -->
+<section class="chapter" id="abstrakcja">
+  <div class="chapter-label" style="color: var(--blue)">
+    <span class="chapter-num">02 / 09</span>
+    🧱 Warstwy abstrakcji
+  </div>
+  <h2>Abstrakcja — ukrywanie złożoności</h2>
+  <p class="chapter-intro">
+    Nikt nie programuje w zerach i jedynkach. Nikt nie myśli o tranzystorach pisząc aplikację. Przez dziesiątki lat informatycy budowali <strong>warstwy abstrakcji</strong> — każda warstwa ukrywa skomplikowane szczegóły niższej i daje prostsze narzędzia wyższej.
+  </p>
+
+  <div class="analogy" style="color: var(--blue)">
+    <span class="analogy-emoji">🚗</span>
+    <div class="analogy-title">Analogia z samochodem</div>
+    <div class="analogy-body">
+      Kiedy skręcasz kierownicą w lewo — <strong>nie musisz wiedzieć</strong> jak działa układ hydrauliczny wspomagania, jak przekładnia kierownicza przenosi siłę, jak każde koło obraca się pod innym kątem (geometria Ackermanna). Po prostu <strong>skręcasz kółko i auto skręca</strong>. Kierownica to abstrakcja nad skomplikowaną mechaniką. W programowaniu działamy identycznie — abstrakcje na abstrakcjach.
+    </div>
+  </div>
+
+  <div class="gap28">
+    <div class="layers">
+      <div class="layer">
+        <div class="layer-icon">🖥️</div>
+        <div class="layer-badge" style="color: var(--purple); border-color: var(--purple-mid); background: var(--purple-soft)">WARSTWA 7</div>
+        <div class="layer-text">
+          <div class="layer-title">Aplikacja / Interfejs użytkownika</div>
+          <div class="layer-desc">To co widzisz i klikasz — przyciski, okna, strony WWW. Programista myśli: "Kliknij i wyślij wiadomość."</div>
+        </div>
+        <div class="layer-arrow">↑</div>
+      </div>
+      <div class="layer">
+        <div class="layer-icon">🧩</div>
+        <div class="layer-badge" style="color: var(--orange); border-color: var(--orange-mid); background: var(--orange-soft)">WARSTWA 6</div>
+        <div class="layer-text">
+          <div class="layer-title">Język programowania (Java, Python, JS…)</div>
+          <div class="layer-desc">Ludzko czytelny kod: <code style="background:var(--warm);padding:1px 6px;border-radius:4px;font-family:monospace;font-size:.8rem">sendMessage("Cześć")</code> — programista nie myśli o bajtach.</div>
+        </div>
+        <div class="layer-arrow">↑</div>
+      </div>
+      <div class="layer">
+        <div class="layer-icon">⚙️</div>
+        <div class="layer-badge" style="color: var(--teal); border-color: #80c4c0; background: var(--teal-soft)">WARSTWA 5</div>
+        <div class="layer-text">
+          <div class="layer-title">Kompilator / Interpreter</div>
+          <div class="layer-desc">Tłumaczy kod ludzki na kod maszynowy. Kompilator robi to raz; interpreter — linia po linii w locie.</div>
+        </div>
+        <div class="layer-arrow">↑</div>
+      </div>
+      <div class="layer">
+        <div class="layer-icon">📋</div>
+        <div class="layer-badge" style="color: var(--green); border-color: var(--green-mid); background: var(--green-soft)">WARSTWA 4</div>
+        <div class="layer-text">
+          <div class="layer-title">System Operacyjny (Windows, Linux, macOS)</div>
+          <div class="layer-desc">Zarządza pamięcią, plikami, procesami. Programy proszą OS o zasoby — OS je przydziela. OS ukrywa szczegóły sprzętu.</div>
+        </div>
+        <div class="layer-arrow">↑</div>
+      </div>
+      <div class="layer">
+        <div class="layer-icon">📟</div>
+        <div class="layer-badge" style="color: var(--blue); border-color: var(--blue-mid); background: var(--blue-soft)">WARSTWA 3</div>
+        <div class="layer-text">
+          <div class="layer-title">Kod maszynowy / Asembler</div>
+          <div class="layer-desc">Instrukcje procesora: MOV, ADD, JMP. Człowiek może to czytać ale jest to żmudne i podatne na błędy.</div>
+        </div>
+        <div class="layer-arrow">↑</div>
+      </div>
+      <div class="layer">
+        <div class="layer-icon">🔩</div>
+        <div class="layer-badge" style="color: var(--red); border-color: #f0b0ac; background: var(--red-soft)">WARSTWA 2</div>
+        <div class="layer-text">
+          <div class="layer-title">Logika cyfrowa (bramki AND, OR, NOT)</div>
+          <div class="layer-desc">Tranzystory połączone w bramki logiczne. Bramka AND: jeśli oba wejścia=1 to wyjście=1. Z tego buduje się procesory.</div>
+        </div>
+        <div class="layer-arrow">↑</div>
+      </div>
+      <div class="layer">
+        <div class="layer-icon">⚡</div>
+        <div class="layer-badge" style="color: var(--ink2); border-color: var(--line2); background: var(--warm)">WARSTWA 1</div>
+        <div class="layer-text">
+          <div class="layer-title">Fizyka — elektrony i tranzystory</div>
+          <div class="layer-desc">Prąd płynie lub nie płynie. Tranzystor to przełącznik sterowany napięciem. Miliardy na 1 cm².</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="gap20">
+    <div class="hbox hbox-b">
+      <div class="hbox-title">💡 Dlaczego to ważne?</div>
+      <div class="hbox-body">
+        Każda warstwa <strong>ukrywa złożoność niższej i daje prostsze narzędzia wyższej</strong>. Pisząc w Pythonie nie musisz wiedzieć jak działa zarządzanie pamięcią — Python robi to za Ciebie. Nie musisz wiedzieć jak procesor wykonuje dodawanie — piszesz <code>a + b</code>. Abstrakcja pozwala budować gigantyczne systemy bez trzymania całej ich złożoności w głowie jednocześnie.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 03 JĘZYKI PROGRAMOWANIA ══ -->
+<section class="chapter" id="jezyk">
+  <div class="chapter-label" style="color: var(--green)">
+    <span class="chapter-num">03 / 09</span>
+    💬 Języki programowania
+  </div>
+  <h2>Czym jest język programowania?</h2>
+  <p class="chapter-intro">
+    Język programowania to <strong>umówiony sposób wydawania rozkazów komputerowi</strong> — zapisany tak, żeby ludzie mogli go czytać i pisać. Komputer nie rozumie angielskiego ani polskiego, ale rozumie precyzyjną składnię języka — i kompilator tłumaczy ją na bity.
+  </p>
+
+  <div class="analogy" style="color: var(--green)">
+    <span class="analogy-emoji">👨‍🍳</span>
+    <div class="analogy-title">Analogia z przepisem kulinarnym</div>
+    <div class="analogy-body">
+      Przepis to <strong>algorytm</strong> — lista kroków do wykonania w określonej kolejności. "Zagotuj wodę. Dodaj makaron. Gotuj 8 minut. Odcedź." Komputer to robot kuchenny który wykonuje przepis idealnie dosłownie — bez żadnej improwizacji, bez zdrowego rozsądku. Jeśli napiszesz "gotuj 8 minut" — ugotuje dokładnie 8 minut. Napisze warto gotować "do miękkości" — nie zrozumie.
+    </div>
+  </div>
+
+  <div class="gap28 g2">
+    <div>
+      <div class="hbox hbox-g" style="margin-bottom:16px">
+        <div class="hbox-title">🌐 Języki wysokiego poziomu</div>
+        <div class="hbox-body">
+          <strong>Python, JavaScript, Java, C#</strong> — blisko języka ludzkiego, daleko od sprzętu. Łatwe do nauki, mało kontroli nad szczegółami. Kompilator/interpreter robi za nas dużo pracy (zarządzanie pamięcią, typy itp.).
+        </div>
+      </div>
+      <div class="hbox hbox-r">
+        <div class="hbox-title">⚙️ Języki niskiego poziomu</div>
+        <div class="hbox-body">
+          <strong>C, C++, Rust, Asembler</strong> — blisko sprzętu, dużo kontroli. Musisz sam zarządzać pamięcią, typami danych. Trudniejsze, ale szybsze i precyzyjniejsze. Systemy operacyjne, sterowniki, gry AAA — pisane w C/C++.
+        </div>
+      </div>
+    </div>
+    <div class="code-wrap">
+      <div class="code-bar">
+        <div class="code-dots"><div class="cd cd-r"></div><div class="cd cd-y"></div><div class="cd cd-g"></div></div>
+        <span class="code-label">Ten sam algorytm — 3 języki</span>
+      </div>
+      <pre class="code"><span class="cc"># Python — bardzo czytelny</span>
+<span class="ck">def</span> <span class="cf">powitaj</span>(imie):
+    <span class="ck">print</span>(<span class="cs">"Cześć, "</span> + imie)
+
+powitaj(<span class="cs">"Ania"</span>)
+
+<span class="cc">// JavaScript — podobnie</span>
+<span class="ck">function</span> <span class="cf">powitaj</span>(imie) {
+    console.<span class="cf">log</span>(<span class="cs">"Cześć, "</span> + imie);
+}
+
+<span class="cc">// Java — bardziej ceremonialny</span>
+<span class="ck">public static void</span> <span class="cf">powitaj</span>(String imie) {
+    System.out.<span class="cf">println</span>(<span class="cs">"Cześć, "</span> + imie);
+}
+
+<span class="cc">// Asembler x86 — to samo, inaczej</span>
+mov  rdi, format_str
+mov  rsi, name_ptr
+<span class="cf">call</span> printf          <span class="cc">; wywołaj printf</span></pre>
+    </div>
+  </div>
+
+  <div class="gap20">
+    <div class="hbox hbox-y">
+      <div class="hbox-title">🤔 Skąd wiedzieć jaki język wybrać?</div>
+      <div class="hbox-body">
+        <strong>Web frontend?</strong> JavaScript (musisz, bo przeglądarka nic innego nie rozumie). <strong>Data Science / AI?</strong> Python (ekosystem bibliotek). <strong>Android?</strong> Kotlin / Java. <strong>iOS?</strong> Swift. <strong>Backend enterprise?</strong> Java, C#. <strong>Wydajność / systemy?</strong> C, C++, Rust. <strong>Na start?</strong> Python — prosta składnia, natychmiastowe efekty, ogromna społeczność.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 04 ZMIENNE ══ -->
+<section class="chapter" id="zmienne">
+  <div class="chapter-label" style="color: var(--purple)">
+    <span class="chapter-num">04 / 09</span>
+    📦 Zmienne i typy danych
+  </div>
+  <h2>Zmienne — pudełka na dane</h2>
+  <p class="chapter-intro">
+    Zmienna to <strong>nazwane miejsce w pamięci komputera</strong> gdzie przechowujesz jakąś wartość. Wyobraź sobie pudełko z etykietą — możesz włożyć do niego coś, wyjąć, zamienić na inne. Komputer nie wie co to "imię" czy "wiek" — ale Ty możesz dać zmiennej nazwę która ma sens dla człowieka.
+  </p>
+
+  <div class="analogy" style="color: var(--purple)">
+    <span class="analogy-emoji">📬</span>
+    <div class="analogy-title">Analogia ze skrzynkami pocztowymi</div>
+    <div class="analogy-body">
+      Wyobraź sobie rząd skrzynek pocztowych w bloku. Każda ma <strong>numer (adres w pamięci)</strong> i <strong>imię właściciela (nazwa zmiennej)</strong>. Możesz włożyć list do skrzynki "Jan" — nie musisz znać numeru, wystarczy imię. Komputer tłumaczy imię na adres. Kiedy program się kończy — skrzynki są opróżniane (pamięć zwalniana).
+    </div>
+  </div>
+
+  <div class="gap28">
+    <div class="code-wrap">
+      <div class="code-bar">
+        <div class="code-dots"><div class="cd cd-r"></div><div class="cd cd-y"></div><div class="cd cd-g"></div></div>
+        <span class="code-label">Zmienne w Javie — przykłady</span>
+      </div>
+      <pre class="code"><span class="cc">// Deklaracja zmiennej: TYP nazwa = wartość;</span>
+<span class="ck">int</span>     wiek       = <span class="cn">25</span>;          <span class="cc">// liczba całkowita</span>
+<span class="ck">double</span>  wzrost     = <span class="cn">1.78</span>;        <span class="cc">// liczba z przecinkiem</span>
+<span class="ck">String</span>  imie       = <span class="cs">"Ania"</span>;      <span class="cc">// tekst (łańcuch znaków)</span>
+<span class="ck">boolean</span> czyPelnoletni = <span class="ck">true</span>;    <span class="cc">// prawda lub fałsz</span>
+<span class="ck">char</span>    pierwszaLitera = <span class="cs">'A'</span>;    <span class="cc">// jeden znak</span>
+
+<span class="cc">// Zmiana wartości — nowe pudełko nie, nowa zawartość tak</span>
+wiek = <span class="cn">26</span>;        <span class="cc">// teraz wiek to 26</span>
+imie = <span class="cs">"Kasia"</span>;   <span class="cc">// teraz imie to "Kasia"</span>
+
+<span class="cc">// Operacje na zmiennych</span>
+<span class="ck">int</span> a = <span class="cn">10</span>;
+<span class="ck">int</span> b = <span class="cn">3</span>;
+<span class="ck">int</span> suma     = a + b;  <span class="cc">// 13</span>
+<span class="ck">int</span> roznica  = a - b;  <span class="cc">// 7</span>
+<span class="ck">int</span> iloczyn  = a * b;  <span class="cc">// 30</span>
+<span class="ck">int</span> iloraz   = a / b;  <span class="cc">// 3 (całkowite!)</span>
+<span class="ck">int</span> reszta   = a % b;  <span class="cc">// 1 (modulo = reszta z dzielenia)</span></pre>
+    </div>
+  </div>
+
+  <div class="gap20 g3">
+    <div class="card">
+      <span class="card-icon">🔢</span>
+      <div class="card-title">Typy liczbowe</div>
+      <div class="card-body">
+        <code style="font-family:monospace;font-size:.85em;background:var(--warm);padding:1px 5px;border-radius:3px">int</code> — całkowite (−2mld do +2mld)<br>
+        <code style="font-family:monospace;font-size:.85em;background:var(--warm);padding:1px 5px;border-radius:3px">long</code> — wielkie całkowite<br>
+        <code style="font-family:monospace;font-size:.85em;background:var(--warm);padding:1px 5px;border-radius:3px">double</code> — ułamkowe (64 bity)<br>
+        <code style="font-family:monospace;font-size:.85em;background:var(--warm);padding:1px 5px;border-radius:3px">float</code> — ułamkowe (32 bity)<br><br>
+        <strong>Dlaczego różne?</strong> Bo zajmują różną ilość pamięci i mają różną precyzję.
+      </div>
+    </div>
+    <div class="card">
+      <span class="card-icon">📝</span>
+      <div class="card-title">Tekst i znaki</div>
+      <div class="card-body">
+        <code style="font-family:monospace;font-size:.85em;background:var(--warm);padding:1px 5px;border-radius:3px">char</code> — jeden znak (litera, cyfra, emoji)<br>
+        <code style="font-family:monospace;font-size:.85em;background:var(--warm);padding:1px 5px;border-radius:3px">String</code> — ciąg znaków (słowo, zdanie, email)<br><br>
+        <strong>String to tak naprawdę tablica charów</strong> — "Ania" to ['A','n','i','a'] pod spodem. Dlatego można liczyć długość, wyciągać litery itp.
+      </div>
+    </div>
+    <div class="card">
+      <span class="card-icon">✅</span>
+      <div class="card-title">Prawda / fałsz</div>
+      <div class="card-body">
+        <code style="font-family:monospace;font-size:.85em;background:var(--warm);padding:1px 5px;border-radius:3px">boolean</code> — tylko dwie wartości: <strong>true</strong> lub <strong>false</strong><br><br>
+        To podstawa każdej decyzji w programie. "Czy użytkownik jest zalogowany? Czy liczba jest większa od 10? Czy email zawiera @?" — wszystko to pytania na które odpowiedź to boolean.
+      </div>
+    </div>
+  </div>
+
+  <div class="gap20">
+    <div class="hbox hbox-p">
+      <div class="hbox-title">🧠 Dlaczego typy danych mają znaczenie?</div>
+      <div class="hbox-body">
+        Komputer musi wiedzieć z góry ile miejsca zarezerwować w pamięci i jak interpretować bity. Liczba <strong>65</strong> jako <code>int</code> to 65. Te same bity jako <code>char</code> to litera "A". Te same bity jako <code>float</code> to jakaś dziwna liczba zmiennoprzecinkowa. <strong>Bity nie mają znaczenia — mają je dopiero gdy wiemy jak je interpretować.</strong>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 05 LOGIKA I WARUNKI ══ -->
+<section class="chapter" id="logika">
+  <div class="chapter-label" style="color: var(--orange)">
+    <span class="chapter-num">05 / 09</span>
+    🔀 Logika i warunki
+  </div>
+  <h2>If / Else — komputer podejmuje decyzje</h2>
+  <p class="chapter-intro">
+    Program który wykonuje tylko ciąg kroków od góry do dołu jest mało użyteczny. Prawdziwa moc zaczyna się gdy program może <strong>podejmować decyzje</strong> w zależności od danych. Do tego służą instrukcje warunkowe — <em>if/else</em>.
+  </p>
+
+  <div class="analogy" style="color: var(--orange)">
+    <span class="analogy-emoji">🚦</span>
+    <div class="analogy-title">Analogia z sygnalizacją świetlną</div>
+    <div class="analogy-body">
+      Kierowca patrzy na sygnalizator: <strong>JEŚLI</strong> światło jest zielone — <strong>TO</strong> jedź. <strong>W PRZECIWNYM RAZIE</strong> — stój. To dokładnie instrukcja if/else. Komputer sprawdza warunek (jest to pytanie z odpowiedzią true/false) i wykonuje jeden z dwóch bloków kodu.
+    </div>
+  </div>
+
+  <div class="gap28 g2">
+    <div class="code-wrap">
+      <div class="code-bar">
+        <div class="code-dots"><div class="cd cd-r"></div><div class="cd cd-y"></div><div class="cd cd-g"></div></div>
+        <span class="code-label">If / Else — przykłady</span>
+      </div>
+      <pre class="code"><span class="ck">int</span> wiek = <span class="cn">17</span>;
+
+<span class="cc">// Podstawowy if/else</span>
+<span class="ck">if</span> (wiek >= <span class="cn">18</span>) {
+    System.out.<span class="cf">println</span>(<span class="cs">"Wejdź na seans!"</span>);
+} <span class="ck">else</span> {
+    System.out.<span class="cf">println</span>(<span class="cs">"Przykro mi, musisz mieć 18+"</span>);
+}
+<span class="cc">// wydrukuje: "Przykro mi, musisz mieć 18+"</span>
+
+<span class="cc">// Wiele warunków — else if</span>
+<span class="ck">int</span> wynik = <span class="cn">75</span>;
+
+<span class="ck">if</span> (wynik >= <span class="cn">90</span>) {
+    System.out.<span class="cf">println</span>(<span class="cs">"Celujący!"</span>);
+} <span class="ck">else if</span> (wynik >= <span class="cn">75</span>) {
+    System.out.<span class="cf">println</span>(<span class="cs">"Bardzo dobry"</span>);
+} <span class="ck">else if</span> (wynik >= <span class="cn">50</span>) {
+    System.out.<span class="cf">println</span>(<span class="cs">"Dostateczny"</span>);
+} <span class="ck">else</span> {
+    System.out.<span class="cf">println</span>(<span class="cs">"Niedostateczny"</span>);
+}
+<span class="cc">// wydrukuje: "Bardzo dobry"</span>
+
+<span class="cc">// Łączenie warunków: && (i), || (lub), ! (nie)</span>
+<span class="ck">boolean</span> maKarte = <span class="ck">true</span>;
+<span class="ck">boolean</span> maGotowke = <span class="ck">false</span>;
+
+<span class="ck">if</span> (maKarte || maGotowke) {
+    System.out.<span class="cf">println</span>(<span class="cs">"Może zapłacić"</span>);
+}
+<span class="cc">// true LUB false = true → wydrukuje "Może zapłacić"</span></pre>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:16px">
+        <span class="card-icon">🔗</span>
+        <div class="card-title">Operatory logiczne</div>
+        <div class="card-body">
+          <strong>&amp;&amp; (AND / I)</strong> — oba warunki muszą być prawdziwe<br>
+          <code style="font-family:monospace;font-size:.82em;background:var(--warm);padding:1px 5px;border-radius:3px">true && true = true</code><br>
+          <code style="font-family:monospace;font-size:.82em;background:var(--warm);padding:1px 5px;border-radius:3px">true && false = false</code><br><br>
+          <strong>|| (OR / LUB)</strong> — przynajmniej jeden musi być prawdziwy<br>
+          <code style="font-family:monospace;font-size:.82em;background:var(--warm);padding:1px 5px;border-radius:3px">false || true = true</code><br>
+          <code style="font-family:monospace;font-size:.82em;background:var(--warm);padding:1px 5px;border-radius:3px">false || false = false</code><br><br>
+          <strong>! (NOT / NIE)</strong> — odwraca wartość<br>
+          <code style="font-family:monospace;font-size:.82em;background:var(--warm);padding:1px 5px;border-radius:3px">!true = false</code>
+        </div>
+      </div>
+      <div class="hbox hbox-o">
+        <div class="hbox-title">⚠️ Częsty błąd</div>
+        <div class="hbox-body">
+          W Javie (i wielu innych językach) <code>= </code> to <strong>przypisanie</strong> (wkładam wartość do zmiennej), a <code>==</code> to <strong>porównanie</strong> (czy są równe?). Napisanie <code>if (wiek = 18)</code> zamiast <code>if (wiek == 18)</code> to klasyczny błąd który prowadzi do dziwnych zachowań.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 06 PĘTLE ══ -->
+<section class="chapter" id="petle">
+  <div class="chapter-label" style="color: var(--teal)">
+    <span class="chapter-num">06 / 09</span>
+    🔄 Pętle — powtarzanie
+  </div>
+  <h2>Pętle — rób to samo X razy</h2>
+  <p class="chapter-intro">
+    Komputer jest idealny do powtarzania tych samych czynności wiele razy — szybko i bez znudzenia. Pętle to mechanizm który mówi "wykonaj ten blok kodu dopóki warunek jest spełniony" albo "wykonaj go dla każdego elementu listy".
+  </p>
+
+  <div class="analogy" style="color: var(--teal)">
+    <span class="analogy-emoji">🧹</span>
+    <div class="analogy-title">Analogia ze sprzątaniem</div>
+    <div class="analogy-body">
+      "Weź każde naczynia ze stołu i umyj je." — to pętla for-each. Bierzesz kolejne naczynia ze stosu (lista) i dla każdego wykonujesz tę samą czynność (mycie). Albo: "Odkurzaj dopóki worek nie będzie pełny." — to pętla while. Robisz coś dopóki warunek (worek niepełny) jest prawdziwy.
+    </div>
+  </div>
+
+  <div class="gap28">
+    <div class="code-wrap">
+      <div class="code-bar">
+        <div class="code-dots"><div class="cd cd-r"></div><div class="cd cd-y"></div><div class="cd cd-g"></div></div>
+        <span class="code-label">3 rodzaje pętli w Javie</span>
+      </div>
+      <pre class="code"><span class="cc">// ══ FOR — gdy wiesz ile razy ══════════════════════</span>
+<span class="cc">// for (start; warunek_kontynuacji; krok_po_każdej_iteracji)</span>
+<span class="ck">for</span> (<span class="ck">int</span> i = <span class="cn">0</span>; i < <span class="cn">5</span>; i++) {
+    System.out.<span class="cf">println</span>(<span class="cs">"Krok numer: "</span> + i);
+}
+<span class="cc">// wydrukuje: 0, 1, 2, 3, 4  (i++ zwiększa i o 1 po każdym kroku)</span>
+
+<span class="cc">// ══ WHILE — gdy nie wiesz ile razy ═══════════════</span>
+<span class="ck">int</span> liczba = <span class="cn">1</span>;
+<span class="ck">while</span> (liczba <= <span class="cn">100</span>) {
+    liczba = liczba * <span class="cn">2</span>;  <span class="cc">// podwajaj</span>
+}
+System.out.<span class="cf">println</span>(liczba); <span class="cc">// 128 — pierwsza potęga 2 > 100</span>
+
+<span class="cc">// ══ FOR-EACH — dla każdego elementu listy ════════</span>
+String[] owoce = {<span class="cs">"jabłko"</span>, <span class="cs">"gruszka"</span>, <span class="cs">"banan"</span>};
+
+<span class="ck">for</span> (String owoc : owoce) {
+    System.out.<span class="cf">println</span>(<span class="cs">"Mam: "</span> + owoc);
+}
+<span class="cc">// wydrukuje: "Mam: jabłko", "Mam: gruszka", "Mam: banan"</span>
+
+<span class="cc">// ══ BREAK i CONTINUE ════════════════════════════</span>
+<span class="ck">for</span> (<span class="ck">int</span> i = <span class="cn">0</span>; i < <span class="cn">10</span>; i++) {
+    <span class="ck">if</span> (i == <span class="cn">3</span>) <span class="ck">continue</span>; <span class="cc">// pomiń i=3, idź do następnego</span>
+    <span class="ck">if</span> (i == <span class="cn">7</span>) <span class="ck">break</span>;    <span class="cc">// zatrzymaj pętlę przy i=7</span>
+    System.out.<span class="cf">println</span>(i);   <span class="cc">// wydrukuje: 0,1,2,4,5,6</span>
+}</pre>
+    </div>
+  </div>
+
+  <div class="gap20">
+    <div class="hbox hbox-r">
+      <div class="hbox-title">🔥 Nieskończona pętla — klasyczna katastrofa</div>
+      <div class="hbox-body">
+        <code>while(true) { /* coś */ }</code> — pętla która nigdy się nie kończy. Procesor kręci się w kółko, program się zawiesza, wentylatory laptopa zaczynają wyć. Zawsze upewnij się że pętla <strong>ma warunek który kiedyś będzie fałszywy</strong> i że coś w pętli go zmienia!
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 07 FUNKCJE ══ -->
+<section class="chapter" id="funkcje">
+  <div class="chapter-label" style="color: var(--blue)">
+    <span class="chapter-num">07 / 09</span>
+    🔧 Funkcje — kawałki kodu z nazwą
+  </div>
+  <h2>Funkcje — nie powtarzaj się</h2>
+  <p class="chapter-intro">
+    Wyobraź sobie że za każdym razem gdy chcesz zagotować wodę, musisz od nowa pisać wszystkie kroki: napełnij czajnik, podłącz do prądu, czekaj aż zagotuje... <strong>Funkcja to przepis z nazwą</strong> — piszesz go raz, a potem wywołujesz po nazwie ile razy chcesz.
+  </p>
+
+  <div class="analogy" style="color: var(--blue)">
+    <span class="analogy-emoji">🧰</span>
+    <div class="analogy-title">Analogia z przyciskiem w windzie</div>
+    <div class="analogy-body">
+      Kiedy naciskasz "3" w windzie — nie musisz wiedzieć jak działają silniki, liny, bezpieczniki. <strong>Naciśnięcie przycisku = wywołanie funkcji.</strong> Winda wie co robić. Możesz nacisnąć "3" sto razy — za każdym razem ta sama sekwencja się wykona. Możesz też nacisnąć "5" — ta sama funkcja, inny argument.
+    </div>
+  </div>
+
+  <div class="gap28 g2">
+    <div class="code-wrap">
+      <div class="code-bar">
+        <div class="code-dots"><div class="cd cd-r"></div><div class="cd cd-y"></div><div class="cd cd-g"></div></div>
+        <span class="code-label">Funkcje — anatomia i przykłady</span>
+      </div>
+      <pre class="code"><span class="cc">// Anatomia funkcji w Javie:</span>
+<span class="cc">// zwracanyTyp nazwaFunkcji(parametry) { ciało }</span>
+
+<span class="cc">// Funkcja bez parametrów, bez zwracania wartości</span>
+<span class="ck">void</span> <span class="cf">przywitajSie</span>() {
+    System.out.<span class="cf">println</span>(<span class="cs">"Cześć, świecie!"</span>);
+}
+
+<span class="cc">// Funkcja z parametrem</span>
+<span class="ck">void</span> <span class="cf">przywitajOsobe</span>(String imie) {
+    System.out.<span class="cf">println</span>(<span class="cs">"Cześć, "</span> + imie + <span class="cs">"!"</span>);
+}
+
+<span class="cc">// Funkcja która ZWRACA wartość (return)</span>
+<span class="ck">int</span> <span class="cf">dodaj</span>(<span class="ck">int</span> a, <span class="ck">int</span> b) {
+    <span class="ck">return</span> a + b;  <span class="cc">// zwróć wynik do wywołującego</span>
+}
+
+<span class="cc">// Wywołanie funkcji:</span>
+<span class="cf">przywitajSie</span>();               <span class="cc">// "Cześć, świecie!"</span>
+<span class="cf">przywitajOsobe</span>(<span class="cs">"Ania"</span>);       <span class="cc">// "Cześć, Ania!"</span>
+<span class="cf">przywitajOsobe</span>(<span class="cs">"Kacper"</span>);     <span class="cc">// "Cześć, Kacper!"</span>
+
+<span class="ck">int</span> wynik = <span class="cf">dodaj</span>(<span class="cn">10</span>, <span class="cn">5</span>);     <span class="cc">// wynik = 15</span>
+<span class="ck">int</span> wynik2 = <span class="cf">dodaj</span>(<span class="cn">100</span>, <span class="cn">200</span>); <span class="cc">// wynik2 = 300</span>
+
+<span class="cc">// Funkcja bardziej realistyczna</span>
+<span class="ck">boolean</span> <span class="cf">czyPelnoletni</span>(<span class="ck">int</span> wiek) {
+    <span class="ck">return</span> wiek >= <span class="cn">18</span>;
+}
+
+<span class="ck">if</span> (<span class="cf">czyPelnoletni</span>(<span class="cn">16</span>)) {
+    System.out.<span class="cf">println</span>(<span class="cs">"Wejdź"</span>);
+} <span class="ck">else</span> {
+    System.out.<span class="cf">println</span>(<span class="cs">"Nie możesz wejść"</span>);
+}</pre>
+    </div>
+    <div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num" style="background:var(--blue)">1</div>
+          <div class="step-content">
+            <div class="step-title">Deklaracja — piszesz przepis</div>
+            <div class="step-body">Tworzysz funkcję z jej nazwą, parametrami i ciałem. Kod w środku <strong>jeszcze się nie wykonuje</strong> — to tylko przepis czekający na wywołanie.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="background:var(--blue)">2</div>
+          <div class="step-content">
+            <div class="step-title">Wywołanie — uruchamiasz przepis</div>
+            <div class="step-body">Piszesz <code>nazwaFunkcji(argumenty)</code> w dowolnym miejscu kodu. Program "skacze" do ciała funkcji, wykonuje je i wraca.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="background:var(--blue)">3</div>
+          <div class="step-content">
+            <div class="step-title">Parametry — wejście do funkcji</div>
+            <div class="step-body">Wartości które "podajesz" do funkcji przy wywołaniu. Jak składniki przepisu — dodaj(<strong>3</strong>, <strong>7</strong>) — 3 i 7 to argumenty.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="background:var(--blue)">4</div>
+          <div class="step-content">
+            <div class="step-title">Return — wyjście z funkcji</div>
+            <div class="step-body">Funkcja może zwrócić wynik. <code>return x</code> kończy działanie i przekazuje wartość <code>x</code> tam skąd funkcja była wywołana.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 08 KLASY I OBIEKTY ══ -->
+<section class="chapter" id="klasy">
+  <div class="chapter-label" style="color: var(--purple)">
+    <span class="chapter-num">08 / 09</span>
+    🏗️ Klasy i obiekty — OOP
+  </div>
+  <h2>Klasy — szablony dla rzeczy</h2>
+  <p class="chapter-intro">
+    Do tej pory trzymaliśmy dane w oddzielnych zmiennych — imię w jednym miejscu, wiek w innym. Gdy masz 1000 użytkowników, robi się bałagan. <strong>Klasy pozwalają grupować dane i funkcje które na nich działają</strong> w jeden spójny "typ" — własny, wymyślony przez programistę.
+  </p>
+
+  <div class="analogy" style="color: var(--purple)">
+    <span class="analogy-emoji">🏭</span>
+    <div class="analogy-title">Analogia z fabryką samochodów</div>
+    <div class="analogy-body">
+      <strong>Klasa to projekt/schemat</strong> — rysunek techniczny samochodu. Mówi jak samochód wygląda (ma silnik, 4 koła, kolor) i co potrafi robić (jedź, hamuj, zatankuj). Projekt sam w sobie nie jedzie. <strong>Obiekt to konkretny egzemplarz</strong> — samochód który zjeżdża z taśmy na podstawie tego projektu. Możesz z jednego projektu wyprodukować milion samochodów — każdy z własnym kolorem i przebiegiem.
+    </div>
+  </div>
+
+  <div class="gap28 g2">
+    <div class="code-wrap">
+      <div class="code-bar">
+        <div class="code-dots"><div class="cd cd-r"></div><div class="cd cd-y"></div><div class="cd cd-g"></div></div>
+        <span class="code-label">Klasa Pies — definicja i użycie</span>
+      </div>
+      <pre class="code"><span class="cc">// ══ DEFINICJA KLASY (schemat/projekt) ════════════</span>
+<span class="ck">class</span> Pies {
+    <span class="cc">// POLA — dane które każdy pies posiada</span>
+    String imie;
+    String rasa;
+    <span class="ck">int</span>    wiek;
+    <span class="ck">double</span> wagaKg;
+
+    <span class="cc">// KONSTRUKTOR — jak "urodzić" nowego psa</span>
+    Pies(String imie, String rasa, <span class="ck">int</span> wiek) {
+        <span class="ck">this</span>.imie  = imie;   <span class="cc">// this = ten konkretny pies</span>
+        <span class="ck">this</span>.rasa  = rasa;
+        <span class="ck">this</span>.wiek  = wiek;
+    }
+
+    <span class="cc">// METODY — co pies potrafi robić</span>
+    <span class="ck">void</span> <span class="cf">szczekaj</span>() {
+        System.out.<span class="cf">println</span>(<span class="ck">this</span>.imie + <span class="cs">": Hau! Hau!"</span>);
+    }
+
+    <span class="ck">void</span> <span class="cf">przedstawSie</span>() {
+        System.out.<span class="cf">println</span>(<span class="cs">"Jestem "</span> + imie +
+          <span class="cs">", rasa: "</span> + rasa +
+          <span class="cs">", wiek: "</span> + wiek);
+    }
+
+    <span class="ck">boolean</span> <span class="cf">czyMlody</span>() {
+        <span class="ck">return</span> wiek < <span class="cn">3</span>;
+    }
+}
+
+<span class="cc">// ══ TWORZENIE OBIEKTÓW (egzemplarzy) ════════════</span>
+Pies reks = <span class="ck">new</span> Pies(<span class="cs">"Reks"</span>, <span class="cs">"Owczarek"</span>, <span class="cn">5</span>);
+Pies burek = <span class="ck">new</span> Pies(<span class="cs">"Burek"</span>, <span class="cs">"Kundelek"</span>, <span class="cn">2</span>);
+
+<span class="cc">// ══ UŻYWANIE OBIEKTÓW ════════════════════════════</span>
+reks.<span class="cf">szczekaj</span>();        <span class="cc">// "Reks: Hau! Hau!"</span>
+burek.<span class="cf">przedstawSie</span>();  <span class="cc">// "Jestem Burek, rasa: Kundelek..."</span>
+
+System.out.<span class="cf">println</span>(burek.<span class="cf">czyMlody</span>()); <span class="cc">// true (wiek=2 < 3)</span>
+System.out.<span class="cf">println</span>(reks.<span class="cf">czyMlody</span>());  <span class="cc">// false (wiek=5)</span></pre>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:16px">
+        <span class="card-icon">🧬</span>
+        <div class="card-title">4 filary OOP</div>
+        <div class="card-body">
+          <strong>Enkapsulacja</strong> — chowaj dane w środku klasy, udostępniaj tylko to co trzeba (prywatne pola, publiczne metody)<br><br>
+          <strong>Dziedziczenie</strong> — klasa "Pies" może dziedziczyć z "Zwierzę" — przejmuje wszystkie właściwości i może dodać własne<br><br>
+          <strong>Polimorfizm</strong> — każde zwierzę ma metodę <code>wydajDzwiek()</code> ale pies szczeka, kot miauczy, krowa muczy<br><br>
+          <strong>Abstrakcja</strong> — ukrywasz złożoność, pokazujesz tylko interface
+        </div>
+      </div>
+      <div class="hbox hbox-p">
+        <div class="hbox-title">💬 Klasa vs Obiekt</div>
+        <div class="hbox-body">
+          <strong>Klasa</strong> = przepis, projekt, schemat. Istnieje w kodzie, nie zajmuje pamięci na dane.<br>
+          <strong>Obiekt</strong> = konkretny egzemplarz stworzony na podstawie klasy. Zajmuje pamięć, ma własne wartości pól.<br><br>
+          <code>Pies</code> — klasa (jeden egzemplarz w kodzie)<br>
+          <code>reks, burek</code> — obiekty (dwa egzemplarze w pamięci)
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 09 OD KODU DO EKRANU ══ -->
+<section class="chapter" id="jak-dziala">
+  <div class="chapter-label" style="color: var(--green)">
+    <span class="chapter-num">09 / 09</span>
+    🌐 Od kodu do ekranu
+  </div>
+  <h2>Jak kod staje się działającą aplikacją?</h2>
+  <p class="chapter-intro">
+    Piszesz kod w edytorze — i pojawia się aplikacja na ekranie. Między tymi dwoma faktami dzieje się dużo. Oto mapa podróży Twojego kodu — od tekstu w pliku przez kompilację, aż do bitów lecących przez kabelek do ekranu.
+  </p>
+
+  <div class="gap28">
+    <div class="steps">
+      <div class="step">
+        <div class="step-num" style="background:var(--orange)">1</div>
+        <div class="step-content">
+          <div class="step-title">Piszesz kod w edytorze (np. VS Code, IntelliJ)</div>
+          <div class="step-body">Tworzysz plik tekstowy z rozszerzeniem <code>.java</code>, <code>.py</code>, <code>.js</code> itp. To zwykły tekst — komputer go jeszcze nie rozumie. Edytor koloruje składnię (syntax highlighting) ale to tylko dla Twoich oczu.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num" style="background:var(--blue)">2</div>
+        <div class="step-content">
+          <div class="step-title">Kompilator / Interpreter tłumaczy kod</div>
+          <div class="step-body">
+            <strong>Kompilator</strong> (Java, C++) — czyta cały plik i tłumaczy na kod maszynowy lub bytecode jednorazowo. Tworzysz plik wykonywalny <code>.exe</code> albo <code>.class</code>. Błędy są wykrywane przed uruchomieniem.<br>
+            <strong>Interpreter</strong> (Python, JavaScript) — czyta i wykonuje kod linia po linii na żywo. Błędy wychodzą dopiero podczas działania.
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num" style="background:var(--green)">3</div>
+        <div class="step-content">
+          <div class="step-title">System Operacyjny ładuje program do pamięci RAM</div>
+          <div class="step-body">OS rezerwuje kawałek RAM dla Twojego programu, ładuje do niego kod i dane, ustawia stos wywołań. Twój program dostaje swój "piaskownicę" — własny obszar pamięci, odizolowany od innych programów.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num" style="background:var(--purple)">4</div>
+        <div class="step-content">
+          <div class="step-title">Procesor wykonuje instrukcje jedna po drugiej</div>
+          <div class="step-body">CPU pobiera instrukcje z RAM, dekoduje je (co to za instrukcja?), wykonuje (ALU: dodaj, porównaj, skocz) i zapisuje wynik. Miliardy instrukcji na sekundę. Każda instrukcja to kilka nanosekund.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num" style="background:var(--teal)">5</div>
+        <div class="step-content">
+          <div class="step-title">Karta graficzna renderuje piksele</div>
+          <div class="step-body">Gdy program mówi "narysuj ten przycisk tutaj" — OS przekazuje to GPU. Karta graficzna przelicza miliony pikseli i wypycha je na monitor przez kabel DisplayPort/HDMI. To co widzisz to fotony odbijające się od ciekłokrystalicznych elementów sterowanych napięciem.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="gap28">
+    <div class="g2">
+      <div class="hbox hbox-g">
+        <div class="hbox-title">🌐 Jak działa strona WWW?</div>
+        <div class="hbox-body">
+          Wpisujesz <strong>google.com</strong> → DNS zamienia na adres IP → Twój komputer wysyła żądanie HTTP przez internet → Serwer Google dostaje żądanie, kompiluje HTML/CSS/JS → Przesyła je z powrotem jako bajty → Twoja przeglądarka parsuje HTML, buduje DOM, renderuje piksele → Widzisz stronę. Wszystko w &lt;200 milisekund.
+        </div>
+      </div>
+      <div class="hbox hbox-b">
+        <div class="hbox-title">📱 Jak działa aplikacja mobilna?</div>
+        <div class="hbox-body">
+          Pobierasz <strong>.apk / .ipa</strong> ze sklepu → System instaluje, sprawdza uprawnienia → Klikasz ikonkę → OS tworzy nowy proces, ładuje kod do RAM → JVM (Android) / ART kompiluje bytecode do kodu natywnego → Wyświetla interfejs przez framework UI → CPU+GPU renderuje 60 klatek na sekundę.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="gap28">
+    <div class="summary">
+      <h3>🏆 Masz już fundament</h3>
+      <p>
+        Teraz rozumiesz że <strong>komputer to nic magicznego</strong> — to miliard przełączników które świecą lub nie świecą, ułożonych w sprytny sposób. Zrozumiałeś <strong>warstwy abstrakcji</strong> — każda warstwa ukrywa złożoność i daje prostsze narzędzia. Wiesz że <strong>zmienna to pudełko w pamięci</strong>, <strong>funkcja to nazwany przepis</strong>, a <strong>klasa to szablon dla danych i akcji</strong>. Wiesz jak kod przechodzi przez kompilator i ląduje jako piksele na ekranie. <strong>To jest fundament na którym buduje się całe programowanie</strong> — od prostych skryptów po systemy obsługujące miliony użytkowników.
+      </p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  <div class="footer-logo">Programowanie od Zera</div>
+  <div>Bity · Abstrakcja · Zmienne · Logika · Pętle · Funkcje · Klasy · Od kodu do ekranu</div>
+</footer>
+</body>
+</html>

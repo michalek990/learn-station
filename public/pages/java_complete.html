@@ -1,0 +1,1708 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Java — Complete Knowledge Map</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #07050f;
+  --s1: #0e0a1a;
+  --s2: #17122a;
+  --s3: #201a38;
+  --bd: #2a2248;
+  --bd2: #3a3060;
+  --tx: #e8e0ff;
+  --tx2: #9088bb;
+  --mt: #50467a;
+  --java: #f89820;
+  --java2: #fdb54e;
+  --blue: #4d9fff;
+  --cyan: #22d3ee;
+  --green: #4ade80;
+  --violet: #a78bfa;
+  --rose: #fb7185;
+  --amber: #fbbf24;
+  --teal: #2dd4bf;
+  --pink: #e879f9;
+  --slate: #94a3b8;
+  --emerald: #34d399;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--tx); font-family: 'DM Sans', sans-serif; line-height: 1.65; overflow-x: hidden; }
+
+/* BACK */
+.back{position:fixed;top:22px;left:22px;z-index:9999;background:rgba(255,255,255,.95);backdrop-filter:blur(14px);border:1px solid var(--bd2);border-radius:40px;padding:10px 20px;display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--tx2);font-family:'IBM Plex Mono',monospace;font-size:0.72rem;font-weight:500;letter-spacing:1px;transition:all .25s}
+.back:hover{color:var(--java);border-color:var(--java)}
+
+/* HEADER */
+.hdr { min-height: 500px; padding: 110px 80px 80px; position: relative; overflow: hidden; display: flex; align-items: flex-end; }
+.hdr-bg { position: absolute; inset: 0; background: var(--s1); }
+.hdr-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 70% 60% at 5% 100%, rgba(248,152,32,0.13) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 70% at 95% 0%, rgba(77,159,255,0.08) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 50% at 60% 60%, rgba(167,139,250,0.05) 0%, transparent 55%);
+}
+.hdr-hex {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--bd) 1px, transparent 1px),
+    linear-gradient(90deg, var(--bd) 1px, transparent 1px);
+  background-size: 52px 52px;
+  opacity: 0.15;
+  mask-image: radial-gradient(ellipse 80% 90% at 50% 50%, black, transparent);
+}
+.hdr-content { position: relative; max-width: 1360px; width: 100%; }
+.hdr-tier {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; font-weight: 700;
+  letter-spacing: 3px; text-transform: uppercase; color: var(--java);
+  margin-bottom: 28px; padding: 7px 16px;
+  border: 1px solid rgba(248,152,32,0.35); border-radius: 4px;
+  background: rgba(248,152,32,0.06);
+}
+.tier-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--java); animation: blink 2s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+h1 { font-size: clamp(3rem, 7.5vw, 7rem); font-weight: 800; line-height: 0.9; letter-spacing: -5px; margin-bottom: 28px; }
+h1 em { font-style: normal; color: var(--java2); }
+h1 small { display: block; font-size: 0.36em; letter-spacing: -1px; color: var(--tx2); font-weight: 500; margin-top: 14px; }
+.hdr-desc { font-size: 1rem; color: var(--tx2); max-width: 620px; line-height: 1.9; }
+.hdr-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+.chip { font-family: 'IBM Plex Mono', monospace; font-size: 0.63rem; font-weight: 600; letter-spacing: 0.5px; padding: 5px 12px; border-radius: 3px; border: 1px solid; }
+.cj  { color:var(--java);   border-color:rgba(248,152,32,0.4);  background:rgba(248,152,32,0.06); }
+.cb  { color:var(--blue);   border-color:rgba(77,159,255,0.35); background:rgba(77,159,255,0.05); }
+.cv  { color:var(--violet); border-color:rgba(167,139,250,0.35);background:rgba(167,139,250,0.07);}
+.ct  { color:var(--teal);   border-color:rgba(45,212,191,0.35); background:rgba(45,212,191,0.05); }
+.cg  { color:var(--green);  border-color:rgba(74,222,128,0.35); background:rgba(74,222,128,0.05); }
+.cr  { color:var(--rose);   border-color:rgba(251,113,133,0.35);background:rgba(251,113,133,0.05);}
+.cp  { color:var(--pink);   border-color:rgba(232,121,249,0.35);background:rgba(232,121,249,0.06);}
+
+/* NAV */
+.nav { position:sticky; top:0; z-index:300; background:rgba(7,5,15,0.96); backdrop-filter:blur(20px); border-bottom:1px solid var(--bd); display:flex; overflow-x:auto; scrollbar-width:none; padding:0 80px; }
+.nav::-webkit-scrollbar{display:none}
+.nav-a { color:var(--mt); text-decoration:none; font-family:'IBM Plex Mono',monospace; font-size:0.64rem; font-weight:600; letter-spacing:0.5px; padding:14px 13px; white-space:nowrap; border-bottom:2px solid transparent; transition:all .18s; }
+.nav-a:hover { color:var(--java); border-bottom-color:var(--java); }
+
+/* MAIN */
+.main { max-width:1360px; margin:0 auto; padding:80px 24px 160px; }
+
+.chapter { margin-bottom:104px; animation:fadeUp .5s ease backwards; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+.chapter:nth-child(1){animation-delay:.04s} .chapter:nth-child(2){animation-delay:.07s}
+.chapter:nth-child(3){animation-delay:.10s} .chapter:nth-child(4){animation-delay:.13s}
+.chapter:nth-child(5){animation-delay:.16s} .chapter:nth-child(6){animation-delay:.19s}
+.chapter:nth-child(7){animation-delay:.22s} .chapter:nth-child(8){animation-delay:.25s}
+.chapter:nth-child(9){animation-delay:.28s} .chapter:nth-child(10){animation-delay:.31s}
+.chapter:nth-child(11){animation-delay:.34s} .chapter:nth-child(12){animation-delay:.37s}
+.chapter:nth-child(13){animation-delay:.40s} .chapter:nth-child(14){animation-delay:.43s}
+
+.ch-head { display:flex; align-items:flex-start; gap:22px; margin-bottom:36px; padding-bottom:28px; border-bottom:1px solid var(--bd); }
+.ch-num { font-family:'IBM Plex Mono',monospace; font-size:0.62rem; font-weight:700; letter-spacing:3px; color:var(--mt); padding-top:6px; white-space:nowrap; }
+.ch-info { flex:1; }
+.ch-cat { font-family:'IBM Plex Mono',monospace; font-size:0.58rem; font-weight:700; letter-spacing:3px; text-transform:uppercase; margin-bottom:6px; }
+.ch-title { font-size:1.9rem; font-weight:800; letter-spacing:-1px; line-height:1.1; margin-bottom:10px; }
+.ch-desc { font-size:0.9rem; color:var(--tx2); max-width:800px; line-height:1.9; }
+
+/* GRIDS */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.g13{display:grid;grid-template-columns:1fr 3fr;gap:14px}
+.g21{display:grid;grid-template-columns:2fr 1fr;gap:14px}
+.g32{display:grid;grid-template-columns:3fr 2fr;gap:14px}
+@media(max-width:1100px){.g4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:900px){.g2,.g3,.g4,.g13,.g21,.g32{grid-template-columns:1fr}.hdr{padding:80px 24px 56px}.nav{padding:0 16px}h1{font-size:3rem;letter-spacing:-2px}}
+
+/* CARD */
+.card{background:var(--s1);border:1px solid var(--bd);border-radius:8px;overflow:hidden;transition:border-color .2s,box-shadow .2s}
+.card:hover{border-color:var(--bd2);box-shadow:0 6px 28px rgba(0,0,0,.4)}
+.card-h{padding:11px 18px;font-family:'IBM Plex Mono',monospace;font-size:0.66rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:8px}
+.card-b{padding:18px}
+
+/* CODE */
+.code{background:#04030a;border:1px solid var(--bd);border-radius:8px;overflow:hidden}
+.cbar{background:var(--s1);border-bottom:1px solid var(--bd);padding:9px 16px;font-family:'IBM Plex Mono',monospace;font-size:0.64rem;color:var(--mt);display:flex;align-items:center;justify-content:space-between}
+.cbar-l{display:flex;align-items:center;gap:7px}
+.fdot{width:7px;height:7px;border-radius:50%}
+pre{padding:20px;font-family:'IBM Plex Mono',monospace;font-size:0.77rem;line-height:1.72;overflow-x:auto;color:#9ab}
+
+/* Syntax */
+.kw{color:#c792ea} .an{color:#ffcb6b} .st{color:#c3e88d} .cm{color:#364060;font-style:italic}
+.ty{color:#82aaff} .nu{color:#f78c6c} .fn{color:#80cbc4} .op{color:#89ddff}
+.go{color:var(--java2)} .gr{color:var(--green)} .vi{color:var(--violet)}
+
+/* ALERT */
+.alert{padding:16px 20px;border-radius:6px;border-left:3px solid;font-size:.87rem;line-height:1.85;color:var(--tx2)}
+.alert strong{color:var(--tx)}
+.alert-label{font-family:'IBM Plex Mono',monospace;font-size:.58rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;display:block;margin-bottom:6px}
+.al-java{background:rgba(248,152,32,.05);border-color:var(--java)} .al-java .alert-label{color:var(--java)}
+.al-rose{background:rgba(251,113,133,.05);border-color:var(--rose)} .al-rose .alert-label{color:var(--rose)}
+.al-blue{background:rgba(77,159,255,.05);border-color:var(--blue)} .al-blue .alert-label{color:var(--blue)}
+.al-teal{background:rgba(45,212,191,.05);border-color:var(--teal)} .al-teal .alert-label{color:var(--teal)}
+.al-violet{background:rgba(167,139,250,.05);border-color:var(--violet)} .al-violet .alert-label{color:var(--violet)}
+.al-green{background:rgba(74,222,128,.05);border-color:var(--green)} .al-green .alert-label{color:var(--green)}
+.al-pink{background:rgba(232,121,249,.05);border-color:var(--pink)} .al-pink .alert-label{color:var(--pink)}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;font-size:.84rem}
+.tbl th{background:var(--s2);color:var(--tx2);font-family:'IBM Plex Mono',monospace;font-size:.63rem;letter-spacing:2px;text-transform:uppercase;font-weight:700;padding:11px 16px;text-align:left;border-bottom:1px solid var(--bd);white-space:nowrap}
+.tbl td{padding:11px 16px;border-bottom:1px solid var(--bd);color:var(--tx2);vertical-align:top;line-height:1.75}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:var(--s2);color:var(--tx)}
+.tbl code{font-family:'IBM Plex Mono',monospace;font-size:.76rem;color:var(--java2);background:rgba(248,152,32,.09);padding:2px 7px;border-radius:3px}
+
+/* RLIST */
+.rlist{}
+.ritem{display:flex;gap:16px;padding:12px 0;border-bottom:1px solid var(--bd);align-items:flex-start}
+.ritem:last-child{border-bottom:none}
+.ritem-key{font-family:'IBM Plex Mono',monospace;font-size:.76rem;white-space:nowrap;padding-top:2px;min-width:190px;flex-shrink:0}
+.ritem-val{font-size:.85rem;color:var(--tx2);line-height:1.75}
+.ritem-val code{font-family:'IBM Plex Mono',monospace;font-size:.76rem;color:var(--java2);background:rgba(248,152,32,.09);padding:1px 6px;border-radius:3px}
+.ritem-val strong{color:var(--tx)}
+
+/* COMPARE */
+.compare{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--bd);border-radius:8px;overflow:hidden}
+.compare-col:first-child{border-right:1px solid var(--bd)}
+.compare-head{padding:11px 18px;font-family:'IBM Plex Mono',monospace;font-size:.66rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border-bottom:1px solid var(--bd)}
+.compare-body{padding:16px 18px;font-size:.84rem;color:var(--tx2);line-height:1.8}
+
+/* FLOW */
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:4px;padding:18px}
+.flow-box{background:var(--s2);border:1px solid var(--bd2);border-radius:5px;padding:9px 14px;font-size:.76rem;font-family:'IBM Plex Mono',monospace;text-align:center;line-height:1.4}
+.flow-arr{color:var(--mt);padding:0 2px;font-size:1rem}
+
+/* PILLS */
+.pills{display:flex;flex-wrap:wrap;gap:7px;padding:14px}
+.pill{font-family:'IBM Plex Mono',monospace;font-size:.67rem;padding:4px 11px;border-radius:20px;border:1px solid;font-weight:600}
+.pj{color:var(--java);  border-color:rgba(248,152,32,.4);  background:rgba(248,152,32,.06)}
+.pb{color:var(--blue);  border-color:rgba(77,159,255,.35); background:rgba(77,159,255,.05)}
+.pv{color:var(--violet);border-color:rgba(167,139,250,.35);background:rgba(167,139,250,.07)}
+.pt{color:var(--teal);  border-color:rgba(45,212,191,.35); background:rgba(45,212,191,.05)}
+.pg{color:var(--green); border-color:rgba(74,222,128,.35); background:rgba(74,222,128,.05)}
+.pr{color:var(--rose);  border-color:rgba(251,113,133,.35);background:rgba(251,113,133,.05)}
+.pp{color:var(--pink);  border-color:rgba(232,121,249,.35);background:rgba(232,121,249,.06)}
+.pa{color:var(--amber); border-color:rgba(251,191,36,.35); background:rgba(251,191,36,.05)}
+.ps{color:var(--slate); border-color:rgba(148,163,184,.35);background:rgba(148,163,184,.05)}
+
+/* STRIP */
+.strip{border:1px solid var(--bd);border-radius:8px;padding:18px 22px;font-size:.87rem;color:var(--tx2);line-height:1.85;display:flex;gap:16px;align-items:flex-start}
+.strip-icon{font-size:1.3rem;flex-shrink:0;padding-top:2px}
+.strip strong{color:var(--tx)}
+
+/* VERSION TIMELINE */
+.timeline{display:flex;flex-direction:column;gap:0}
+.tl-item{display:grid;grid-template-columns:120px 1fr;gap:0;position:relative}
+.tl-item::before{content:'';position:absolute;left:106px;top:20px;bottom:-1px;width:2px;background:var(--bd)}
+.tl-item:last-child::before{display:none}
+.tl-ver{font-family:'IBM Plex Mono',monospace;font-size:.76rem;font-weight:700;padding:12px 0;text-align:right;padding-right:24px;position:relative;white-space:nowrap}
+.tl-ver::after{content:'';position:absolute;right:-5px;top:16px;width:12px;height:12px;border-radius:50%;background:var(--s1);border:2px solid}
+.tl-body{padding:10px 0 10px 24px;font-size:.83rem;color:var(--tx2);line-height:1.75;border-bottom:1px solid var(--bd)}
+.tl-item:last-child .tl-body{border-bottom:none}
+.tl-body strong{color:var(--tx)}
+
+/* MEMORY DIAGRAM */
+.mem-diagram{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:16px}
+.mem-zone{border:1px solid;border-radius:6px;padding:14px;font-size:.8rem}
+.mem-title{font-family:'IBM Plex Mono',monospace;font-size:.65rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px}
+.mem-item{padding:4px 0;color:var(--tx2);font-size:.8rem;border-bottom:1px solid;margin-bottom:4px}
+.mem-item:last-child{border-bottom:none;margin-bottom:0}
+
+.gap8{margin-top:8px} .gap12{margin-top:12px} .gap16{margin-top:16px} .gap24{margin-top:24px}
+
+/* FOOTER */
+.footer{border-top:1px solid var(--bd);background:var(--s1);padding:36px 80px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;font-family:'IBM Plex Mono',monospace;font-size:.68rem;color:var(--mt)}
+.footer-title{color:var(--java);font-weight:700}
+</style>
+</head>
+<body>
+
+<a class="back" href="#">← MENU</a>
+
+<!-- ═══════════════════ HEADER -->
+<header class="hdr">
+  <div class="hdr-bg"></div>
+  <div class="hdr-hex"></div>
+  <div class="hdr-content">
+    <div class="hdr-tier"><div class="tier-dot"></div> Java Platform · JDK · JVM · JRE</div>
+    <h1>Java<br><em>Complete</em><small>Wszystko o platformie Java — od kodu do bajtów</small></h1>
+    <p class="hdr-desc">Kompletna mapa wiedzy o Javie: architektura platformy, JVM internals, model pamięci, wątki, typy generyczne, współbieżność, nowe funkcje Java 8–21 i narzędzia JDK.</p>
+    <div class="hdr-chips">
+      <span class="chip cj">● Java 21 LTS</span>
+      <span class="chip cb">JVM Architecture</span>
+      <span class="chip cv">Memory Model</span>
+      <span class="chip ct">Concurrency</span>
+      <span class="chip cg">Generics & Types</span>
+      <span class="chip cr">GC Deep-Dive</span>
+      <span class="chip cp">Project Loom / Panama / Valhalla</span>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════════ NAV -->
+<nav class="nav">
+  <a class="nav-a" href="#platform">Platforma</a>
+  <a class="nav-a" href="#jvm-arch">JVM Architektura</a>
+  <a class="nav-a" href="#memory">Pamięć & GC</a>
+  <a class="nav-a" href="#classloading">Classloading</a>
+  <a class="nav-a" href="#types">Typy & Generics</a>
+  <a class="nav-a" href="#concurrency">Współbieżność</a>
+  <a class="nav-a" href="#memory-model">Java Memory Model</a>
+  <a class="nav-a" href="#modern">Java 8–21</a>
+  <a class="nav-a" href="#streams">Streams & Lambdas</a>
+  <a class="nav-a" href="#io">I/O & NIO</a>
+  <a class="nav-a" href="#jdk-tools">JDK Tools</a>
+  <a class="nav-a" href="#performance">Performance</a>
+  <a class="nav-a" href="#projects">Projekty Przyszłości</a>
+</nav>
+
+<!-- ═══════════════════ MAIN -->
+<main class="main">
+
+  <!-- ══ 01 PLATFORMA -->
+  <section class="chapter" id="platform">
+    <div class="ch-head">
+      <div class="ch-num">01 / 13</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--java)">Architektura Platformy Java</div>
+        <div class="ch-title">JDK, JRE, JVM — co jest czym</div>
+        <div class="ch-desc">Fundamentalna hierarchia platformy Java. Wiele osób myli te pojęcia — każda ma inne zadanie i inny zakres. Od Java 11 granica JDK/JRE zaciera się (JRE nie jest dostarczane osobno).</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="card">
+        <div class="card-h" style="color:var(--java)">☕ Hierarchia JDK → JRE → JVM</div>
+        <div class="card-b">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:.76rem;line-height:2;background:var(--s2);padding:18px;border-radius:6px;margin-bottom:16px">
+            <span style="color:var(--java)">JDK (Java Development Kit)</span><br>
+            ├── javac, javap, jshell, jlink...<br>
+            ├── <span style="color:var(--blue)">JRE (Java Runtime Environment)</span><br>
+            │   ├── java.base, java.sql...<br>
+            │   └── <span style="color:var(--violet)">JVM (Java Virtual Machine)</span><br>
+            │       ├── Class Loader Subsystem<br>
+            │       ├── Runtime Data Areas<br>
+            │       ├── Execution Engine<br>
+            │       │   ├── Interpreter<br>
+            │       │   ├── JIT Compiler<br>
+            │       │   └── GC<br>
+            │       └── Native Interface (JNI)<br>
+            └── JDK Tools + src.zip
+          </div>
+          <div class="rlist">
+            <div class="ritem">
+              <div class="ritem-key" style="color:var(--java)">JDK</div>
+              <div class="ritem-val">Narzędzia developerskie: kompilator <code>javac</code>, debugger, profiler, <code>jlink</code>, <code>jpackage</code>. Potrzebujesz do pisania i kompilowania kodu.</div>
+            </div>
+            <div class="ritem">
+              <div class="ritem-key" style="color:var(--blue)">JRE</div>
+              <div class="ritem-val">Środowisko uruchomieniowe: standardowa biblioteka + JVM. Od Java 11 nie jest dystrybuowane osobno — używaj <code>jlink</code> do tworzenia custom runtime.</div>
+            </div>
+            <div class="ritem">
+              <div class="ritem-key" style="color:var(--violet)">JVM</div>
+              <div class="ritem-val">Maszyna wirtualna — wykonuje bytecode. Implementacje: HotSpot (Oracle/OpenJDK), GraalVM, Eclipse OpenJ9, Azul Zing/Zulu.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card" style="margin-bottom:14px">
+          <div class="card-h" style="color:var(--java)">🏭 Dystybucje JDK</div>
+          <div class="card-b">
+            <table class="tbl">
+              <thead><tr><th>Dystrybucja</th><th>Producent</th><th>Licencja</th></tr></thead>
+              <tbody>
+                <tr><td><strong>OpenJDK</strong></td><td>Oracle + Community</td><td>GPL v2 — darmowa</td></tr>
+                <tr><td>Eclipse Temurin</td><td>Adoptium (dawniej AdoptOpenJDK)</td><td>Darmowa — polecana</td></tr>
+                <tr><td>Oracle JDK</td><td>Oracle</td><td>Płatna na produkcji (od Java 17 free again)</td></tr>
+                <tr><td>GraalVM CE/EE</td><td>Oracle</td><td>CE darmowa; EE płatna</td></tr>
+                <tr><td>Azul Zulu</td><td>Azul Systems</td><td>Darmowa (TCK certified)</td></tr>
+                <tr><td>Amazon Corretto</td><td>Amazon</td><td>Darmowa — używana na AWS</td></tr>
+                <tr><td>Microsoft OpenJDK</td><td>Microsoft</td><td>Darmowa — zoptymalizowana pod Azure</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="alert al-java">
+          <span class="alert-label">☕ Wersjonowanie Java</span>
+          <strong>LTS (Long-Term Support):</strong> Java 8, 11, 17, 21 — wsparcie 8+ lat. <strong>Non-LTS:</strong> co 6 miesięcy (19, 20, 22...) — wsparcie tylko 6 miesięcy. Na produkcji używaj wyłącznie LTS. Aktualne LTS to <strong>Java 21</strong> (do 2031+).
+        </div>
+      </div>
+    </div>
+
+    <div class="gap16"></div>
+    <div class="card">
+      <div class="card-h" style="color:var(--java)">📅 Historia wersji Java — kluczowe zmiany</div>
+      <div class="card-b">
+        <div class="timeline">
+          <div class="tl-item">
+            <div class="tl-ver" style="color:var(--java)">Java 8 <br><span style="font-size:.6rem;color:var(--mt)">LTS 2014</span><div style="position:absolute;right:-5px;top:16px;width:12px;height:12px;border-radius:50%;background:var(--s1);border:2px solid var(--java)"></div></div>
+            <div class="tl-body"><strong>Lambdas, Stream API, Optional, default methods, Date/Time API (java.time), Nashorn JS engine, CompletableFuture, forEach na kolekcjach.</strong> Największa zmiana od Java 5.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-ver" style="color:var(--blue)">Java 11 <br><span style="font-size:.6rem;color:var(--mt)">LTS 2018</span><div style="position:absolute;right:-5px;top:16px;width:12px;height:12px;border-radius:50%;background:var(--s1);border:2px solid var(--blue)"></div></div>
+            <div class="tl-body"><strong>var w lambda params, HttpClient (nowy standardowy), String: isBlank, strip, lines, repeat, Files.readString/writeString. Usunięto Nashorn, Java EE moduły.</strong> Pierwsza bez JRE.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-ver" style="color:var(--teal)">Java 14–15<br><span style="font-size:.6rem;color:var(--mt)">2020–2021</span><div style="position:absolute;right:-5px;top:16px;width:12px;height:12px;border-radius:50%;background:var(--s1);border:2px solid var(--teal)"></div></div>
+            <div class="tl-body"><strong>Records (preview→final), Pattern Matching instanceof (preview), Text Blocks ("""), Sealed Classes (preview), NullPointerException helpful messages, ZGC production-ready.</strong></div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-ver" style="color:var(--violet)">Java 17 <br><span style="font-size:.6rem;color:var(--mt)">LTS 2021</span><div style="position:absolute;right:-5px;top:16px;width:12px;height:12px;border-radius:50%;background:var(--s1);border:2px solid var(--violet)"></div></div>
+            <div class="tl-body"><strong>Sealed Classes (final), Pattern Matching instanceof (final), Records (final), TextBlocks (final), RandomGenerator API, usunięto Applets i SecurityManager.</strong> Bardzo stabilna — popularna jako docelowa.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-ver" style="color:var(--green)">Java 21 <br><span style="font-size:.6rem;color:var(--mt)">LTS 2023</span><div style="position:absolute;right:-5px;top:16px;width:12px;height:12px;border-radius:50%;background:var(--s1);border:2px solid var(--green)"></div></div>
+            <div class="tl-body"><strong>Virtual Threads (final!), Pattern Matching switch (final), Sequenced Collections, Record Patterns, String Templates (preview), Scoped Values (preview), Structured Concurrency (preview).</strong> Aktualny LTS.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 02 JVM ARCH -->
+  <section class="chapter" id="jvm-arch">
+    <div class="ch-head">
+      <div class="ch-num">02 / 13</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--blue)">JVM — Architektura wewnętrzna</div>
+        <div class="ch-title">Co robi JVM od .java do wykonania</div>
+        <div class="ch-desc">JVM jest specyfikacją — HotSpot to jej najpopularniejsza implementacja. Kompilacja dwuetapowa (javac → bytecode, JIT → native) daje Javie unikalną kombinację przenośności i wydajności.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--blue)"></div>Droga od kodu do wykonania</div></div>
+        <pre><span class="cm">Source Code (.java)</span>
+        ↓  <span class="go">javac</span> (kompilacja)
+<span class="cm">Bytecode (.class)</span>          <span class="cm">// platform-independent</span>
+        ↓  <span class="go">ClassLoader</span>
+<span class="cm">Loaded Class (Method Area)</span>
+        ↓  <span class="go">Bytecode Verifier</span>   <span class="cm">// bezpieczeństwo</span>
+        ↓  <span class="go">Interpreter</span>          <span class="cm">// pierwsze wykonania</span>
+        ↓  <span class="cm">profiling — "hot spots"?</span>
+        ↓  <span class="go">JIT Compiler (C1/C2)</span>  <span class="cm">// kompilacja do native</span>
+<span class="cm">Native Machine Code</span>         <span class="cm">// cached w Code Cache</span>
+
+<span class="cm">// Tiered Compilation (HotSpot):</span>
+<span class="cm">Tier 0: Interpreter</span>
+<span class="cm">Tier 1: C1 lekka optymalizacja (szybka kompilacja)</span>
+<span class="cm">Tier 2: C1 z profilowaniem</span>
+<span class="cm">Tier 3: C1 z pełnym profilowaniem</span>
+<span class="cm">Tier 4: C2 agresywna optymalizacja (wolniejsza kompilacja)</span>
+
+<span class="cm">// -XX:+PrintCompilation — pokaż co JIT kompiluje</span></pre>
+      </div>
+
+      <div>
+        <div class="card" style="margin-bottom:14px">
+          <div class="card-h" style="color:var(--blue)">🔧 Runtime Data Areas</div>
+          <div class="card-b">
+            <div class="rlist">
+              <div class="ritem">
+                <div class="ritem-key" style="color:var(--java)">Method Area</div>
+                <div class="ritem-val">Metadane klas, bytecode metod, stałe. Implementacja: <code>Metaspace</code> (od Java 8, off-heap)</div>
+              </div>
+              <div class="ritem">
+                <div class="ritem-key" style="color:var(--java)">Heap</div>
+                <div class="ritem-val">Obiekty i tablice. Dzielony między wątki. Zarządzany przez GC. Young + Old Generation.</div>
+              </div>
+              <div class="ritem">
+                <div class="ritem-key" style="color:var(--blue)">Stack (per thread)</div>
+                <div class="ritem-val">Ramki wywołań (frames): zmienne lokalne, operand stack, reference do current method. StackOverflow = za głęboka rekurencja.</div>
+              </div>
+              <div class="ritem">
+                <div class="ritem-key" style="color:var(--blue)">PC Register</div>
+                <div class="ritem-val">Program Counter — adres aktualnie wykonywanej instrukcji bytecode. Per thread.</div>
+              </div>
+              <div class="ritem">
+                <div class="ritem-key" style="color:var(--violet)">Native Method Stack</div>
+                <div class="ritem-val">Stack dla metod natywnych (C/C++ przez JNI). Oddzielny od Java Stack.</div>
+              </div>
+              <div class="ritem">
+                <div class="ritem-key" style="color:var(--teal)">Code Cache</div>
+                <div class="ritem-val">Cache skompilowanego kodu JIT. Gdy pełny — JIT przestaje kompilować (degradacja!). Monitoruj.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="alert al-blue">
+          <span class="alert-label">⚡ JIT Optymalizacje</span>
+          <strong>Inlining</strong> — wklejanie ciał małych metod. <strong>Loop unrolling</strong>. <strong>Escape analysis</strong> — alokacja na stosie zamiast heap. <strong>Dead code elimination</strong>. <strong>Devirtualization</strong> — wywołania wirtualne → statyczne. JIT może cofnąć optymalizację (deoptimization) gdy profil się zmieni.
+        </div>
+      </div>
+    </div>
+
+    <div class="gap16"></div>
+    <div class="g2">
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--blue)"></div>Bytecode — co widzi JVM</div></div>
+        <pre><span class="cm">// Java source:</span>
+<span class="kw">public int</span> <span class="fn">add</span>(<span class="kw">int</span> a, <span class="kw">int</span> b) { <span class="kw">return</span> a + b; }
+
+<span class="cm">// javap -c MyClass — dekompilacja do bytecode:</span>
+<span class="go">0: iload_1</span>       <span class="cm">// załaduj 'a' (int local var 1)</span>
+<span class="go">1: iload_2</span>       <span class="cm">// załaduj 'b' (int local var 2)</span>
+<span class="go">2: iadd</span>          <span class="cm">// dodaj dwa inty ze stosu</span>
+<span class="go">3: ireturn</span>       <span class="cm">// zwróć int z wierzchołka stosu</span>
+
+<span class="cm">// Instrukcje bytecode (prefix = typ):</span>
+<span class="cm">// i = int, l = long, f = float, d = double</span>
+<span class="cm">// a = reference (object/array)</span>
+<span class="cm">// b = byte, c = char, s = short</span>
+
+<span class="cm">// Przydatne komendy javap:</span>
+<span class="cm">// javap -c MyClass      — bytecode</span>
+<span class="cm">// javap -verbose MyClass — pełne metadane</span>
+<span class="cm">// javap -p MyClass       — prywatne też</span></pre>
+      </div>
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--blue)"></div>GraalVM — polyglot + native image</div></div>
+        <pre><span class="cm">// GraalVM to JVM + kompilator JVMCI + wiele języków</span>
+
+<span class="cm">// 1. Native Image — kompilacja AOT (Ahead-of-Time)</span>
+native-image -jar myapp.jar myapp
+<span class="cm">// → standalone binary, bez JVM runtime</span>
+<span class="cm">// → start &lt;10ms, mało RAM, ale mniejszy peak throughput</span>
+<span class="cm">// → ograniczenia: reflection wymaga konfiguracji</span>
+
+<span class="cm">// 2. Spring Boot + GraalVM Native:</span>
+<span class="cm">// ./mvnw -Pnative native:compile</span>
+<span class="cm">// → wymaga GraalVM JDK i: @RegisterReflectionForBinding</span>
+
+<span class="cm">// 3. Truffle — inne języki na JVM</span>
+<span class="cm">// JavaScript, Python, Ruby, R, WebAssembly</span>
+<span class="cm">// Wszystkie korzystają z JIT GraalVM</span>
+
+<span class="cm">// 4. Graal JIT — zamiennik C2 w HotSpot</span>
+<span class="cm">// -XX:+UseJVMCICompiler → użyj Graal JIT zamiast C2</span>
+<span class="cm">// Lepsze optymalizacje dla długo-działających serwisów</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 03 MEMORY & GC -->
+  <section class="chapter" id="memory">
+    <div class="ch-head">
+      <div class="ch-num">03 / 13</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--rose)">Zarządzanie Pamięcią</div>
+        <div class="ch-title">Heap, GC algorytmy i tuning</div>
+        <div class="ch-desc">Garbage Collection to jeden z najważniejszych aspektów JVM dla wydajności. Zrozumienie regionów pamięci, algorytmów i jak czytać GC logi to niezbędna umiejętność dla każdego senior Java developera.</div>
+      </div>
+    </div>
+
+    <div class="card gap16" style="margin-bottom:16px">
+      <div class="card-h" style="color:var(--rose)">🧠 Regiony pamięci Heap — G1GC</div>
+      <div class="card-b">
+        <div class="mem-diagram">
+          <div class="mem-zone" style="border-color:rgba(74,222,128,.4);background:rgba(74,222,128,.04)">
+            <div class="mem-title" style="color:var(--green)">Young Generation</div>
+            <div class="mem-item" style="border-color:rgba(74,222,128,.2)"><strong>Eden Space</strong><br><span style="font-size:.76rem">Nowe obiekty. Większość umiera tu (generational hypothesis)</span></div>
+            <div class="mem-item" style="border-color:rgba(74,222,128,.2)"><strong>Survivor S0 / S1</strong><br><span style="font-size:.76rem">Ocalałe po Minor GC. Max-Tenuring-Threshold kopii → Old Gen</span></div>
+          </div>
+          <div class="mem-zone" style="border-color:rgba(77,159,255,.4);background:rgba(77,159,255,.04)">
+            <div class="mem-title" style="color:var(--blue)">Old Generation (Tenured)</div>
+            <div class="mem-item" style="border-color:rgba(77,159,255,.2)">Długożyjące obiekty</div>
+            <div class="mem-item" style="border-color:rgba(77,159,255,.2)">Duże obiekty (humongous)</div>
+            <div class="mem-item" style="border-color:rgba(77,159,255,.2)">Major GC gdy prawie pełne</div>
+          </div>
+          <div class="mem-zone" style="border-color:rgba(167,139,250,.4);background:rgba(167,139,250,.04)">
+            <div class="mem-title" style="color:var(--violet)">Non-Heap</div>
+            <div class="mem-item" style="border-color:rgba(167,139,250,.2)"><strong>Metaspace</strong> — klasy, metody, stałe (off-heap od Java 8)</div>
+            <div class="mem-item" style="border-color:rgba(167,139,250,.2)"><strong>Code Cache</strong> — JIT output</div>
+            <div class="mem-item" style="border-color:rgba(167,139,250,.2)"><strong>Direct Memory</strong> — NIO ByteBuffer</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="card">
+        <div class="card-h" style="color:var(--rose)">⚙️ GC Algorytmy — porównanie</div>
+        <div class="card-b" style="overflow-x:auto">
+          <table class="tbl">
+            <thead><tr><th>GC</th><th>STW Pauzy</th><th>Throughput</th><th>Kiedy</th></tr></thead>
+            <tbody>
+              <tr><td><code>SerialGC</code></td><td>Długie (single thread)</td><td>Niska</td><td>Małe heap (&lt;256MB), mikrousługi w K8s</td></tr>
+              <tr><td><code>ParallelGC</code></td><td>Długie (multi thread)</td><td>Wysoki</td><td>Batch processing, throughput &gt; latency</td></tr>
+              <tr><td><code>G1GC</code> ★</td><td>Przewidywalne ~200ms</td><td>Dobry</td><td>Domyślny. Heap 4GB–32GB. Balans.</td></tr>
+              <tr><td><code>ZGC</code></td><td>&lt;1ms (concurrent)</td><td>Dobry</td><td>Latency-critical. Heap TB. Java 15+ prod</td></tr>
+              <tr><td><code>Shenandoah</code></td><td>&lt;10ms (concurrent)</td><td>Dobry</td><td>Podobny ZGC. Lepszy mały heap.</td></tr>
+              <tr><td><code>Epsilon</code></td><td>Brak GC (no-op)</td><td>Max</td><td>Testy, short-lived CLI, benchmarki</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--rose)"></div>Czytanie logów GC</div></div>
+        <pre style="font-size:.74rem"><span class="cm"># Włącz logi GC (Java 9+):</span>
+-Xlog:gc*:file=gc.log:time,uptime:filecount=5,filesize=20m
+
+<span class="cm"># Typowy wpis G1GC Minor GC:</span>
+<span class="go">[2.345s] GC(12) Pause Young (Normal) (G1 Evacuation Pause)</span>
+<span class="go">[2.345s] Heap before GC: 512M-&gt;Young: 256M Old: 256M</span>
+<span class="go">[2.356s] Pause Young 512M-&gt;128M(1024M) 11.234ms</span>
+<span class="cm">          ↑przed      ↑po    ↑heap      ↑czas pauzy STW</span>
+
+<span class="cm"># Sygnały problemów w logach:</span>
+<span class="cm"># "to-space exhausted"   → za mały heap, za dużo allokacji</span>
+<span class="cm"># "Humongous allocation" → obiekt &gt;50% regionu G1 → OldGen</span>
+<span class="cm"># "Full GC (Ergonomics)" → G1 nie nadąża → STW Full GC</span>
+<span class="cm"># Rosnący Old Gen        → memory leak?</span>
+
+<span class="cm"># Narzędzia analizy logów GC:</span>
+<span class="cm"># GCEasy.io, GCViewer, JDK Mission Control</span></pre>
+      </div>
+    </div>
+
+    <div class="gap16"></div>
+    <div class="g3">
+      <div class="card">
+        <div class="card-h" style="color:var(--rose)">📊 Cykl GC — G1</div>
+        <div class="card-b" style="font-size:.83rem;color:var(--tx2);line-height:1.8">
+          <p style="margin-bottom:8px"><strong style="color:var(--green)">Minor GC (Young)</strong> — najczęstszy. STW. Kopiuje ocalałe z Eden/Survivor do S1 lub Old. Trwa 1–100ms.</p>
+          <p style="margin-bottom:8px"><strong style="color:var(--blue)">Concurrent Marking</strong> — G1 równolegle z aplikacją oznacza żywe obiekty w Old Gen.</p>
+          <p style="margin-bottom:8px"><strong style="color:var(--amber)">Mixed GC</strong> — czyści Young + część Old (regiony o największym garbage). Cel: &lt;200ms.</p>
+          <p><strong style="color:var(--rose)">Full GC</strong> — ostateczność gdy G1 nie nadąża. Długa pauza STW. Każdy Full GC to problem.</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h" style="color:var(--rose)">🔍 Finalizatory i References</div>
+        <div class="card-b" style="font-size:.83rem;color:var(--tx2);line-height:1.8">
+          <p style="margin-bottom:8px"><strong style="color:var(--rose)">finalize() — nie używaj!</strong> Nieprzewidywalne, może powodować wycieki, deprecated Java 9, usunięte Java 18.</p>
+          <p style="margin-bottom:8px"><strong style="color:var(--tx)">SoftReference</strong> — GC usuwa gdy potrzebuje pamięci. Użyj jako cache.</p>
+          <p style="margin-bottom:8px"><strong style="color:var(--tx)">WeakReference</strong> — GC usuwa przy następnym cyklu. WeakHashMap — cache z auto-eviction.</p>
+          <p><strong style="color:var(--tx)">PhantomReference</strong> — po GC, przed zwolnieniem. Używaj do cleanup (zamiast finalize). <code>Cleaner API</code> (Java 9+).</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h" style="color:var(--rose)">🚨 Memory Leaks w Java</div>
+        <div class="card-b" style="font-size:.83rem;color:var(--tx2);line-height:1.8">
+          <p style="margin-bottom:8px"><strong style="color:var(--tx)">Static collections</strong> — rosną bez ograniczeń. Nieusuwane elementy.</p>
+          <p style="margin-bottom:8px"><strong style="color:var(--tx)">ThreadLocal bez remove()</strong> — wycieki w thread poolach (dane z poprzednich requestów).</p>
+          <p style="margin-bottom:8px"><strong style="color:var(--tx)">Listeners/Observers</strong> — niezderejstrowane subskrypcje trzymają obiekty żywymi.</p>
+          <p style="margin-bottom:8px"><strong style="color:var(--tx)">Inner classes</strong> — nonstatic inner class trzyma ref do outer class.</p>
+          <p><strong style="color:var(--tx)">Heap dump</strong> → <code>jmap -dump:live,format=b,file=heap.hprof &lt;pid&gt;</code> → analiza Eclipse MAT.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 04 CLASSLOADING -->
+  <section class="chapter" id="classloading">
+    <div class="ch-head">
+      <div class="ch-num">04 / 13</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--teal)">ClassLoading & JPMS</div>
+        <div class="ch-title">Ładowanie klas i system modułów</div>
+        <div class="ch-desc">ClassLoader to mechanizm dynamicznego ładowania klas w runtime. Hierarchia delegacji zapewnia bezpieczeństwo i izolację. Java 9 dodała JPMS (Java Platform Module System) — silniejszą enkapsulację.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--teal)"></div>ClassLoader hierarchia i delegacja</div></div>
+        <pre><span class="cm">// Parent Delegation Model — zasada:</span>
+<span class="cm">// ClassLoader zawsze najpierw pyta rodzica</span>
+
+<span class="cm">Bootstrap ClassLoader  (C++, wbudowany w JVM)</span>
+<span class="cm">  └── ładuje: java.lang.*, java.util.*, itp.</span>
+<span class="cm">  └── źródło: rt.jar / java.base module</span>
+
+<span class="cm">Platform ClassLoader  (dawniej Extension CL)</span>
+<span class="cm">  └── ładuje: javax.*, java.sql.*, itp.</span>
+
+<span class="cm">Application ClassLoader</span>
+<span class="cm">  └── ładuje: Twój kod + classpath biblioteki</span>
+
+<span class="cm">Custom ClassLoader  (Spring, OSGi, Tomcat)</span>
+<span class="cm">  └── osobna hierarchia per webapp/plugin</span>
+
+<span class="cm">// Własny ClassLoader:</span>
+<span class="kw">public class</span> <span class="ty">HotReloadClassLoader</span> <span class="kw">extends</span> <span class="ty">ClassLoader</span> {
+    <span class="an">@Override</span>
+    <span class="kw">protected</span> <span class="ty">Class</span>&lt;?&gt; <span class="fn">findClass</span>(<span class="ty">String</span> name) <span class="kw">throws</span> <span class="ty">ClassNotFoundException</span> {
+        <span class="kw">byte</span>[] bytes = loadBytesFromDisk(name);  <span class="cm">// czytaj .class</span>
+        <span class="kw">return</span> defineClass(name, bytes, <span class="nu">0</span>, bytes.length);
+    }
+}
+
+<span class="cm">// ClassLoader isolation: każdy Tomcat webapp ma swój CL</span>
+<span class="cm">// → różne wersje tej samej biblioteki w jednym JVM!</span></pre>
+      </div>
+
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--teal)"></div>JPMS — Java Platform Module System</div></div>
+        <pre><span class="cm">// module-info.java — deklaracja modułu</span>
+<span class="kw">module</span> com.myapp.orders {
+    <span class="kw">requires</span> java.base;          <span class="cm">// implicit zawsze</span>
+    <span class="kw">requires</span> java.sql;
+    <span class="kw">requires transitive</span> com.myapp.shared; <span class="cm">// transitive dep</span>
+
+    <span class="kw">exports</span> com.myapp.orders.api;        <span class="cm">// publiczne</span>
+    <span class="kw">exports</span> com.myapp.orders.internal <span class="kw">to</span>
+        com.myapp.inventory;             <span class="cm">// tylko dla wybranych</span>
+
+    <span class="kw">opens</span> com.myapp.orders.domain;      <span class="cm">// refleksja dozwolona</span>
+    <span class="kw">uses</span> com.myapp.PaymentProvider;     <span class="cm">// ServiceLoader</span>
+    <span class="kw">provides</span> com.myapp.PaymentProvider
+        <span class="kw">with</span> com.myapp.orders.StripePayment;
+}
+
+<span class="cm">// Problemy z JPMS w praktyce:</span>
+<span class="cm">// --add-opens java.base/java.lang=ALL-UNNAMED  (Spring, refleksja)</span>
+<span class="cm">// --add-exports java.base/sun.security.ssl=ALL-UNNAMED</span>
+<span class="cm">// Biblioteki często potrzebują opens — Spring Boot obsługuje</span></pre>
+      </div>
+    </div>
+
+    <div class="gap16"></div>
+    <div class="g3">
+      <div class="card">
+        <div class="card-h" style="color:var(--teal)">📦 jlink — custom runtime</div>
+        <div class="card-b">
+          <div class="code" style="border:none;border-radius:0;background:transparent">
+            <pre style="padding:0;font-size:.75rem"><span class="cm"># Stwórz minimalne JRE z tylko potrzebnymi modułami</span>
+jlink \
+  --module-path $JAVA_HOME/jmods \
+  --add-modules java.base,java.sql,java.net.http \
+  --output ./custom-jre \
+  --strip-debug \
+  --no-header-files \
+  --compress=2
+
+<span class="cm"># Wynik: ~30MB zamiast 300MB pełnego JDK</span>
+<span class="cm"># Idealny do kontenerów Docker</span>
+
+<span class="cm"># Sprawdź jakich modułów potrzebujesz:</span>
+jdeps --print-module-deps myapp.jar</pre>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h" style="color:var(--teal)">🔄 Fazy ładowania klasy</div>
+        <div class="card-b" style="font-size:.83rem;color:var(--tx2);line-height:1.8">
+          <p><strong style="color:var(--tx)">Loading</strong> — odnajdź i wczytaj .class jako tablicę bajtów</p>
+          <p><strong style="color:var(--tx)">Linking:</strong></p>
+          <p style="padding-left:12px"><strong>Verification</strong> — walidacja bytecode (bezpieczeństwo)</p>
+          <p style="padding-left:12px"><strong>Preparation</strong> — alokacja static fields z wartościami domyślnymi</p>
+          <p style="padding-left:12px"><strong>Resolution</strong> — zamiana symbolicznych referencji na bezpośrednie</p>
+          <p><strong style="color:var(--tx)">Initialization</strong> — static initializer bloki, static field przypisania</p>
+          <p style="margin-top:8px;font-size:.8rem">Klasa ładowana jest <strong>lazy</strong> — dopiero przy pierwszym użyciu!</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h" style="color:var(--teal)">⚠️ ClassNotFoundException vs NoClassDefFoundError</div>
+        <div class="card-b" style="font-size:.83rem;color:var(--tx2);line-height:1.8">
+          <p style="margin-bottom:10px"><strong style="color:var(--rose)">ClassNotFoundException</strong> (checked) — klasa nie znaleziona przy <code>Class.forName()</code> lub <code>ClassLoader.loadClass()</code>. Brak na classpath.</p>
+          <p style="margin-bottom:10px"><strong style="color:var(--rose)">NoClassDefFoundError</strong> (error) — klasa była dostępna przy kompilacji, ale nie w runtime. Błąd w static inizjalizatorze może też ją wywołać.</p>
+          <p><strong style="color:var(--rose)">LinkageError</strong> — klasa załadowana przez dwa różne ClassLoadery — problem w OSGi, Tomcat, Spring Boot fat-jar.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 05 TYPES & GENERICS -->
+  <section class="chapter" id="types">
+    <div class="ch-head">
+      <div class="ch-num">05 / 13</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--violet)">System Typów & Generics</div>
+        <div class="ch-title">Typy, Generics i Type Erasure</div>
+        <div class="ch-desc">System typów Javy to fundament — prymitywy vs obiekty, autoboxing, generyki i kluczowy mechanizm type erasure. Bez rozumienia tych mechanizmów trudno debugować ClassCastException i pisać generyczne biblioteki.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--violet)"></div>Generics — zaawansowane użycie</div></div>
+        <pre><span class="cm">// Bounded wildcards — PECS (Producer Extends, Consumer Super)</span>
+
+<span class="cm">// ? extends T — Producer (odczyt): możesz CZYTAĆ T</span>
+<span class="kw">public void</span> <span class="fn">sumList</span>(<span class="ty">List</span>&lt;? <span class="kw">extends</span> <span class="ty">Number</span>&gt; list) {
+    <span class="ty">Number</span> n = list.get(<span class="nu">0</span>);  <span class="cm">// ✅ bezpieczne</span>
+    list.add(<span class="nu">1</span>);              <span class="cm">// ❌ kompilator zabrani!</span>
+}
+
+<span class="cm">// ? super T — Consumer (zapis): możesz PISAĆ T</span>
+<span class="kw">public void</span> <span class="fn">addNumbers</span>(<span class="ty">List</span>&lt;? <span class="kw">super</span> <span class="ty">Integer</span>&gt; list) {
+    list.add(<span class="nu">42</span>);             <span class="cm">// ✅ bezpieczne</span>
+    <span class="ty">Integer</span> i = list.get(<span class="nu">0</span>); <span class="cm">// ❌ Object — nie Integer</span>
+}
+
+<span class="cm">// Multiple bounds</span>
+<span class="kw">public</span> &lt;<span class="ty">T</span> <span class="kw">extends</span> <span class="ty">Comparable</span>&lt;<span class="ty">T</span>&gt; & <span class="ty">Serializable</span>&gt; <span class="ty">T</span> <span class="fn">max</span>(<span class="ty">T</span> a, <span class="ty">T</span> b) {
+    <span class="kw">return</span> a.compareTo(b) >= <span class="nu">0</span> ? a : b;
+}
+
+<span class="cm">// Type Token — omijanie type erasure</span>
+<span class="kw">public class</span> <span class="ty">TypeToken</span>&lt;<span class="ty">T</span>&gt; {
+    <span class="kw">private final</span> <span class="ty">Type</span> type;
+    <span class="kw">public</span> <span class="ty">TypeToken</span>() {
+        <span class="cm">// getGenericSuperclass() zachowuje parametry w runtime!</span>
+        type = ((<span class="ty">ParameterizedType</span>) getClass().getGenericSuperclass())
+                   .getActualTypeArguments()[<span class="nu">0</span>];
+    }
+}
+<span class="cm">// Użycie: new TypeToken&lt;List&lt;User&gt;&gt;(){}.getType()</span>
+<span class="cm">// Jackson ParameterizedTypeReference robi to samo</span></pre>
+      </div>
+
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--violet)"></div>Type Erasure — jak działają generyki</div></div>
+        <pre><span class="cm">// Generyki są tylko w czasie kompilacji!</span>
+<span class="cm">// JVM widzi List, nie List&lt;String&gt;</span>
+
+<span class="cm">// Kod źródłowy:</span>
+<span class="ty">List</span>&lt;<span class="ty">String</span>&gt; list = <span class="kw">new</span> <span class="ty">ArrayList</span>&lt;&gt;();
+list.add(<span class="st">"hello"</span>);
+<span class="ty">String</span> s = list.get(<span class="nu">0</span>);
+
+<span class="cm">// Po erasure (co widzi JVM):</span>
+<span class="ty">List</span> list = <span class="kw">new</span> <span class="ty">ArrayList</span>();
+list.add(<span class="st">"hello"</span>);
+<span class="ty">String</span> s = (<span class="ty">String</span>) list.get(<span class="nu">0</span>); <span class="cm">// checkcast</span>
+
+<span class="cm">// Konsekwencje erasure:</span>
+<span class="kw">new</span> T();                            <span class="cm">// ❌ Cannot instantiate T</span>
+<span class="kw">new</span> T[];                            <span class="cm">// ❌ Generic array</span>
+list <span class="kw">instanceof</span> <span class="ty">List</span>&lt;<span class="ty">String</span>&gt;       <span class="cm">// ❌ Illegal</span>
+
+<span class="cm">// ✅ Heap pollution — kompilator ostrzega:</span>
+@SuppressWarnings(<span class="st">"unchecked"</span>)
+<span class="ty">List</span>&lt;<span class="ty">String</span>&gt; strings = (<span class="ty">List</span>&lt;<span class="ty">String</span>&gt;) <span class="kw">new</span> <span class="ty">ArrayList</span>&lt;<span class="ty">Integer</span>&gt;();
+
+<span class="cm">// Reifiable types (zachowane w runtime):</span>
+<span class="cm">// int[], String[], List (raw), List&lt;?&gt;, int</span>
+<span class="cm">// Non-reifiable: List&lt;String&gt;, Map&lt;K,V&gt;, T</span></pre>
+      </div>
+    </div>
+
+    <div class="gap16"></div>
+    <div class="g3">
+      <div class="card">
+        <div class="card-h" style="color:var(--violet)">📦 Prymitywy vs Obiekty</div>
+        <div class="card-b">
+          <table class="tbl">
+            <thead><tr><th>Prymityw</th><th>Wrapper</th><th>Rozmiar</th></tr></thead>
+            <tbody>
+              <tr><td><code>boolean</code></td><td><code>Boolean</code></td><td>1 bit (JVM: 1 byte)</td></tr>
+              <tr><td><code>byte</code></td><td><code>Byte</code></td><td>8 bit</td></tr>
+              <tr><td><code>short</code></td><td><code>Short</code></td><td>16 bit</td></tr>
+              <tr><td><code>int</code></td><td><code>Integer</code></td><td>32 bit</td></tr>
+              <tr><td><code>long</code></td><td><code>Long</code></td><td>64 bit</td></tr>
+              <tr><td><code>float</code></td><td><code>Float</code></td><td>32 bit IEEE 754</td></tr>
+              <tr><td><code>double</code></td><td><code>Double</code></td><td>64 bit IEEE 754</td></tr>
+              <tr><td><code>char</code></td><td><code>Character</code></td><td>16 bit Unicode</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h" style="color:var(--violet)">⚡ Autoboxing — pułapki</div>
+        <div class="card-b">
+          <div class="code" style="border:none;border-radius:0;background:transparent">
+            <pre style="padding:0;font-size:.75rem"><span class="cm">// Integer cache: -128 do 127 cached!</span>
+<span class="ty">Integer</span> a = <span class="nu">127</span>, b = <span class="nu">127</span>;
+a == b;     <span class="cm">// ✅ true (cached)</span>
+<span class="ty">Integer</span> c = <span class="nu">128</span>, d = <span class="nu">128</span>;
+c == d;     <span class="cm">// ❌ false (new objects!)</span>
+c.equals(d); <span class="cm">// ✅ true</span>
+
+<span class="cm">// NullPointerException przez unboxing:</span>
+<span class="ty">Integer</span> val = <span class="kw">null</span>;
+<span class="kw">int</span> x = val;  <span class="cm">// ❌ NPE! val.intValue()</span>
+
+<span class="cm">// Performance: autoboxing w pętli</span>
+<span class="ty">Long</span> sum = <span class="nu">0L</span>;
+<span class="kw">for</span> (<span class="kw">long</span> i = <span class="nu">0</span>; i &lt; <span class="nu">1_000_000</span>; i++)
+    sum += i;  <span class="cm">// ❌ milion unbox+box!</span>
+<span class="kw">long</span> sum2 = <span class="nu">0L</span>;  <span class="cm">// ✅ użyj prymitywu</span></pre>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h" style="color:var(--violet)">🆕 Records & Sealed (Java 16/17)</div>
+        <div class="card-b">
+          <div class="code" style="border:none;border-radius:0;background:transparent">
+            <pre style="padding:0;font-size:.75rem"><span class="cm">// Record — immutable data carrier</span>
+<span class="kw">public record</span> <span class="ty">Point</span>(<span class="kw">int</span> x, <span class="kw">int</span> y) {
+    <span class="cm">// Auto: constructor, getters, equals, hashCode, toString</span>
+    <span class="cm">// Compact constructor:</span>
+    <span class="ty">Point</span> { <span class="kw">if</span> (x &lt; <span class="nu">0</span>) <span class="kw">throw new</span> <span class="ty">IAE</span>(<span class="st">"negative x"</span>); }
+}
+
+<span class="cm">// Sealed — zamknięta hierarchia typów</span>
+<span class="kw">public sealed interface</span> <span class="ty">Shape</span>
+    <span class="kw">permits</span> <span class="ty">Circle</span>, <span class="ty">Rectangle</span>, <span class="ty">Triangle</span> {}
+
+<span class="kw">public record</span> <span class="ty">Circle</span>(<span class="kw">double</span> radius)
+    <span class="kw">implements</span> <span class="ty">Shape</span> {}
+<span class="kw">public final class</span> <span class="ty">Rectangle</span>
+    <span class="kw">implements</span> <span class="ty">Shape</span> {}
+<span class="cm">// compiler zna wszystkie warianty → exhaustive switch</span></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 06 CONCURRENCY -->
+  <section class="chapter" id="concurrency">
+    <div class="ch-head">
+      <div class="ch-num">06 / 13</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--cyan)">Współbieżność</div>
+        <div class="ch-title">Wątki, synchronizacja i java.util.concurrent</div>
+        <div class="ch-desc">Współbieżność to jeden z najtrudniejszych aspektów Javy. Od synchronized przez Lock, executor services, CompletableFuture, po nowe Virtual Threads — każdy mechanizm ma inne trade-offs i przypadki użycia.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--cyan)"></div>Synchronizacja — mechanizmy</div></div>
+        <pre><span class="cm">// ─── synchronized ────────────────────────────────────────</span>
+<span class="kw">public synchronized void</span> <span class="fn">increment</span>() { count++; }
+<span class="cm">// = synchronized(this) — blokuje instancję</span>
+
+<span class="kw">synchronized</span> (<span class="ty">MyClass</span>.class) { <span class="cm">// blokuje klasę</span> }
+
+<span class="cm">// ─── ReentrantLock — więcej kontroli ─────────────────────</span>
+<span class="kw">private final</span> <span class="ty">Lock</span> lock = <span class="kw">new</span> <span class="ty">ReentrantLock</span>(<span class="kw">true</span>); <span class="cm">// fair!</span>
+
+<span class="kw">boolean</span> acquired = lock.tryLock(<span class="nu">100</span>, <span class="ty">TimeUnit</span>.MILLISECONDS);
+<span class="kw">if</span> (acquired) {
+    <span class="kw">try</span> { doWork(); }
+    <span class="kw">finally</span> { lock.unlock(); }   <span class="cm">// ZAWSZE w finally!</span>
+}
+
+<span class="cm">// ─── ReadWriteLock — wiele czytających, jeden piszący ─────</span>
+<span class="kw">private final</span> <span class="ty">ReadWriteLock</span> rwLock = <span class="kw">new</span> <span class="ty">ReentrantReadWriteLock</span>();
+
+<span class="cm">// Read — wiele wątków równocześnie</span>
+rwLock.readLock().lock();
+<span class="kw">try</span> { <span class="kw">return</span> cache.get(key); }
+<span class="kw">finally</span> { rwLock.readLock().unlock(); }
+
+<span class="cm">// Write — wyłączny dostęp</span>
+rwLock.writeLock().lock();
+<span class="kw">try</span> { cache.put(key, value); }
+<span class="kw">finally</span> { rwLock.writeLock().unlock(); }</pre>
+      </div>
+
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--cyan)"></div>Atomic i concurrent collections</div></div>
+        <pre><span class="cm">// ─── Atomic — lock-free operacje ──────────────────────────</span>
+<span class="ty">AtomicInteger</span> counter = <span class="kw">new</span> <span class="ty">AtomicInteger</span>(<span class="nu">0</span>);
+counter.incrementAndGet();         <span class="cm">// atomowy ++</span>
+counter.compareAndSet(<span class="nu">5</span>, <span class="nu">10</span>);    <span class="cm">// CAS — serce lock-free</span>
+
+<span class="ty">AtomicReference</span>&lt;<span class="ty">State</span>&gt; state = <span class="kw">new</span> <span class="ty">AtomicReference</span>&lt;&gt;(initial);
+state.updateAndGet(s -> s.transition(Event.CONFIRM)); <span class="cm">// atomowy update</span>
+
+<span class="cm">// ─── java.util.concurrent collections ────────────────────</span>
+<span class="ty">ConcurrentHashMap</span>&lt;<span class="ty">K</span>,<span class="ty">V</span>&gt; map;   <span class="cm">// segment locking, nie blokuje całej mapy</span>
+map.computeIfAbsent(key, k -> expensive()); <span class="cm">// atomowa operacja</span>
+
+<span class="ty">CopyOnWriteArrayList</span>&lt;<span class="ty">T</span>&gt; list; <span class="cm">// kopia przy każdym write — read bez locka</span>
+<span class="cm">// Dobra gdy: mało zapisów, dużo odczytów (event listeners)</span>
+
+<span class="ty">BlockingQueue</span>&lt;<span class="ty">Task</span>&gt; queue = <span class="kw">new</span> <span class="ty">LinkedBlockingQueue</span>&lt;&gt;(<span class="nu">1000</span>);
+queue.put(task);     <span class="cm">// blokuje gdy pełna</span>
+queue.take();        <span class="cm">// blokuje gdy pusta</span>
+queue.poll(<span class="nu">100</span>, <span class="ty">MILLISECONDS</span>); <span class="cm">// timeout</span>
+
+<span class="ty">ConcurrentLinkedQueue</span>&lt;<span class="ty">T</span>&gt; clq; <span class="cm">// lock-free queue (Michael-Scott)</span>
+<span class="ty">ArrayDeque</span>&lt;<span class="ty">T</span>&gt; deque;          <span class="cm">// nie thread-safe ale szybszy single-thread</span></pre>
+      </div>
+    </div>
+
+    <div class="gap16"></div>
+    <div class="g2">
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--cyan)"></div>CompletableFuture — async pipeline</div></div>
+        <pre><span class="ty">CompletableFuture</span>&lt;<span class="ty">User</span>&gt; userFuture = <span class="ty">CompletableFuture</span>
+    .supplyAsync(() -> userRepo.findById(id), executor)  <span class="cm">// async start</span>
+    .thenApply(<span class="ty">User</span>::getName)                           <span class="cm">// transform</span>
+    .thenCompose(name -> emailService.lookup(name))       <span class="cm">// async chain</span>
+    .exceptionally(ex -> {                               <span class="cm">// error handling</span>
+        log.error(<span class="st">"Failed"</span>, ex);
+        <span class="kw">return</span> <span class="kw">null</span>;
+    })
+    .orTimeout(<span class="nu">5</span>, <span class="ty">TimeUnit</span>.SECONDS);                    <span class="cm">// timeout</span>
+
+<span class="cm">// Łączenie wielu futures:</span>
+<span class="ty">CompletableFuture</span>&lt;<span class="ty">Void</span>&gt; all = <span class="ty">CompletableFuture</span>
+    .allOf(future1, future2, future3);          <span class="cm">// czeka na wszystkie</span>
+
+<span class="ty">CompletableFuture</span>&lt;<span class="ty">Object</span>&gt; any = <span class="ty">CompletableFuture</span>
+    .anyOf(future1, future2);                   <span class="cm">// pierwszy który skończy</span>
+
+<span class="cm">// UWAGA: thenApply vs thenApplyAsync</span>
+<span class="cm">// thenApply — wykonuje w tym samym wątku co poprzedni etap</span>
+<span class="cm">// thenApplyAsync — nowy task w ForkJoinPool.commonPool()</span>
+<span class="cm">// thenApplyAsync(fn, executor) — w custom executor</span></pre>
+      </div>
+
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--cyan)"></div>ExecutorService — właściwe użycie</div></div>
+        <pre><span class="cm">// ─── Rodzaje executors ────────────────────────────────────</span>
+<span class="ty">Executors</span>.newFixedThreadPool(<span class="nu">10</span>);          <span class="cm">// stała liczba wątków</span>
+<span class="ty">Executors</span>.newCachedThreadPool();           <span class="cm">// ❌ unbounded! ryzyko</span>
+<span class="ty">Executors</span>.newSingleThreadExecutor();      <span class="cm">// jeden wątek, queue</span>
+<span class="ty">Executors</span>.newScheduledThreadPool(<span class="nu">4</span>);      <span class="cm">// scheduled tasks</span>
+<span class="ty">Executors</span>.newVirtualThreadPerTaskExecutor(); <span class="cm">// Java 21 ✅</span>
+
+<span class="cm">// ✅ Custom ThreadPoolExecutor — pełna kontrola</span>
+<span class="kw">new</span> <span class="ty">ThreadPoolExecutor</span>(
+    <span class="nu">4</span>,              <span class="cm">// corePoolSize</span>
+    <span class="nu">8</span>,              <span class="cm">// maximumPoolSize</span>
+    <span class="nu">60</span>, <span class="ty">SECONDS</span>,    <span class="cm">// keepAlive idle threads</span>
+    <span class="kw">new</span> <span class="ty">ArrayBlockingQueue</span>&lt;&gt;(<span class="nu">200</span>),   <span class="cm">// queue z limitem!</span>
+    <span class="kw">new</span> <span class="ty">ThreadFactoryBuilder</span>().setNameFormat(<span class="st">"worker-%d"</span>).build(),
+    <span class="kw">new</span> <span class="ty">CallerRunsPolicy</span>()      <span class="cm">// backpressure: wywołujący sam wykonuje</span>
+);
+
+<span class="cm">// Shutdown gracefully:</span>
+executor.shutdown();                       <span class="cm">// nie przyjmuje nowych</span>
+<span class="kw">if</span> (!executor.awaitTermination(<span class="nu">30</span>, <span class="ty">SECONDS</span>))
+    executor.shutdownNow();                <span class="cm">// interrupt all</span></pre>
+      </div>
+    </div>
+
+    <div class="gap16"></div>
+    <div class="g3">
+      <div class="card">
+        <div class="card-h" style="color:var(--cyan)">🔒 Deadlock — diagnoza</div>
+        <div class="card-b" style="font-size:.83rem;color:var(--tx2);line-height:1.8">
+          <p style="margin-bottom:8px"><strong style="color:var(--tx)">Warunki deadlocka (Coffman):</strong> Mutual exclusion, Hold & wait, No preemption, Circular wait — wszystkie cztery muszą być spełnione.</p>
+          <p style="margin-bottom:8px"><strong style="color:var(--tx)">Diagnostyka:</strong> <code>jstack &lt;pid&gt;</code> → szukaj "deadlock" w output. JDK Mission Control → thread dumps. VisualVM.</p>
+          <p><strong style="color:var(--tx)">Zapobieganie:</strong> acquire locki zawsze w tej samej kolejności. Używaj <code>tryLock(timeout)</code>. Preferuj lock-free struktury.</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h" style="color:var(--cyan)">⚡ Semaphore & CountDownLatch</div>
+        <div class="card-b">
+          <div class="code" style="border:none;border-radius:0;background:transparent">
+            <pre style="padding:0;font-size:.74rem"><span class="cm">// Semaphore — limituje concurrent access</span>
+<span class="ty">Semaphore</span> sem = <span class="kw">new</span> <span class="ty">Semaphore</span>(<span class="nu">3</span>); <span class="cm">// max 3 jednocześnie</span>
+sem.acquire();
+<span class="kw">try</span> { callExpensiveAPI(); }
+<span class="kw">finally</span> { sem.release(); }
+
+<span class="cm">// CountDownLatch — synchronizacja startu</span>
+<span class="ty">CountDownLatch</span> latch = <span class="kw">new</span> <span class="ty">CountDownLatch</span>(<span class="nu">3</span>);
+<span class="cm">// Wątek główny czeka:</span>
+latch.await(<span class="nu">10</span>, <span class="ty">SECONDS</span>);
+<span class="cm">// Każdy worker po zakończeniu:</span>
+latch.countDown();
+
+<span class="cm">// CyclicBarrier — wielokrotne spotkanie</span>
+<span class="ty">CyclicBarrier</span> barrier = <span class="kw">new</span> <span class="ty">CyclicBarrier</span>(<span class="nu">4</span>, barrierAction);
+<span class="cm">// Każdy wątek: barrier.await() — czeka na 4</span></pre>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h" style="color:var(--cyan)">🆕 Structured Concurrency (Java 21)</div>
+        <div class="card-b">
+          <div class="code" style="border:none;border-radius:0;background:transparent">
+            <pre style="padding:0;font-size:.74rem"><span class="cm">// Zarządza grupą powiązanych wątków</span>
+<span class="kw">try</span> (<span class="kw">var</span> scope = <span class="kw">new</span> <span class="ty">StructuredTaskScope</span>
+        .<span class="ty">ShutdownOnFailure</span>()) {
+
+    <span class="ty">Future</span>&lt;<span class="ty">User</span>&gt; user =
+        scope.fork(() -> findUser(id));
+    <span class="ty">Future</span>&lt;<span class="ty">Order</span>&gt; order =
+        scope.fork(() -> findOrder(id));
+
+    scope.join()           <span class="cm">// czeka na oba</span>
+         .throwIfFailed(); <span class="cm">// propaguje błąd</span>
+
+    <span class="kw">return</span> <span class="kw">new</span> <span class="ty">Response</span>(user.get(), order.get());
+} <span class="cm">// auto-cancel przy wyjściu ze scope</span>
+
+<span class="cm">// ShutdownOnSuccess — pierwszy wynik wygrywa</span></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 07 JAVA MEMORY MODEL -->
+  <section class="chapter" id="memory-model">
+    <div class="ch-head">
+      <div class="ch-num">07 / 13</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--rose)">Java Memory Model (JMM)</div>
+        <div class="ch-title">Visibility, Happens-Before i volatile</div>
+        <div class="ch-desc">JMM definiuje reguły widoczności zmian w pamięci między wątkami. Bez zrozumienia happens-before nie możesz pisać poprawnego kodu wielowątkowego — problemy są nieodtwarzalne i specyficzne dla architektury CPU.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--rose)"></div>volatile — gwarancje widoczności</div></div>
+        <pre><span class="cm">// Problem: CPU cache — wątek może nie widzieć zmian innych!</span>
+<span class="kw">private boolean</span> running = <span class="kw">true</span>; <span class="cm">// ❌ może być cached w CPU</span>
+
+<span class="kw">private volatile boolean</span> running = <span class="kw">true</span>; <span class="cm">// ✅</span>
+<span class="cm">// volatile gwarantuje:</span>
+<span class="cm">// 1. Każdy odczyt z main memory (nie cache CPU)</span>
+<span class="cm">// 2. Każdy zapis od razu do main memory</span>
+<span class="cm">// 3. Happens-before: zapis volatile HB odczyt tego samego pola</span>
+
+<span class="cm">// ❌ volatile NIE gwarantuje atomowości złożonych operacji!</span>
+<span class="kw">volatile int</span> count = <span class="nu">0</span>;
+count++;  <span class="cm">// ❌ nie atomic: read, increment, write = 3 operacje</span>
+<span class="cm">// ✅ Użyj AtomicInteger dla atomowych operacji na liczbach</span>
+
+<span class="cm">// Gdzie volatile wystarcza:</span>
+<span class="cm">// - jeden wątek pisze, wiele czyta</span>
+<span class="cm">// - boolean flagi (stop flag, initialized)</span>
+<span class="cm">// - referencje do niezmiennych obiektów</span>
+
+<span class="kw">class</span> <span class="ty">Singleton</span> {
+    <span class="kw">private volatile static</span> <span class="ty">Singleton</span> instance;
+    <span class="kw">public static</span> <span class="ty">Singleton</span> <span class="fn">getInstance</span>() {
+        <span class="kw">if</span> (instance == <span class="kw">null</span>) {
+            <span class="kw">synchronized</span> (<span class="ty">Singleton</span>.class) {
+                <span class="kw">if</span> (instance == <span class="kw">null</span>)
+                    instance = <span class="kw">new</span> <span class="ty">Singleton</span>(); <span class="cm">// volatile chroni!</span>
+            }
+        }
+        <span class="kw">return</span> instance;
+    }
+}</pre>
+      </div>
+
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--rose)"></div>Happens-Before — reguły JMM</div></div>
+        <pre><span class="cm">// Happens-Before (HB): jeśli A HB B, to B widzi efekty A</span>
+
+<span class="cm">// Reguły HB w Javie:</span>
+<span class="cm">// 1. Program Order Rule</span>
+<span class="cm">//    Każda akcja w wątku HB kolejnej akcji w tym wątku</span>
+
+<span class="cm">// 2. Monitor Lock Rule</span>
+<span class="cm">//    Unlock monitora HB kolejny lock tego samego monitora</span>
+
+<span class="cm">// 3. Volatile Variable Rule</span>
+<span class="cm">//    Zapis volatile HB kolejny odczyt tego pola</span>
+
+<span class="cm">// 4. Thread Start Rule</span>
+<span class="cm">//    thread.start() HB jakiekolwiek działanie w nowym wątku</span>
+
+<span class="cm">// 5. Thread Termination Rule</span>
+<span class="cm">//    Wszelkie akcje w wątku HB thread.join() w innym wątku</span>
+
+<span class="cm">// 6. Transitivity</span>
+<span class="cm">//    Jeśli A HB B i B HB C, to A HB C</span>
+
+<span class="cm">// Praktyczne konsekwencje:</span>
+<span class="kw">int</span> x = <span class="nu">0</span>;
+<span class="ty">Thread</span> t = <span class="kw">new</span> <span class="ty">Thread</span>(() -> {
+    x = <span class="nu">42</span>;  <span class="cm">// Thread Start Rule → t.start() HB to</span>
+});
+t.start();
+t.join();
+<span class="cm">// Thread Termination Rule → join() HB ten kod</span>
+System.out.println(x);  <span class="cm">// ✅ widzi 42 — gwarantowane</span></pre>
+      </div>
+    </div>
+
+    <div class="gap16"></div>
+    <div class="alert al-rose">
+      <span class="alert-label">🚨 Data Race — najgroźniejszy bug współbieżności</span>
+      <strong>Data race</strong> = dwa wątki odczytują/zapisują to samo pole bez synchronizacji, gdy przynajmniej jeden pisze. Wynik jest <strong>nieokreślony</strong> (undefined behavior). Może się przejawiać sporadycznie, tylko na wielordzeniowych maszynach, lub tylko pod obciążeniem. Narzędzia: <strong>ThreadSanitizer</strong> (w GraalVM native), <strong>Helgrind</strong> (Valgrind), <strong>Java Thread Sanitizer</strong>. Zasada: jeśli pole jest dostępne z wielu wątków i choć jeden pisze → potrzebujesz synchronizacji.
+    </div>
+  </section>
+
+  <!-- ══ 08 MODERN JAVA -->
+  <section class="chapter" id="modern">
+    <div class="ch-head">
+      <div class="ch-num">08 / 13</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--green)">Modern Java — 8 do 21</div>
+        <div class="ch-title">Kluczowe funkcje nowoczesnej Javy</div>
+        <div class="ch-desc">Java ewoluuje szybko od 2018 roku (6-miesięczny cykl). Znajomość nowych funkcji odróżnia nowoczesny kod od "Enterprise Java 2008". Szczególnie ważne: pattern matching, records, sealed classes i text blocks.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--green)"></div>Pattern Matching — switch (Java 21)</div></div>
+        <pre><span class="cm">// Stary sposób:</span>
+<span class="kw">if</span> (shape <span class="kw">instanceof</span> <span class="ty">Circle</span>) {
+    <span class="ty">Circle</span> c = (<span class="ty">Circle</span>) shape;
+    <span class="kw">return</span> Math.PI * c.radius() * c.radius();
+}
+
+<span class="cm">// Java 16+ — pattern matching instanceof:</span>
+<span class="kw">if</span> (shape <span class="kw">instanceof</span> <span class="ty">Circle</span> c) {  <span class="cm">// c automatycznie Circle</span>
+    <span class="kw">return</span> Math.PI * c.radius() * c.radius();
+}
+
+<span class="cm">// Java 21 — pattern matching switch (final):</span>
+<span class="kw">double</span> area = <span class="kw">switch</span> (shape) {
+    <span class="kw">case</span> <span class="ty">Circle</span> c    -> Math.PI * c.radius() * c.radius();
+    <span class="kw">case</span> <span class="ty">Rectangle</span> r -> r.width() * r.height();
+    <span class="kw">case</span> <span class="ty">Triangle</span> t  -> t.base() * t.height() / <span class="nu">2.0</span>;
+    <span class="cm">// Sealed class → compiler wie że wyczerpałeś przypadki!</span>
+};
+
+<span class="cm">// Guarded patterns:</span>
+<span class="kw">case</span> <span class="ty">Circle</span> c <span class="kw">when</span> c.radius() > <span class="nu">0</span> -> <span class="st">"valid circle"</span>;
+<span class="kw">case</span> <span class="ty">Circle</span> c                       -> <span class="st">"degenerate circle"</span>;
+
+<span class="cm">// Record patterns (Java 21):</span>
+<span class="kw">if</span> (obj <span class="kw">instanceof</span> <span class="ty">Point</span>(int x, int y)) { <span class="cm">// destrukturyzacja!</span>
+    System.out.println(x + <span class="st">", "</span> + y);
+}</pre>
+      </div>
+
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--green)"></div>Inne kluczowe funkcje Java 8–21</div></div>
+        <pre><span class="cm">// ─── Java 9 — var w try-with-resources ───────────────────</span>
+<span class="kw">try</span> (<span class="kw">var</span> in = <span class="kw">new</span> <span class="ty">FileInputStream</span>(<span class="st">"file.txt"</span>)) { }
+
+<span class="cm">// ─── Java 10 — Local Variable Type Inference ─────────────</span>
+<span class="kw">var</span> list = <span class="kw">new</span> <span class="ty">ArrayList</span>&lt;<span class="ty">String</span>&gt;();  <span class="cm">// = ArrayList&lt;String&gt;</span>
+<span class="cm">// var działa tylko dla zmiennych lokalnych, nie pól klasy</span>
+
+<span class="cm">// ─── Java 14 — Helpful NullPointerExceptions ──────────────</span>
+<span class="cm">// "Cannot invoke String.length() because user.name is null"</span>
+<span class="cm">// Zamiast: "NullPointerException at line 42"</span>
+
+<span class="cm">// ─── Java 15 — Text Blocks ────────────────────────────────</span>
+<span class="ty">String</span> json = <span class="st">"""
+    {
+        "name": "Jan",
+        "age": 30
+    }
+    """</span>;
+
+<span class="cm">// ─── Java 16 — Collection factory + Stream ────────────────</span>
+<span class="ty">List</span>.of(<span class="nu">1</span>,<span class="nu">2</span>,<span class="nu">3</span>);       <span class="cm">// immutable</span>
+<span class="ty">Map</span>.of(<span class="st">"k"</span>, <span class="st">"v"</span>);     <span class="cm">// immutable</span>
+list.stream().toList(); <span class="cm">// zamiast collect(toList())</span>
+
+<span class="cm">// ─── Java 21 — Sequenced Collections ─────────────────────</span>
+<span class="ty">SequencedCollection</span>&lt;<span class="ty">E</span>&gt;:
+    getFirst(), getLast(), addFirst(), addLast()
+    reversed() <span class="cm">// odwrócony widok!</span>
+<span class="cm">// List, Deque, SortedSet implementują SequencedCollection</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 09 STREAMS & LAMBDAS -->
+  <section class="chapter" id="streams">
+    <div class="ch-head">
+      <div class="ch-num">09 / 13</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--teal)">Streams, Lambdas & Functional</div>
+        <div class="ch-title">Stream API — zaawansowane wzorce</div>
+        <div class="ch-desc">Stream API to potężne narzędzie, ale ma pułapki. Lazy evaluation, short-circuiting, parallel streams — każdy aspekt ma implikacje dla wydajności. Functional interfaces i method references to fundament nowoczesnej Javy.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--teal)"></div>Stream — zaawansowane operacje</div></div>
+        <pre><span class="cm">// ─── Lazy evaluation — ważne! ────────────────────────────</span>
+<span class="cm">// Intermediate ops (filter, map) NIE są wykonywane bez terminal op</span>
+<span class="ty">Stream</span>&lt;<span class="ty">String</span>&gt; s = list.stream()
+    .filter(x -> { log(<span class="st">"filter"</span>); <span class="kw">return</span> x.length() > <span class="nu">3</span>; })
+    .map(x -> { log(<span class="st">"map"</span>); <span class="kw">return</span> x.toUpperCase(); });
+<span class="cm">// Nic nie zostało wykonane jeszcze!</span>
+s.findFirst(); <span class="cm">// teraz: filter→map→findFirst. SHORT-CIRCUIT!</span>
+
+<span class="cm">// ─── Collectors zaawansowane ──────────────────────────────</span>
+<span class="ty">Map</span>&lt;<span class="ty">String</span>, <span class="ty">Long</span>&gt; countByDept = employees.stream()
+    .collect(<span class="ty">Collectors</span>.groupingBy(
+        <span class="ty">Employee</span>::getDept,
+        <span class="ty">Collectors</span>.counting()));
+
+<span class="ty">Map</span>&lt;<span class="ty">Boolean</span>, <span class="ty">List</span>&lt;<span class="ty">Order</span>&gt;&gt; partition = orders.stream()
+    .collect(<span class="ty">Collectors</span>.partitioningBy(o -> o.getTotal() > <span class="nu">1000</span>));
+
+<span class="cm">// Downstream collector:</span>
+<span class="ty">Map</span>&lt;<span class="ty">String</span>, <span class="ty">Optional</span>&lt;<span class="ty">Employee</span>&gt;&gt; topEarner = employees.stream()
+    .collect(<span class="ty">Collectors</span>.groupingBy(
+        <span class="ty">Employee</span>::getDept,
+        <span class="ty">Collectors</span>.maxBy(<span class="ty">Comparator</span>.comparing(<span class="ty">Employee</span>::getSalary))));
+
+<span class="cm">// Joining:</span>
+<span class="ty">String</span> csv = names.stream()
+    .collect(<span class="ty">Collectors</span>.joining(<span class="st">", "</span>, <span class="st">"["</span>, <span class="st">"]"</span>)); <span class="cm">// [a, b, c]</span>
+
+<span class="cm">// Custom Collector:</span>
+<span class="ty">Collector</span>&lt;<span class="ty">Integer</span>, ?, <span class="ty">Statistics</span>&gt; stats = <span class="ty">Collector</span>.of(
+    <span class="ty">Statistics</span>::<span class="kw">new</span>,        <span class="cm">// supplier</span>
+    <span class="ty">Statistics</span>::accumulate,  <span class="cm">// accumulator</span>
+    <span class="ty">Statistics</span>::combine,     <span class="cm">// combiner (parallel)</span>
+    <span class="ty">Statistics</span>::finish       <span class="cm">// finisher</span>
+);</pre>
+      </div>
+
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--teal)"></div>Functional Interfaces & Method References</div></div>
+        <pre><span class="cm">// Wbudowane @FunctionalInterface:</span>
+<span class="ty">Function</span>&lt;<span class="ty">T</span>,<span class="ty">R</span>&gt;    t -> r       <span class="cm">// transform</span>
+<span class="ty">Predicate</span>&lt;<span class="ty">T</span>&gt;     t -> boolean <span class="cm">// test</span>
+<span class="ty">Consumer</span>&lt;<span class="ty">T</span>&gt;      t -> void    <span class="cm">// consume</span>
+<span class="ty">Supplier</span>&lt;<span class="ty">T</span>&gt;      () -> t      <span class="cm">// produce</span>
+<span class="ty">BiFunction</span>&lt;<span class="ty">T</span>,<span class="ty">U</span>,<span class="ty">R</span>&gt; (t,u) -> r  <span class="cm">// binary transform</span>
+<span class="ty">UnaryOperator</span>&lt;<span class="ty">T</span>&gt; t -> t      <span class="cm">// transform same type</span>
+<span class="ty">BinaryOperator</span>&lt;<span class="ty">T</span>&gt;(t,t) -> t  <span class="cm">// binary same type</span>
+<span class="ty">Runnable</span>         () -> void   <span class="cm">// run</span>
+<span class="ty">Callable</span>&lt;<span class="ty">T</span>&gt;      () -> T     <span class="cm">// call (throws)</span>
+
+<span class="cm">// Method references — 4 rodzaje:</span>
+<span class="ty">String</span>::toUpperCase      <span class="cm">// instance method, implied receiver</span>
+<span class="ty">System</span>.out::println      <span class="cm">// instance method, specific receiver</span>
+<span class="ty">String</span>::<span class="kw">new</span>              <span class="cm">// constructor</span>
+<span class="ty">Math</span>::abs                <span class="cm">// static method</span>
+
+<span class="cm">// Function composition:</span>
+<span class="ty">Function</span>&lt;<span class="ty">String</span>, <span class="ty">String</span>&gt; pipeline =
+    <span class="ty">String</span>::trim
+    .andThen(<span class="ty">String</span>::toLowerCase)
+    .andThen(s -> s.replace(<span class="st">" "</span>, <span class="st">"_"</span>));
+
+<span class="cm">// Predicate composition:</span>
+<span class="ty">Predicate</span>&lt;<span class="ty">String</span>&gt; valid = isNotEmpty.and(isNotTooLong).or(isSpecial);
+<span class="ty">Predicate</span>&lt;<span class="ty">String</span>&gt; invalid = valid.negate();</pre>
+      </div>
+    </div>
+
+    <div class="gap16"></div>
+    <div class="alert al-violet">
+      <span class="alert-label">⚡ Parallel Streams — kiedy pomagają, kiedy szkodzą</span>
+      <strong>Używaj gdy:</strong> duże kolekcje (&gt;10k elementów), operacje CPU-bound, niezależne elementy. <strong>Unikaj gdy:</strong> operacje I/O-bound (zajmują ForkJoinPool.commonPool), mało danych (overhead splittingu &gt; zysk), operacje z side effects, ordered streams z stateful operations. <strong>Zawsze mierz</strong> — <code>JMH</code> (Java Microbenchmark Harness) zamiast "parallel pewnie szybsze".
+    </div>
+  </section>
+
+  <!-- ══ 10 I/O & NIO -->
+  <section class="chapter" id="io">
+    <div class="ch-head">
+      <div class="ch-num">10 / 13</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--amber)">I/O, NIO & Sieć</div>
+        <div class="ch-title">Java I/O — od strumieni do NIO.2</div>
+        <div class="ch-desc">Java I/O przeszła długą drogę — od blokujących strumieni (java.io) przez nieblokujące NIO (1.4) po NIO.2 z Path API (7) i nowy HttpClient (11). Wybór właściwego API zależy od use case i skali.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--amber)"></div>NIO.2 — Path API (Java 7+)</div></div>
+        <pre><span class="cm">// ─── Nowoczesna praca z plikami ──────────────────────────</span>
+<span class="ty">Path</span> path = <span class="ty">Path</span>.of(<span class="st">"/home/user/data.txt"</span>);
+
+<span class="cm">// Odczyt — wiele sposobów</span>
+<span class="ty">String</span> content = <span class="ty">Files</span>.readString(path, <span class="ty">UTF_8</span>);         <span class="cm">// małe pliki</span>
+<span class="ty">List</span>&lt;<span class="ty">String</span>&gt; lines = <span class="ty">Files</span>.readAllLines(path);           <span class="cm">// wszystkie linie</span>
+<span class="kw">try</span> (<span class="ty">Stream</span>&lt;<span class="ty">String</span>&gt; s = <span class="ty">Files</span>.lines(path)) {           <span class="cm">// streaming!</span>
+    s.filter(l -> l.startsWith(<span class="st">"#"</span>)).forEach(log::info);
+}
+
+<span class="cm">// Zapis</span>
+<span class="ty">Files</span>.writeString(path, content, <span class="ty">StandardOpenOption</span>.APPEND);
+<span class="ty">Files</span>.write(path, bytes, <span class="ty">CREATE</span>, <span class="ty">TRUNCATE_EXISTING</span>);
+
+<span class="cm">// Operacje na plikach/katalogach</span>
+<span class="ty">Files</span>.copy(src, dst, <span class="ty">REPLACE_EXISTING</span>);
+<span class="ty">Files</span>.move(src, dst, <span class="ty">ATOMIC_MOVE</span>);
+<span class="ty">Files</span>.delete(path);                   <span class="cm">// rzuca jeśli brak pliku</span>
+<span class="ty">Files</span>.deleteIfExists(path);           <span class="cm">// bezpieczniejsze</span>
+<span class="ty">Files</span>.createDirectories(path);        <span class="cm">// mkdir -p</span>
+
+<span class="cm">// Szybkie attribute reads:</span>
+<span class="kw">long</span> size = <span class="ty">Files</span>.size(path);
+<span class="ty">FileTime</span> modified = <span class="ty">Files</span>.getLastModifiedTime(path);
+<span class="kw">boolean</span> exists = <span class="ty">Files</span>.exists(path);</pre>
+      </div>
+
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--amber)"></div>NIO Channels & HttpClient</div></div>
+        <pre><span class="cm">// ─── FileChannel — efektywny odczyt dużych plików ────────</span>
+<span class="kw">try</span> (<span class="ty">FileChannel</span> ch = <span class="ty">FileChannel</span>.open(path, <span class="ty">READ</span>)) {
+    <span class="ty">MappedByteBuffer</span> buf = ch.map(
+        <span class="ty">FileChannel.MapMode</span>.READ_ONLY, <span class="nu">0</span>, ch.size());
+    <span class="cm">// Memory-mapped file — OS mapuje plik do pamięci</span>
+    <span class="cm">// Idealne do parsowania dużych plików binarnych</span>
+}
+
+<span class="cm">// ─── Java 11 HttpClient (async, HTTP/2) ──────────────────</span>
+<span class="ty">HttpClient</span> client = <span class="ty">HttpClient</span>.newBuilder()
+    .connectTimeout(<span class="ty">Duration</span>.ofSeconds(<span class="nu">5</span>))
+    .followRedirects(<span class="ty">HttpClient.Redirect</span>.NORMAL)
+    .executor(customExecutor)
+    .build();
+
+<span class="ty">HttpRequest</span> req = <span class="ty">HttpRequest</span>.newBuilder()
+    .uri(<span class="ty">URI</span>.create(<span class="st">"https://api.example.com/data"</span>))
+    .header(<span class="st">"Authorization"</span>, <span class="st">"Bearer "</span> + token)
+    .timeout(<span class="ty">Duration</span>.ofSeconds(<span class="nu">10</span>))
+    .GET().build();
+
+<span class="cm">// Synchroniczne:</span>
+<span class="ty">HttpResponse</span>&lt;<span class="ty">String</span>&gt; resp =
+    client.send(req, <span class="ty">HttpResponse.BodyHandlers</span>.ofString());
+
+<span class="cm">// Asynchroniczne:</span>
+client.sendAsync(req, <span class="ty">HttpResponse.BodyHandlers</span>.ofString())
+    .thenApply(<span class="ty">HttpResponse</span>::body)
+    .thenAccept(body -> process(body));</pre>
+      </div>
+    </div>
+
+    <div class="gap16"></div>
+    <div class="g3">
+      <div class="card">
+        <div class="card-h" style="color:var(--amber)">📁 WatchService — monitorowanie</div>
+        <div class="card-b">
+          <div class="code" style="border:none;border-radius:0;background:transparent">
+            <pre style="padding:0;font-size:.75rem"><span class="ty">WatchService</span> watcher = <span class="ty">FileSystems</span>.getDefault().newWatchService();
+<span class="ty">Path</span> dir = <span class="ty">Path</span>.of(<span class="st">"/config"</span>);
+dir.register(watcher,
+    <span class="ty">ENTRY_CREATE</span>, <span class="ty">ENTRY_MODIFY</span>, <span class="ty">ENTRY_DELETE</span>);
+
+<span class="kw">while</span> (<span class="kw">true</span>) {
+    <span class="ty">WatchKey</span> key = watcher.take(); <span class="cm">// blokuje</span>
+    <span class="kw">for</span> (<span class="ty">WatchEvent</span>&lt;?&gt; event : key.pollEvents()) {
+        log.info(<span class="st">"{}: {}"</span>,
+            event.kind(), event.context());
+    }
+    key.reset(); <span class="cm">// WAŻNE! Inaczej nie dostaniesz więcej</span>
+}</pre>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h" style="color:var(--amber)">🗜️ Serializacja — i dlaczego unikać</div>
+        <div class="card-b" style="font-size:.83rem;color:var(--tx2);line-height:1.85">
+          <p style="margin-bottom:8px"><strong style="color:var(--rose)">Java Serialization — problemy:</strong> security vulnerabilities (deserializacja = RCE!), kruche (zmiana klasy łamie format), wolne, duże pliki.</p>
+          <p style="margin-bottom:8px"><strong style="color:var(--tx)">Alternatywy:</strong> JSON (Jackson), Protocol Buffers (protobuf), Avro, MessagePack.</p>
+          <p>Jeśli musisz: <code>serialVersionUID</code>, <code>transient</code> dla niepotrzebnych pól, <code>readObject</code> z walidacją. <strong>Nigdy nie deserializuj niezaufanych danych!</strong></p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h" style="color:var(--amber)">💾 Try-with-resources</div>
+        <div class="card-b">
+          <div class="code" style="border:none;border-radius:0;background:transparent">
+            <pre style="padding:0;font-size:.75rem"><span class="cm">// Automatycznie zamyka AutoCloseable</span>
+<span class="kw">try</span> (<span class="kw">var</span> conn = ds.getConnection();
+     <span class="kw">var</span> stmt = conn.prepareStatement(sql);
+     <span class="kw">var</span> rs = stmt.executeQuery()) {
+    <span class="kw">while</span> (rs.next()) { process(rs); }
+} <span class="cm">// rs, stmt, conn zamknięte w odwrotnej kolejności</span>
+
+<span class="cm">// Wiele zasobów = odwrotna kolejność zamykania</span>
+<span class="cm">// Wyjątek z close() = suppressed exception</span>
+<span class="kw">try</span> { ... } <span class="kw">catch</span> (<span class="ty">Exception</span> e) {
+    <span class="kw">for</span> (<span class="ty">Throwable</span> s : e.getSuppressed())
+        log.warn(<span class="st">"Suppressed: {}"</span>, s.getMessage());
+}</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 11 JDK TOOLS -->
+  <section class="chapter" id="jdk-tools">
+    <div class="ch-head">
+      <div class="ch-num">11 / 13</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--pink)">JDK Tools & Diagnostyka</div>
+        <div class="ch-title">Narzędzia JDK — diagnostyka produkcji</div>
+        <div class="ch-desc">JDK dostarcza potężne narzędzia diagnostyczne, o których wiele osób nie wie. Od prostych komend CLI po JDK Mission Control i JFR — to jest Twój pierwszy zestaw narzędzi gdy coś idzie nie tak na produkcji.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="card">
+        <div class="card-h" style="color:var(--pink)">🔧 Kluczowe narzędzia CLI</div>
+        <div class="card-b" style="overflow-x:auto">
+          <table class="tbl">
+            <thead><tr><th>Narzędzie</th><th>Zastosowanie</th><th>Przykład</th></tr></thead>
+            <tbody>
+              <tr><td><code>jps</code></td><td>Lista procesów Java</td><td><code>jps -l -v</code></td></tr>
+              <tr><td><code>jstack</code></td><td>Thread dump — deadlocks, blocked threads</td><td><code>jstack &lt;pid&gt;</code></td></tr>
+              <tr><td><code>jmap</code></td><td>Heap dump, histogram obiektów</td><td><code>jmap -dump:live,format=b,file=h.hprof &lt;pid&gt;</code></td></tr>
+              <tr><td><code>jstat</code></td><td>GC statystyki w czasie rzeczywistym</td><td><code>jstat -gcutil &lt;pid&gt; 1000</code></td></tr>
+              <tr><td><code>jcmd</code></td><td>Diagnostyczne komendy JVM (wszystko w jednym)</td><td><code>jcmd &lt;pid&gt; VM.flags</code></td></tr>
+              <tr><td><code>jinfo</code></td><td>Flagi JVM działającego procesu</td><td><code>jinfo -flags &lt;pid&gt;</code></td></tr>
+              <tr><td><code>javap</code></td><td>Dekompilacja bytecode</td><td><code>javap -c -verbose MyClass</code></td></tr>
+              <tr><td><code>jdeps</code></td><td>Analiza zależności między pakietami/modułami</td><td><code>jdeps --multi-release 21 app.jar</code></td></tr>
+              <tr><td><code>jlink</code></td><td>Tworzenie custom JRE</td><td><code>jlink --add-modules java.base --output runtime</code></td></tr>
+              <tr><td><code>jshell</code></td><td>REPL — interaktywna Java</td><td><code>jshell</code></td></tr>
+              <tr><td><code>jpackage</code></td><td>Native installer (exe, dmg, deb)</td><td><code>jpackage --type exe --input ...</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div>
+        <div class="code" style="margin-bottom:14px">
+          <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--pink)"></div>jcmd — szwajcarski scyzoryk JVM</div></div>
+          <pre style="font-size:.74rem"><span class="cm"># Wszystkie dostępne komendy dla procesu:</span>
+jcmd &lt;pid&gt; help
+
+<span class="cm"># GC — ręczne wywołanie:</span>
+jcmd &lt;pid&gt; GC.run
+
+<span class="cm"># Heap histogram (bez dump):</span>
+jcmd &lt;pid&gt; GC.heap_info
+jcmd &lt;pid&gt; GC.class_histogram
+
+<span class="cm"># Thread dump:</span>
+jcmd &lt;pid&gt; Thread.print
+
+<span class="cm"># JFR — Java Flight Recorder:</span>
+jcmd &lt;pid&gt; JFR.start name=my_recording duration=60s filename=/tmp/r.jfr
+jcmd &lt;pid&gt; JFR.dump filename=/tmp/now.jfr
+jcmd &lt;pid&gt; JFR.stop
+
+<span class="cm"># VM Info — wersja, flagi:</span>
+jcmd &lt;pid&gt; VM.version
+jcmd &lt;pid&gt; VM.flags
+jcmd &lt;pid&gt; VM.system_properties</pre>
+        </div>
+        <div class="alert al-pink">
+          <span class="alert-label">🔥 JDK Mission Control + JFR</span>
+          <strong>Java Flight Recorder</strong> — produkcyjny profiler z &lt;1% overhead. Rejestruje: alokacje, GC pauzy, I/O, metody (CPU sampling), wątki, klasy. <strong>Jak używać:</strong> Start z flagami <code>-XX:StartFlightRecording</code> lub przez <code>jcmd</code>. Analizuj w JDK Mission Control (bezpłatny GUI). Kluczowe widoki: CPU flamegraph, allocation pressure, GC causes.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 12 PERFORMANCE -->
+  <section class="chapter" id="performance">
+    <div class="ch-head">
+      <div class="ch-num">12 / 13</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--blue)">Performance & Benchmarking</div>
+        <div class="ch-title">Optymalizacja i mierzenie wydajności Java</div>
+        <div class="ch-desc">Optymalizacja bez mierzenia to zgadywanie. JMH (Java Microbenchmark Harness) to jedyne narzędzie do rzetelnych benchmarków w JVM — eliminuje pułapki jak JIT warm-up, dead code elimination i czas GC.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--blue)"></div>JMH — właściwe benchmarki</div></div>
+        <pre><span class="cm">// Dependency: org.openjdk.jmh:jmh-core</span>
+<span class="an">@BenchmarkMode</span>(<span class="ty">Mode</span>.AverageTime)
+<span class="an">@OutputTimeUnit</span>(<span class="ty">TimeUnit</span>.MICROSECONDS)
+<span class="an">@State</span>(<span class="ty">Scope</span>.Thread)
+<span class="an">@Warmup</span>(iterations = <span class="nu">5</span>, time = <span class="nu">1</span>)      <span class="cm">// JIT musi się "rozgrzać"!</span>
+<span class="an">@Measurement</span>(iterations = <span class="nu">10</span>, time = <span class="nu">1</span>)
+<span class="an">@Fork</span>(<span class="nu">2</span>)                              <span class="cm">// osobny JVM fork</span>
+<span class="kw">public class</span> <span class="ty">StringConcatBenchmark</span> {
+
+    <span class="an">@Param</span>({<span class="st">"10"</span>, <span class="st">"100"</span>, <span class="st">"1000"</span>})    <span class="cm">// parametryzacja</span>
+    <span class="kw">private int</span> size;
+
+    <span class="an">@Benchmark</span>
+    <span class="kw">public</span> <span class="ty">String</span> <span class="fn">plusOperator</span>() {
+        <span class="ty">String</span> result = <span class="st">""</span>;
+        <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nu">0</span>; i < size; i++) result += i;
+        <span class="kw">return</span> result;
+    }
+
+    <span class="an">@Benchmark</span>
+    <span class="kw">public</span> <span class="ty">String</span> <span class="fn">stringBuilder</span>() {
+        <span class="kw">var</span> sb = <span class="kw">new</span> <span class="ty">StringBuilder</span>();
+        <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nu">0</span>; i < size; i++) sb.append(i);
+        <span class="kw">return</span> sb.toString();
+    }
+}
+<span class="cm">// Uruchom: java -jar benchmarks.jar -rf json -rff results.json</span></pre>
+      </div>
+
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--blue)"></div>Kluczowe optymalizacje Java</div></div>
+        <pre><span class="cm">// ─── String ───────────────────────────────────────────────</span>
+<span class="cm">// ✅ StringBuilder w pętlach (Java 8 robi to dla + w prostych przypadkach)</span>
+<span class="cm">// ✅ String.intern() — pool dla powtarzających się wartości (z umiarem)</span>
+<span class="cm">// ✅ isEmpty() zamiast length() == 0</span>
+<span class="cm">// ✅ startsWith/endsWith zamiast substring + equals</span>
+
+<span class="cm">// ─── Kolekcje ─────────────────────────────────────────────</span>
+<span class="kw">new</span> <span class="ty">ArrayList</span>&lt;&gt;(<span class="nu">expectedSize</span>);    <span class="cm">// unikaj resize!</span>
+<span class="kw">new</span> <span class="ty">HashMap</span>&lt;&gt;(expectedSize / <span class="nu">0.75f</span> + <span class="nu">1</span>); <span class="cm">// poprawny initial capacity</span>
+<span class="ty">EnumMap</span>, <span class="ty">EnumSet</span>                 <span class="cm">// szybsze od HashMap dla enumów</span>
+<span class="ty">ArrayDeque</span>                        <span class="cm">// zamiast Stack lub LinkedList</span>
+
+<span class="cm">// ─── Prymitywy ────────────────────────────────────────────</span>
+<span class="ty">IntStream</span>.range(<span class="nu">0</span>, n).sum()       <span class="cm">// zamiast Stream&lt;Integer&gt;</span>
+<span class="ty">int</span>[] array                        <span class="cm">// zamiast Integer[] (10x mniej pamięci)</span>
+
+<span class="cm">// ─── Unikaj alokacji w hot path ───────────────────────────</span>
+<span class="cm">// Object pooling (HikariCP robi to dla connections)</span>
+<span class="cm">// StringBuilder reuse w thread-local</span>
+<span class="cm">// Stack allocation przez escape analysis (JIT robi automatycznie)</span>
+
+<span class="cm">// ─── Mierz, nie zgaduj ────────────────────────────────────</span>
+<span class="cm">// Async Profiler — sampling profiler, low overhead</span>
+<span class="cm">// JFR + JMC — alokacje, GC, I/O w jednym</span>
+<span class="cm">// YourKit / JProfiler — GUI, heap analysis</span></pre>
+      </div>
+    </div>
+
+    <div class="gap16"></div>
+    <div class="g4">
+      <div class="card">
+        <div class="card-h" style="color:var(--blue)">🔢 String Pool</div>
+        <div class="card-b" style="font-size:.82rem;color:var(--tx2);line-height:1.8">
+          <p style="margin-bottom:8px">Literały String są automatycznie internowane w String Pool (PermGen → Heap od Java 8).</p>
+          <div class="code" style="border:none;border-radius:0;background:transparent;margin-top:8px">
+            <pre style="padding:0;font-size:.73rem"><span class="ty">String</span> a = <span class="st">"hello"</span>;     <span class="cm">// pool</span>
+<span class="ty">String</span> b = <span class="st">"hello"</span>;     <span class="cm">// ten sam obiekt</span>
+a == b;                   <span class="cm">// true!</span>
+<span class="ty">String</span> c = <span class="kw">new</span> <span class="ty">String</span>(<span class="st">"hello"</span>); <span class="cm">// heap</span>
+a == c;                   <span class="cm">// false</span>
+a.equals(c);              <span class="cm">// true ✅</span></pre>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h" style="color:var(--blue)">📏 Rozmiary obiektów</div>
+        <div class="card-b" style="font-size:.82rem;color:var(--tx2);line-height:1.8">
+          <p style="margin-bottom:8px">Każdy obiekt Java ma <strong style="color:var(--tx)">object header: 12–16 bajtów</strong> (mark word + klass pointer).</p>
+          <p style="margin-bottom:8px">Pola wyrównywane do 8 bajtów (padding). Odniesienie: 4 bajty (compressed oops, heap &lt;32GB) lub 8 bajtów.</p>
+          <p><code>jol-core</code> (Java Object Layout) — narzędzie do sprawdzania rozmiaru obiektów w pamięci.</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h" style="color:var(--blue)">⚡ CPU Cache Efficiency</div>
+        <div class="card-b" style="font-size:.82rem;color:var(--tx2);line-height:1.8">
+          <p style="margin-bottom:8px">CPU cache line = 64 bajty. Dostęp do danych poza cache (cache miss) kosztuje ~100x więcej.</p>
+          <p style="margin-bottom:8px"><strong style="color:var(--tx)">Array of Structs vs Struct of Arrays</strong>: iteracja po tablicy prymitywów jest cache-friendly.</p>
+          <p>False sharing: dwa wątki zapisują do różnych pól tego samego cache line → konflikt. <code>@Contended</code> (JDK 8+) dodaje padding.</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h" style="color:var(--blue)">🧪 Async Profiler</div>
+        <div class="card-b" style="font-size:.82rem;color:var(--tx2);line-height:1.8">
+          <p style="margin-bottom:8px">Najlepszy sampling profiler dla JVM. Działa bez SafePoint bias (problem HotSpot).</p>
+          <div class="code" style="border:none;border-radius:0;background:transparent">
+            <pre style="padding:0;font-size:.72rem">./profiler.sh -d 30 -f flamegraph.html &lt;pid&gt;
+<span class="cm"># Modes: cpu, alloc, wall, lock, cache-misses</span>
+<span class="cm"># Wynik: flamegraph SVG/HTML</span></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 13 PROJEKTY PRZYSZŁOŚCI -->
+  <section class="chapter" id="projects">
+    <div class="ch-head">
+      <div class="ch-num">13 / 13</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--java)">Projekty OpenJDK — Przyszłość Javy</div>
+        <div class="ch-title">Loom, Valhalla, Panama, Amber</div>
+        <div class="ch-desc">Cztery wielkie projekty OpenJDK definiują przyszłość Javy. Część już trafiła do produkcji (Loom → Virtual Threads), reszta jest w zaawansowanym stadium. Senior powinien rozumieć kierunek ewolucji platformy.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="card">
+        <div class="card-h" style="color:var(--java)">🧵 Project Loom — Virtual Threads</div>
+        <div class="card-b" style="font-size:.85rem;color:var(--tx2);line-height:1.85">
+          <p style="margin-bottom:10px"><strong style="color:var(--green)">Status: DONE — Java 21 (final)</strong></p>
+          <p style="margin-bottom:10px">Virtual Threads, Structured Concurrency, Scoped Values. Miliony lekkich wątków bez kosztów platform threads. Blokowanie nie marnuje OS thread — carrier thread wraca do puli.</p>
+          <p style="margin-bottom:10px"><strong style="color:var(--tx)">Structured Concurrency</strong> (preview Java 21) — zarządzanie grupami powiązanych wątków jako jednostką. Automatyczny cancel przy błędzie lub wyjściu ze scope.</p>
+          <p><strong style="color:var(--tx)">Scoped Values</strong> (preview Java 21) — bezpieczna alternatywa dla ThreadLocal przy milionach VT. Immutable, dziedziczone przez child threads.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h" style="color:var(--violet)">💎 Project Valhalla — Value Types</div>
+        <div class="card-b" style="font-size:.85rem;color:var(--tx2);line-height:1.85">
+          <p style="margin-bottom:10px"><strong style="color:var(--amber)">Status: W toku — JEP 401 (preview)</strong></p>
+          <p style="margin-bottom:10px">Eliminuje granicę prymityw/obiekt. <strong style="color:var(--tx)">Value Classes</strong> — obiekty bez identity (jak int), alokowane na stosie lub inline w tablicach. Znikają object headers dla small immutable objects.</p>
+          <div class="code" style="border:none;border-radius:0;background:transparent;margin-top:10px">
+            <pre style="padding:0;font-size:.74rem"><span class="cm">// Przyszłość — value class</span>
+<span class="kw">value class</span> <span class="ty">Point</span> {
+    <span class="kw">double</span> x, y;  <span class="cm">// inline w tablicy!</span>
+}
+<span class="ty">Point</span>[] arr = <span class="kw">new</span> <span class="ty">Point</span>[<span class="nu">1_000_000</span>];
+<span class="cm">// Dziś: 1M pointer + 1M object (header + fields)</span>
+<span class="cm">// Valhalla: 1M * (x,y) — jak double[][]!</span></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="gap16"></div>
+    <div class="g2">
+      <div class="card">
+        <div class="card-h" style="color:var(--teal)">🌉 Project Panama — Native Interop</div>
+        <div class="card-b" style="font-size:.85rem;color:var(--tx2);line-height:1.85">
+          <p style="margin-bottom:10px"><strong style="color:var(--green)">Status: DONE — Java 22 (final) / Java 21 preview</strong></p>
+          <p style="margin-bottom:10px"><strong style="color:var(--tx)">Foreign Function & Memory API</strong> — zastępuje JNI. Wywołuj natywne biblioteki C bez pisania C kodu. Bezpieczniejsze zarządzanie off-heap memory.</p>
+          <div class="code" style="border:none;border-radius:0;background:transparent">
+            <pre style="padding:0;font-size:.74rem"><span class="cm">// Wywołanie C strlen() bez JNI:</span>
+<span class="kw">try</span> (<span class="ty">Arena</span> arena = <span class="ty">Arena</span>.ofConfined()) {
+    <span class="ty">MethodHandle</span> strlen = <span class="ty">Linker</span>.nativeLinker()
+        .downcallHandle(<span class="st">"strlen"</span>, ...);
+    <span class="ty">MemorySegment</span> str = arena.allocateFrom(<span class="st">"hello"</span>);
+    <span class="kw">long</span> len = (<span class="kw">long</span>) strlen.invoke(str); <span class="cm">// = 5</span>
+}</pre>
+          </div>
+          <p style="margin-top:10px"><strong style="color:var(--tx)">Vector API</strong> (incubator) — SIMD instrukcje dla przetwarzania wektorowego (ML, sygnały, multimedia).</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h" style="color:var(--green)">🍂 Project Amber — Language Features</div>
+        <div class="card-b" style="font-size:.85rem;color:var(--tx2);line-height:1.85">
+          <p style="margin-bottom:10px"><strong style="color:var(--green)">Status: Ciągłe dostarczanie (wiele JEP finalizowanych)</strong></p>
+          <p style="margin-bottom:8px">Już gotowe (przez Amber): <strong style="color:var(--tx)">Records, Pattern Matching instanceof, Sealed Classes, Text Blocks, Local Variable Inference (var), Pattern Matching switch</strong>.</p>
+          <p style="margin-bottom:8px">W toku: <strong style="color:var(--tx)">String Templates</strong> (JEP 430) — bezpieczna interpolacja stringów.</p>
+          <div class="code" style="border:none;border-radius:0;background:transparent">
+            <pre style="padding:0;font-size:.74rem"><span class="cm">// String Templates (preview Java 21)</span>
+<span class="ty">String</span> name = <span class="st">"Jan"</span>;
+<span class="kw">int</span> age = <span class="nu">30</span>;
+<span class="ty">String</span> msg = <span class="ty">STR</span>.<span class="st">"Witaj \{name}, masz \{age} lat"</span>;
+<span class="cm">// Bezpieczniejsze niż format() i + concat</span>
+<span class="cm">// Template Processor (STR, FMT, RAW) jest rozszerzalny</span></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="gap24"></div>
+    <div class="strip" style="border-color:var(--java);background:rgba(248,152,32,.04)">
+      <div class="strip-icon">☕</div>
+      <div>
+        <strong>Java nie jest legacy — Java ewoluuje.</strong> Każde 6 miesięcy nowe funkcje, każde 2 lata nowe LTS. Virtual Threads zrewolucjonizowały współbieżność. Valhalla wyeliminuje granicę między prymitywami a obiektami. Panama zastąpi JNI. Amber systematycznie czyni składnię bardziej wyrazistą. Java 21 to jedna z najlepszych wersji w historii — znajomość nowoczesnych idiomów to już wymaganie, nie bonus.
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div><span class="footer-title">Java Complete Knowledge Map</span> · JDK 21 LTS · JVM Internals · Concurrency · Modern Java</div>
+  <div>13 rozdziałów · Platforma Java od fundamentów po przyszłość</div>
+</footer>
+
+</body>
+</html>

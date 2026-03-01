@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SQL — Podstawy</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #faf8f3;
+  --surface: #ffffff;
+  --surface2: #f5f0e8;
+  --border: #e8e0d0;
+  --ink: #1a1510;
+  --ink2: #4a3f35;
+  --muted: #9a8f85;
+  --blue: #1a4a8a;
+  --blue-light: #e8f0fa;
+  --green: #1a6b3c;
+  --green-light: #e8f5ee;
+  --orange: #c45c1a;
+  --orange-light: #fdf0e8;
+  --red: #9b1c1c;
+  --red-light: #fdeaea;
+  --purple: #5b21b6;
+  --purple-light: #f0ebff;
+  --teal: #0f5d6b;
+  --teal-light: #e8f5f7;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'JetBrains Mono', monospace;
+  min-height: 100vh;
+  padding: 0;
+}
+
+/* HEADER */
+.header {
+  background: var(--ink);
+  padding: 48px 40px 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+.header::before {
+  content: 'SQL';
+  position: absolute;
+  right: -20px;
+  top: -30px;
+  font-family: 'Playfair Display', serif;
+  font-size: 180px;
+  font-weight: 900;
+  color: rgba(255,255,255,0.04);
+  pointer-events: none;
+  user-select: none;
+}
+
+.header-label {
+  font-size: 0.7rem;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+
+.header h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: -2px;
+  line-height: 1;
+  margin-bottom: 16px;
+}
+
+.header h1 span {
+  color: #f59e0b;
+}
+
+.header-desc {
+  font-size: 0.8rem;
+  color: var(--muted);
+  max-width: 500px;
+  line-height: 1.7;
+}
+
+.header-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 24px;
+}
+
+.tag {
+  font-size: 0.65rem;
+  padding: 4px 10px;
+  border-radius: 3px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.tag-blue { background: var(--blue); color: #fff; }
+.tag-green { background: var(--green); color: #fff; }
+.tag-orange { background: var(--orange); color: #fff; }
+.tag-red { background: var(--red); color: #fff; }
+.tag-purple { background: var(--purple); color: #fff; }
+.tag-teal { background: var(--teal); color: #fff; }
+
+/* NAV */
+.toc {
+  background: var(--ink);
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding: 0 40px;
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+}
+
+.toc a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.7rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 14px 16px;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+}
+
+.toc a:hover { color: #fff; border-bottom-color: #f59e0b; }
+
+/* MAIN */
+.main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+}
+
+/* SECTION */
+.section {
+  margin-bottom: 56px;
+  animation: fadeUp 0.5s ease backwards;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.section:nth-child(1) { animation-delay: 0.05s; }
+.section:nth-child(2) { animation-delay: 0.1s; }
+.section:nth-child(3) { animation-delay: 0.15s; }
+.section:nth-child(4) { animation-delay: 0.2s; }
+.section:nth-child(5) { animation-delay: 0.25s; }
+.section:nth-child(6) { animation-delay: 0.3s; }
+.section:nth-child(7) { animation-delay: 0.35s; }
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--border);
+}
+
+.section-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: var(--border);
+  line-height: 1;
+  min-width: 48px;
+}
+
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -0.5px;
+}
+
+.section-sub {
+  font-size: 0.7rem;
+  color: var(--muted);
+  margin-top: 2px;
+  letter-spacing: 1px;
+}
+
+/* GRID */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+
+@media (max-width: 768px) {
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  .header { padding: 32px 20px; }
+  .toc { padding: 0 20px; }
+  .main { padding: 24px 16px 60px; }
+}
+
+/* CARD */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.card-head {
+  padding: 14px 18px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-head.blue { background: var(--blue-light); color: var(--blue); border-bottom: 1px solid #c5d8f5; }
+.card-head.green { background: var(--green-light); color: var(--green); border-bottom: 1px solid #b5dcc5; }
+.card-head.orange { background: var(--orange-light); color: var(--orange); border-bottom: 1px solid #f5cfa5; }
+.card-head.red { background: var(--red-light); color: var(--red); border-bottom: 1px solid #f5b5b5; }
+.card-head.purple { background: var(--purple-light); color: var(--purple); border-bottom: 1px solid #d5c5f5; }
+.card-head.teal { background: var(--teal-light); color: var(--teal); border-bottom: 1px solid #b5d5da; }
+
+/* CODE BLOCK */
+.code-block {
+  background: #1a1510;
+  border-radius: 6px;
+  overflow: hidden;
+  margin: 12px 0;
+}
+
+.code-bar {
+  background: #2a2015;
+  padding: 8px 14px;
+  font-size: 0.65rem;
+  color: var(--muted);
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #3a3025;
+}
+
+.code-dots {
+  display: flex;
+  gap: 5px;
+}
+
+.code-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+pre {
+  padding: 16px 18px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  line-height: 1.7;
+  overflow-x: auto;
+  color: #e8dcc8;
+}
+
+/* SQL SYNTAX COLORS */
+.kw { color: #f59e0b; font-weight: 700; }   /* keywords */
+.fn { color: #60cdff; }                      /* functions */
+.str { color: #7ec88a; }                     /* strings */
+.num { color: #ff9d6e; }                     /* numbers */
+.cmt { color: #6a5f50; font-style: italic; } /* comments */
+.col { color: #c8b8ff; }                     /* columns */
+.tbl { color: #ff7eb3; }                     /* tables */
+.op  { color: #f59e0b; }                     /* operators */
+
+/* INLINE CODE */
+code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8em;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 1px 5px;
+  color: var(--blue);
+}
+
+/* DESCRIPTION */
+.desc {
+  font-size: 0.82rem;
+  color: var(--ink2);
+  line-height: 1.8;
+  padding: 14px 18px;
+}
+
+/* TABLE */
+.sql-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+}
+
+.sql-table th {
+  background: var(--ink);
+  color: #f59e0b;
+  padding: 10px 14px;
+  text-align: left;
+  font-weight: 700;
+  letter-spacing: 1px;
+  font-size: 0.7rem;
+}
+
+.sql-table td {
+  padding: 9px 14px;
+  border-bottom: 1px solid var(--border);
+  color: var(--ink2);
+  vertical-align: top;
+}
+
+.sql-table tr:last-child td { border-bottom: none; }
+.sql-table tr:hover td { background: var(--surface2); }
+
+.sql-table td:first-child {
+  font-weight: 700;
+  color: var(--blue);
+}
+
+/* DIAGRAM */
+.diagram {
+  background: #1a1510;
+  border-radius: 8px;
+  padding: 24px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  color: #c8b8a8;
+  line-height: 1.9;
+  overflow-x: auto;
+}
+
+.diagram .hl { color: #f59e0b; font-weight: 700; }
+.diagram .hl2 { color: #60cdff; }
+.diagram .hl3 { color: #7ec88a; }
+.diagram .hl4 { color: #ff7eb3; }
+.diagram .dim { color: #4a3f35; }
+
+/* BADGE */
+.badge {
+  display: inline-block;
+  font-size: 0.6rem;
+  padding: 2px 7px;
+  border-radius: 3px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+.badge-pk { background: #f59e0b; color: #1a1510; }
+.badge-fk { background: var(--blue); color: #fff; }
+.badge-uq { background: var(--green); color: #fff; }
+.badge-nn { background: var(--red); color: #fff; }
+
+/* INFO BOX */
+.info-box {
+  border-left: 3px solid;
+  padding: 12px 16px;
+  border-radius: 0 6px 6px 0;
+  margin: 12px 0;
+  font-size: 0.8rem;
+  line-height: 1.7;
+  color: var(--ink2);
+}
+
+.info-box.blue { border-color: var(--blue); background: var(--blue-light); }
+.info-box.green { border-color: var(--green); background: var(--green-light); }
+.info-box.orange { border-color: var(--orange); background: var(--orange-light); }
+
+.info-box strong { color: var(--ink); }
+
+/* JOIN DIAGRAM */
+.join-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.join-card {
+  background: #1a1510;
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+}
+
+.join-title {
+  color: #f59e0b;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+}
+
+.join-circles {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60px;
+  position: relative;
+  margin: 0 auto;
+  width: 120px;
+}
+
+.circle-left, .circle-right {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  border: 2px solid;
+  position: absolute;
+}
+
+.circle-left { left: 0; border-color: #60cdff; background: rgba(96,205,255,0.12); }
+.circle-right { right: 0; border-color: #ff7eb3; background: rgba(255,126,179,0.12); }
+
+.join-hl { opacity: 1; }
+.join-dim { opacity: 0.2; }
+
+.circle-left.hl-full { background: rgba(96,205,255,0.35); }
+.circle-right.hl-full { background: rgba(255,126,179,0.35); }
+
+.join-overlap {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 28px;
+  height: 54px;
+  z-index: 1;
+}
+
+.join-overlap.hl { background: rgba(245,158,11,0.5); }
+
+.join-desc {
+  color: #9a8f85;
+  font-size: 0.65rem;
+  margin-top: 10px;
+  line-height: 1.5;
+}
+
+/* TYPES GRID */
+.types-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 10px;
+}
+
+.type-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px 14px;
+}
+
+.type-name {
+  font-weight: 700;
+  font-size: 0.8rem;
+  color: var(--blue);
+  margin-bottom: 4px;
+}
+
+.type-example {
+  font-size: 0.7rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-label">// poradnik programisty</div>
+  <h1>SQL <span>Podstawy</span></h1>
+  <p class="header-desc">Kompletny przewodnik po fundamentach SQL — od typów danych i relacji, przez zapytania SELECT, po modyfikację danych i grupowanie.</p>
+  <div class="header-tags">
+    <span class="tag tag-blue">SELECT</span>
+    <span class="tag tag-green">INSERT / UPDATE / DELETE</span>
+    <span class="tag tag-orange">JOIN</span>
+    <span class="tag tag-red">GROUP BY</span>
+    <span class="tag tag-purple">Typy danych</span>
+    <span class="tag tag-teal">Relacje</span>
+  </div>
+</div>
+
+<nav class="toc">
+  <a href="#typy">Typy danych</a>
+  <a href="#relacje">Klucze i relacje</a>
+  <a href="#select">SELECT</a>
+  <a href="#joins">JOIN</a>
+  <a href="#dml">INSERT / UPDATE / DELETE</a>
+  <a href="#group">GROUP BY</a>
+  <a href="#order">ORDER BY / HAVING</a>
+</nav>
+
+<main class="main">
+
+<!-- ===================== TYPY DANYCH ===================== -->
+<section class="section" id="typy">
+  <div class="section-header">
+    <div class="section-num">01</div>
+    <div>
+      <div class="section-title">Typy danych</div>
+      <div class="section-sub">co możesz przechowywać w kolumnach</div>
+    </div>
+  </div>
+
+  <div class="types-grid">
+    <div class="type-card">
+      <div class="type-name">INT / BIGINT</div>
+      <div class="type-example">Liczby całkowite<br>INT: do ~2 mld<br>BIGINT: do ~9 trylionów<br><code>wiek INT</code></div>
+    </div>
+    <div class="type-card">
+      <div class="type-name">DECIMAL / NUMERIC</div>
+      <div class="type-example">Liczby z przecinkiem, precyzyjne (finanse!)<br><code>cena DECIMAL(10,2)</code><br>= 8 cyfr + 2 po przecinku</div>
+    </div>
+    <div class="type-card">
+      <div class="type-name">FLOAT / DOUBLE</div>
+      <div class="type-example">Zmiennoprzecinkowe (przybliżone)<br>Nie używaj do pieniędzy!<br><code>wynik FLOAT</code></div>
+    </div>
+    <div class="type-card">
+      <div class="type-name">VARCHAR(n)</div>
+      <div class="type-example">Tekst zmiennej długości<br>n = max znaków<br><code>imie VARCHAR(100)</code></div>
+    </div>
+    <div class="type-card">
+      <div class="type-name">CHAR(n)</div>
+      <div class="type-example">Tekst stałej długości<br>Uzupełniany spacjami<br><code>kod CHAR(2)</code></div>
+    </div>
+    <div class="type-card">
+      <div class="type-name">TEXT</div>
+      <div class="type-example">Długi tekst bez limitu<br>Artykuły, opisy<br><code>opis TEXT</code></div>
+    </div>
+    <div class="type-card">
+      <div class="type-name">DATE / TIME</div>
+      <div class="type-example">Data lub czas<br><code>DATE: '2024-01-15'</code><br><code>TIME: '14:30:00'</code></div>
+    </div>
+    <div class="type-card">
+      <div class="type-name">DATETIME / TIMESTAMP</div>
+      <div class="type-example">Data + czas razem<br>TIMESTAMP = UTC<br><code>'2024-01-15 14:30:00'</code></div>
+    </div>
+    <div class="type-card">
+      <div class="type-name">BOOLEAN</div>
+      <div class="type-example">TRUE / FALSE<br>W MySQL: TINYINT(1)<br><code>aktywny BOOLEAN</code></div>
+    </div>
+    <div class="type-card">
+      <div class="type-name">ENUM</div>
+      <div class="type-example">Jedna z listy wartości<br><code>status ENUM(<br>'aktywny','nieaktywny')</code></div>
+    </div>
+    <div class="type-card">
+      <div class="type-name">JSON</div>
+      <div class="type-example">Dane JSON (MySQL 5.7+)<br>Elastyczna struktura<br><code>meta JSON</code></div>
+    </div>
+    <div class="type-card">
+      <div class="type-name">UUID</div>
+      <div class="type-example">Unikalny identyfikator<br><code>'550e8400-e29b-41d4</code><br>Lepszy niż AUTO_INCREMENT do API</div>
+    </div>
+  </div>
+
+  <div class="info-box orange" style="margin-top:16px;">
+    <strong>⚠ Uwaga na NULL</strong> — NULL to brak wartości, nie zero i nie pusty string. <code>NULL != NULL</code> — żeby sprawdzić NULL używasz <code>IS NULL</code> lub <code>IS NOT NULL</code>, nie <code>= NULL</code>.
+  </div>
+</section>
+
+<!-- ===================== KLUCZE I RELACJE ===================== -->
+<section class="section" id="relacje">
+  <div class="section-header">
+    <div class="section-num">02</div>
+    <div>
+      <div class="section-title">Klucze i relacje</div>
+      <div class="section-sub">jak tabele się ze sobą łączą</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <div class="card-head blue">🔑 Rodzaje kluczy</div>
+        <table class="sql-table">
+          <tr>
+            <td>PRIMARY KEY <span class="badge badge-pk">PK</span></td>
+            <td>Unikalny identyfikator wiersza. Nie może być NULL. Jeden na tabelę.</td>
+          </tr>
+          <tr>
+            <td>FOREIGN KEY <span class="badge badge-fk">FK</span></td>
+            <td>Wskazuje na PK innej tabeli. Zapewnia spójność danych (integralność referencyjna).</td>
+          </tr>
+          <tr>
+            <td>UNIQUE <span class="badge badge-uq">UQ</span></td>
+            <td>Wartości muszą być unikalne, ale może być NULL. Może być wiele na tabelę.</td>
+          </tr>
+          <tr>
+            <td>NOT NULL <span class="badge badge-nn">NN</span></td>
+            <td>Kolumna nie może mieć wartości NULL. Obowiązkowe pole.</td>
+          </tr>
+          <tr>
+            <td>INDEX</td>
+            <td>Przyspiesza wyszukiwanie. Nie wpływa na dane, tylko na wydajność.</td>
+          </tr>
+          <tr>
+            <td>CHECK</td>
+            <td>Walidacja wartości. np. <code>wiek > 0 AND wiek &lt; 150</code></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div>
+      <div class="code-block">
+        <div class="code-bar"><div class="code-dots"><div class="code-dot" style="background:#ff5f57"></div><div class="code-dot" style="background:#febc2e"></div><div class="code-dot" style="background:#28c840"></div></div><span>CREATE TABLE</span></div>
+        <pre><span class="kw">CREATE TABLE</span> <span class="tbl">uzytkownicy</span> (
+  <span class="col">id</span>        <span class="fn">INT</span> <span class="kw">PRIMARY KEY</span> <span class="fn">AUTO_INCREMENT</span>,
+  <span class="col">email</span>     <span class="fn">VARCHAR</span>(<span class="num">255</span>) <span class="kw">NOT NULL UNIQUE</span>,
+  <span class="col">imie</span>      <span class="fn">VARCHAR</span>(<span class="num">100</span>) <span class="kw">NOT NULL</span>,
+  <span class="col">wiek</span>      <span class="fn">INT</span> <span class="kw">CHECK</span> (<span class="col">wiek</span> <span class="op">></span> <span class="num">0</span>),
+  <span class="col">created</span>   <span class="fn">TIMESTAMP</span> <span class="kw">DEFAULT</span> <span class="fn">NOW</span>()
+);
+
+<span class="kw">CREATE TABLE</span> <span class="tbl">zamowienia</span> (
+  <span class="col">id</span>          <span class="fn">INT</span> <span class="kw">PRIMARY KEY</span> <span class="fn">AUTO_INCREMENT</span>,
+  <span class="col">uzytkownik_id</span> <span class="fn">INT</span> <span class="kw">NOT NULL</span>,
+  <span class="col">kwota</span>       <span class="fn">DECIMAL</span>(<span class="num">10</span>,<span class="num">2</span>) <span class="kw">NOT NULL</span>,
+  <span class="col">data</span>        <span class="fn">DATE</span> <span class="kw">NOT NULL</span>,
+
+  <span class="cmt">-- FK łączy z tabelą uzytkownicy</span>
+  <span class="kw">FOREIGN KEY</span> (<span class="col">uzytkownik_id</span>)
+    <span class="kw">REFERENCES</span> <span class="tbl">uzytkownicy</span>(<span class="col">id</span>)
+    <span class="kw">ON DELETE CASCADE</span>
+);</pre>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:20px;">
+    <div class="card">
+      <div class="card-head teal">🔗 Typy relacji</div>
+      <div class="desc">
+        <div class="grid-3" style="gap:16px;margin-top:4px;">
+          <div>
+            <div style="font-weight:700;color:var(--teal);margin-bottom:8px;">1 do 1 (1:1)</div>
+            <div class="diagram" style="font-size:0.72rem;">
+<span class="hl">Uzytkownik</span> <span class="dim">────</span> <span class="hl2">Profil</span>
+Jeden użytkownik
+ma jeden profil.
+Rzadko używane,
+często łączy się
+w jedną tabelę.
+            </div>
+          </div>
+          <div>
+            <div style="font-weight:700;color:var(--teal);margin-bottom:8px;">1 do wielu (1:N)</div>
+            <div class="diagram" style="font-size:0.72rem;">
+<span class="hl">Uzytkownik</span>
+  <span class="dim">│</span>
+  <span class="dim">├──</span> <span class="hl2">Zamowienie 1</span>
+  <span class="dim">├──</span> <span class="hl2">Zamowienie 2</span>
+  <span class="dim">└──</span> <span class="hl2">Zamowienie 3</span>
+Jeden user ma
+wiele zamówień.
+Najczęstsza relacja!
+            </div>
+          </div>
+          <div>
+            <div style="font-weight:700;color:var(--teal);margin-bottom:8px;">Wiele do wielu (N:M)</div>
+            <div class="diagram" style="font-size:0.72rem;">
+<span class="hl">Student</span> <span class="dim">──</span> <span class="hl3">student_kurs</span> <span class="dim">──</span> <span class="hl2">Kurs</span>
+Wymaga tabeli
+pośredniej (junction)!
+Student na wielu
+kursach, kurs ma
+wielu studentów.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SELECT ===================== -->
+<section class="section" id="select">
+  <div class="section-header">
+    <div class="section-num">03</div>
+    <div>
+      <div class="section-title">SELECT — pobieranie danych</div>
+      <div class="section-sub">podstawowe i zaawansowane zapytania</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div>
+      <div class="code-block">
+        <div class="code-bar"><div class="code-dots"><div class="code-dot" style="background:#ff5f57"></div><div class="code-dot" style="background:#febc2e"></div><div class="code-dot" style="background:#28c840"></div></div><span>SELECT podstawy</span></div>
+        <pre><span class="cmt">-- Wszystkie kolumny (unikaj w produkcji!)</span>
+<span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> <span class="tbl">uzytkownicy</span>;
+
+<span class="cmt">-- Konkretne kolumny</span>
+<span class="kw">SELECT</span> <span class="col">imie</span>, <span class="col">email</span>, <span class="col">wiek</span>
+<span class="kw">FROM</span> <span class="tbl">uzytkownicy</span>;
+
+<span class="cmt">-- Aliasy kolumn (AS)</span>
+<span class="kw">SELECT</span>
+  <span class="col">imie</span>  <span class="kw">AS</span> <span class="col">name</span>,
+  <span class="col">email</span> <span class="kw">AS</span> <span class="col">mail</span>,
+  <span class="col">wiek</span>  <span class="kw">AS</span> <span class="col">age</span>
+<span class="kw">FROM</span> <span class="tbl">uzytkownicy</span>;
+
+<span class="cmt">-- Kolumna obliczana</span>
+<span class="kw">SELECT</span>
+  <span class="col">imie</span>,
+  <span class="col">cena</span> <span class="op">*</span> <span class="num">1.23</span> <span class="kw">AS</span> <span class="col">cena_z_vat</span>
+<span class="kw">FROM</span> <span class="tbl">produkty</span>;</pre>
+      </div>
+    </div>
+    <div>
+      <div class="code-block">
+        <div class="code-bar"><div class="code-dots"><div class="code-dot" style="background:#ff5f57"></div><div class="code-dot" style="background:#febc2e"></div><div class="code-dot" style="background:#28c840"></div></div><span>WHERE — filtrowanie</span></div>
+        <pre><span class="cmt">-- Proste warunki</span>
+<span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> <span class="tbl">uzytkownicy</span>
+<span class="kw">WHERE</span> <span class="col">wiek</span> <span class="op">></span> <span class="num">18</span>;
+
+<span class="cmt">-- Wiele warunków</span>
+<span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> <span class="tbl">uzytkownicy</span>
+<span class="kw">WHERE</span> <span class="col">wiek</span> <span class="op">></span> <span class="num">18</span> <span class="kw">AND</span> <span class="col">wiek</span> <span class="op">&lt;</span> <span class="num">65</span>;
+
+<span class="cmt">-- IN — jedna z wartości</span>
+<span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> <span class="tbl">produkty</span>
+<span class="kw">WHERE</span> <span class="col">kategoria</span> <span class="kw">IN</span> (<span class="str">'buty'</span>, <span class="str">'kurtki'</span>);
+
+<span class="cmt">-- BETWEEN — zakres</span>
+<span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> <span class="tbl">zamowienia</span>
+<span class="kw">WHERE</span> <span class="col">kwota</span> <span class="kw">BETWEEN</span> <span class="num">100</span> <span class="kw">AND</span> <span class="num">500</span>;
+
+<span class="cmt">-- LIKE — wzorzec tekstowy</span>
+<span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> <span class="tbl">uzytkownicy</span>
+<span class="kw">WHERE</span> <span class="col">imie</span> <span class="kw">LIKE</span> <span class="str">'Jan%'</span>;
+<span class="cmt">-- % = dowolna liczba znaków</span>
+<span class="cmt">-- _ = dokładnie jeden znak</span>
+
+<span class="cmt">-- IS NULL</span>
+<span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> <span class="tbl">uzytkownicy</span>
+<span class="kw">WHERE</span> <span class="col">telefon</span> <span class="kw">IS NULL</span>;</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-box blue" style="margin-top:4px;">
+    <strong>Kolejność klauzul SELECT:</strong> SELECT → FROM → WHERE → GROUP BY → HAVING → ORDER BY → LIMIT. Musisz je pisać dokładnie w tej kolejności!
+  </div>
+</section>
+
+<!-- ===================== JOIN ===================== -->
+<section class="section" id="joins">
+  <div class="section-header">
+    <div class="section-num">04</div>
+    <div>
+      <div class="section-title">JOIN — łączenie tabel</div>
+      <div class="section-sub">pobieranie danych z wielu tabel naraz</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="join-grid">
+
+      <div class="join-card">
+        <div class="join-title">INNER JOIN</div>
+        <div class="join-circles">
+          <div class="circle-left join-dim"></div>
+          <div class="join-overlap hl"></div>
+          <div class="circle-right join-dim"></div>
+        </div>
+        <div class="join-desc">Tylko wiersze które mają dopasowanie w obu tabelach. Najpopularniejszy.</div>
+      </div>
+
+      <div class="join-card">
+        <div class="join-title">LEFT JOIN</div>
+        <div class="join-circles">
+          <div class="circle-left hl-full"></div>
+          <div class="join-overlap hl"></div>
+          <div class="circle-right join-dim"></div>
+        </div>
+        <div class="join-desc">Wszystko z lewej tabeli + dopasowania z prawej. Brak dopasowania = NULL.</div>
+      </div>
+
+      <div class="join-card">
+        <div class="join-title">RIGHT JOIN</div>
+        <div class="join-circles">
+          <div class="circle-left join-dim"></div>
+          <div class="join-overlap hl"></div>
+          <div class="circle-right hl-full"></div>
+        </div>
+        <div class="join-desc">Wszystko z prawej tabeli + dopasowania z lewej. Rzadko używany.</div>
+      </div>
+
+      <div class="join-card">
+        <div class="join-title">FULL OUTER JOIN</div>
+        <div class="join-circles">
+          <div class="circle-left hl-full"></div>
+          <div class="join-overlap hl"></div>
+          <div class="circle-right hl-full"></div>
+        </div>
+        <div class="join-desc">Wszystko z obu tabel. Brak dopasowania = NULL po obu stronach.</div>
+      </div>
+
+    </div>
+
+    <div>
+      <div class="code-block">
+        <div class="code-bar"><div class="code-dots"><div class="code-dot" style="background:#ff5f57"></div><div class="code-dot" style="background:#febc2e"></div><div class="code-dot" style="background:#28c840"></div></div><span>przykłady JOIN</span></div>
+        <pre><span class="cmt">-- INNER JOIN: tylko dopasowane</span>
+<span class="kw">SELECT</span>
+  <span class="tbl">u</span>.<span class="col">imie</span>,
+  <span class="tbl">z</span>.<span class="col">kwota</span>,
+  <span class="tbl">z</span>.<span class="col">data</span>
+<span class="kw">FROM</span> <span class="tbl">uzytkownicy</span> <span class="tbl">u</span>
+<span class="kw">INNER JOIN</span> <span class="tbl">zamowienia</span> <span class="tbl">z</span>
+  <span class="kw">ON</span> <span class="tbl">u</span>.<span class="col">id</span> <span class="op">=</span> <span class="tbl">z</span>.<span class="col">uzytkownik_id</span>;
+
+<span class="cmt">-- LEFT JOIN: wszyscy userzy,</span>
+<span class="cmt">-- nawet bez zamówień</span>
+<span class="kw">SELECT</span>
+  <span class="tbl">u</span>.<span class="col">imie</span>,
+  <span class="fn">COUNT</span>(<span class="tbl">z</span>.<span class="col">id</span>) <span class="kw">AS</span> <span class="col">ile_zamowien</span>
+<span class="kw">FROM</span> <span class="tbl">uzytkownicy</span> <span class="tbl">u</span>
+<span class="kw">LEFT JOIN</span> <span class="tbl">zamowienia</span> <span class="tbl">z</span>
+  <span class="kw">ON</span> <span class="tbl">u</span>.<span class="col">id</span> <span class="op">=</span> <span class="tbl">z</span>.<span class="col">uzytkownik_id</span>
+<span class="kw">GROUP BY</span> <span class="tbl">u</span>.<span class="col">id</span>;
+
+<span class="cmt">-- JOIN 3 tabel</span>
+<span class="kw">SELECT</span>
+  <span class="tbl">u</span>.<span class="col">imie</span>,
+  <span class="tbl">z</span>.<span class="col">kwota</span>,
+  <span class="tbl">p</span>.<span class="col">nazwa</span> <span class="kw">AS</span> <span class="col">produkt</span>
+<span class="kw">FROM</span> <span class="tbl">uzytkownicy</span> <span class="tbl">u</span>
+<span class="kw">JOIN</span> <span class="tbl">zamowienia</span> <span class="tbl">z</span>
+  <span class="kw">ON</span> <span class="tbl">u</span>.<span class="col">id</span> <span class="op">=</span> <span class="tbl">z</span>.<span class="col">uzytkownik_id</span>
+<span class="kw">JOIN</span> <span class="tbl">produkty</span> <span class="tbl">p</span>
+  <span class="kw">ON</span> <span class="tbl">z</span>.<span class="col">produkt_id</span> <span class="op">=</span> <span class="tbl">p</span>.<span class="col">id</span>;</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== INSERT UPDATE DELETE ===================== -->
+<section class="section" id="dml">
+  <div class="section-header">
+    <div class="section-num">05</div>
+    <div>
+      <div class="section-title">INSERT / UPDATE / DELETE</div>
+      <div class="section-sub">modyfikacja danych — DML (Data Manipulation Language)</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div>
+      <div class="code-block">
+        <div class="code-bar"><div class="code-dots"><div class="code-dot" style="background:#ff5f57"></div><div class="code-dot" style="background:#febc2e"></div><div class="code-dot" style="background:#28c840"></div></div><span>INSERT</span></div>
+        <pre><span class="cmt">-- Jeden wiersz</span>
+<span class="kw">INSERT INTO</span> <span class="tbl">uzytkownicy</span>
+  (<span class="col">imie</span>, <span class="col">email</span>, <span class="col">wiek</span>)
+<span class="kw">VALUES</span>
+  (<span class="str">'Jan'</span>, <span class="str">'<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="8ee4efe0cee3efe7e2a0ede1e3">[email&#160;protected]</a>'</span>, <span class="num">30</span>);
+
+<span class="cmt">-- Wiele wierszy naraz (wydajniej!)</span>
+<span class="kw">INSERT INTO</span> <span class="tbl">uzytkownicy</span>
+  (<span class="col">imie</span>, <span class="col">email</span>, <span class="col">wiek</span>)
+<span class="kw">VALUES</span>
+  (<span class="str">'Anna'</span>, <span class="str">'<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b9d8d7d7d8f9d4d8d0d597dad6d4">[email&#160;protected]</a>'</span>, <span class="num">25</span>),
+  (<span class="str">'Kuba'</span>, <span class="str">'<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="deb5abbcbf9eb3bfb7b2f0bdb1b3">[email&#160;protected]</a>'</span>, <span class="num">28</span>),
+  (<span class="str">'Ola'</span>,  <span class="str">'<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a6c9cac7e6cbc7cfca88c5c9cb">[email&#160;protected]</a>'</span>,  <span class="num">22</span>);
+
+<span class="cmt">-- INSERT z SELECT (kopiowanie danych)</span>
+<span class="kw">INSERT INTO</span> <span class="tbl">archiwum</span> (<span class="col">imie</span>, <span class="col">email</span>)
+<span class="kw">SELECT</span> <span class="col">imie</span>, <span class="col">email</span>
+<span class="kw">FROM</span> <span class="tbl">uzytkownicy</span>
+<span class="kw">WHERE</span> <span class="col">wiek</span> <span class="op">></span> <span class="num">60</span>;</pre>
+      </div>
+    </div>
+    <div>
+      <div class="code-block">
+        <div class="code-bar"><div class="code-dots"><div class="code-dot" style="background:#ff5f57"></div><div class="code-dot" style="background:#febc2e"></div><div class="code-dot" style="background:#28c840"></div></div><span>UPDATE / DELETE</span></div>
+        <pre><span class="cmt">-- UPDATE — zawsze z WHERE!</span>
+<span class="kw">UPDATE</span> <span class="tbl">uzytkownicy</span>
+<span class="kw">SET</span>
+  <span class="col">imie</span>  <span class="op">=</span> <span class="str">'Janek'</span>,
+  <span class="col">email</span> <span class="op">=</span> <span class="str">'<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="187279767d735875797174367b7775">[email&#160;protected]</a>'</span>
+<span class="kw">WHERE</span> <span class="col">id</span> <span class="op">=</span> <span class="num">5</span>;
+
+<span class="cmt">-- UPDATE z obliczeniem</span>
+<span class="kw">UPDATE</span> <span class="tbl">produkty</span>
+<span class="kw">SET</span> <span class="col">cena</span> <span class="op">=</span> <span class="col">cena</span> <span class="op">*</span> <span class="num">1.1</span>
+<span class="kw">WHERE</span> <span class="col">kategoria</span> <span class="op">=</span> <span class="str">'elektronika'</span>;
+
+<span class="cmt">-- DELETE — zawsze z WHERE!</span>
+<span class="kw">DELETE FROM</span> <span class="tbl">uzytkownicy</span>
+<span class="kw">WHERE</span> <span class="col">id</span> <span class="op">=</span> <span class="num">5</span>;
+
+<span class="cmt">-- Usunięcie wszystkich wierszy</span>
+<span class="kw">DELETE FROM</span> <span class="tbl">sesje</span>;
+<span class="cmt">-- lub szybciej:</span>
+<span class="kw">TRUNCATE TABLE</span> <span class="tbl">sesje</span>;</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-box red">
+    <strong>🚨 NIGDY nie rób UPDATE ani DELETE bez WHERE!</strong> <code>UPDATE uzytkownicy SET haslo = 'abc'</code> zmieni hasło WSZYSTKIM użytkownikom. Przed każdym UPDATE/DELETE najpierw napisz odpowiadający SELECT żeby zobaczyć co zmienisz.
+  </div>
+</section>
+
+<!-- ===================== GROUP BY ===================== -->
+<section class="section" id="group">
+  <div class="section-header">
+    <div class="section-num">06</div>
+    <div>
+      <div class="section-title">GROUP BY i funkcje agregujące</div>
+      <div class="section-sub">grupowanie i obliczenia na zbiorach</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <div class="card-head green">∑ Funkcje agregujące</div>
+        <table class="sql-table">
+          <tr><td><code>COUNT(*)</code></td><td>Liczba wierszy w grupie</td></tr>
+          <tr><td><code>COUNT(kol)</code></td><td>Liczba wierszy gdzie kolumna NOT NULL</td></tr>
+          <tr><td><code>SUM(kol)</code></td><td>Suma wartości</td></tr>
+          <tr><td><code>AVG(kol)</code></td><td>Średnia wartość</td></tr>
+          <tr><td><code>MIN(kol)</code></td><td>Minimalna wartość</td></tr>
+          <tr><td><code>MAX(kol)</code></td><td>Maksymalna wartość</td></tr>
+          <tr><td><code>GROUP_CONCAT</code></td><td>Sklejenie wartości w string (MySQL)</td></tr>
+        </table>
+      </div>
+    </div>
+    <div>
+      <div class="code-block">
+        <div class="code-bar"><div class="code-dots"><div class="code-dot" style="background:#ff5f57"></div><div class="code-dot" style="background:#febc2e"></div><div class="code-dot" style="background:#28c840"></div></div><span>GROUP BY przykłady</span></div>
+        <pre><span class="cmt">-- Ile zamówień ma każdy user?</span>
+<span class="kw">SELECT</span>
+  <span class="col">uzytkownik_id</span>,
+  <span class="fn">COUNT</span>(<span class="op">*</span>)     <span class="kw">AS</span> <span class="col">ile_zamowien</span>,
+  <span class="fn">SUM</span>(<span class="col">kwota</span>)   <span class="kw">AS</span> <span class="col">suma</span>,
+  <span class="fn">AVG</span>(<span class="col">kwota</span>)   <span class="kw">AS</span> <span class="col">srednia</span>,
+  <span class="fn">MAX</span>(<span class="col">kwota</span>)   <span class="kw">AS</span> <span class="col">najwieksze</span>
+<span class="kw">FROM</span> <span class="tbl">zamowienia</span>
+<span class="kw">GROUP BY</span> <span class="col">uzytkownik_id</span>;
+
+<span class="cmt">-- Sprzedaż per kategoria per miesiąc</span>
+<span class="kw">SELECT</span>
+  <span class="col">kategoria</span>,
+  <span class="fn">MONTH</span>(<span class="col">data</span>)  <span class="kw">AS</span> <span class="col">miesiac</span>,
+  <span class="fn">SUM</span>(<span class="col">kwota</span>)   <span class="kw">AS</span> <span class="col">sprzedaz</span>
+<span class="kw">FROM</span> <span class="tbl">zamowienia</span>
+<span class="kw">GROUP BY</span> <span class="col">kategoria</span>, <span class="fn">MONTH</span>(<span class="col">data</span>)
+<span class="kw">ORDER BY</span> <span class="col">miesiac</span>, <span class="col">sprzedaz</span> <span class="kw">DESC</span>;</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== ORDER BY / HAVING ===================== -->
+<section class="section" id="order">
+  <div class="section-header">
+    <div class="section-num">07</div>
+    <div>
+      <div class="section-title">ORDER BY / HAVING / LIMIT</div>
+      <div class="section-sub">sortowanie, filtrowanie grup i ograniczanie wyników</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div>
+      <div class="code-block">
+        <div class="code-bar"><div class="code-dots"><div class="code-dot" style="background:#ff5f57"></div><div class="code-dot" style="background:#febc2e"></div><div class="code-dot" style="background:#28c840"></div></div><span>ORDER BY i LIMIT</span></div>
+        <pre><span class="cmt">-- Sortowanie rosnąco (domyślne)</span>
+<span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> <span class="tbl">produkty</span>
+<span class="kw">ORDER BY</span> <span class="col">cena</span> <span class="kw">ASC</span>;
+
+<span class="cmt">-- Sortowanie malejąco</span>
+<span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> <span class="tbl">produkty</span>
+<span class="kw">ORDER BY</span> <span class="col">cena</span> <span class="kw">DESC</span>;
+
+<span class="cmt">-- Po wielu kolumnach</span>
+<span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> <span class="tbl">uzytkownicy</span>
+<span class="kw">ORDER BY</span> <span class="col">nazwisko</span> <span class="kw">ASC</span>, <span class="col">imie</span> <span class="kw">ASC</span>;
+
+<span class="cmt">-- LIMIT — tylko N wierszy</span>
+<span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> <span class="tbl">produkty</span>
+<span class="kw">ORDER BY</span> <span class="col">sprzedaz</span> <span class="kw">DESC</span>
+<span class="kw">LIMIT</span> <span class="num">10</span>;  <span class="cmt">-- top 10!</span>
+
+<span class="cmt">-- LIMIT + OFFSET (paginacja)</span>
+<span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> <span class="tbl">produkty</span>
+<span class="kw">ORDER BY</span> <span class="col">id</span>
+<span class="kw">LIMIT</span> <span class="num">10</span> <span class="kw">OFFSET</span> <span class="num">20</span>;
+<span class="cmt">-- strona 3 (po 10 na stronę)</span></pre>
+      </div>
+    </div>
+    <div>
+      <div class="code-block">
+        <div class="code-bar"><div class="code-dots"><div class="code-dot" style="background:#ff5f57"></div><div class="code-dot" style="background:#febc2e"></div><div class="code-dot" style="background:#28c840"></div></div><span>HAVING — filtrowanie po agregacji</span></div>
+        <pre><span class="cmt">-- WHERE filtruje WIERSZE</span>
+<span class="cmt">-- HAVING filtruje GRUPY (po GROUP BY)</span>
+
+<span class="cmt">-- Userzy z więcej niż 5 zamówieniami</span>
+<span class="kw">SELECT</span>
+  <span class="col">uzytkownik_id</span>,
+  <span class="fn">COUNT</span>(<span class="op">*</span>) <span class="kw">AS</span> <span class="col">ile</span>
+<span class="kw">FROM</span> <span class="tbl">zamowienia</span>
+<span class="kw">GROUP BY</span> <span class="col">uzytkownik_id</span>
+<span class="kw">HAVING</span> <span class="fn">COUNT</span>(<span class="op">*</span>) <span class="op">></span> <span class="num">5</span>;
+
+<span class="cmt">-- WHERE + HAVING razem</span>
+<span class="kw">SELECT</span>
+  <span class="col">uzytkownik_id</span>,
+  <span class="fn">SUM</span>(<span class="col">kwota</span>) <span class="kw">AS</span> <span class="col">suma</span>
+<span class="kw">FROM</span> <span class="tbl">zamowienia</span>
+<span class="kw">WHERE</span> <span class="col">data</span> <span class="op">></span> <span class="str">'2024-01-01'</span>
+<span class="cmt">-- WHERE: tylko zamówienia z 2024</span>
+<span class="kw">GROUP BY</span> <span class="col">uzytkownik_id</span>
+<span class="kw">HAVING</span> <span class="fn">SUM</span>(<span class="col">kwota</span>) <span class="op">></span> <span class="num">1000</span>
+<span class="cmt">-- HAVING: tylko sumy > 1000</span>
+<span class="kw">ORDER BY</span> <span class="col">suma</span> <span class="kw">DESC</span>;</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-box green" style="margin-top:8px;">
+    <strong>WHERE vs HAVING:</strong> WHERE działa na surowych wierszach PRZED grupowaniem. HAVING działa na grupach PO grupowaniu. Nie możesz użyć <code>COUNT(*) > 5</code> w WHERE — to musi być w HAVING!
+  </div>
+
+  <div class="card" style="margin-top:16px;">
+    <div class="card-head purple">📋 Pełna kolejność klauzul SQL</div>
+    <div class="diagram" style="padding:20px;">
+<span class="hl">SELECT</span>   <span class="hl2">kolumny</span>          <span class="dim">-- 6. co pokazać</span>
+<span class="hl">FROM</span>     <span class="hl4">tabela</span>           <span class="dim">-- 1. skąd</span>
+<span class="hl">JOIN</span>     <span class="hl4">tabela2</span>          <span class="dim">-- 2. łącz z</span>
+  <span class="hl">ON</span>   <span class="hl2">warunek</span>
+<span class="hl">WHERE</span>    <span class="hl3">warunek</span>          <span c
