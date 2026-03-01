@@ -530,7 +530,7 @@ function Viewer({ module, onBack }) {
       </div>
       <iframe
         className="viewer-iframe"
-        src={`/pages/${module.file}`}
+        src={`${import.meta.env.BASE_URL}pages/${module.file}`}
         title={module.name}
       />
     </div>
