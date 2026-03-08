@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>App — Setup od zera</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:        #f5f6f8;
+  --bd:        #e4e7ed;
+  --tx:        #111827;
+  --tx2:       #4b5563;
+  --mt:        #9ca3af;
+  --blue:      #2563eb;
+  --blue-l:    #eff6ff;
+  --green:     #16a34a;
+  --green-l:   #f0fdf4;
+  --teal:      #0d9488;
+  --violet:    #7c3aed;
+  --violet-l:  #f5f3ff;
+  --amber:     #d97706;
+  --amber-l:   #fffbeb;
+  --rose:      #e11d48;
+  --rose-l:    #fff1f2;
+  --orange:    #ea580c;
+  --terminal:  #0d1117;
+  --t-green:   #3fb950;
+  --t-blue:    #79c0ff;
+  --t-yellow:  #e3b341;
+  --t-comment: #8b949e;
+  --t-white:   #c9d1d9;
+  --t-pink:    #ff7b72;
+  --t-orange:  #ffa657;
+  --t-purple:  #d2a8ff;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--tx); font-family: 'Sora', sans-serif; line-height: 1.6; }
+
+/* ── HEADER ── */
+.hdr {
+  background: var(--terminal);
+  padding: 48px 80px 40px;
+  position: relative;
+  overflow: hidden;
+}
+.hdr::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 80% at 0% 100%, rgba(63,185,80,.06), transparent 60%),
+    radial-gradient(ellipse 50% 60% at 100% 0%, rgba(121,192,255,.05), transparent 55%);
+  pointer-events: none;
+}
+.hdr-inner { max-width: 960px; margin: 0 auto; position: relative; }
+.hdr-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .7rem;
+  color: var(--t-comment);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.hdr-eyebrow::before { content: '>'; color: var(--t-green); font-weight: 700; }
+h1 {
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -1.5px;
+  line-height: 1;
+  color: #fff;
+  margin-bottom: 10px;
+}
+h1 span { color: var(--t-green); }
+.hdr-sub {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .8rem;
+  color: var(--t-comment);
+  margin-bottom: 24px;
+  line-height: 1.9;
+}
+.hdr-sub em { color: var(--t-yellow); font-style: normal; }
+.tech-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.tech {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .62rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 4px;
+  border: 1px solid;
+}
+
+/* ── STEP NAV ── */
+.step-nav {
+  background: #fff;
+  border-bottom: 1px solid var(--bd);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  padding: 0 80px;
+  display: flex;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.step-nav::-webkit-scrollbar { display: none; }
+.step-nav a {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .62rem;
+  font-weight: 600;
+  color: var(--mt);
+  text-decoration: none;
+  padding: 11px 14px;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  transition: all .15s;
+}
+.step-nav a:hover { color: var(--blue); border-bottom-color: var(--blue); }
+
+/* ── MAIN ── */
+.main { max-width: 960px; margin: 0 auto; padding: 40px 24px 100px; }
+
+/* ── STEP BLOCK ── */
+.step-block { margin-bottom: 44px; animation: fadeUp .4s ease backwards; }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.step-block:nth-child(1)  { animation-delay: .04s; }
+.step-block:nth-child(2)  { animation-delay: .08s; }
+.step-block:nth-child(3)  { animation-delay: .12s; }
+.step-block:nth-child(4)  { animation-delay: .16s; }
+.step-block:nth-child(5)  { animation-delay: .20s; }
+.step-block:nth-child(6)  { animation-delay: .24s; }
+.step-block:nth-child(7)  { animation-delay: .28s; }
+.step-block:nth-child(8)  { animation-delay: .32s; }
+.step-block:nth-child(9)  { animation-delay: .36s; }
+.step-block:nth-child(10) { animation-delay: .40s; }
+.step-block:nth-child(11) { animation-delay: .44s; }
+.step-block:nth-child(12) { animation-delay: .48s; }
+
+.step-head { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+.step-num {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .75rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  color: #fff;
+}
+.step-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .55rem;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+.step-title { font-size: 1.1rem; font-weight: 700; letter-spacing: -.3px; }
+
+/* ── TERMINAL BLOCK ── */
+.terminal {
+  background: var(--terminal);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0,0,0,.18);
+}
+.term-bar {
+  background: #161b22;
+  padding: 9px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid #30363d;
+}
+.term-dots { display: flex; gap: 5px; }
+.term-dot { width: 11px; height: 11px; border-radius: 50%; }
+.term-title {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .62rem;
+  color: #8b949e;
+  text-align: center;
+}
+.term-copy {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .6rem;
+  color: #8b949e;
+  cursor: pointer;
+  padding: 2px 8px;
+  border-radius: 3px;
+  border: 1px solid #30363d;
+  background: transparent;
+  transition: all .15s;
+}
+.term-copy:hover  { color: #c9d1d9; border-color: #6e7681; }
+.term-copy.copied { color: var(--t-green); border-color: var(--t-green); }
+
+.term-body { padding: 16px 20px; display: flex; flex-direction: column; gap: 2px; }
+.cmd-line {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .82rem;
+  line-height: 1.7;
+}
+.cmd-prompt { color: var(--t-green); flex-shrink: 0; font-weight: 700; user-select: none; }
+.cmd-text   { color: var(--t-white); flex: 1; word-break: break-all; }
+.cmd-comment {
+  color: var(--t-comment);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .74rem;
+  padding-left: 20px;
+  user-select: none;
+  margin-top: 7px;
+}
+.cmd-comment:first-child { margin-top: 0; }
+.cmd-output {
+  color: #8b949e;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .74rem;
+  padding-left: 20px;
+  line-height: 1.7;
+}
+/* terminal syntax */
+.c { color: var(--t-blue); }    /* command */
+.a { color: var(--t-yellow); }  /* arg / value */
+.s { color: var(--t-pink); }    /* string */
+.f { color: var(--t-orange); }  /* flag */
+
+/* ── FILE SNIPPET ── */
+.file-snippet {
+  background: var(--terminal);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+.file-bar {
+  background: #161b22;
+  padding: 7px 14px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .62rem;
+  color: #8b949e;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-bottom: 1px solid #30363d;
+}
+
+/*
+  Code is rendered as individual <div class="ln"> lines
+  so every line preserves indentation without wrapping.
+  white-space: pre keeps spaces exactly.
+*/
+.code-body {
+  padding: 14px 0;
+  overflow-x: auto;
+}
+.code-body::-webkit-scrollbar { height: 4px; }
+.code-body::-webkit-scrollbar-thumb { background: #30363d; border-radius: 2px; }
+
+.ln {
+  display: block;
+  padding: 0 18px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .78rem;
+  line-height: 1.78;
+  white-space: pre;
+  color: var(--t-white);
+}
+.ln:hover { background: rgba(255,255,255,.025); }
+/* empty spacer line */
+.ln.gap { line-height: 1; padding-top: 6px; padding-bottom: 2px; }
+
+/* code syntax colors */
+.kw { color: #ff7b72; }           /* keyword: import export const */
+.st { color: #a5d6ff; }           /* string */
+.cm { color: #8b949e; font-style: italic; } /* comment */
+.ty { color: #ffa657; }           /* type / bool: true false */
+.pr { color: #79c0ff; }           /* property / css-var */
+.fn { color: #d2a8ff; }           /* function call */
+.nu { color: #79c0ff; }           /* number */
+.op { color: #c9d1d9; }           /* operator / punctuation */
+.tg { color: #7ee787; }           /* JSX tag */
+
+/* ── EXPLAIN BOX ── */
+.explain {
+  background: #fff;
+  border: 1px solid var(--bd);
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin-top: 10px;
+  font-size: .85rem;
+  line-height: 1.85;
+  color: var(--tx2);
+}
+.explain strong { color: var(--tx); }
+.explain code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .78rem;
+  background: var(--blue-l);
+  color: var(--blue);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+/* ── ALERT ── */
+.alert {
+  padding: 12px 16px;
+  border-radius: 7px;
+  border-left: 3px solid;
+  font-size: .83rem;
+  line-height: 1.85;
+  margin-top: 10px;
+}
+.alert strong { font-weight: 600; }
+.alert code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .78rem;
+  background: rgba(0,0,0,.06);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+.alert-lbl {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .55rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 4px;
+}
+.al-blue   { background: var(--blue-l);   border-color: var(--blue);   color: var(--tx2); }
+.al-blue   .alert-lbl { color: var(--blue);   }
+.al-green  { background: var(--green-l);  border-color: var(--green);  color: var(--tx2); }
+.al-green  .alert-lbl { color: var(--green);  }
+.al-amber  { background: var(--amber-l);  border-color: var(--amber);  color: var(--tx2); }
+.al-amber  .alert-lbl { color: var(--amber);  }
+.al-rose   { background: var(--rose-l);   border-color: var(--rose);   color: var(--tx2); }
+.al-rose   .alert-lbl { color: var(--rose);   }
+.al-violet { background: var(--violet-l); border-color: var(--violet); color: var(--tx2); }
+.al-violet .alert-lbl { color: var(--violet); }
+
+/* ── GRID ── */
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+/* ── FOOTER ── */
+footer {
+  background: var(--terminal);
+  padding: 20px 80px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .62rem;
+  color: #8b949e;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+@media (max-width: 700px) {
+  .g2       { grid-template-columns: 1fr; }
+  .hdr      { padding: 40px 20px; }
+  .step-nav { padding: 0 16px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════ -->
+<!--  HEADER                                          -->
+<!-- ════════════════════════════════════════════════ -->
+<header class="hdr">
+  <div class="hdr-inner">
+    <div class="hdr-eyebrow">Tworzenie projektu React od zera · Stack</div>
+    <h1>Setup<br><span>od zera do projektu</span></h1>
+    <div class="hdr-sub">
+      Pełna lista komend w kolejności — <em>kopiuj i wklejaj</em> po kolei.<br>
+      Zakładamy: masz <em>Node.js 18+</em> i <em>yarn</em> zainstalowane.
+    </div>
+    <div class="tech-row">
+      <span class="tech" style="color:#f97316;border-color:#f9731640;background:#f9731610">Vite</span>
+      <span class="tech" style="color:#3178c6;border-color:#3178c640;background:#3178c610">TypeScript</span>
+      <span class="tech" style="color:#06b6d4;border-color:#06b6d440;background:#06b6d410">Tailwind v4</span>
+      <span class="tech" style="color:#e2e8f0;border-color:#ffffff30;background:#ffffff08">shadcn/ui</span>
+      <span class="tech" style="color:#3fb950;border-color:#3fb95040;background:#3fb95010">Husky</span>
+      <span class="tech" style="color:#e3b341;border-color:#e3b34140;background:#e3b34110">ESLint</span>
+      <span class="tech" style="color:#ff7b72;border-color:#ff7b7240;background:#ff7b7210">Prettier</span>
+      <span class="tech" style="color:#d2a8ff;border-color:#d2a8ff40;background:#d2a8ff10">Vitest</span>
+    </div>
+  </div>
+</header>
+
+<nav class="step-nav">
+  <a href="#s1">① Node &amp; Yarn</a>
+  <a href="#s2">② Vite + React + TS</a>
+  <a href="#s3">③ Tailwind v4</a>
+  <a href="#s4">④ Aliasy @/</a>
+  <a href="#s5">⑤ shadcn/ui</a>
+  <a href="#s6">⑥ Zależności</a>
+  <a href="#s7">⑦ ESLint</a>
+  <a href="#s8">⑧ Prettier</a>
+  <a href="#s9">⑨ Vitest</a>
+  <a href="#s10">⑩ Husky</a>
+  <a href="#s11">⑪ Foldery</a>
+  <a href="#s12">⑫ Start!</a>
+</nav>
+
+<main class="main">
+
+<!-- ════════════════════════════════════════════════ -->
+<!--  STEP 1 — Node & Yarn                            -->
+<!-- ════════════════════════════════════════════════ -->
+<div class="step-block" id="s1">
+  <div class="step-head">
+    <div class="step-num" style="background:#16a34a">1</div>
+    <div class="step-info">
+      <div class="step-tag" style="color:var(--green)">Wymagania</div>
+      <div class="step-title">Sprawdź Node.js i Yarn</div>
+    </div>
+  </div>
+
+  <div class="terminal">
+    <div class="term-bar">
+      <div class="term-dots">
+        <div class="term-dot" style="background:#ff5f57"></div>
+        <div class="term-dot" style="background:#febc2e"></div>
+        <div class="term-dot" style="background:#28c840"></div>
+      </div>
+      <div class="term-title">terminal</div>
+      <button class="term-copy" onclick="copyBlock(this,'blk1')">kopiuj</button>
+    </div>
+    <div class="term-body" id="blk1">
+      <div class="cmd-comment"># sprawdź Node.js — musi być 18+</div>
+      <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd-text"><span class="c">node</span> <span class="f">--version</span></span></div>
+      <div class="cmd-output">v20.11.0</div>
+      <div class="cmd-comment"># sprawdź yarn</div>
+      <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd-text"><span class="c">yarn</span> <span class="f">--version</span></span></div>
+      <div class="cmd-output">1.22.22  ← yarn classic (v1) jest OK</div>
+      <div class="cmd-comment"># jeśli nie masz yarn:</div>
+      <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd-text"><span class="c">npm</span> install <span class="f">-g</span> yarn</span></div>
+    </div>
+  </div>
+
+  <div class="alert al-amber">
+    <span class="alert-lbl">⚠ Uwaga — yarn dlx nie działa w yarn v1</span>
+    Yarn classic (v1.x) nie ma komendy <code>dlx</code> — to yarn v2+.
+    Wszędzie gdzie dokumentacja mówi <code>yarn dlx</code>, używamy <code>npx --yes</code>.
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════ -->
+<!--  STEP 2 — Vite                                   -->
+<!-- ════════════════════════════════════════════════ -->
+<div class="step-block" id="s2">
+  <div class="step-head">
+    <div class="step-num" style="background:#f97316">2</div>
+    <div class="step-info">
+      <div class="step-tag" style="color:var(--orange)">Fundament</div>
+      <div class="step-title">Utwórz projekt Vite + React + TypeScript</div>
+    </div>
+  </div>
+
+  <div class="terminal">
+    <div class="term-bar">
+      <div class="term-dots">
+        <div class="term-dot" style="background:#ff5f57"></div>
+        <div class="term-dot" style="background:#febc2e"></div>
+        <div class="term-dot" style="background:#28c840"></div>
+      </div>
+      <div class="term-title">terminal</div>
+      <button class="term-copy" onclick="copyBlock(this,'blk2')">kopiuj</button>
+    </div>
+    <div class="term-body" id="blk2">
+      <div class="cmd-comment"># utwórz projekt — zamień "admin-panel" na swoją nazwę</div>
+      <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd-text"><span class="c">yarn</span> create vite <span class="s">admin-panel</span> <span class="f">--template</span> <span class="a">react-ts</span></span></div>
+      <div class="cmd-comment"># wejdź do folderu i zainstaluj zależności</div>
+      <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd-text"><span class="c">cd</span> <span class="s">admin-panel</span></span></div>
+      <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd-text"><span class="c">yarn</span> install</span></div>
+      <div class="cmd-comment"># sprawdź że działa</div>
+      <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd-text"><span class="c">yarn</span> dev</span></div>
+      <div class="cmd-output">VITE v6.x  ready  →  http://localhost:5173/</div>
+    </div>
+  </div>
+
+  <div class="explain">
+    <strong>Co wygenerował Vite:</strong> <code>index.html</code>, <code>src/main.tsx</code>, <code>src/App.tsx</code>, <code>vite.config.ts</code>,
+    <code>tsconfig.json</code>, <code>tsconfig.app.json</code>.
+    Zwróć uwagę na <strong>dwa pliki tsconfig</strong> — oba trzeba edytować dodając aliasy.
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════ -->
+<!--  STEP 3 — Tailwind v4                            -->
+<!-- ════════════════════════════════════════════════ -->
+<div class="step-block" id="s3">
+  <div class="step-head">
+    <div class="step-num" style="background:#06b6d4">3</div>
+    <div class="step-info">
+      <div class="step-tag" style="color:var(--teal)">Style</div>
+      <div class="step-title">Tailwind CSS v4 — nowy, prostszy sposób</div>
+    </div>
+  </div>
+
+  <div class="alert al-blue" style="margin-bottom:10px">
+    <span class="alert-lbl">ℹ Tailwind v4 od stycznia 2025</span>
+    <code>npm install tailwindcss</code> instaluje teraz <strong>v4 domyślnie</strong>.
+    W v4 nie ma <code>tailwind.config.js</code> ani komendy <code>npx tailwindcss init</code> — stąd błąd
+    <em>"could not determine executable to run"</em>. Konfiguracja przeniosła się do CSS i pluginu Vite.
+  </div>
+
+  <div class="terminal">
+    <div class="term-bar">
+      <div class="term-dots">
+        <div class="term-dot" style="background:#ff5f57"></div>
+        <div class="term-dot" style="background:#febc2e"></div>
+        <div class="term-dot" style="background:#28c840"></div>
+      </div>
+      <div class="term-title">terminal</div>
+      <button class="term-copy" onclick="copyBlock(this,'blk3')">kopiuj</button>
+    </div>
+    <div class="term-body" id="blk3">
+      <div class="cmd-comment"># zainstaluj Tailwind v4 + oficjalny plugin dla Vite</div>
+      <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd-text"><span class="c">yarn</span> add <span class="f">-D</span> tailwindcss @tailwindcss/vite</span></div>
+      <div class="cmd-comment"># NIE uruchamiaj "npx tailwindcss init" — to komenda v3, w v4 nie istnieje</div>
+    </div>
+  </div>
+
+  <div class="file-snippet">
+    <div class="file-bar">📄 vite.config.ts — dodaj import i plugin tailwindcss()</div>
+    <div class="code-body">
+      <div class="ln"><span class="kw">import</span> <span class="op">{</span> defineConfig <span class="op">}</span> <span class="kw">from</span> <span class="st">'vite'</span></div>
+      <div class="ln"><span class="kw">import</span> react       <span class="kw">from</span> <span class="st">'@vitejs/plugin-react'</span></div>
+      <div class="ln"><span class="kw">import</span> tailwindcss <span class="kw">from</span> <span class="st">'@tailwindcss/vite'</span>   <span class="cm">// ← dodaj</span></div>
+      <div class="ln gap"></div>
+      <div class="ln"><span class="kw">export default</span> <span class="fn">defineConfig</span><span class="op">({</span></div>
+      <div class="ln">  plugins<span class="op">:</span> <span class="op">[</span><span class="fn">react</span><span class="op">(),</span> <span class="fn">tailwindcss</span><span class="op">()],</span>  <span class="cm">// ← dodaj tailwindcss()</span></div>
+      <div class="ln"><span class="op">})</span></div>
+    </div>
+  </div>
+
+  <div class="file-snippet">
+    <div class="file-bar">📄 src/index.css — zastąp całą zawartość</div>
+    <div class="code-body">
+      <div class="ln"><span class="kw">@import</span> <span class="st">"tailwindcss"</span><span class="op">;</span>  <span class="cm">/* jedna linia zamiast trzech @tailwind */</span></div>
+      <div class="ln gap"></div>
+      <div class="ln"><span class="cm">/* CSS zmienne — shadcn uzupełni je automatycznie podczas init */</span></div>
+      <div class="ln"><span class="ty">:root</span> <span class="op">{</span></div>
+      <div class="ln">  <span class="pr">--background</span><span class="op">:</span> <span class="nu">0 0% 100%</span><span class="op">;</span></div>
+      <div class="ln">  <span class="pr">--foreground</span><span class="op">:</span> <span class="nu">222.2 84% 4.9%</span><span class="op">;</span></div>
+      <div class="ln">  <span class="pr">--primary</span><span class="op">:</span>    <span class="nu">221.2 83.2% 53.3%</span><span class="op">;</span></div>
+      <div class="ln">  <span class="pr">--muted</span><span class="op">:</span>      <span class="nu">210 40% 96.1%</span><span class="op">;</span></div>
+      <div class="ln">  <span class="pr">--border</span><span class="op">:</span>     <span class="nu">214.3 31.8% 91.4%</span><span class="op">;</span></div>
+      <div class="ln"><span class="op">}</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════ -->
+<!--  STEP 4 — Aliasy @/ (PRZED shadcn!)              -->
+<!-- ════════════════════════════════════════════════ -->
+<div class="step-block" id="s4">
+  <div class="step-head">
+    <div class="step-num" style="background:#0d9488">4</div>
+    <div class="step-info">
+      <div class="step-tag" style="color:var(--teal)">Aliasy importów</div>
+      <div class="step-title">Skonfiguruj @/ — zrób to PRZED shadcn</div>
+    </div>
+  </div>
+
+  <div class="alert al-rose" style="margin-bottom:10px">
+    <span class="alert-lbl">⚠ Kolejność krytyczna</span>
+    shadcn podczas <code>init</code> sprawdza czy aliasy istnieją. Brak aliasów = błąd
+    <em>"No import alias found in your tsconfig.json"</em>.
+    Dlatego ten krok jest <strong>przed</strong> shadcn, nie po.
+  </div>
+
+  <div class="terminal">
+    <div class="term-bar">
+      <div class="term-dots">
+        <div class="term-dot" style="background:#ff5f57"></div>
+        <div class="term-dot" style="background:#febc2e"></div>
+        <div class="term-dot" style="background:#28c840"></div>
+      </div>
+      <div class="term-title">terminal</div>
+      <button class="term-copy" onclick="copyBlock(this,'blk4')">kopiuj</button>
+    </div>
+    <div class="term-body" id="blk4">
+      <div class="cmd-comment"># potrzebny żeby path.resolve(__dirname) zadziałało w vite.config.ts</div>
+      <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd-text"><span class="c">yarn</span> add <span class="f">-D</span> @types/node</span></div>
+    </div>
+  </div>
+
+  <div class="file-snippet">
+    <div class="file-bar">📄 tsconfig.json — dodaj compilerOptions z paths</div>
+    <div class="code-body">
+      <div class="ln"><span class="op">{</span></div>
+      <div class="ln">  <span class="pr">"files"</span><span class="op">:</span> <span class="op">[],</span></div>
+      <div class="ln">  <span class="pr">"references"</span><span class="op">:</span> <span class="op">[</span></div>
+      <div class="ln">    <span class="op">{</span> <span class="pr">"path"</span><span class="op">:</span> <span class="st">"./tsconfig.app.json"</span>  <span class="op">},</span></div>
+      <div class="ln">    <span class="op">{</span> <span class="pr">"path"</span><span class="op">:</span> <span class="st">"./tsconfig.node.json"</span> <span class="op">}</span></div>
+      <div class="ln">  <span class="op">],</span></div>
+      <div class="ln">  <span class="pr">"compilerOptions"</span><span class="op">:</span> <span class="op">{</span>  <span class="cm">// ← dodaj całą tę sekcję</span></div>
+      <div class="ln">    <span class="pr">"baseUrl"</span><span class="op">:</span> <span class="st">"."</span><span class="op">,</span></div>
+      <div class="ln">    <span class="pr">"paths"</span><span class="op">:</span> <span class="op">{</span></div>
+      <div class="ln">      <span class="pr">"@/*"</span><span class="op">:</span> <span class="op">[</span><span class="st">"./src/*"</span><span class="op">]</span></div>
+      <div class="ln">    <span class="op">}</span></div>
+      <div class="ln">  <span class="op">}</span></div>
+      <div class="ln"><span class="op">}</span></div>
+    </div>
+  </div>
+
+  <div class="file-snippet">
+    <div class="file-bar">📄 tsconfig.app.json — dopisz baseUrl i paths do istniejącego compilerOptions</div>
+    <div class="code-body">
+      <div class="ln"><span class="op">{</span></div>
+      <div class="ln">  <span class="pr">"compilerOptions"</span><span class="op">:</span> <span class="op">{</span></div>
+      <div class="ln">    <span class="cm">// ... reszta istniejących opcji bez zmian ...</span></div>
+      <div class="ln gap"></div>
+      <div class="ln">    <span class="pr">"baseUrl"</span><span class="op">:</span> <span class="st">"."</span><span class="op">,</span>        <span class="cm">// ← dodaj</span></div>
+      <div class="ln">    <span class="pr">"paths"</span><span class="op">:</span> <span class="op">{</span>            <span class="cm">// ← dodaj</span></div>
+      <div class="ln">      <span class="pr">"@/*"</span><span class="op">:</span> <span class="op">[</span><span class="st">"./src/*"</span><span class="op">]</span></div>
+      <div class="ln">    <span class="op">}</span></div>
+      <div class="ln">  <span class="op">}</span></div>
+      <div class="ln"><span class="op">}</span></div>
+    </div>
+  </div>
+
+  <div class="file-snippet">
+    <div class="file-bar">📄 vite.config.ts — pełna wersja z aliasami i Tailwind v4</div>
+    <div class="code-body">
+      <div class="ln"><span class="kw">import</span> path        <span class="kw">from</span> <span class="st">'path'</span></div>
+      <div class="ln"><span class="kw">import</span> <span class="op">{</span> defineConfig <span class="op">}</span> <span class="kw">from</span> <span class="st">'vite'</span></div>
+      <div class="ln"><span class="kw">import</span> react       <span class="kw">from</span> <span class="st">'@vitejs/plugin-react'</span></div>
+      <div class="ln"><span class="kw">import</span> tailwindcss <span class="kw">from</span> <span class="st">'@tailwindcss/vite'</span></div>
+      <div class="ln gap"></div>
+      <div class="ln"><span class="kw">export default</span> <span class="fn">defineConfig</span><span class="op">({</span></div>
+      <div class="ln">  plugins<span class="op">:</span> <span class="op">[</span><span class="fn">react</span><span class="op">(),</span> <span class="fn">tailwindcss</span><span class="op">()],</span></div>
+      <div class="ln">  resolve<span class="op">:</span> <span class="op">{</span></div>
+      <div class="ln">    alias<span class="op">:</span> <span class="op">{</span></div>
+      <div class="ln">      <span class="st">'@'</span><span class="op">:</span> path<span class="op">.</span><span class="fn">resolve</span><span class="op">(</span>__dirname<span class="op">,</span> <span class="st">'./src'</span><span class="op">),</span></div>
+      <div class="ln">    <span class="op">},</span></div>
+      <div class="ln">  <span class="op">},</span></div>
+      <div class="ln"><span class="op">})</span></div>
+    </div>
+  </div>
+
+  <div class="explain">
+    <strong>Dlaczego dwa pliki tsconfig?</strong>
+    Vite 5+ dzieli konfigurację. <code>tsconfig.json</code> jest "koordynatorem" — shadcn szuka aliasów właśnie tutaj.
+    <code>tsconfig.app.json</code> to właściwa konfiguracja kompilatora — potrzebuje aliasów żeby
+    VSCode rozumiał <code>@/components/…</code> w importach i nie pokazywał czerwonych podkreśleń.
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════ -->
+<!--  STEP 5 — shadcn/ui                              -->
+<!-- ════════════════════════════════════════════════ -->
+<div class="step-block" id="s5">
+  <div class="step-head">
+    <div class="step-num" style="background:#18181b">5</div>
+    <div class="step-info">
+      <div class="step-tag" style="color:var(--mt)">Komponenty UI</div>
+      <div class="step-title">Zainstaluj shadcn/ui</div>
+    </div>
+  </div>
+
+  <div class="terminal">
+    <div class="term-bar">
+      <div class="term-dots">
+        <div class="term-dot" style="background:#ff5f57"></div>
+        <div class="term-dot" style="background:#febc2e"></div>
+        <div class="term-dot" style="background:#28c840"></div>
+      </div>
+      <div class="term-title">terminal</div>
+      <button class="term-copy" onclick="copyBlock(this,'blk5')">kopiuj</button>
+    </div>
+    <div class="term-body" id="blk5">
+      <div class="cmd-comment"># --yes wymusza pobranie bez pytania (obejście błędu na Windows)</div>
+      <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd-text"><span class="c">npx</span> <span class="f">--yes</span> shadcn@latest init</span></div>
+      <div class="cmd-output">✔ Preflight checks.</div>
+      <div class="cmd-output">✔ Verifying framework. Found Vite.</div>
+      <div class="cmd-output">✔ Validating Tailwind CSS config. Found v4.</div>
+      <div class="cmd-output">✔ Validating import alias.          ← teraz przechodzi!</div>
+      <div class="cmd-output">? Which color would you like to use? › <span style="color:var(--t-green)">Zinc</span></div>
+      <div class="cmd-output">✔ Writing components.json</div>
+      <div class="cmd-comment"># dodawaj komponenty pojedynczo gdy potrzebujesz</div>
+      <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd-text"><span class="c">npx</span> shadcn@latest add button</span></div>
+      <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd-text"><span class="c">npx</span> shadcn@latest add dialog dropdown-menu accordion</span></div>
+      <div class="cmd-comment"># clsx + tailwind-merge (potrzebne do funkcji cn())</div>
+      <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd-text"><span class="c">yarn</span> add clsx tailwind-merge</span></div>
+    </div>
+  </div>
+
+  <div class="explain">
+    shadcn <strong>nie instaluje paczki npm</strong> — kopiuje kod komponentu bezpośrednio do <code>src/components/ui/</code>.
+    Twój plik, twój kod — edytuj co chcesz. Każdy komponent dodajesz gdy go potrzebujesz.
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════ -->
+<!--  STEP 6 — Zależności                             -->
+<!-- ════════════════════════════════════════════════ -->
+<div class="step-block" id="s6">
+  <div class="step-head">
+    <div class="step-num" style="background:#2563eb">6</div>
+    <div class="step-info">
+      <div class="step-tag" style="color:var(--blue)">Zależności</div>
+      <div class="step-title">React Router, React Query, Jotai, Axios…</div>
+    </div>
+  </div>
+
+  <div class="terminal">
+    <div class="term-bar">
+      <div class="term-dots">
+        <div class="term-dot" style="background:#ff5f57"></div>
+        <div class="term-dot" style="background:#febc2e"></div>
+        <div class="term-dot" style="background:#28c840"></div>
+      </div>
+      <div class="term-title">terminal</div>
+      <button class="term-copy" onclick="copyBlock(this,'blk6')">kopiuj</button>
+    </div>
+    <div class="term-body" id="blk6">
+      <div class="cmd-comment"># routing</div>
+      <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd-text"><span class="c">yarn</span> add react-router-dom</span></div>
+      <div class="cmd-comment"># fetching i cache danych z API</div>
+      <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd-text"><span class="c">yarn</span> add @tanstack/react-query</span></div>
+      <div class="cmd-comment"># zarządzanie stanem (lekka alternatywa dla Redux)</div>
+      <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd-text"><span class="c">yarn</span> add jotai</span></div>
+      <div class="cmd-comment"># HTTP client</div>
+      <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd-text"><span class="c">yarn</span> add axios</span></div>
+      <div class="cmd-comment"># formularze + walidacja</div>
+      <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd-text"><span class="c">yarn</span> add react-hook-form zod @hookform/resolvers</span></div>
+      <div class="cmd-comment"># ikony</div>
+      <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd-text"><span class="c">yarn</span> add lucide-react</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════ -->
+<!--  STEP 7 — ESLint                                 -->
+<!-- ════════════════════════════════════════════════ -->
+<div class="step-block" id="s7">
+  <div class="step-head">
+    <div class="step-num" style="background:#4338ca">7</div>
+    <div class="step-info">
+      <div class="step-tag" style="color:var(--violet)">Jakość kodu</div>
+      <div class="step-title">ESLint — pilnuje poprawności</div>
+    </div>
+  </div>
+
+  <div class="terminal">
+    <div class="term-bar">
+      <div class="term-dots">
+        <div class="term-dot" style="background:#ff5f57"></div>
+        <div class="term-dot" style="background:#febc2e"></div>
+        <div class="term-dot" style="background:#28c840"></div>
+      </div>
+      <div class="term-title">terminal</div>
+      <button class="term-copy" onclick="copyBlock(this,'blk7')">kopiuj</button>
+    </div>
+    <div class="term-body" id="blk7">
+      <div class="cmd-comment"># ESLint + reguły Airbnb + TypeScript + React hooks</div>
+      <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd-text"><span class="c">yarn</span> add <span class="f">-D</span> eslint @typescript-eslint/eslint-plugin @typescript-eslint/parser eslint-plugin-react eslint-plugin-react-hooks eslint-plugin-import eslint-config-airbnb eslint-config-airbnb-typescript eslint-config-prettier</span></div>
+      <div class="cmd-comment"># vite-plugin-eslint — błędy pojawiają się w terminalu podczas yarn dev</div>
+      <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd-text"><span class="c">yarn</span> add <span class="f">-D</span> vite-plugin-eslint</span></div>
+    </div>
+  </div>
+
+  <div class="file-snippet">
+    <div class="file-bar">📄 .eslintrc.cjs — utwórz w root projektu</div>
+    <div class="code-body">
+      <div class="ln"><span class="kw">module</span><span class="op">.</span>exports <span class="op">=</span> <span class="op">{</span></div>
+      <div class="ln">  root<span class="op">:</span> <span class="ty">true</span><span class="op">,</span></div>
+      <div class="ln">  env<span class="op">:</span> <span class="op">{</span> browser<span class="op">:</span> <span class="ty">true</span><span class="op">,</span> es2020<span class="op">:</span> <span class="ty">true</span> <span class="op">},</span></div>
+      <div class="ln">  extends<span class="op">:</span> <span class="op">[</span></div>
+      <div class="ln">    <span class="st">'eslint:recommended'</span><span class="op">,</span></div>
+      <div class="ln">    <span class="st">'plugin:@typescript-eslint/recommended'</span><span class="op">,</span></div>
+      <div class="ln">    <span class="st">'airbnb'</span><span class="op">,</span></div>
+      <div class="ln">    <span class="st">'airbnb-typescript'</span><span class="op">,</span></div>
+      <div class="ln">    <span class="st">'eslint-config-prettier'</span><span class="op">,</span>  <span class="cm">// musi być ostatni — wyłącza reguły kolidujące z Prettier</span></div>
+      <div class="ln">  <span class="op">],</span></div>
+      <div class="ln">  parser<span class="op">:</span>        <span class="st">'@typescript-eslint/parser'</span><span class="op">,</span></div>
+      <div class="ln">  parserOptions<span class="op">:</span> <span class="op">{</span> project<span class="op">:</span> <span class="st">'./tsconfig.json'</span> <span class="op">},</span></div>
+      <div class="ln">  rules<span class="op">:</span> <span class="op">{</span></div>
+      <div class="ln">    <span class="st">'no-console'</span><span class="op">:</span>                         <span class="op">[</span><span class="st">'warn'</span><span class="op">,</span> <span class="op">{</span> allow<span class="op">:</span> <span class="op">[</span><span class="st">'warn'</span><span class="op">,</span> <span class="st">'error'</span><span class="op">]</span> <span class="op">}],</span></div>
+      <div class="ln">    <span class="st">'react/react-in-jsx-scope'</span><span class="op">:</span>           <span class="st">'off'</span><span class="op">,</span>  <span class="cm">// React 17+ — nie trzeba importować</span></div>
+      <div class="ln">    <span class="st">'react/prop-types'</span><span class="op">:</span>                   <span class="st">'off'</span><span class="op">,</span>  <span class="cm">// używamy TypeScript</span></div>
+      <div class="ln">    <span class="st">'import/prefer-default-export'</span><span class="op">:</span>       <span class="st">'off'</span><span class="op">,</span></div>
+      <div class="ln">    <span class="st">'react/function-component-definition'</span><span class="op">:</span> <span class="op">[</span><span class="nu">2</span><span class="op">,</span> <span class="op">{</span></div>
+      <div class="ln">      namedComponents<span class="op">:</span> <span class="st">'arrow-function'</span><span class="op">,</span>   <span class="cm">// tylko: const X = () => {}</span></div>
+      <div class="ln">    <span class="op">}],</span></div>
+      <div class="ln">  <span class="op">},</span></div>
+      <div class="ln"><span class="op">}</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════ -->
+<!--  STEP 8 — Prettier                               -->
+<!-- ════════════════════════════════════════════════ -->
+<div class="step-block" id="s8">
+  <div class="step-head">
+    <div class="step-num" style="background:#ea580c">8</div>
+    <div class="step-info">
+      <div class="step-tag" style="color:var(--orange)">Formatowanie</div>
+      <div class="step-title">Prettier — automatyczne formatowanie kodu</div>
+    </div>
+  </div>
+
+  <div class="terminal">
+    <div class="term-bar">
+      <div class="term-dots">
+        <div class="term-dot" style="background:#ff5f57"></div>
+        <div class="term-dot" style="background:#febc2e"></div>
+        <div class="term-dot" style="background:#28c840"></div>
+      </div>
+      <div class="term-title">terminal</div>
+      <button class="term-copy" onclick="copyBlock(this,'blk8')">kopiuj</button>
+    </div>
+    <div class="term-body" id="blk8">
+      <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd-text"><span class="c">yarn</span> add <span class="f">-D</span> prettier prettier-plugin-tailwindcss</span></div>
+    </div>
+  </div>
+
+  <div class="file-snippet">
+    <div class="file-bar">📄 .prettierrc — utwórz w root projektu</div>
+    <div class="code-body">
+      <div class="ln"><span class="op">{</span></div>
+      <div class="ln">  <span class="pr">"singleQuote"</span><span class="op">:</span>   <span class="ty">true</span><span class="op">,</span>              <span class="cm">// 'tak' zamiast "tak"</span></div>
+      <div class="ln">  <span class="pr">"semi"</span><span class="op">:</span>          <span class="ty">true</span><span class="op">,</span>              <span class="cm">// średniki na końcu linii</span></div>
+      <div class="ln">  <span class="pr">"tabWidth"</span><span class="op">:</span>      <span class="nu">2</span><span class="op">,</span>                 <span class="cm">// 2 spacje wcięcia</span></div>
+      <div class="ln">  <span class="pr">"printWidth"</span><span class="op">:</span>    <span class="nu">120</span><span class="op">,</span>               <span class="cm">// max 120 znaków w linii</span></div>
+      <div class="ln">  <span class="pr">"trailingComma"</span><span class="op">:</span> <span class="st">"all"</span><span class="op">,</span>             <span class="cm">// przecinek po ostatnim elemencie</span></div>
+      <div class="ln">  <span class="pr">"useTabs"</span><span class="op">:</span>       <span class="ty">false</span><span class="op">,</span></div>
+      <div class="ln">  <span class="pr">"plugins"</span><span class="op">:</span>       <span class="op">[</span><span class="st">"prettier-plugin-tailwindcss"</span><span class="op">]</span>  <span class="cm">// auto-sortuje klasy Tailwinda</span></div>
+      <div class="ln"><span class="op">}</span></div>
+    </div>
+  </div>
+
+  <div class="explain">
+    W VSCode zainstaluj rozszerzenie <strong>Prettier - Code formatter</strong> i dodaj do <code>settings.json</code>:
+    <code>"editor.formatOnSave": true</code> — kod będzie formatowany automatycznie przy każdym Ctrl+S.
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════ -->
+<!--  STEP 9 — Vitest                                 -->
+<!-- ════════════════════════════════════════════════ -->
+<div class="step-block" id="s9">
+  <div class="step-head">
+    <div class="step-num" style="background:#16a34a">9</div>
+    <div class="step-info">
+      <div class="step-tag" style="color:var(--green)">Testy</div>
+      <div class="step-title">Vitest + Testing Library</div>
+    </div>
+  </div>
+
+  <div class="terminal">
+    <div class="term-bar">
+      <div class="term-dots">
+        <div class="term-dot" style="background:#ff5f57"></div>
+        <div class="term-dot" style="background:#febc2e"></div>
+        <div class="term-dot" style="background:#28c840"></div>
+      </div>
+      <div class="term-title">terminal</div>
+      <button class="term-copy" onclick="copyBlock(this,'blk9')">kopiuj</button>
+    </div>
+    <div class="term-body" id="blk9">
+      <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd-text"><span class="c">yarn</span> add <span class="f">-D</span> vitest @testing-library/react @testing-library/jest-dom @testing-library/user-event jsdom</span></div>
+      <div class="cmd-comment"># utwórz folder na testy</div>
+      <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd-text"><span class="c">mkdir</span> src/tests</span></div>
+      <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd-text"><span class="c">touch</span> src/tests/setup.ts</span></div>
+    </div>
+  </div>
+
+  <div class="file-snippet">
+    <div class="file-bar">📄 vitest.config.ts — utwórz w root projektu</div>
+    <div class="code-body">
+      <div class="ln"><span class="kw">import</span> <span class="op">{</span> defineConfig<span class="op">,</span> mergeConfig <span class="op">}</span> <span class="kw">from</span> <span class="st">'vitest/config'</span></div>
+      <div class="ln"><span class="kw">import</span> viteConfig                      <span class="kw">from</span> <span class="st">'./vite.config'</span></div>
+      <div class="ln gap"></div>
+      <div class="ln"><span class="cm">// dziedziczy aliasy @/ z Vite — działają też w testach</span></div>
+      <div class="ln"><span class="kw">export default</span> <span class="fn">mergeConfig</span><span class="op">(</span>viteConfig<span class="op">,</span> <span class="fn">defineConfig</span><span class="op">({</span></div>
+      <div class="ln">  test<span class="op">:</span> <span class="op">{</span></div>
+      <div class="ln">    globals<span class="op">:</span>     <span class="ty">true</span><span class="op">,</span>                       <span class="cm">// describe/it/expect bez importu</span></div>
+      <div class="ln">    environment<span class="op">:</span> <span class="st">'jsdom'</span><span class="op">,</span>                   <span class="cm">// symuluje DOM przeglądarki</span></div>
+      <div class="ln">    setupFiles<span class="op">:</span>  <span class="st">'./src/tests/setup.ts'</span><span class="op">,</span></div>
+      <div class="ln">  <span class="op">},</span></div>
+      <div class="ln"><span class="op">}))</span></div>
+    </div>
+  </div>
+
+  <div class="file-snippet">
+    <div class="file-bar">📄 src/tests/setup.ts</div>
+    <div class="code-body">
+      <div class="ln"><span class="kw">import</span> <span class="st">'@testing-library/jest-dom'</span></div>
+      <div class="ln"><span class="cm">// dzięki temu możesz pisać: expect(el).toBeInTheDocument()</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════ -->
+<!--  STEP 10 — Husky                                 -->
+<!-- ════════════════════════════════════════════════ -->
+<div class="step-block" id="s10">
+  <div class="step-head">
+    <div class="step-num" style="background:#d97706">10</div>
+    <div class="step-info">
+      <div class="step-tag" style="color:var(--amber)">Git Hooks</div>
+      <div class="step-title">Husky + Commitlint</div>
+    </div>
+  </div>
+
+  <div class="terminal">
+    <div class="term-bar">
+      <div class="term-dots">
+        <div class="term-dot" style="background:#ff5f57"></div>
+        <div class="term-dot" style="background:#febc2e"></div>
+        <div class="term-dot" style="background:#28c840"></div>
+      </div>
+      <div class="term-title">terminal</div>
+      <button class="term-copy" onclick="copyBlock(this,'blk10')">kopiuj</button>
+    </div>
+    <div class="term-body" id="blk10">
+      <div class="cmd-comment"># upewnij się że masz git repo</div>
+      <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd-text"><span class="c">git</span> init</span></div>
+      <div class="cmd-comment"># zainstaluj husky + commitlint</div>
+      <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd-text"><span class="c">yarn</span> add <span class="f">-D</span> husky @commitlint/cli @commitlint/config-conventional</span></div>
+      <div class="cmd-comment"># aktywuj husky</div>
+      <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd-text"><span class="c">npx</span> husky install</span></div>
+      <div class="cmd-comment"># hook: blokuje commit gdy testy nie przechodzą</div>
+      <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd-text"><span class="c">npx</span> husky add .husky/pre-commit <span class="s">"yarn run test"</span></span></div>
+      <div class="cmd-comment"># hook: sprawdza format wiadomości commita</div>
+      <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd-text"><span class="c">npx</span> husky add .husky/commit-msg <span class="s">'npx --no -- commitlint --edit "$1"'</span></span></div>
+    </div>
+  </div>
+
+  <div class="file-snippet">
+    <div class="file-bar">📄 commitlint.config.cjs — utwórz w root projektu</div>
+    <div class="code-body">
+      <div class="ln"><span class="kw">module</span><span class="op">.</span>exports <span class="op">=</span> <span class="op">{</span></div>
+      <div class="ln">  extends<span class="op">:</span> <span class="op">[</span><span class="st">'@commitlint/config-conventional'</span><span class="op">],</span></div>
+      <div class="ln"><span class="op">}</span></div>
+      <div class="ln gap"></div>
+      <div class="ln"><span class="cm">// dozwolone formaty:</span></div>
+      <div class="ln"><span class="cm">// feat: dodanie nowej funkcji</span></div>
+      <div class="ln"><span class="cm">// fix: naprawienie błędu</span></div>
+      <div class="ln"><span class="cm">// chore: aktualizacja zależności, konfiguracja</span></div>
+      <div class="ln"><span class="cm">// refactor: przepisanie bez zmiany działania</span></div>
+      <div class="ln"><span class="cm">// docs: dokumentacja</span></div>
+    </div>
+  </div>
+
+  <div class="alert al-green">
+    <span class="alert-lbl">✅ Jak to działa</span>
+    <code>git commit -m "feat: nowa strona"</code> → uruchamia testy → sprawdza format → commit zapisany.
+    Zły format lub padające testy = commit zablokowany.
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════ -->
+<!--  STEP 11 — Struktura folderów                    -->
+<!-- ════════════════════════════════════════════════ -->
+<div class="step-block" id="s11">
+  <div class="step-head">
+    <div class="step-num" style="background:#7c3aed">11</div>
+    <div class="step-info">
+      <div class="step-tag" style="color:var(--violet)">Architektura</div>
+      <div class="step-title">Utwórz strukturę folderów jedną komendą</div>
+    </div>
+  </div>
+
+  <div class="terminal">
+    <div class="term-bar">
+      <div class="term-dots">
+        <div class="term-dot" style="background:#ff5f57"></div>
+        <div class="term-dot" style="background:#febc2e"></div>
+        <div class="term-dot" style="background:#28c840"></div>
+      </div>
+      <div class="term-title">terminal</div>
+      <button class="term-copy" onclick="copyBlock(this,'blk11')">kopiuj</button>
+    </div>
+    <div class="term-body" id="blk11">
+      <div class="cmd-comment"># tworzy całą strukturę src/app/ za jednym razem</div>
+      <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd-text"><span class="c">mkdir</span> <span class="f">-p</span> src/app/{features,layouts/{auth-layout,top-navigation-layout/partials},pages,providers/{auth-provider,theme-provider},services,shared/{assets/{images,styles},components,ui-base/{button,loading},utils/http-client}}</span></div>
+      <div class="cmd-comment"># główne pliki aplikacji</div>
+      <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd-text"><span class="c">touch</span> src/app/app.tsx src/app/routes.tsx</span></div>
+      <div class="cmd-comment"># funkcja cn() — używana wszędzie</div>
+      <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd-text"><span class="c">touch</span> src/app/shared/utils/common.utils.ts</span></div>
+    </div>
+  </div>
+
+  <div class="file-snippet">
+    <div class="file-bar">📄 src/app/shared/utils/common.utils.ts</div>
+    <div class="code-body">
+      <div class="ln"><span class="kw">import</span> <span class="op">{</span> type ClassValue<span class="op">,</span> clsx <span class="op">}</span> <span class="kw">from</span> <span class="st">'clsx'</span></div>
+      <div class="ln"><span class="kw">import</span> <span class="op">{</span> twMerge <span class="op">}</span>             <span class="kw">from</span> <span class="st">'tailwind-merge'</span></div>
+      <div class="ln gap"></div>
+      <div class="ln"><span class="cm">// najczęściej używana funkcja w projekcie</span></div>
+      <div class="ln"><span class="cm">// łączy klasy Tailwinda bez konfliktów</span></div>
+      <div class="ln"><span class="kw">export const</span> <span class="fn">cn</span> <span class="op">=</span> <span class="op">(...</span>inputs<span class="op">:</span> ClassValue<span class="op">[])</span> <span class="op">=&gt;</span></div>
+      <div class="ln">  <span class="fn">twMerge</span><span class="op">(</span><span class="fn">clsx</span><span class="op">(</span>inputs<span class="op">))</span></div>
+      <div class="ln gap"></div>
+      <div class="ln"><span class="cm">// użycie:</span></div>
+      <div class="ln"><span class="cm">// cn('bg-red-500', isActive &amp;&amp; 'bg-blue-500')</span></div>
+      <div class="ln"><span class="cm">// cn('px-4 py-2', className)  ← w komponentach shadcn</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════ -->
+<!--  STEP 12 — Finał                                 -->
+<!-- ════════════════════════════════════════════════ -->
+<div class="step-block" id="s12">
+  <div class="step-head">
+    <div class="step-num" style="background:#e11d48">12</div>
+    <div class="step-info">
+      <div class="step-tag" style="color:var(--rose)">Finał</div>
+      <div class="step-title">Zaktualizuj package.json i odpal projekt</div>
+    </div>
+  </div>
+
+  <div class="file-snippet">
+    <div class="file-bar">📄 package.json — sekcja "scripts"</div>
+    <div class="code-body">
+      <div class="ln"><span class="op">{</span></div>
+      <div class="ln">  <span class="pr">"scripts"</span><span class="op">:</span> <span class="op">{</span></div>
+      <div class="ln">    <span class="pr">"dev"</span><span class="op">:</span>          <span class="st">"vite"</span><span class="op">,</span></div>
+      <div class="ln">    <span class="pr">"build"</span><span class="op">:</span>        <span class="st">"tsc &amp;&amp; vite build"</span><span class="op">,</span></div>
+      <div class="ln">    <span class="pr">"build:prod"</span><span class="op">:</span>   <span class="st">"tsc &amp;&amp; vite build --mode prod"</span><span class="op">,</span></div>
+      <div class="ln">    <span class="pr">"build:test"</span><span class="op">:</span>   <span class="st">"tsc &amp;&amp; vite build --mode test"</span><span class="op">,</span></div>
+      <div class="ln">    <span class="pr">"preview"</span><span class="op">:</span>      <span class="st">"vite preview"</span><span class="op">,</span></div>
+      <div class="ln">    <span class="pr">"test"</span><span class="op">:</span>         <span class="st">"vitest run"</span><span class="op">,</span></div>
+      <div class="ln">    <span class="pr">"test:watch"</span><span class="op">:</span>   <span class="st">"vitest"</span><span class="op">,</span></div>
+      <div class="ln">    <span class="pr">"lint"</span><span class="op">:</span>         <span class="st">"eslint . --max-warnings 0"</span><span class="op">,</span></div>
+      <div class="ln">    <span class="pr">"format"</span><span class="op">:</span>       <span class="st">"prettier . --write"</span><span class="op">,</span></div>
+      <div class="ln">    <span class="pr">"prepare"</span><span class="op">:</span>      <span class="st">"husky install"</span></div>
+      <div class="ln">  <span class="op">}</span></div>
+      <div class="ln"><span class="op">}</span></div>
+    </div>
+  </div>
+
+  <div class="terminal" style="margin-top:10px">
+    <div class="term-bar">
+      <div class="term-dots">
+        <div class="term-dot" style="background:#ff5f57"></div>
+        <div class="term-dot" style="background:#febc2e"></div>
+        <div class="term-dot" style="background:#28c840"></div>
+      </div>
+      <div class="term-title">terminal — sprawdzenie i pierwszy commit</div>
+      <button class="term-copy" onclick="copyBlock(this,'blk12')">kopiuj</button>
+    </div>
+    <div class="term-body" id="blk12">
+      <div class="cmd-comment"># sprawdź TypeScript — zero błędów</div>
+      <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd-text"><span class="c">npx</span> tsc <span class="f">--noEmit</span></span></div>
+      <div class="cmd-comment"># sformatuj cały kod</div>
+      <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd-text"><span class="c">yarn</span> format</span></div>
+      <div class="cmd-comment"># sprawdź linting</div>
+      <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd-text"><span class="c">yarn</span> lint</span></div>
+      <div class="cmd-comment"># pierwszy commit</div>
+      <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd-text"><span class="c">git</span> add .</span></div>
+      <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd-text"><span class="c">git</span> commit <span class="f">-m</span> <span class="s">"chore: initial project setup"</span></span></div>
+      <div class="cmd-output" style="color:var(--t-green)">✔ tests passed</div>
+      <div class="cmd-output" style="color:var(--t-green)">✔ commit message valid</div>
+      <div class="cmd-output" style="color:var(--t-green)">[main] chore: initial project setup</div>
+      <div class="cmd-comment"># uruchom serwer</div>
+      <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd-text"><span class="c">yarn</span> dev</span></div>
+      <div class="cmd-output" style="color:var(--t-green)">  ➜  Local:   http://localhost:5173/  🚀</div>
+    </div>
+  </div>
+
+  <div class="alert al-green">
+    <span class="alert-lbl">🎉 Projekt gotowy</span>
+    Masz pełny stack: Vite + React + TypeScript + <strong>Tailwind v4</strong> + shadcn/ui +
+    React Router + Axios + React Query + Jotai + ESLint + Prettier + Vitest + Husky + aliasy @/.
+  </div>
+
+  <div class="g2" style="margin-top:12px">
+    <div class="alert al-blue">
+      <span class="alert-lbl">💡 Co dalej</span>
+      Tworzysz <code>src/app/app.tsx</code>, <code>routes.tsx</code>, pierwsze layouty i providery.
+      Wzorce są opisane w <em>App-struktura.html</em> i <em>App-drzewo.html</em>.
+    </div>
+    <div class="alert al-violet">
+      <span class="alert-lbl">📦 Opcjonalnie</span>
+      Firebase: <code>yarn add firebase</code>.
+      Mapy: <code>yarn add leaflet react-leaflet</code>.
+      Wykresy: <code>yarn add recharts</code>.
+      Tabele: <code>yarn add @tanstack/react-table</code>.
+    </div>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  <span>App Setup Guide · React + Vite + TypeScript + Tailwind v4 · 12 kroków</span>
+  <span>vitejs.dev · tailwindcss.com · ui.shadcn.com · commitlint.js.org</span>
+</footer>
+
+<script>
+function copyBlock(btn, blockId) {
+  const block = document.getElementById(blockId);
+  if (!block) return;
+  const lines = block.querySelectorAll('.cmd-line');
+  const cmds = Array.from(lines)
+    .map(line => line.querySelector('.cmd-text')?.innerText || '')
+    .filter(Boolean);
+  navigator.clipboard.writeText(cmds.join('\n')).then(() => {
+    btn.textContent = '✓ skopiowano';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'kopiuj';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+</script>
+</body>
+</html>

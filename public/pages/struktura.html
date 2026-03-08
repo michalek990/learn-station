@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>App — Architektura projektu React</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f6f7f9;
+  --s1: #ffffff;
+  --s2: #f0f2f5;
+  --bd: #e4e7ed;
+  --bd2: #c8cdd8;
+  --tx: #111827;
+  --tx2: #4b5563;
+  --mt: #9ca3af;
+
+  --blue: #2563eb;
+  --blue-l: #eff6ff;
+  --blue-b: #bfdbfe;
+  --green: #16a34a;
+  --green-l: #f0fdf4;
+  --green-b: #bbf7d0;
+  --violet: #7c3aed;
+  --violet-l: #f5f3ff;
+  --violet-b: #ddd6fe;
+  --amber: #d97706;
+  --amber-l: #fffbeb;
+  --amber-b: #fde68a;
+  --rose: #e11d48;
+  --rose-l: #fff1f2;
+  --rose-b: #fecdd3;
+  --teal: #0d9488;
+  --teal-l: #f0fdfa;
+  --teal-b: #99f6e4;
+  --orange: #ea580c;
+  --orange-l: #fff7ed;
+  --orange-b: #fed7aa;
+  --pink: #db2777;
+  --pink-l: #fdf2f8;
+  --pink-b: #fbcfe8;
+  --slate: #475569;
+  --slate-l: #f8fafc;
+  --slate-b: #cbd5e1;
+}
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font-family:'Sora',sans-serif;line-height:1.65;overflow-x:hidden}
+
+/* HEADER */
+.hdr{background:#fff;border-bottom:1px solid var(--bd);padding:56px 80px 48px;position:relative;overflow:hidden}
+.hdr::before{content:'';position:absolute;top:-80px;right:-80px;width:400px;height:400px;background:radial-gradient(circle,rgba(37,99,235,.07) 0%,transparent 70%);pointer-events:none}
+.hdr::after{content:'';position:absolute;bottom:-60px;left:20%;width:300px;height:300px;background:radial-gradient(circle,rgba(124,58,237,.05) 0%,transparent 70%);pointer-events:none}
+.hdr-inner{max-width:1100px;margin:0 auto;position:relative}
+.hdr-label{font-family:'IBM Plex Mono',monospace;font-size:.6rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--blue);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.hdr-dot{width:6px;height:6px;border-radius:50%;background:var(--blue);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
+h1{font-size:clamp(2rem,4vw,3.4rem);font-weight:800;letter-spacing:-2px;line-height:1;margin-bottom:12px;color:var(--tx)}
+h1 span{color:var(--blue)}
+.hdr-sub{font-size:.95rem;color:var(--tx2);max-width:600px;line-height:1.9;margin-bottom:24px}
+.badges{display:flex;flex-wrap:wrap;gap:6px}
+.badge{font-family:'IBM Plex Mono',monospace;font-size:.6rem;font-weight:700;padding:4px 10px;border-radius:4px;border:1px solid}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,.97);backdrop-filter:blur(16px);border-bottom:1px solid var(--bd);padding:0 80px;display:flex;gap:0;overflow-x:auto;scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nav a{font-family:'IBM Plex Mono',monospace;font-size:.62rem;font-weight:600;letter-spacing:.4px;color:var(--mt);text-decoration:none;padding:12px 14px;white-space:nowrap;border-bottom:2px solid transparent;transition:all .15s}
+.nav a:hover{color:var(--blue);border-bottom-color:var(--blue)}
+
+/* MAIN */
+.main{max-width:1100px;margin:0 auto;padding:48px 24px 100px}
+
+/* SECTION */
+.section{margin-bottom:72px}
+.sec-head{display:flex;align-items:center;gap:16px;margin-bottom:28px;padding-bottom:20px;border-bottom:2px solid var(--bd)}
+.sec-icon{font-size:1.4rem;width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sec-label{font-family:'IBM Plex Mono',monospace;font-size:.55rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:3px}
+.sec-title{font-size:1.4rem;font-weight:800;letter-spacing:-.5px}
+
+/* GRID */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.g1{display:grid;grid-template-columns:1fr;gap:10px}
+@media(max-width:860px){.g2,.g3{grid-template-columns:1fr}.hdr{padding:40px 20px}.nav{padding:0 16px}.main{padding:32px 16px 80px}}
+
+/* CARD */
+.card{background:#fff;border:1px solid var(--bd);border-radius:10px;overflow:hidden;transition:box-shadow .2s,border-color .2s}
+.card:hover{box-shadow:0 4px 24px rgba(0,0,0,.07);border-color:var(--bd2)}
+.card-head{padding:11px 16px;border-bottom:1px solid var(--bd);font-family:'IBM Plex Mono',monospace;font-size:.62rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;display:flex;align-items:center;gap:8px}
+.card-body{padding:0}
+
+/* FILE ROW — clickable */
+.file-row{display:flex;align-items:flex-start;gap:12px;padding:11px 16px;border-bottom:1px solid var(--bd);cursor:pointer;transition:background .12s;position:relative}
+.file-row:last-child{border-bottom:none}
+.file-row:hover{background:var(--s2)}
+.file-row.active{background:var(--blue-l)}
+.file-name{font-family:'IBM Plex Mono',monospace;font-size:.75rem;font-weight:600;min-width:180px;flex-shrink:0;padding-top:2px;display:flex;align-items:center;gap:6px}
+.file-name .ext{font-size:.6rem;font-weight:700;padding:1px 5px;border-radius:3px;flex-shrink:0}
+.file-short{font-size:.83rem;color:var(--tx2);line-height:1.7;flex:1}
+.file-arrow{color:var(--mt);font-size:.7rem;margin-left:auto;flex-shrink:0;padding-top:3px;transition:transform .15s}
+.file-row.active .file-arrow{transform:rotate(90deg);color:var(--blue)}
+
+/* EXPANDED CONTENT */
+.file-expand{display:none;background:var(--blue-l);border-bottom:1px solid var(--blue-b);padding:14px 16px 16px 16px;animation:slideDown .18s ease}
+@keyframes slideDown{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.file-expand.open{display:block}
+.expand-desc{font-size:.84rem;color:var(--tx2);line-height:1.85;margin-bottom:12px}
+.expand-desc strong{color:var(--tx)}
+
+/* CODE BLOCK */
+.cblock{background:#1e293b;border-radius:7px;overflow:hidden;margin-top:8px}
+.cbar{background:#0f172a;padding:7px 14px;font-family:'IBM Plex Mono',monospace;font-size:.6rem;color:#64748b;display:flex;align-items:center;gap:6px}
+.cdot{width:8px;height:8px;border-radius:50%}
+pre{padding:14px 16px;font-family:'IBM Plex Mono',monospace;font-size:.75rem;line-height:1.8;overflow-x:auto;color:#e2e8f0}
+.kw{color:#c084fc}.st{color:#86efac}.cm{color:#475569;font-style:italic}
+.ty{color:#7dd3fc}.nu{color:#fb923c}.fn{color:#34d399}.at{color:#fbbf24}
+
+/* FOLDER TREE */
+.tree{font-family:'IBM Plex Mono',monospace;font-size:.74rem;background:#fff;border:1px solid var(--bd);border-radius:10px;padding:20px 24px;line-height:2}
+.tree-line{display:flex;align-items:center;gap:0;color:var(--tx2)}
+.tree-line .folder{color:var(--blue);font-weight:600}
+.tree-line .file{color:var(--tx)}
+.tree-line .ts{color:var(--blue)}
+.tree-line .tsx{color:var(--teal)}
+.tree-line .js{color:var(--amber)}
+.tree-line .json{color:var(--green)}
+.tree-line .md{color:var(--slate)}
+.tree-line .sh{color:var(--orange)}
+.tree-line .html{color:var(--rose)}
+.tree-line .css{color:var(--pink)}
+.tree-indent{color:#d1d5db}
+
+/* ALERT BOX */
+.alert{padding:13px 16px;border-radius:7px;border-left:3px solid;font-size:.84rem;line-height:1.85;margin-bottom:10px}
+.alert strong{color:var(--tx)}
+.alert-lbl{font-family:'IBM Plex Mono',monospace;font-size:.55rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;display:block;margin-bottom:4px}
+.al-blue{background:var(--blue-l);border-color:var(--blue);color:var(--tx2)}.al-blue .alert-lbl{color:var(--blue)}
+.al-green{background:var(--green-l);border-color:var(--green);color:var(--tx2)}.al-green .alert-lbl{color:var(--green)}
+.al-amber{background:var(--amber-l);border-color:var(--amber);color:var(--tx2)}.al-amber .alert-lbl{color:var(--amber)}
+.al-violet{background:var(--violet-l);border-color:var(--violet);color:var(--tx2)}.al-violet .alert-lbl{color:var(--violet)}
+.al-rose{background:var(--rose-l);border-color:var(--rose);color:var(--tx2)}.al-rose .alert-lbl{color:var(--rose)}
+
+/* FLOW DIAGRAM */
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:6px;padding:16px;background:#fff;border:1px solid var(--bd);border-radius:8px}
+.flow-box{font-family:'IBM Plex Mono',monospace;font-size:.65rem;font-weight:600;padding:6px 12px;border-radius:5px;text-align:center}
+.flow-arr{color:var(--mt);font-size:.9rem}
+
+/* FOOTER */
+footer{background:#fff;border-top:1px solid var(--bd);padding:24px 80px;font-family:'IBM Plex Mono',monospace;font-size:.62rem;color:var(--mt);display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-inner">
+    <div class="hdr-label"><span class="hdr-dot"></span> Dokumentacja projektu</div>
+    <h1>App<br><span>Architektura React</span></h1>
+    <p class="hdr-sub">Kompletny przewodnik po strukturze projektu — każdy plik, każdy folder, po co jest i jak działa. Kliknij w plik żeby zobaczyć szczegóły i przykładowy kod.</p>
+    <div class="badges">
+      <span class="badge" style="color:var(--violet);border-color:var(--violet-b);background:var(--violet-l)">React 18</span>
+      <span class="badge" style="color:var(--blue);border-color:var(--blue-b);background:var(--blue-l)">TypeScript</span>
+      <span class="badge" style="color:var(--amber);border-color:var(--amber-b);background:var(--amber-l)">Vite</span>
+      <span class="badge" style="color:var(--teal);border-color:var(--teal-b);background:var(--teal-l)">Tailwind</span>
+      <span class="badge" style="color:var(--pink);border-color:var(--pink-b);background:var(--pink-l)">shadcn/ui</span>
+      <span class="badge" style="color:var(--green);border-color:var(--green-b);background:var(--green-l)">Firebase</span>
+      <span class="badge" style="color:var(--orange);border-color:var(--orange-b);background:var(--orange-l)">Husky</span>
+    </div>
+  </div>
+</header>
+
+<nav class="nav">
+  <a href="#root">📁 Root</a>
+  <a href="#github">🔧 .github</a>
+  <a href="#config">⚙️ Konfiguracja</a>
+  <a href="#src">📂 src/app</a>
+  <a href="#providers">🔌 Providers</a>
+  <a href="#services">🌐 Services</a>
+  <a href="#pages">📄 Pages</a>
+  <a href="#shared">🧩 Shared</a>
+  <a href="#flow">🔄 Jak to działa</a>
+</nav>
+
+<main class="main">
+
+  <!-- ROOT FILES -->
+  <section class="section" id="root">
+    <div class="sec-head">
+      <div class="sec-icon" style="background:var(--slate-l);font-size:1.2rem">📁</div>
+      <div>
+        <div class="sec-label" style="color:var(--slate)">Katalog główny</div>
+        <div class="sec-title">Pliki w root projektu</div>
+      </div>
+    </div>
+
+    <div class="g2" style="margin-bottom:10px">
+      <div class="card">
+        <div class="card-head" style="color:var(--amber)">📦 Zarządzanie projektem</div>
+        <div class="card-body">
+
+          <div class="file-row" onclick="toggle(this)">
+            <div class="file-name"><span class="ext" style="background:var(--amber-l);color:var(--amber)">JSON</span>package.json</div>
+            <div class="file-short">Serce projektu — zależności i skrypty</div>
+            <span class="file-arrow">▶</span>
+          </div>
+          <div class="file-expand">
+            <div class="expand-desc"><strong>Serce całego projektu.</strong> Przechowuje listę wszystkich bibliotek, skrypty uruchamiania i metadane projektu. Bez tego pliku projekt nie istnieje.</div>
+            <div class="cblock">
+              <div class="cbar"><span class="cdot" style="background:#ef4444"></span><span class="cdot" style="background:#f59e0b"></span><span class="cdot" style="background:#22c55e"></span> package.json</div>
+              <pre><span class="st">"scripts"</span>: {
+  <span class="st">"dev"</span>: <span class="st">"vite"</span>,              <span class="cm">// yarn dev → odpala localhost:5173</span>
+  <span class="st">"build:prod"</span>: <span class="st">"tsc && vite build --mode prod"</span>,
+  <span class="st">"test"</span>: <span class="st">"vitest run"</span>,        <span class="cm">// yarn test → odpal testy</span>
+  <span class="st">"lint"</span>: <span class="st">"eslint . --max-warnings 0"</span>,
+  <span class="st">"format"</span>: <span class="st">"prettier . --write"</span>, <span class="cm">// formatuj cały kod</span>
+  <span class="st">"storybook"</span>: <span class="st">"storybook dev -p 6006"</span>,
+  <span class="st">"prepare"</span>: <span class="st">"husky install"</span>   <span class="cm">// auto-instalacja git hooków</span>
+}</pre>
+            </div>
+          </div>
+
+          <div class="file-row" onclick="toggle(this)">
+            <div class="file-name"><span class="ext" style="background:var(--amber-l);color:var(--amber)">LOCK</span>yarn.lock</div>
+            <div class="file-short">Zamrożone wersje wszystkich paczek</div>
+            <span class="file-arrow">▶</span>
+          </div>
+          <div class="file-expand">
+            <div class="expand-desc"><strong>Gwarancja że wszyscy w zespole mają te same wersje bibliotek.</strong> Yarn generuje go automatycznie. Nie edytujesz ręcznie — tylko commituj do gita.</div>
+            <div class="cblock">
+              <div class="cbar"><span class="cdot" style="background:#ef4444"></span><span class="cdot" style="background:#f59e0b"></span><span class="cdot" style="background:#22c55e"></span> yarn.lock (fragment)</div>
+              <pre>react@^<span class="nu">18.2.0</span>:
+  version <span class="st">"18.2.0"</span>         <span class="cm">← dokładna wersja</span>
+  resolved <span class="st">"https://registry..."</span>
+  integrity sha512-...    <span class="cm">← checksum bezpieczeństwa</span>
+
+<span class="cm">// Bez tego pliku:</span>
+<span class="cm">// developer A → dostaje react 18.2.0</span>
+<span class="cm">// developer B tydzień później → react 18.3.0</span>
+<span class="cm">// "u mnie działa" 😅</span></pre>
+            </div>
+          </div>
+
+          <div class="file-row" onclick="toggle(this)">
+            <div class="file-name"><span class="ext" style="background:var(--slate-l);color:var(--slate)">RC</span>.npmrc</div>
+            <div class="file-short">Konfiguracja npm — tylko błędy w logach</div>
+            <span class="file-arrow">▶</span>
+          </div>
+          <div class="file-expand">
+            <div class="expand-desc"><strong>Jedna linijka która sprawia że terminal jest czysty.</strong> Bez tego <code>yarn install</code> wypluwałby dziesiątki żółtych ostrzeżeń.</div>
+            <div class="cblock">
+              <div class="cbar"><span class="cdot" style="background:#ef4444"></span><span class="cdot" style="background:#f59e0b"></span><span class="cdot" style="background:#22c55e"></span> .npmrc</div>
+              <pre>loglevel=error
+<span class="cm">// pokazuj TYLKO błędy, nic więcej</span></pre>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head" style="color:var(--blue)">🏗️ Główne pliki aplikacji</div>
+        <div class="card-body">
+
+          <div class="file-row" onclick="toggle(this)">
+            <div class="file-name"><span class="ext" style="background:var(--rose-l);color:var(--rose)">HTML</span>index.html</div>
+            <div class="file-short">Jedyna strona HTML w całej apce (SPA)</div>
+            <span class="file-arrow">▶</span>
+          </div>
+          <div class="file-expand">
+            <div class="expand-desc"><strong>To jest punkt startowy całej aplikacji.</strong> Przeglądarka otwiera ten jeden plik, a React wypełnia pusty <code>&lt;div id="root"&gt;</code> całą aplikacją. Nigdy nie tworzysz innych plików HTML.</div>
+            <div class="cblock">
+              <div class="cbar"><span class="cdot" style="background:#ef4444"></span><span class="cdot" style="background:#f59e0b"></span><span class="cdot" style="background:#22c55e"></span> index.html</div>
+              <pre><span class="kw">&lt;body</span> <span class="at">class</span>=<span class="st">"min-h-screen bg-muted"</span><span class="kw">&gt;</span>
+  <span class="cm">&lt;!-- React wstrzykuje tu całą apkę --&gt;</span>
+  <span class="kw">&lt;div</span> <span class="at">id</span>=<span class="st">"root"</span><span class="kw">&gt;&lt;/div&gt;</span>
+  
+  <span class="cm">&lt;!-- punkt startowy React --&gt;</span>
+  <span class="kw">&lt;script</span> <span class="at">type</span>=<span class="st">"module"</span> <span class="at">src</span>=<span class="st">"/src/index.tsx"</span><span class="kw">&gt;&lt;/script&gt;</span>
+<span class="kw">&lt;/body&gt;</span></pre>
+            </div>
+          </div>
+
+          <div class="file-row" onclick="toggle(this)">
+            <div class="file-name"><span class="ext" style="background:var(--blue-l);color:var(--blue)">TS</span>vite-env.d.ts</div>
+            <div class="file-short">Typy dla zmiennych środowiskowych Vite</div>
+            <span class="file-arrow">▶</span>
+          </div>
+          <div class="file-expand">
+            <div class="expand-desc"><strong>Mówi TypeScriptowi że <code>import.meta.env</code> istnieje.</strong> Bez tego TS podkreślałby zmienne środowiskowe na czerwono. Nie edytujesz — jest automatycznie.</div>
+            <div class="cblock">
+              <div class="cbar"><span class="cdot" style="background:#ef4444"></span><span class="cdot" style="background:#f59e0b"></span><span class="cdot" style="background:#22c55e"></span> vite-env.d.ts</div>
+              <pre><span class="cm">/// &lt;reference types="vite/client" /&gt;</span>
+
+<span class="cm">// dzięki temu TS rozumie:</span>
+<span class="kw">import</span>.meta.env.VITE_API_URL  <span class="cm">// ✅ zna ten typ</span>
+<span class="kw">import</span>.meta.hot              <span class="cm">// ✅ zna ten typ</span></pre>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- CONFIG FILES -->
+    <div class="g3" id="config">
+      <div class="card">
+        <div class="card-head" style="color:var(--violet)">⚙️ TypeScript</div>
+        <div class="card-body">
+          <div class="file-row" onclick="toggle(this)">
+            <div class="file-name"><span class="ext" style="background:var(--blue-l);color:var(--blue)">JSON</span>tsconfig.json</div>
+            <div class="file-short">Konfiguracja TypeScript + aliasy @/</div>
+            <span class="file-arrow">▶</span>
+          </div>
+          <div class="file-expand">
+            <div class="expand-desc"><strong>Mówi TypeScriptowi jak sprawdzać kod.</strong> Najważniejsze: <strong>strict: true</strong> (surowy tryb) i <strong>paths</strong> (aliasy @/ żeby TS rozumiał importy).</div>
+            <div class="cblock">
+              <div class="cbar"><span class="cdot" style="background:#ef4444"></span><span class="cdot" style="background:#f59e0b"></span><span class="cdot" style="background:#22c55e"></span> tsconfig.json</div>
+              <pre><span class="st">"strict"</span>: <span class="kw">true</span>,           <span class="cm">// surowy tryb</span>
+<span class="st">"noUnusedLocals"</span>: <span class="kw">true</span>,   <span class="cm">// błąd za nieużywane zmienne</span>
+<span class="st">"paths"</span>: {
+  <span class="st">"@/features/*"</span>: [<span class="st">"src/app/features/*"</span>],
+  <span class="st">"@/shared/*"</span>:   [<span class="st">"src/app/shared/*"</span>],
+  <span class="st">"@/layouts/*"</span>:  [<span class="st">"src/app/layouts/*"</span>]
+  <span class="cm">// aliasy @ — skróty do folderów</span>
+}</pre>
+            </div>
+          </div>
+          <div class="file-row" onclick="toggle(this)">
+            <div class="file-name"><span class="ext" style="background:var(--blue-l);color:var(--blue)">JSON</span>tsconfig.node.json</div>
+            <div class="file-short">Osobne ustawienia TS dla plików konfiguracyjnych</div>
+            <span class="file-arrow">▶</span>
+          </div>
+          <div class="file-expand">
+            <div class="expand-desc"><strong>vite.config.ts działa w Node.js, nie w przeglądarce.</strong> Ma inne API i inne typy. Ten plik mówi TSowi żeby traktował go osobno.</div>
+            <div class="cblock">
+              <div class="cbar"><span class="cdot" style="background:#ef4444"></span><span class="cdot" style="background:#f59e0b"></span><span class="cdot" style="background:#22c55e"></span> tsconfig.node.json</div>
+              <pre>{
+  <span class="st">"include"</span>: [<span class="st">"vite.config.ts"</span>]
+  <span class="cm">// tylko ten plik ma inne reguły</span>
+}</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head" style="color:var(--amber)">⚡ Vite & Vitest</div>
+        <div class="card-body">
+          <div class="file-row" onclick="toggle(this)">
+            <div class="file-name"><span class="ext" style="background:var(--amber-l);color:var(--amber)">TS</span>vite.config.ts</div>
+            <div class="file-short">Build, devserver i aliasy @/</div>
+            <span class="file-arrow">▶</span>
+          </div>
+          <div class="file-expand">
+            <div class="expand-desc"><strong>Konfiguracja Vite — narzędzia które buduje projekt.</strong> Najważniejsze: aliasy @/ (skróty do folderów) i pluginy. Aliasy MUSZĄ być tu i w tsconfig.</div>
+            <div class="cblock">
+              <div class="cbar"><span class="cdot" style="background:#ef4444"></span><span class="cdot" style="background:#f59e0b"></span><span class="cdot" style="background:#22c55e"></span> vite.config.ts</div>
+              <pre><span class="fn">defineConfig</span>({
+  plugins: [<span class="fn">react</span>(), <span class="fn">eslint</span>()],
+  resolve: {
+    alias: [
+      { find: <span class="st">'@/shared'</span>, replacement: <span class="st">'/src/app/shared'</span> },
+      { find: <span class="st">'@/features'</span>, replacement: <span class="st">'/src/app/features'</span> },
+      <span class="cm">// bez aliasów: '../../../shared/utils'</span>
+      <span class="cm">// z aliasami:  '@/shared/utils' ✅</span>
+    ]
+  }
+})</pre>
+            </div>
+          </div>
+          <div class="file-row" onclick="toggle(this)">
+            <div class="file-name"><span class="ext" style="background:var(--green-l);color:var(--green)">TS</span>vitest.config.ts</div>
+            <div class="file-short">Konfiguracja testów (dziedziczy z Vite)</div>
+            <span class="file-arrow">▶</span>
+          </div>
+          <div class="file-expand">
+            <div class="expand-desc"><strong>Ustawienia dla testów automatycznych.</strong> Dziedziczy konfigurację Vite więc aliasy @/ działają też w testach. jsdom symuluje przeglądarkę w Node.js.</div>
+            <div class="cblock">
+              <div class="cbar"><span class="cdot" style="background:#ef4444"></span><span class="cdot" style="background:#f59e0b"></span><span class="cdot" style="background:#22c55e"></span> vitest.config.ts</div>
+              <pre><span class="fn">mergeConfig</span>(viteConfig, {
+  test: {
+    globals: <span class="kw">true</span>,         <span class="cm">// describe/it/expect bez importu</span>
+    environment: <span class="st">'jsdom'</span>, <span class="cm">// symuluj przeglądarkę</span>
+    setupFiles: <span class="st">'./tests/setup.ts'</span>,
+    include: [<span class="st">'**/*.test.tsx'</span>]
+  }
+})</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head" style="color:var(--teal)">🎨 Style & UI</div>
+        <div class="card-body">
+          <div class="file-row" onclick="toggle(this)">
+            <div class="file-name"><span class="ext" style="background:var(--teal-l);color:var(--teal)">JS</span>tailwind.config.js</div>
+            <div class="file-short">Kolory, animacje, ciemny motyw</div>
+            <span class="file-arrow">▶</span>
+          </div>
+          <div class="file-expand">
+            <div class="expand-desc"><strong>Konfiguracja Tailwinda.</strong> Kolory przez CSS zmienne (łatwa zmiana motywu), animacje dla accordion i kursora, ciemny motyw przez klasę CSS.</div>
+            <div class="cblock">
+              <div class="cbar"><span class="cdot" style="background:#ef4444"></span><span class="cdot" style="background:#f59e0b"></span><span class="cdot" style="background:#22c55e"></span> tailwind.config.js</div>
+              <pre>colors: {
+  primary: <span class="st">'hsl(var(--primary))'</span>,
+  <span class="cm">// kolor siedzi w CSS zmiennej</span>
+  <span class="cm">// zmiana motywu = zmiana jednej zmiennej</span>
+},
+keyframes: {
+  <span class="st">'accordion-down'</span>: { ... },
+  <span class="st">'caret-blink'</span>: { ... }
+}</pre>
+            </div>
+          </div>
+          <div class="file-row" onclick="toggle(this)">
+            <div class="file-name"><span class="ext" style="background:var(--teal-l);color:var(--teal)">JS</span>postcss.config.js</div>
+            <div class="file-short">Procesor CSS — wymagany przez Tailwind</div>
+            <span class="file-arrow">▶</span>
+          </div>
+          <div class="file-expand">
+            <div class="expand-desc"><strong>Tailwind potrzebuje PostCSS żeby działać.</strong> Autoprefixer dodaje prefiksy <code>-webkit-</code> dla starszych przeglądarek automatycznie.</div>
+            <div class="cblock">
+              <div class="cbar"><span class="cdot" style="background:#ef4444"></span><span class="cdot" style="background:#f59e0b"></span><span class="cdot" style="background:#22c55e"></span> postcss.config.js</div>
+              <pre>plugins: {
+  tailwindcss: {},    <span class="cm">// przetwarza klasy Tailwinda</span>
+  autoprefixer: {},   <span class="cm">// dodaje -webkit-, -moz-</span>
+}</pre>
+            </div>
+          </div>
+          <div class="file-row" onclick="toggle(this)">
+            <div class="file-name"><span class="ext" style="background:var(--pink-l);color:var(--pink)">JSON</span>components.json</div>
+            <div class="file-short">Konfiguracja shadcn/ui CLI</div>
+            <span class="file-arrow">▶</span>
+          </div>
+          <div class="file-expand">
+            <div class="expand-desc"><strong>Instrukcja dla shadcn.</strong> Gdy robisz <code>npx shadcn-ui add button</code>, shadcn czyta ten plik i wie gdzie wrzucić komponent i jakiego stylu użyć.</div>
+            <div class="cblock">
+              <div class="cbar"><span class="cdot" style="background:#ef4444"></span><span class="cdot" style="background:#f59e0b"></span><span class="cdot" style="background:#22c55e"></span> components.json</div>
+              <pre>{
+  <span class="st">"style"</span>: <span class="st">"new-york"</span>,
+  <span class="st">"aliases"</span>: {
+    <span class="st">"components"</span>: <span class="st">"src/app/components"</span>
+    <span class="cm">// tu lądują skopiowane komponenty</span>
+  }
+}</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LINTING -->
+    <div class="g2" style="margin-top:10px">
+      <div class="card">
+        <div class="card-head" style="color:var(--rose)">🔍 ESLint — jakość kodu</div>
+        <div class="card-body">
+          <div class="file-row" onclick="toggle(this)">
+            <div class="file-name"><span class="ext" style="background:var(--rose-l);color:var(--rose)">CJS</span>.eslintrc.cjs</div>
+            <div class="file-short">Reguły sprawdzania poprawności kodu</div>
+            <span class="file-arrow">▶</span>
+          </div>
+          <div class="file-expand">
+            <div class="expand-desc"><strong>ESLint pilnuje czy kod jest poprawnie napisany.</strong> Używa surowego zestawu reguł Airbnb. Odpala się na bieżąco w edytorze i podczas devu przez Vite.</div>
+            <div class="cblock">
+              <div class="cbar"><span class="cdot" style="background:#ef4444"></span><span class="cdot" style="background:#f59e0b"></span><span class="cdot" style="background:#22c55e"></span> .eslintrc.cjs (ważne reguły)</div>
+              <pre><span class="st">'no-console'</span>: [<span class="st">'warn'</span>, { allow: [<span class="st">'warn'</span>, <span class="st">'error'</span>] }],
+<span class="cm">// console.log = ostrzeżenie ⚠️</span>
+
+<span class="st">'react/function-component-definition'</span>: [<span class="nu">2</span>, {
+  namedComponents: <span class="st">'arrow-function'</span>
+}],
+<span class="cm">// TYLKO arrow functions: const X = () => {}</span>
+
+<span class="st">'import/order'</span>: [<span class="nu">1</span>, { <span class="cm">/* kolejność importów */</span> }],
+<span class="cm">// external → internal → sibling</span></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head" style="color:var(--orange)">✨ Prettier — formatowanie kodu</div>
+        <div class="card-body">
+          <div class="file-row" onclick="toggle(this)">
+            <div class="file-name"><span class="ext" style="background:var(--orange-l);color:var(--orange)">RC</span>.prettierrc</div>
+            <div class="file-short">Zasady automatycznego formatowania kodu</div>
+            <span class="file-arrow">▶</span>
+          </div>
+          <div class="file-expand">
+            <div class="expand-desc"><strong>Prettier automatycznie formatuje kod żeby wszyscy pisali tak samo.</strong> Odpala się przez <code>yarn format</code> lub przy każdym zapisie w VSCode. Dzięki niemu cały kod wygląda jakby pisała go jedna osoba.</div>
+            <div class="cblock">
+              <div class="cbar"><span class="cdot" style="background:#ef4444"></span><span class="cdot" style="background:#f59e0b"></span><span class="cdot" style="background:#22c55e"></span> .prettierrc</div>
+              <pre>{
+  <span class="st">"singleQuote"</span>: <span class="kw">true</span>,   <span class="cm">// 'tak' zamiast "tak"</span>
+  <span class="st">"semi"</span>: <span class="kw">true</span>,          <span class="cm">// średniki na końcu</span>
+  <span class="st">"tabWidth"</span>: <span class="nu">2</span>,         <span class="cm">// wcięcia 2 spacje</span>
+  <span class="st">"printWidth"</span>: <span class="nu">120</span>,     <span class="cm">// max 120 znaków w linii</span>
+  <span class="st">"trailingComma"</span>: <span class="st">"all"</span>, <span class="cm">// przecinek po ostatnim elemencie</span>
+  <span class="st">"plugins"</span>: [<span class="st">"prettier-plugin-tailwindcss"</span>]
+  <span class="cm">// sortuje klasy Tailwinda automatycznie</span>
+}</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- .GITHUB -->
+  <section class="section" id="github">
+    <div class="sec-head">
+      <div class="sec-icon" style="background:var(--orange-l)">🔧</div>
+      <div>
+        <div class="sec-label" style="color:var(--orange)">Folder .github</div>
+        <div class="sec-title">Git Hooks & Issue Templates</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="card">
+        <div class="card-head" style="color:var(--orange)">🐕 Husky — Git Hooks</div>
+        <div class="card-body">
+          <div class="file-row" onclick="toggle(this)">
+            <div class="file-name"><span class="ext" style="background:var(--orange-l);color:var(--orange)">SH</span>pre-commit</div>
+            <div class="file-short">Odpala się PRZED każdym commitem</div>
+            <span class="file-arrow">▶</span>
+          </div>
+          <div class="file-expand">
+            <div class="expand-desc"><strong>Blokuje commit jeśli testy nie przechodzą.</strong> Nie możesz wrzucić zepsutego kodu do repozytorium.</div>
+            <div class="cblock">
+              <div class="cbar"><span class="cdot" style="background:#ef4444"></span><span class="cdot" style="background:#f59e0b"></span><span class="cdot" style="background:#22c55e"></span> .husky/pre-commit</div>
+              <pre>#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+yarn run test   <span class="cm"># testy muszą przejść!</span>
+<span class="cm"># fail → commit zablokowany ❌</span></pre>
+            </div>
+          </div>
+
+          <div class="file-row" onclick="toggle(this)">
+            <div class="file-name"><span class="ext" style="background:var(--orange-l);color:var(--orange)">SH</span>commit-msg</div>
+            <div class="file-short">Sprawdza format wiadomości commita</div>
+            <span class="file-arrow">▶</span>
+          </div>
+          <div class="file-expand">
+            <div class="expand-desc"><strong>Wymusza Conventional Commits.</strong> Wiadomości muszą mieć określony format — nie możesz napisać "poprawki" albo "fix".</div>
+            <div class="cblock">
+              <div class="cbar"><span class="cdot" style="background:#ef4444"></span><span class="cdot" style="background:#f59e0b"></span><span class="cdot" style="background:#22c55e"></span> Przykłady commitów</div>
+              <pre><span class="fn">✅ feat: dodanie strony logowania</span>
+<span class="fn">✅ fix: naprawienie błędu w tabeli</span>
+<span class="fn">✅ chore: aktualizacja zależności</span>
+<span class="fn">✅ refactor: przepisanie serwisu</span>
+
+<span class="cm">❌ "poprawki"</span>
+<span class="cm">❌ "fix"</span>
+<span class="cm">❌ "WIP"</span>
+<span class="cm">❌ "asdasd"</span></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head" style="color:var(--green)">📋 Issue Templates</div>
+        <div class="card-body">
+          <div class="file-row" onclick="toggle(this)">
+            <div class="file-name"><span class="ext" style="background:var(--rose-l);color:var(--rose)">MD</span>bug_report.md</div>
+            <div class="file-short">Szablon zgłaszania błędów na GitHubie</div>
+            <span class="file-arrow">▶</span>
+          </div>
+          <div class="file-expand">
+            <div class="expand-desc"><strong>Gdy ktoś klika "New Issue" na GitHubie, zamiast pustego pola dostaje gotowy formularz.</strong> Wymusza podanie kroków reprodukcji, przeglądarki, systemu. Automatycznie dodaje labelki: <code>bug</code>, <code>need analysis</code>.</div>
+            <div class="cblock">
+              <div class="cbar"><span class="cdot" style="background:#ef4444"></span><span class="cdot" style="background:#f59e0b"></span><span class="cdot" style="background:#22c55e"></span> bug_report.md (struktura)</div>
+              <pre><span class="st">**Describe the bug**</span>      <span class="cm">← co się psuje</span>
+<span class="st">**To Reproduce**</span>          <span class="cm">← kroki do odtworzenia</span>
+<span class="st">**Expected behavior**</span>     <span class="cm">← co powinno działać</span>
+<span class="st">**Screenshots**</span>           <span class="cm">← opcjonalne</span>
+<span class="st">**Browser / OS**</span>          <span class="cm">← środowisko</span>
+
+<span class="cm">// Bez szablonu: "nie działa" 🙄</span>
+<span class="cm">// Z szablonem: developer ma wszystko ✅</span></pre>
+            </div>
+          </div>
+
+          <div class="file-row" onclick="toggle(this)">
+            <div class="file-name"><span class="ext" style="background:var(--green-l);color:var(--green)">MD</span>feature_request.md</div>
+            <div class="file-short">Szablon prośby o nową funkcjonalność</div>
+            <span class="file-arrow">▶</span>
+          </div>
+          <div class="file-expand">
+            <div class="expand-desc"><strong>Ustrukturyzowana prośba o nową funkcję.</strong> Pyta o problem który rozwiązuje, jak powinna działać i jakie alternatywy rozważano. Labelki: <code>enhancement</code>, <code>need analysis</code>.</div>
+            <div class="cblock">
+              <div class="cbar"><span class="cdot" style="background:#ef4444"></span><span class="cdot" style="background:#f59e0b"></span><span class="cdot" style="background:#22c55e"></span> feature_request.md (struktura)</div>
+              <pre><span class="st">**Problem?**</span>              <span class="cm">← po co ta funkcja</span>
+<span class="st">**Rozwiązanie**</span>           <span class="cm">← jak ma działać</span>
+<span class="st">**Alternatywy**</span>           <span class="cm">← co jeszcze rozważałeś</span></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert al-amber" style="margin-top:10px">
+      <span class="alert-lbl">⚡ Jak działa Husky przy commicie</span>
+      <code>git commit -m "feat: nowa strona"</code> → <strong>pre-commit:</strong> yarn test (testy OK?) → <strong>commit-msg:</strong> commitlint (dobry format?) → commit zapisany ✅. Każdy fail = commit zablokowany.
+    </div>
+  </section>
+
+  <!-- SRC/APP -->
+  <section class="section" id="src">
+    <div class="sec-head">
+      <div class="sec-icon" style="background:var(--blue-l)">📂</div>
+      <div>
+        <div class="sec-label" style="color:var(--blue)">src/app</div>
+        <div class="sec-title">Rdzeń aplikacji</div>
+      </div>
+    </div>
+
+    <div class="g2" style="margin-bottom:10px">
+      <div class="card">
+        <div class="card-head" style="color:var(--blue)">🚀 Punkt startowy</div>
+        <div class="card-body">
+          <div class="file-row" onclick="toggle(this)">
+            <div class="file-name"><span class="ext" style="background:var(--teal-l);color:var(--teal)">TSX</span>app.tsx</div>
+            <div class="file-short">Główny komponent — łączy wszystko razem</div>
+            <span class="file-arrow">▶</span>
+          </div>
+          <div class="file-expand">
+            <div class="expand-desc"><strong>Punkt wejścia aplikacji.</strong> Owija wszystko w providery i router. Wszystko co dodasz tu — dostępne w całej apce.</div>
+            <div class="cblock">
+              <div class="cbar"><span class="cdot" style="background:#ef4444"></span><span class="cdot" style="background:#f59e0b"></span><span class="cdot" style="background:#22c55e"></span> app.tsx</div>
+              <pre><span class="kw">const</span> <span class="fn">App</span> = () => (
+  <span class="kw">&lt;ThemeProvider&gt;</span>
+    <span class="kw">&lt;AuthProvider&gt;</span>
+      <span class="kw">&lt;QueryClientProvider&gt;</span>
+        <span class="kw">&lt;RouterProvider</span> router={router} <span class="kw">/&gt;</span>
+      <span class="kw">&lt;/QueryClientProvider&gt;</span>
+    <span class="kw">&lt;/AuthProvider&gt;</span>
+  <span class="kw">&lt;/ThemeProvider&gt;</span>
+)</pre>
+            </div>
+          </div>
+
+          <div class="file-row" onclick="toggle(this)">
+            <div class="file-name"><span class="ext" style="background:var(--teal-l);color:var(--teal)">TSX</span>routes.tsx</div>
+            <div class="file-short">Mapa URL → strona aplikacji</div>
+            <span class="file-arrow">▶</span>
+          </div>
+          <div class="file-expand">
+            <div class="expand-desc"><strong>Definiuje wszystkie ścieżki URL aplikacji.</strong> Gdy wchodzisz na <code>/vehicles</code> — React wie że ma pokazać VehiclesPage.</div>
+            <div class="cblock">
+              <div class="cbar"><span class="cdot" style="background:#ef4444"></span><span class="cdot" style="background:#f59e0b"></span><span class="cdot" style="background:#22c55e"></span> routes.tsx</div>
+              <pre><span class="kw">const</span> router = <span class="fn">createBrowserRouter</span>([
+  {
+    path: <span class="st">'/'</span>,
+    element: <span class="kw">&lt;TopNavigationLayout /&gt;</span>,
+    children: [
+      { path: <span class="st">'dashboard'</span>, element: <span class="kw">&lt;Dashboard /&gt;</span> },
+      { path: <span class="st">'vehicles'</span>, element: <span class="kw">&lt;VehiclesPage /&gt;</span> },
+      { path: <span class="st">'analytics'</span>, element: <span class="kw">&lt;AnalyticsPage /&gt;</span> },
+    ]
+  },
+  {
+    path: <span class="st">'/auth'</span>,
+    element: <span class="kw">&lt;AuthLayout /&gt;</span>,
+    children: [{ path: <span class="st">'login'</span>, element: <span class="kw">&lt;LoginPage /&gt;</span> }]
+  }
+])</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head" style="color:var(--violet)">🧩 Features</div>
+        <div class="card-body">
+          <div class="file-row" onclick="toggle(this)">
+            <div class="file-name"><span class="ext" style="background:var(--violet-l);color:var(--violet)">TSX</span>table-action-buttons</div>
+            <div class="file-short">Pasek przycisków nad każdą tabelą w apce</div>
+            <span class="file-arrow">▶</span>
+          </div>
+          <div class="file-expand">
+            <div class="expand-desc"><strong>Współdzielona feature używana na wielu stronach.</strong> Renderuje: Kopiuj, Drukuj, Widok (zarządzanie kolumnami), Export (CSV/PDF/Excel). Używa generyka &lt;TData&gt; — działa z dowolnym typem tabeli.</div>
+            <div class="cblock">
+              <div class="cbar"><span class="cdot" style="background:#ef4444"></span><span class="cdot" style="background:#f59e0b"></span><span class="cdot" style="background:#22c55e"></span> TableActionButtons.tsx</div>
+              <pre><span class="cm">// generyk — działa z każdym typem tabeli</span>
+<span class="kw">const</span> <span class="fn">TableActionButtons</span> = &lt;<span class="ty">TData</span>,&gt;({
+  tableObject,   <span class="cm">// obiekt tabeli tanstack</span>
+  className,
+}) => (
+  <span class="kw">&lt;div&gt;</span>
+    <span class="kw">&lt;Button&gt;</span>Kopiuj<span class="kw">&lt;/Button&gt;</span>
+    <span class="kw">&lt;Button&gt;</span>Drukuj<span class="kw">&lt;/Button&gt;</span>
+    {tableObject && <span class="kw">&lt;Button&gt;</span>Widok<span class="kw">&lt;/Button&gt;</span>}
+    <span class="kw">&lt;Dropdown&gt;</span>Export (CSV/PDF/Excel)<span class="kw">&lt;/Dropdown&gt;</span>
+  <span class="kw">&lt;/div&gt;</span>
+)</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LAYOUTS -->
+    <div class="card" style="margin-bottom:10px">
+      <div class="card-head" style="color:var(--teal)">🏗️ Layouts — szkielety stron</div>
+      <div class="card-body">
+        <div class="file-row" onclick="toggle(this)">
+          <div class="file-name"><span class="ext" style="background:var(--teal-l);color:var(--teal)">TSX</span>auth-layout</div>
+          <div class="file-short">Układ dla stron logowania — wyśrodkowana karta</div>
+          <span class="file-arrow">▶</span>
+        </div>
+        <div class="file-expand">
+          <div class="expand-desc"><strong>Prosty layout dla niezalogowanych użytkowników.</strong> Wyśrodkowana karta na neutralnym tle. Pliki: <code>auth.layout.tsx</code> (komponent), <code>index.ts</code> (export).</div>
+          <div class="cblock">
+            <div class="cbar"><span class="cdot" style="background:#ef4444"></span><span class="cdot" style="background:#f59e0b"></span><span class="cdot" style="background:#22c55e"></span> auth.layout.tsx</div>
+            <pre><span class="kw">const</span> <span class="fn">AuthLayout</span> = () => (
+  <span class="kw">&lt;div</span> <span class="at">className</span>=<span class="st">"min-h-screen flex items-center justify-center"</span><span class="kw">&gt;</span>
+    <span class="kw">&lt;div</span> <span class="at">className</span>=<span class="st">"w-full max-w-md"</span><span class="kw">&gt;</span>
+      <span class="kw">&lt;Outlet /&gt;</span>  <span class="cm">{/* tu wchodzą strony logowania */}</span>
+    <span class="kw">&lt;/div&gt;</span>
+  <span class="kw">&lt;/div&gt;</span>
+)</pre>
+          </div>
+        </div>
+
+        <div class="file-row" onclick="toggle(this)">
+          <div class="file-name"><span class="ext" style="background:var(--teal-l);color:var(--teal)">TSX</span>top-navigation-layout</div>
+          <div class="file-short">Układ z górnym menu — dla zalogowanych</div>
+          <span class="file-arrow">▶</span>
+        </div>
+        <div class="file-expand">
+          <div class="expand-desc"><strong>Główny layout aplikacji po zalogowaniu.</strong> Górny navbar + sidebar + obszar treści. Podfoldery: <code>partials/</code> (kawałki layoutu — navbar, sidebar), <code>utils/</code> (helpery).</div>
+          <div class="cblock">
+            <div class="cbar"><span class="cdot" style="background:#ef4444"></span><span class="cdot" style="background:#f59e0b"></span><span class="cdot" style="background:#22c55e"></span> top-navigation.layout.tsx</div>
+            <pre><span class="kw">const</span> <span class="fn">TopNavigationLayout</span> = () => (
+  <span class="kw">&lt;div&gt;</span>
+    <span class="kw">&lt;Navbar /&gt;</span>      <span class="cm">{/* z partials/ */}</span>
+    <span class="kw">&lt;Sidebar /&gt;</span>     <span class="cm">{/* z partials/ */}</span>
+    <span class="kw">&lt;main&gt;</span>
+      <span class="kw">&lt;Outlet /&gt;</span>    <span class="cm">{/* tu wchodzą strony */}</span>
+    <span class="kw">&lt;/main&gt;</span>
+  <span class="kw">&lt;/div&gt;</span>
+)</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROVIDERS -->
+  <section class="section" id="providers">
+    <div class="sec-head">
+      <div class="sec-icon" style="background:var(--violet-l)">🔌</div>
+      <div>
+        <div class="sec-label" style="color:var(--violet)">src/app/providers</div>
+        <div class="sec-title">Globalny stan aplikacji</div>
+      </div>
+    </div>
+
+    <div class="alert al-violet" style="margin-bottom:12px">
+      <span class="alert-lbl">💡 Wzorzec 3 plików</span>
+      Każdy provider dzieli się na: <strong>types.ts</strong> (interfejsy), <strong>auth.context.ts</strong> (tworzenie kontekstu + hook), <strong>auth.provider.tsx</strong> (logika + JSX). Plus <strong>index.ts</strong> i <strong>public-api.ts</strong> jako drzwi wejściowe.
+    </div>
+
+    <div class="g2">
+      <div class="card">
+        <div class="card-head" style="color:var(--violet)">🔐 auth-provider</div>
+        <div class="card-body">
+          <div class="file-row" onclick="toggle(this)">
+            <div class="file-name"><span class="ext" style="background:var(--blue-l);color:var(--blue)">TS</span>types.ts</div>
+            <div class="file-short">Interfejsy — jak wygląda zalogowany user</div>
+            <span class="file-arrow">▶</span>
+          </div>
+          <div class="file-expand">
+            <div class="expand-desc"><strong>Czyste typy TypeScript.</strong> Żadnej logiki — tylko definicje kształtu danych. Można importować wszędzie bez importowania logiki.</div>
+            <div class="cblock">
+              <div class="cbar"><span class="cdot" style="background:#ef4444"></span><span class="cdot" style="background:#f59e0b"></span><span class="cdot" style="background:#22c55e"></span> types.ts</div>
+              <pre><span class="kw">export interface</span> <span class="ty">AuthUser</span> {
+  id: <span class="ty">string</span>
+  email: <span class="ty">string</span>
+  role: <span class="st">'admin'</span> | <span class="st">'user'</span>
+}
+
+<span class="kw">export interface</span> <span class="ty">AuthContextType</span> {
+  user: <span class="ty">AuthUser</span> | <span class="kw">null</span>
+  login: (email: <span class="ty">string</span>, pass: <span class="ty">string</span>) => <span class="ty">void</span>
+  logout: () => <span class="ty">void</span>
+}</pre>
+            </div>
+          </div>
+
+          <div class="file-row" onclick="toggle(this)">
+            <div class="file-name"><span class="ext" style="background:var(--blue-l);color:var(--blue)">TS</span>auth.context.ts</div>
+            <div class="file-short">Tworzy kontekst + hook useAuth()</div>
+            <span class="file-arrow">▶</span>
+          </div>
+          <div class="file-expand">
+            <div class="expand-desc"><strong>Gniazdko elektryczne</strong> — samo w sobie nic nie robi, tylko definiuje interfejs dostępu. Hook <code>useAuth()</code> to sposób na odczyt danych z dowolnego komponentu.</div>
+            <div class="cblock">
+              <div class="cbar"><span class="cdot" style="background:#ef4444"></span><span class="cdot" style="background:#f59e0b"></span><span class="cdot" style="background:#22c55e"></span> auth.context.ts</div>
+              <pre><span class="kw">export const</span> AuthContext = 
+  <span class="fn">createContext</span>&lt;<span class="ty">AuthContextType</span> | <span class="kw">null</span>&gt;(<span class="kw">null</span>)
+
+<span class="cm">// hook — odczyt stanu z każdego komponentu</span>
+<span class="kw">export const</span> <span class="fn">useAuth</span> = () => {
+  <span class="kw">const</span> ctx = <span class="fn">useContext</span>(AuthContext)
+  <span class="kw">if</span> (!ctx) <span class="kw">throw new</span> <span class="fn">Error</span>(<span class="st">'Brak AuthProvider!'</span>)
+  <span class="kw">return</span> ctx
+}</pre>
+            </div>
+          </div>
+
+          <div class="file-row" onclick="toggle(this)">
+            <div class="file-name"><span class="ext" style="background:var(--teal-l);color:var(--teal)">TSX</span>auth.provider.tsx</div>
+            <div class="file-short">Logika + stan + JSX (prąd w gniazdku)</div>
+            <span class="file-arrow">▶</span>
+          </div>
+          <div class="file-expand">
+            <div class="expand-desc"><strong>Prąd w gniazdku</strong> — tu żyje prawdziwa logika: stan, efekty, funkcje. Owija children i dostarcza dane przez kontekst.</div>
+            <div class="cblock">
+              <div class="cbar"><span class="cdot" style="background:#ef4444"></span><span class="cdot" style="background:#f59e0b"></span><span class="cdot" style="background:#22c55e"></span> auth.provider.tsx</div>
+              <pre><span class="kw">export const</span> <span class="fn">AuthProvider</span> = ({ children }) => {
+  <span class="kw">const</span> [user, setUser] = <span class="fn">useState</span>(<span class="kw">null</span>)
+
+  <span class="kw">const</span> <span class="fn">login</span> = <span class="kw">async</span> (email, pass) => {
+    <span class="cm">// wywołaj Firebase, zapisz token</span>
+  }
+
+  <span class="kw">return</span> (
+    <span class="kw">&lt;AuthContext.Provider</span> value={{ user, login }}<span class="kw">&gt;</span>
+      {children}
+    <span class="kw">&lt;/AuthContext.Provider&gt;</span>
+  )
+}</pre>
+            </div>
+          </div>
+
+          <div class="file-row" onclick="toggle(this)">
+            <div class="file-name"><span class="ext" style="background:var(--slate-l);color:var(--slate)">TS</span>public-api.ts + index.ts</div>
+            <div class="file-short">Jeden punkt wejścia do modułu</div>
+            <span class="file-arrow">▶</span>
+          </div>
+          <div class="file-expand">
+            <div class="expand-desc"><strong>Enkapsulacja.</strong> public-api.ts decyduje co jest dostępne na zewnątrz. index.ts re-eksportuje. Dzięki temu importujesz z jednego miejsca.</div>
+            <div class="cblock">
+              <div class="cbar"><span class="cdot" style="background:#ef4444"></span><span class="cdot" style="background:#f59e0b"></span><span class="cdot" style="background:#22c55e"></span> import z zewnątrz</div>
+              <pre><span class="cm">// zamiast:</span>
+<span class="kw">import</span> { AuthProvider } <span class="kw">from</span> <span class="st">'../../providers/auth-provider/auth.provider'</span>
+<span class="kw">import</span> { useAuth } <span class="kw">from</span> <span class="st">'../../providers/auth-provider/auth.context'</span>
+
+<span class="cm">// piszesz:</span>
+<span class="kw">import</span> { AuthProvider, useAuth } <span class="kw">from</span> <span class="st">'@/providers/auth-provider'</span></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head" style="color:var(--teal)">🎨 theme-provider</div>
+        <div class="card-body">
+          <div class="file-row" onclick="toggle(this)">
+            <div class="file-name"><span class="ext" style="background:var(--teal-l);color:var(--teal)">TSX</span>theme.provider.tsx</div>
+            <div class="file-short">Ciemny / jasny motyw aplikacji</div>
+            <span class="file-arrow">▶</span>
+          </div>
+          <div class="file-expand">
+            <div class="expand-desc"><strong>Zarządza motywem light/dark.</strong> Dodaje klasę <code>dark</code> do elementu HTML co aktywuje ciemny motyw Tailwinda. Zapisuje preferencję w localStorage.</div>
+            <div class="cblock">
+              <div class="cbar"><span class="cdot" style="background:#ef4444"></span><span class="cdot" style="background:#f59e0b"></span><span class="cdot" style="background:#22c55e"></span> theme.provider.tsx</div>
+              <pre><span class="kw">const</span> <span class="fn">ThemeProvider</span> = ({ children }) => {
+  <span class="kw">const</span> [theme, setTheme] = <span class="fn">useState</span>(<span class="st">'light'</span>)
+
+  <span class="fn">useEffect</span>(() => {
+    <span class="cm">// dodaj/usuń klasę 'dark' z &lt;html&gt;</span>
+    document.documentElement.<span class="fn">classList</span>
+      .<span class="fn">toggle</span>(<span class="st">'dark'</span>, theme === <span class="st">'dark'</span>)
+  }, [theme])
+
+  <span class="kw">return</span> <span class="kw">&lt;ThemeContext.Provider</span> value={{ theme, setTheme }}<span class="kw">&gt;</span>
+    {children}
+  <span class="kw">&lt;/ThemeContext.Provider&gt;</span>
+}</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section class="section" id="services">
+    <div class="sec-head">
+      <div class="sec-icon" style="background:var(--green-l)">🌐</div>
+      <div>
+        <div class="sec-label" style="color:var(--green)">src/app/services</div>
+        <div class="sec-title">Komunikacja z API</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="card">
+        <div class="card-head" style="color:var(--green)">⚡ http-client (shared/utils)</div>
+        <div class="card-body">
+          <div class="file-row" onclick="toggle(this)">
+            <div class="file-name"><span class="ext" style="background:var(--blue-l);color:var(--blue)">TS</span>http.ts</div>
+            <div class="file-short">Instancja Axiosa z interceptorami</div>
+            <span class="file-arrow">▶</span>
+          </div>
+          <div class="file-expand">
+            <div class="expand-desc"><strong>Serce komunikacji z API.</strong> Tworzy skonfigurowanego klienta HTTP. Interceptor request = auto-dodaje token do każdego zapytania. Interceptor response = obsługa błędów.</div>
+            <div class="cblock">
+              <div class="cbar"><span class="cdot" style="background:#ef4444"></span><span class="cdot" style="background:#f59e0b"></span><span class="cdot" style="background:#22c55e"></span> http.ts</div>
+              <pre><span class="kw">const</span> http = axios.<span class="fn">create</span>({
+  baseURL: <span class="kw">import</span>.meta.env.VITE_API_URL
+})
+
+<span class="cm">// przed każdym zapytaniem:</span>
+http.interceptors.request.<span class="fn">use</span>((config) => {
+  <span class="kw">const</span> token = localStorage.<span class="fn">getItem</span>(<span class="st">'token'</span>)
+  <span class="kw">if</span> (token) config.headers.Authorization = <span class="st">`Bearer ${token}`</span>
+  <span class="kw">return</span> config  <span class="cm">// nie musisz dodawać tokenu ręcznie!</span>
+})</pre>
+            </div>
+          </div>
+
+          <div class="file-row" onclick="toggle(this)">
+            <div class="file-name"><span class="ext" style="background:var(--blue-l);color:var(--blue)">TS</span>getAuthToken.ts</div>
+            <div class="file-short">Pobiera token z localStorage</div>
+            <span class="file-arrow">▶</span>
+          </div>
+          <div class="file-expand">
+            <div class="expand-desc">Czyta token z localStorage i zwraca w formacie <code>Bearer xxx</code>. Zwraca null jeśli użytkownik nie jest zalogowany.</div>
+            <div class="cblock"><div class="cbar"><span class="cdot" style="background:#ef4444"></span><span class="cdot" style="background:#f59e0b"></span><span class="cdot" style="background:#22c55e"></span> getAuthToken.ts</div><pre><span class="kw">export default</span> () => {
+  <span class="kw">const</span> token = localStorage.<span class="fn">getItem</span>(<span class="st">'token'</span>)
+  <span class="kw">if</span> (!token) <span class="kw">return null</span>
+  <span class="kw">return</span> <span class="st">`Bearer ${token}`</span>
+}</pre></div>
+          </div>
+
+          <div class="file-row" onclick="toggle(this)">
+            <div class="file-name"><span class="ext" style="background:var(--blue-l);color:var(--blue)">TS</span>getTimezone.ts</div>
+            <div class="file-short">Strefa czasowa użytkownika</div>
+            <span class="file-arrow">▶</span>
+          </div>
+          <div class="file-expand">
+            <div class="expand-desc">Pobiera strefę czasową z przeglądarki. Serwer wie wtedy w jakiej strefie jest użytkownik — ważne przy wyświetlaniu dat.</div>
+            <div class="cblock"><div class="cbar"><span class="cdot" style="background:#ef4444"></span><span class="cdot" style="background:#f59e0b"></span><span class="cdot" style="background:#22c55e"></span> getTimezone.ts</div><pre><span class="kw">export default</span> () => 
+  Intl.<span class="fn">DateTimeFormat</span>()
+    .<span class="fn">resolvedOptions</span>().timeZone
+<span class="cm">// → "Europe/Warsaw"</span></pre></div>
+          </div>
+
+          <div class="file-row" onclick="toggle(this)">
+            <div class="file-name"><span class="ext" style="background:var(--blue-l);color:var(--blue)">TS</span>withAccessToken.ts</div>
+            <div class="file-short">Składa pełne nagłówki autoryzacji</div>
+            <span class="file-arrow">▶</span>
+          </div>
+          <div class="file-expand">
+            <div class="expand-desc"><strong>Łączy wszystkie helpery w jeden obiekt nagłówków.</strong> Używane przy zapytaniach wymagających autoryzacji.</div>
+            <div class="cblock"><div class="cbar"><span class="cdot" style="background:#ef4444"></span><span class="cdot" style="background:#f59e0b"></span><span class="cdot" style="background:#22c55e"></span> withAccessToken.ts</div><pre><span class="kw">export default</span> () => ({
+  headers: {
+    Authorization: <span class="fn">getAuthToken</span>(),
+    <span class="st">'X-User-Id'</span>: <span class="fn">getUserId</span>(),
+    <span class="st">'X-Time-Zone'</span>: <span class="fn">getTimezone</span>(),
+  }
+})</pre></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head" style="color:var(--teal)">📡 Serwisy API (wzorzec 3 plików)</div>
+        <div class="card-body">
+          <div class="file-row" onclick="toggle(this)">
+            <div class="file-name"><span class="ext" style="background:var(--blue-l);color:var(--blue)">TS</span>bi/service.ts</div>
+            <div class="file-short">Zapytania HTTP do API analityki/BI</div>
+            <span class="file-arrow">▶</span>
+          </div>
+          <div class="file-expand">
+            <div class="expand-desc"><strong>Konkretne wywołania API.</strong> Ten sam wzorzec 3 plików co providers: <code>types.ts</code> (typy), <code>service.ts</code> (HTTP), <code>index.ts</code> (export).</div>
+            <div class="cblock"><div class="cbar"><span class="cdot" style="background:#ef4444"></span><span class="cdot" style="background:#f59e0b"></span><span class="cdot" style="background:#22c55e"></span> bi/service.ts</div><pre><span class="kw">export const</span> BiService = {
+  <span class="fn">getReports</span>: (params: <span class="ty">BiReportRequest</span>) =>
+    http.<span class="fn">get</span>(<span class="st">'/bi/reports'</span>, { params }),
+    
+  <span class="fn">deleteReport</span>: (id: <span class="ty">string</span>) =>
+    http.<span class="fn">delete</span>(<span class="st">`/bi/reports/${id}`</span>),
+}</pre></div>
+          </div>
+
+          <div class="file-row" onclick="toggle(this)">
+            <div class="file-name"><span class="ext" style="background:var(--blue-l);color:var(--blue)">TS</span>bi/types.ts</div>
+            <div class="file-short">Typy request i response dla BI API</div>
+            <span class="file-arrow">▶</span>
+          </div>
+          <div class="file-expand">
+            <div class="expand-desc">Definiuje jak wyglądają dane wysyłane do API i dane odbierane z API.</div>
+            <div class="cblock"><div class="cbar"><span class="cdot" style="background:#ef4444"></span><span class="cdot" style="background:#f59e0b"></span><span class="cdot" style="background:#22c55e"></span> bi/types.ts</div><pre><span class="kw">export interface</span> <span class="ty">BiReportRequest</span> {
+  dateFrom: <span class="ty">string</span>
+  dateTo: <span class="ty">string</span>
+}
+
+<span class="kw">export interface</span> <span class="ty">BiReportResponse</span> {
+  data: <span class="ty">BiReport</span>[]
+  total: <span class="ty">number</span>
+}</pre></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PAGES -->
+  <section class="section" id="pages">
+    <div class="sec-head">
+      <div class="sec-icon" style="background:var(--amber-l)">📄</div>
+      <div>
+        <div class="sec-label" style="color:var(--amber)">src/app/pages</div>
+        <div class="sec-title">Strony aplikacji — na przykładzie helpPage</div>
+      </div>
+    </div>
+
+    <div class="alert al-blue" style="margin-bottom:12px">
+      <span class="alert-lbl">📂 Każda strona ma ten sam podział</span>
+      <strong>containers/</strong> — logika (fetching danych, stan, hooki) &nbsp;·&nbsp; <strong>utils/</strong> — dane i funkcje pomocnicze tej strony &nbsp;·&nbsp; <strong>komponent.tsx</strong> — tylko wyświetlanie
+    </div>
+
+    <div class="g2">
+      <div class="card">
+        <div class="card-head" style="color:var(--amber)">📄 helpPage — przykład kompletnej strony</div>
+        <div class="card-body">
+          <div class="file-row" onclick="toggle(this)">
+            <div class="file-name"><span class="ext" style="background:var(--teal-l);color:var(--teal)">TSX</span>helpPage.component.tsx</div>
+            <div class="file-short">Kelner — tylko podaje gotowe danie</div>
+            <span class="file-arrow">▶</span>
+          </div>
+          <div class="file-expand">
+            <div class="expand-desc"><strong>Komponent który tylko wyświetla.</strong> Nie fetuje danych, nie zarządza stanem. Importuje gotowe dane z utils/ i wyświetla je używając komponentów UI.</div>
+            <div class="cblock"><div class="cbar"><span class="cdot" style="background:#ef4444"></span><span class="cdot" style="background:#f59e0b"></span><span class="cdot" style="background:#22c55e"></span> helpPage.component.tsx</div><pre><span class="kw">const</span> <span class="fn">HelpPage</span> = () => (
+  <span class="kw">&lt;ContentWrapper</span>
+    headTitle=<span class="st">"Pomoc"</span>
+    breadcrumbItems={helpPageBreadcrumbItems}
+  <span class="kw">&gt;</span>
+    <span class="kw">&lt;Card</span> title=<span class="st">"Dokumentacja"</span><span class="kw">&gt;</span>
+      <span class="kw">&lt;a</span> href=<span class="st">"/"</span><span class="kw">&gt;</span>Instrukcja użytkownika<span class="kw">&lt;/a&gt;</span>
+    <span class="kw">&lt;/Card&gt;</span>
+    <span class="kw">&lt;Card</span> title=<span class="st">"Warto wiedzieć"</span><span class="kw">&gt;</span>
+      <span class="kw">&lt;Accordion</span> items={mockHelpPage} <span class="kw">/&gt;</span>
+    <span class="kw">&lt;/Card&gt;</span>
+  <span class="kw">&lt;/ContentWrapper&gt;</span>
+)</pre></div>
+          </div>
+
+          <div class="file-row" onclick="toggle(this)">
+            <div class="file-name"><span class="ext" style="background:var(--blue-l);color:var(--blue)">TS</span>utils/mock-help-page-data.ts</div>
+            <div class="file-short">Tymczasowe dane dla accordionu</div>
+            <span class="file-arrow">▶</span>
+          </div>
+          <div class="file-expand">
+            <div class="expand-desc"><strong>Mock = tymczasowe dane wpisane ręcznie.</strong> Docelowo przyjdą z API. Nazwa <code>mock-</code> sygnalizuje że to placeholder do zastąpienia.</div>
+            <div class="cblock"><div class="cbar"><span class="cdot" style="background:#ef4444"></span><span class="cdot" style="background:#f59e0b"></span><span class="cdot" style="background:#22c55e"></span> mock-help-page-data.ts</div><pre><span class="kw">export const</span> mockHelpPage = [
+  { key: <span class="st">'1'</span>, label: <span class="st">'Przydatne informacje'</span>, description: <span class="st">'...'</span> },
+  { key: <span class="st">'2'</span>, label: <span class="st">'Skróty klawiszowe'</span>, description: <span class="st">'...'</span> },
+]
+<span class="cm">// gdy API będzie gotowe — wyrzucasz ten plik</span>
+<span class="cm">// i pobierasz dane w containers/</span></pre></div>
+          </div>
+
+          <div class="file-row" onclick="toggle(this)">
+            <div class="file-name"><span class="ext" style="background:var(--blue-l);color:var(--blue)">TS</span>utils/breadcrumb-items.ts</div>
+            <div class="file-short">Okruszki nawigacyjne (BI › Pomoc)</div>
+            <span class="file-arrow">▶</span>
+          </div>
+          <div class="file-expand">
+            <div class="expand-desc">Statyczne dane dla breadcrumb na górze strony. Poza utils/ nikt tego nie używa — dlatego siedzi lokalnie w stronie, nie w shared/.</div>
+            <div class="cblock"><div class="cbar"><span class="cdot" style="background:#ef4444"></span><span class="cdot" style="background:#f59e0b"></span><span class="cdot" style="background:#22c55e"></span> breadcrumb-items.ts</div><pre><span class="kw">export const</span> helpPageBreadcrumbItems = [
+  { href: <span class="st">'/'</span>, key: <span class="st">'BI'</span>, label: <span class="st">'BI'</span> },
+  { key: <span class="st">'Pomoc'</span>, label: <span class="st">'Pomoc'</span> },
+]
+<span class="cm">// wyświetla: BI › Pomoc</span></pre></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head" style="color:var(--rose)">🔄 containers/ — gdy jest logika</div>
+        <div class="card-body">
+          <div class="file-row" onclick="toggle(this)">
+            <div class="file-name"><span class="ext" style="background:var(--teal-l);color:var(--teal)">TSX</span>containers/VehiclesContainer.tsx</div>
+            <div class="file-short">Kuchnia — gotuje dane zanim je podasz</div>
+            <span class="file-arrow">▶</span>
+          </div>
+          <div class="file-expand">
+            <div class="expand-desc"><strong>Container trzyma całą logikę strony.</strong> Fetuje dane z API, zarządza stanem, obsługuje filtry i paginację. Przekazuje gotowe dane do komponentu prezentacyjnego.</div>
+            <div class="cblock"><div class="cbar"><span class="cdot" style="background:#ef4444"></span><span class="cdot" style="background:#f59e0b"></span><span class="cdot" style="background:#22c55e"></span> VehiclesContainer.tsx (przykład)</div><pre><span class="kw">const</span> <span class="fn">VehiclesContainer</span> = () => {
+  <span class="kw">const</span> [vehicles, setVehicles] = <span class="fn">useState</span>([])
+  <span class="kw">const</span> [loading, setLoading] = <span class="fn">useState</span>(<span class="kw">true</span>)
+
+  <span class="fn">useEffect</span>(() => {
+    ItemService.<span class="fn">getVehicles</span>().<span class="fn">then</span>(setVehicles)
+  }, [])
+
+  <span class="cm">// obsługa filtrów, sortowania...</span>
+
+  <span class="kw">return</span> <span class="kw">&lt;VehiclesPage</span> data={vehicles} loading={loading} <span class="kw">/&gt;</span>
+}
+<span class="cm">// komponent VehiclesPage nic nie wie o API ✅</span></pre></div>
+          </div>
+
+          <div style="padding:14px 16px">
+            <div class="alert al-green" style="margin:0">
+              <span class="alert-lbl">🍳 Analogia restauracja</span>
+              <strong>utils/</strong> = przepisy i składniki &nbsp;·&nbsp; <strong>containers/</strong> = kuchnia, gotuje dane &nbsp;·&nbsp; <strong>komponent</strong> = kelner, tylko podaje gotowe danie
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert al-amber" style="margin-top:10px">
+      <span class="alert-lbl">📂 Wszystkie strony w projekcie</span>
+      dashboard · vehiclesPage · itemsListPage · analyticsPage · chartsPage · signalsPage · live · usageStatisticsPage · zslSystemPage · contactPage · helpPage · auth · errorPage · page404
+    </div>
+  </section>
+
+  <!-- SHARED -->
+  <section class="section" id="shared">
+    <div class="sec-head">
+      <div class="sec-icon" style="background:var(--pink-l)">🧩</div>
+      <div>
+        <div class="sec-label" style="color:var(--pink)">src/app/shared</div>
+        <div class="sec-title">Współdzielone zasoby całej aplikacji</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="card">
+        <div class="card-head" style="color:var(--pink)">🧱 ui-base — własne komponenty bazowe</div>
+        <div class="card-body">
+          <div class="file-row" onclick="toggle(this)">
+            <div class="file-name"><span class="ext" style="background:var(--teal-l);color:var(--teal)">TSX</span>button/</div>
+            <div class="file-short">Własny Button zbudowany na shadcn</div>
+            <span class="file-arrow">▶</span>
+          </div>
+          <div class="file-expand">
+            <div class="expand-desc"><strong>Customowy przycisk dostosowany do projektu.</strong> Bazuje na shadcn Button ale ma własne warianty, rozmiary i style zgodne z designem App.</div>
+            <div class="cblock"><div class="cbar"><span class="cdot" style="background:#ef4444"></span><span class="cdot" style="background:#f59e0b"></span><span class="cdot" style="background:#22c55e"></span> Hierarchia komponentów</div><pre><span class="cm">Radix UI (logika dostępności)</span>
+    ↓
+<span class="cm">shadcn/ui (styl + Tailwind)</span>
+    ↓
+<span class="cm">shared/ui-base (customizacja projektu)</span>
+    ↓
+<span class="cm">używasz w komponentach aplikacji</span></pre></div>
+          </div>
+
+          <div class="file-row" onclick="toggle(this)">
+            <div class="file-name"><span class="ext" style="background:var(--teal-l);color:var(--teal)">TSX</span>loading/</div>
+            <div class="file-short">Spinner / skeleton ładowania</div>
+            <span class="file-arrow">▶</span>
+          </div>
+          <div class="file-expand">
+            <div class="expand-desc">Komponent pokazujący stan ładowania. Jeden w całej apce = spójny wygląd wszędzie.</div>
+            <div class="cblock"><div class="cbar"><span class="cdot" style="background:#ef4444"></span><span class="cdot" style="background:#f59e0b"></span><span class="cdot" style="background:#22c55e"></span> loading/index.tsx</div><pre><span class="kw">const</span> <span class="fn">Loading</span> = () => (
+  <span class="kw">&lt;div</span> <span class="at">className</span>=<span class="st">"flex items-center justify-center"</span><span class="kw">&gt;</span>
+    <span class="kw">&lt;Spinner</span> size=<span class="st">"lg"</span> <span class="kw">/&gt;</span>
+  <span class="kw">&lt;/div&gt;</span>
+)</pre></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head" style="color:var(--violet)">🔧 shared/utils — funkcje pomocnicze</div>
+        <div class="card-body">
+          <div class="file-row" onclick="toggle(this)">
+            <div class="file-name"><span class="ext" style="background:var(--blue-l);color:var(--blue)">TS</span>common.utils.ts</div>
+            <div class="file-short">cn() i processSnapshot — używane wszędzie</div>
+            <span class="file-arrow">▶</span>
+          </div>
+          <div class="file-expand">
+            <div class="expand-desc"><strong>Dwie kluczowe funkcje.</strong> <code>cn()</code> — łączy klasy Tailwinda bez konfliktów (najczęściej używana funkcja w projekcie). <code>processSnapshot()</code> — naprawia format danych z Firebase.</div>
+            <div class="cblock"><div class="cbar"><span class="cdot" style="background:#ef4444"></span><span class="cdot" style="background:#f59e0b"></span><span class="cdot" style="background:#22c55e"></span> common.utils.ts</div><pre><span class="cm">// cn() — łączy klasy Tailwinda</span>
+<span class="kw">export const</span> <span class="fn">cn</span> = (...inputs) => <span class="fn">twMerge</span>(<span class="fn">clsx</span>(inputs))
+
+<span class="cm">// problem bez cn:</span>
+<span class="st">'bg-red-500 bg-blue-500'</span>  <span class="cm">← która wygra? losowo!</span>
+<span class="cm">// cn rozwiązuje: wygrywa ostatnia ✅</span>
+
+<span class="cm">// processSnapshot() — naprawia Firebase</span>
+<span class="cm">// Firebase: { data: {...}, id: 'abc' }  ← id osobno</span>
+<span class="cm">// po processSnapshot: { ...data, id }  ← id w środku ✅</span></pre></div>
+          </div>
+
+          <div class="file-row" onclick="toggle(this)">
+            <div class="file-name"><span class="ext" style="background:var(--slate-l);color:var(--slate)">TS</span>index.ts + public-api.ts</div>
+            <div class="file-short">Jeden punkt wejścia do shared/utils</div>
+            <span class="file-arrow">▶</span>
+          </div>
+          <div class="file-expand">
+            <div class="expand-desc">Ten sam wzorzec co w providers i services.</div>
+            <div class="cblock"><div class="cbar"><span class="cdot" style="background:#ef4444"></span><span class="cdot" style="background:#f59e0b"></span><span class="cdot" style="background:#22c55e"></span> import</div><pre><span class="kw">import</span> { cn, processSnapshot } <span class="kw">from</span> <span class="st">'@/shared/utils'</span></pre></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STORYBOOK -->
+  <section class="section">
+    <div class="sec-head">
+      <div class="sec-icon" style="background:var(--rose-l)">📚</div>
+      <div>
+        <div class="sec-label" style="color:var(--rose)">Storybook (.storybook/)</div>
+        <div class="sec-title">Katalog komponentów UI</div>
+      </div>
+    </div>
+    <div class="g2">
+      <div class="card">
+        <div class="card-head" style="color:var(--rose)">⚙️ Konfiguracja Storybook</div>
+        <div class="card-body">
+          <div class="file-row" onclick="toggle(this)">
+            <div class="file-name"><span class="ext" style="background:var(--blue-l);color:var(--blue)">TS</span>main.ts</div>
+            <div class="file-short">Gdzie szukać stories, jakich pluginów używać</div>
+            <span class="file-arrow">▶</span>
+          </div>
+          <div class="file-expand">
+            <div class="expand-desc"><strong>Konfiguracja samego Storybooka.</strong> Szuka plików <code>*.stories.tsx</code> w całym projekcie. Używa Vite pod spodem (tak samo jak aplikacja).</div>
+            <div class="cblock"><div class="cbar"><span class="cdot" style="background:#ef4444"></span><span class="cdot" style="background:#f59e0b"></span><span class="cdot" style="background:#22c55e"></span> .storybook/main.ts</div><pre>stories: [<span class="st">'../src/**/*.stories.@(ts|tsx)'</span>],
+framework: <span class="st">'@storybook/react-vite'</span>,
+<span class="cm">// yarn storybook → localhost:6006</span></pre></div>
+          </div>
+          <div class="file-row" onclick="toggle(this)">
+            <div class="file-name"><span class="ext" style="background:var(--blue-l);color:var(--blue)">TS</span>preview.ts</div>
+            <div class="file-short">Konfiguracja podglądu — color picker, date picker</div>
+            <span class="file-arrow">▶</span>
+          </div>
+          <div class="file-expand">
+            <div class="expand-desc">Propsy z "color" w nazwie → color picker w panelu. Propsy zaczynające się od "on" → panel akcji z logowaniem.</div>
+            <div class="cblock"><div class="cbar"><span class="cdot" style="background:#ef4444"></span><span class="cdot" style="background:#f59e0b"></span><span class="cdot" style="background:#22c55e"></span> Przykładowy plik .stories.tsx</div><pre><span class="kw">export default</span> { component: Button }
+
+<span class="kw">export const</span> Primary = {
+  args: { label: <span class="st">'Kliknij'</span>, variant: <span class="st">'primary'</span> }
+}
+<span class="kw">export const</span> Outline = {
+  args: { label: <span class="st">'Kliknij'</span>, variant: <span class="st">'outline'</span> }
+}
+<span class="cm">// każdy export = osobny wariant w Storybooku</span></pre></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="alert al-rose">
+          <span class="alert-lbl">📚 Do czego służy Storybook</span>
+          Osobna aplikacja na <code>localhost:6006</code> gdzie możesz przeglądać komponenty <strong>bez uruchamiania całej apki</strong>. Developer robi komponent → od razu widzi jak wygląda we wszystkich wariantach. Designer sprawdza bez zaglądania w kod.
+        </div>
+        <div class="alert al-blue" style="margin-top:10px">
+          <span class="alert-lbl">🎨 shadcn/ui — czym jest</span>
+          <strong>Nie instaluje paczki</strong> — kopiuje kod komponentu bezpośrednio do projektu (<code>src/app/components/ui/button.tsx</code>). Twój plik, twój kod, zmieniasz co chcesz. Radix UI dostarcza logikę i dostępność, Tailwind dodaje wygląd, shadcn łączy jedno z drugim.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FLOW -->
+  <section class="section" id="flow">
+    <div class="sec-head">
+      <div class="sec-icon" style="background:var(--green-l)">🔄</div>
+      <div>
+        <div class="sec-label" style="color:var(--green)">Podsumowanie</div>
+        <div class="sec-title">Jak to wszystko działa razem</div>
+      </div>
+    </div>
+
+    <div class="flow" style="margin-bottom:12px;flex-direction:column;align-items:flex-start;gap:4px">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:.72rem;line-height:2.2;color:var(--tx2)">
+        <span style="color:var(--blue);font-weight:600">index.html</span> → ładuje <span style="color:var(--teal);font-weight:600">src/index.tsx</span> → montuje <span style="color:var(--violet);font-weight:600">App.tsx</span><br>
+        <span style="color:var(--violet);font-weight:600">App.tsx</span> → owija w <span style="color:var(--rose);font-weight:600">Providers</span> (auth, theme) → przekazuje do <span style="color:var(--amber);font-weight:600">routes.tsx</span><br>
+        <span style="color:var(--amber);font-weight:600">routes.tsx</span> → URL <code>/vehicles</code> → wybiera <span style="color:var(--teal);font-weight:600">TopNavigationLayout</span><br>
+        <span style="color:var(--teal);font-weight:600">Layout</span> → renderuje Navbar + Sidebar + <span style="color:var(--orange);font-weight:600">VehiclesPage</span><br>
+        <span style="color:var(--orange);font-weight:600">VehiclesContainer</span> → fetuje z <span style="color:var(--green);font-weight:600">ItemService</span> → przekazuje do komponentu<br>
+        <span style="color:var(--green);font-weight:600">ItemService</span> → używa <span style="color:var(--blue);font-weight:600">http.ts</span> → auto-dodaje token → zapytanie do API<br>
+        <span style="color:var(--blue);font-weight:600">Komponent</span> → wyświetla dane używając <span style="color:var(--pink);font-weight:600">shared/ui-base</span> + <span style="color:var(--pink);font-weight:600">shadcn/ui</span>
+      </div>
+    </div>
+
+    <div class="g3">
+      <div class="alert al-violet">
+        <span class="alert-lbl">🏛️ Zasada hierarchii</span>
+        <strong>shared/</strong> używa każdy &nbsp;·&nbsp; <strong>services/</strong> używają pages i features &nbsp;·&nbsp; <strong>pages/</strong> używa tylko siebie. Nigdy odwrotnie — strona nie importuje z innej strony.
+      </div>
+      <div class="alert al-green">
+        <span class="alert-lbl">🚪 Wzorzec public-api</span>
+        Każdy moduł ma <strong>index.ts + public-api.ts</strong>. Importujesz zawsze z <code>@/nazwa-modułu</code>, nigdy bezpośrednio z pliku. Możesz zmienić wewnętrzną strukturę bez ruszania reszty apki.
+      </div>
+      <div class="alert al-amber">
+        <span class="alert-lbl">🔒 Jakość kodu</span>
+        <strong>ESLint</strong> pilnuje poprawności → <strong>Prettier</strong> formatuje wygląd → <strong>Husky</strong> blokuje commit jeśli testy padają lub commit ma zły format → <strong>yarn.lock</strong> zapewnia te same wersje u każdego.
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer style="background:#fff;border-top:1px solid var(--bd);padding:20px 80px;font-family:'IBM Plex Mono',monospace;font-size:.6rem;color:var(--mt);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px">
+  <span><strong style="color:var(--tx)">App</strong> — Architektura React · Feature-based architecture</span>
+  <span>React · TypeScript · Vite · Tailwind · shadcn/ui · Firebase · Husky</span>
+</footer>
+
+<script>
+function toggle(row) {
+  const expand = row.nextElementSibling;
+  const isOpen = expand.classList.contains('open');
+  
+  // zamknij wszystkie w tym samym card-body
+  const cardBody = row.closest('.card-body');
+  if (cardBody) {
+    cardBody.querySelectorAll('.file-row').forEach(r => r.classList.remove('active'));
+    cardBody.querySelectorAll('.file-expand').forEach(e => e.classList.remove('open'));
+  }
+  
+  if (!isOpen) {
+    row.classList.add('active');
+    expand.classList.add('open');
+    // przewiń do widoku
+    setTimeout(() => expand.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+  }
+}
+</script>
+</body>
+</html>

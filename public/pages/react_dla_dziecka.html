@@ -1,0 +1,1448 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>React dla każdego — Podstawy od zera</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f8fafc;
+  --s1: #ffffff;
+  --s2: #f1f5f9;
+  --s3: #e2e8f0;
+  --bd: #e2e8f0;
+  --bd2: #cbd5e1;
+  --tx: #0f172a;
+  --tx2: #475569;
+  --mt: #64748b;
+  --react: #0284c7;
+  --react2: #0369a1;
+  --green: #16a34a;
+  --teal: #0d9488;
+  --sky: #0284c7;
+  --violet: #7c3aed;
+  --rose: #e11d48;
+  --amber: #d97706;
+  --pink: #a21caf;
+  --emerald: #059669;
+  --lime: #65a30d;
+  --slate: #475569;
+}
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;line-height:1.65;overflow-x:hidden}
+
+.back{position:fixed;top:22px;left:22px;z-index:9999;background:#fff;backdrop-filter:blur(14px);border:1px solid var(--bd2);border-radius:40px;padding:10px 20px;display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--tx2);font-family:'IBM Plex Mono',monospace;font-size:.72rem;font-weight:500;letter-spacing:1px;transition:all .25s}
+.back:hover{color:var(--react);border-color:var(--react)}
+
+/* HEADER */
+.hdr{min-height:460px;padding:110px 80px 80px;position:relative;overflow:hidden;display:flex;align-items:flex-end}
+.hdr-bg{position:absolute;inset:0;background:#fff}
+.hdr-bg::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 5% 100%,rgba(2,132,199,.10) 0%,transparent 55%),radial-gradient(ellipse 50% 70% at 95% 10%,rgba(16,163,74,.07) 0%,transparent 50%),radial-gradient(ellipse 40% 60% at 50% 50%,rgba(124,58,237,.04) 0%,transparent 60%)}
+.hdr-grid{position:absolute;inset:0;background-image:linear-gradient(var(--bd) 1px,transparent 1px),linear-gradient(90deg,var(--bd) 1px,transparent 1px);background-size:48px 48px;opacity:.5;mask-image:radial-gradient(ellipse 85% 90% at 50% 50%,black,transparent)}
+.hdr-content{position:relative;max-width:1360px;width:100%}
+.hdr-tier{display:inline-flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:.65rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--react);margin-bottom:28px;padding:7px 16px;border:1px solid rgba(2,132,199,.35);border-radius:4px;background:rgba(2,132,199,.07)}
+.tier-dot{width:6px;height:6px;border-radius:50%;background:var(--react);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+h1{font-size:clamp(3rem,7.5vw,6.5rem);font-weight:800;line-height:.9;letter-spacing:-5px;margin-bottom:28px}
+h1 em{font-style:normal;color:var(--react)}
+h1 small{display:block;font-size:.36em;letter-spacing:-1px;color:var(--tx2);font-weight:500;margin-top:14px}
+.hdr-desc{font-size:1rem;color:var(--tx2);max-width:640px;line-height:1.9}
+.hdr-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.chip{font-family:'IBM Plex Mono',monospace;font-size:.63rem;font-weight:600;letter-spacing:.5px;padding:5px 12px;border-radius:3px;border:1px solid}
+.cr{color:var(--react);border-color:rgba(2,132,199,.4);background:rgba(2,132,199,.07)}
+.cg{color:var(--green);border-color:rgba(22,163,74,.35);background:rgba(22,163,74,.06)}
+.ct{color:var(--teal);border-color:rgba(13,148,136,.35);background:rgba(13,148,136,.06)}
+.cv{color:var(--violet);border-color:rgba(124,58,237,.35);background:rgba(124,58,237,.08)}
+.ca{color:var(--amber);border-color:rgba(217,119,6,.35);background:rgba(217,119,6,.06)}
+.ce{color:var(--emerald);border-color:rgba(5,150,105,.35);background:rgba(5,150,105,.06)}
+.cp{color:var(--pink);border-color:rgba(162,28,175,.35);background:rgba(162,28,175,.06)}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:300;background:rgba(248,250,252,.98);backdrop-filter:blur(20px);border-bottom:1px solid var(--bd);display:flex;overflow-x:auto;scrollbar-width:none;padding:0 80px}
+.nav::-webkit-scrollbar{display:none}
+.nav-a{color:var(--mt);text-decoration:none;font-family:'IBM Plex Mono',monospace;font-size:.64rem;font-weight:600;letter-spacing:.5px;padding:14px 13px;white-space:nowrap;border-bottom:2px solid transparent;transition:all .18s}
+.nav-a:hover{color:var(--react);border-bottom-color:var(--react)}
+
+/* MAIN */
+.main{max-width:1360px;margin:0 auto;padding:80px 24px 160px}
+.chapter{margin-bottom:104px;animation:fadeUp .5s ease backwards}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.chapter:nth-child(1){animation-delay:.04s}.chapter:nth-child(2){animation-delay:.07s}
+.chapter:nth-child(3){animation-delay:.10s}.chapter:nth-child(4){animation-delay:.13s}
+.chapter:nth-child(5){animation-delay:.16s}.chapter:nth-child(6){animation-delay:.19s}
+.chapter:nth-child(7){animation-delay:.22s}.chapter:nth-child(8){animation-delay:.25s}
+.chapter:nth-child(9){animation-delay:.28s}.chapter:nth-child(10){animation-delay:.31s}
+.chapter:nth-child(11){animation-delay:.34s}.chapter:nth-child(12){animation-delay:.37s}
+
+.ch-head{display:flex;align-items:flex-start;gap:22px;margin-bottom:36px;padding-bottom:28px;border-bottom:1px solid var(--bd)}
+.ch-num{font-family:'IBM Plex Mono',monospace;font-size:.62rem;font-weight:700;letter-spacing:3px;color:var(--mt);padding-top:6px;white-space:nowrap}
+.ch-info{flex:1}
+.ch-cat{font-family:'IBM Plex Mono',monospace;font-size:.58rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:6px}
+.ch-title{font-size:1.9rem;font-weight:800;letter-spacing:-1px;line-height:1.1;margin-bottom:10px}
+.ch-desc{font-size:.92rem;color:var(--tx2);max-width:820px;line-height:1.95}
+
+/* GRIDS */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.g13{display:grid;grid-template-columns:1fr 3fr;gap:14px}
+.g32{display:grid;grid-template-columns:3fr 2fr;gap:14px}
+@media(max-width:1100px){.g4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:900px){.g2,.g3,.g4,.g13,.g32{grid-template-columns:1fr}.hdr{padding:80px 24px 56px}.nav{padding:0 16px}h1{font-size:3rem;letter-spacing:-2px}}
+
+/* CARD */
+.card{background:var(--s1);border:1px solid var(--bd);border-radius:8px;overflow:hidden;transition:border-color .2s,box-shadow .2s}
+.card:hover{border-color:var(--bd2);box-shadow:0 6px 28px rgba(0,0,0,.08)}
+.card-h{padding:11px 18px;font-family:'IBM Plex Mono',monospace;font-size:.66rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:8px}
+.card-b{padding:18px}
+
+/* ANALOGY CARD — big emoji + wyjaśnienie */
+.ana{background:#fff;border:1px solid var(--bd);border-radius:10px;padding:22px 24px;display:flex;gap:18px;align-items:flex-start;transition:box-shadow .2s}
+.ana:hover{box-shadow:0 4px 20px rgba(0,0,0,.07)}
+.ana-icon{font-size:2.4rem;flex-shrink:0;line-height:1}
+.ana-body{}
+.ana-title{font-size:1rem;font-weight:700;margin-bottom:5px;color:var(--tx)}
+.ana-text{font-size:.87rem;color:var(--tx2);line-height:1.85}
+.ana-code{font-family:'IBM Plex Mono',monospace;font-size:.75rem;color:var(--react2);background:rgba(2,132,199,.08);padding:2px 7px;border-radius:3px;display:inline}
+
+/* STEP LIST */
+.steps{display:flex;flex-direction:column;gap:0}
+.step{display:flex;gap:16px;padding:16px 0;border-bottom:1px solid var(--bd);align-items:flex-start}
+.step:last-child{border-bottom:none}
+.step-num{width:28px;height:28px;border-radius:50%;background:var(--react);color:#fff;font-family:'IBM Plex Mono',monospace;font-size:.72rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.step-body{flex:1}
+.step-title{font-weight:700;font-size:.95rem;margin-bottom:4px}
+.step-text{font-size:.85rem;color:var(--tx2);line-height:1.8}
+
+/* CODE */
+.code{background:#f8fafc;border:1px solid var(--bd);border-radius:8px;overflow:hidden}
+.cbar{background:#fff;border-bottom:1px solid var(--bd);padding:9px 16px;font-family:'IBM Plex Mono',monospace;font-size:.64rem;color:var(--mt);display:flex;align-items:center;gap:7px}
+.fdot{width:7px;height:7px;border-radius:50%}
+pre{padding:20px;font-family:'IBM Plex Mono',monospace;font-size:.78rem;line-height:1.75;overflow-x:auto;color:#1e293b}
+.kw{color:#7c3aed}.st{color:#16a34a}.cm{color:#94a3b8;font-style:italic}
+.ty{color:#2563eb}.nu{color:#dc2626}.fn{color:#0d9488}.op{color:#0284c7}
+.go{color:var(--react2)}.gr{color:var(--green)}.vi{color:var(--violet)}.re{color:var(--rose)}
+.an{color:#d97706}
+
+/* ALERTS */
+.alert{padding:16px 20px;border-radius:6px;border-left:3px solid;font-size:.88rem;line-height:1.9;color:var(--tx2)}
+.alert strong{color:var(--tx)}
+.alert-label{font-family:'IBM Plex Mono',monospace;font-size:.58rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;display:block;margin-bottom:6px}
+.al-react{background:rgba(2,132,199,.06);border-color:var(--react)} .al-react .alert-label{color:var(--react)}
+.al-green{background:rgba(22,163,74,.06);border-color:var(--green)} .al-green .alert-label{color:var(--green)}
+.al-amber{background:rgba(217,119,6,.06);border-color:var(--amber)} .al-amber .alert-label{color:var(--amber)}
+.al-violet{background:rgba(124,58,237,.06);border-color:var(--violet)} .al-violet .alert-label{color:var(--violet)}
+.al-teal{background:rgba(13,148,136,.06);border-color:var(--teal)} .al-teal .alert-label{color:var(--teal)}
+.al-rose{background:rgba(225,29,72,.06);border-color:var(--rose)} .al-rose .alert-label{color:var(--rose)}
+.al-emerald{background:rgba(5,150,105,.06);border-color:var(--emerald)} .al-emerald .alert-label{color:var(--emerald)}
+
+/* COMPARE */
+.compare{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--bd);border-radius:8px;overflow:hidden}
+.compare-col:first-child{border-right:1px solid var(--bd)}
+.compare-head{padding:11px 18px;font-family:'IBM Plex Mono',monospace;font-size:.66rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border-bottom:1px solid var(--bd)}
+.compare-body{padding:16px 18px;font-size:.85rem;color:var(--tx2);line-height:1.85}
+
+/* STRIP */
+.strip{border:1px solid var(--bd);border-radius:8px;padding:18px 22px;font-size:.88rem;color:var(--tx2);line-height:1.9;display:flex;gap:16px;align-items:flex-start;background:#fff}
+.strip-icon{font-size:1.4rem;flex-shrink:0;padding-top:2px}
+.strip strong{color:var(--tx)}
+
+/* QUIZ / CHECKLIST */
+.checklist{display:flex;flex-direction:column;gap:2px}
+.check-item{display:flex;align-items:flex-start;gap:10px;padding:9px 12px;border-radius:6px;font-size:.87rem;color:var(--tx2);line-height:1.7;background:transparent;transition:background .15s}
+.check-item:hover{background:var(--s2)}
+.check-box{width:18px;height:18px;border:2px solid var(--bd2);border-radius:4px;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center}
+.check-item.done .check-box{background:var(--green);border-color:var(--green);color:#fff;font-size:.7rem}
+.check-item.done{color:var(--tx)}
+
+/* FLOW DIAGRAM */
+.flow{display:flex;align-items:center;gap:0;flex-wrap:wrap;justify-content:center;padding:20px 0}
+.flow-box{background:#fff;border:1.5px solid var(--bd2);border-radius:8px;padding:12px 18px;font-size:.85rem;font-weight:600;text-align:center;min-width:120px}
+.flow-arrow{font-size:1.2rem;color:var(--mt);padding:0 8px;flex-shrink:0}
+
+/* BIG RULE */
+.rule{border:2px solid var(--react);border-radius:10px;padding:20px 24px;background:rgba(2,132,199,.04)}
+.rule-title{font-family:'IBM Plex Mono',monospace;font-size:.62rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--react);margin-bottom:8px}
+.rule-text{font-size:.95rem;font-weight:600;color:var(--tx);line-height:1.7}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;font-size:.84rem}
+.tbl th{background:var(--s2);color:var(--tx2);font-family:'IBM Plex Mono',monospace;font-size:.63rem;letter-spacing:2px;text-transform:uppercase;font-weight:700;padding:11px 16px;text-align:left;border-bottom:1px solid var(--bd)}
+.tbl td{padding:11px 16px;border-bottom:1px solid var(--bd);color:var(--tx2);vertical-align:top;line-height:1.75}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:var(--s2);color:var(--tx)}
+.tbl code{font-family:'IBM Plex Mono',monospace;font-size:.76rem;color:var(--react2);background:rgba(2,132,199,.09);padding:2px 7px;border-radius:3px}
+
+.gap8{margin-top:8px}.gap12{margin-top:12px}.gap16{margin-top:16px}.gap24{margin-top:24px}
+
+/* FOOTER */
+.footer{border-top:1px solid var(--bd);background:#fff;padding:36px 80px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;font-family:'IBM Plex Mono',monospace;font-size:.68rem;color:var(--mt)}
+.footer-title{color:var(--react);font-weight:700}
+</style>
+</head>
+<body>
+
+<a class="back" href="#">← MENU</a>
+
+<header class="hdr">
+  <div class="hdr-bg"></div>
+  <div class="hdr-grid"></div>
+  <div class="hdr-content">
+    <div class="hdr-tier"><div class="tier-dot"></div> React · Podstawy od zera</div>
+    <h1>React<br><em>dla każdego</em><small>Czym jest, jak działa, jak pisać komponenty — krok po kroku, po ludzku</small></h1>
+    <p class="hdr-desc">Ten poradnik tłumaczy React tak jakbyś nigdy wcześniej nie widział kodu. Bez żargonu, bez założeń. Każdy koncept przez analogię z prawdziwego życia, a potem przez kod. Po przeczytaniu będziesz wiedzieć jak myśleć w React.</p>
+    <div class="hdr-chips">
+      <span class="chip cr">⚛️ Czym jest React</span>
+      <span class="chip cg">Komponenty</span>
+      <span class="chip ct">JSX</span>
+      <span class="chip cv">Props</span>
+      <span class="chip ca">Stan (State)</span>
+      <span class="chip ce">Hooki</span>
+      <span class="chip cp">Listy i Zdarzenia</span>
+    </div>
+  </div>
+</header>
+
+<nav class="nav">
+  <a class="nav-a" href="#czym-jest">Czym jest React</a>
+  <a class="nav-a" href="#komponenty">Komponenty</a>
+  <a class="nav-a" href="#jsx">JSX</a>
+  <a class="nav-a" href="#props">Props</a>
+  <a class="nav-a" href="#stan">Stan</a>
+  <a class="nav-a" href="#useeffect">useEffect</a>
+  <a class="nav-a" href="#listy">Listy i Klucze</a>
+  <a class="nav-a" href="#zdarzenia">Zdarzenia</a>
+  <a class="nav-a" href="#formularze">Formularze</a>
+  <a class="nav-a" href="#warunkowe">Warunkowe renderowanie</a>
+  <a class="nav-a" href="#drzewo">Drzewo komponentów</a>
+  <a class="nav-a" href="#pierwszy-projekt">Pierwszy projekt</a>
+</nav>
+
+<main class="main">
+
+  <!-- ══ 01 CZYM JEST REACT ══ -->
+  <section class="chapter" id="czym-jest">
+    <div class="ch-head">
+      <div class="ch-num">01 / 12</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--react)">Zanim zaczniesz</div>
+        <div class="ch-title">Czym jest React i po co w ogóle istnieje?</div>
+        <div class="ch-desc">Wyobraź sobie że budujesz stronę internetową. Na początku masz tylko HTML. Ale co gdy chcesz żeby coś się zmieniało — koszyk w sklepie, licznik lajków, powiadomienia? Tutaj wkracza React. To biblioteka JavaScript która sprawia że strona "żyje" i reaguje na działania użytkownika — stąd nazwa <em>React</em> (reagować).</div>
+      </div>
+    </div>
+
+    <div class="g3">
+      <div class="ana">
+        <div class="ana-icon">🧱</div>
+        <div class="ana-body">
+          <div class="ana-title">HTML = szkielet</div>
+          <div class="ana-text">HTML to suchy tekst który przeglądarka wyświetla. Możesz napisać <span class="ana-code">&lt;button&gt;Kliknij&lt;/button&gt;</span> — ale po kliknięciu nic się nie stanie bez dodatkowego kodu.</div>
+        </div>
+      </div>
+      <div class="ana">
+        <div class="ana-icon">⚙️</div>
+        <div class="ana-body">
+          <div class="ana-title">JavaScript = silnik</div>
+          <div class="ana-text">JavaScript to kod który sprawia że strona reaguje. Problem: gdy aplikacja rośnie, ręczne zarządzanie zmianami w HTML staje się koszmarnie skomplikowane.</div>
+        </div>
+      </div>
+      <div class="ana">
+        <div class="ana-icon">⚛️</div>
+        <div class="ana-body">
+          <div class="ana-title">React = inteligentny silnik</div>
+          <div class="ana-text">React zarządza tym za Ciebie. Opisujesz <em>jak ma wyglądać</em> interfejs w danym stanie. React sam oblicza co się zmieniło i aktualizuje tylko to co trzeba.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="gap16"></div>
+
+    <div class="compare">
+      <div class="compare-col">
+        <div class="compare-head" style="color:var(--rose)">❌ Bez React — bałagan</div>
+        <div class="compare-body">
+          Masz 500 elementów na stronie. Użytkownik klika "dodaj do koszyka". Musisz ręcznie znaleźć element koszyka w HTML, zmienić liczbę, zmienić kolor przycisku, ukryć komunikat "koszyk pusty", pokazać komunikat "1 produkt"... i pamiętać żeby zrobić to we wszystkich miejscach. Gdy coś pójdzie nie tak — debugging to koszmar.
+        </div>
+      </div>
+      <div class="compare-col">
+        <div class="compare-head" style="color:var(--green)">✅ Z React — porządek</div>
+        <div class="compare-body">
+          Mówisz React: "stan koszyka to <code>3 produkty</code>". React sam decyduje jak wyświetlić licznik, przycisk, komunikat. Gdy dodajesz produkt, zmieniasz jeden stan — React automatycznie aktualizuje wszystkie miejsca które od niego zależą. Zawsze spójnie.
+        </div>
+      </div>
+    </div>
+
+    <div class="gap16"></div>
+
+    <div class="strip">
+      <div class="strip-icon">💡</div>
+      <div>
+        <strong>Kluczowa idea React w jednym zdaniu:</strong> Zamiast mówić przeglądarce "zmień ten element", mówisz React "w tym stanie aplikacja powinna wyglądać tak" — i React sam zajmuje się zmianami. To podejście nazywa się <strong>deklaratywne</strong> (opisujesz CO, nie JAK).
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 02 KOMPONENTY ══ -->
+  <section class="chapter" id="komponenty">
+    <div class="ch-head">
+      <div class="ch-num">02 / 12</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--green)">Serce Reacta</div>
+        <div class="ch-title">Komponenty — klocki LEGO z których budujesz interfejs</div>
+        <div class="ch-desc">Komponent to kawałek interfejsu — może to być przycisk, nagłówek, karta produktu, cały formularz, a nawet cała strona. Każdy komponent to osobna, niezależna jednostka. Składasz je jak klocki LEGO — mały przycisk wchodzi w kartę, karta wchodzi w listę, lista wchodzi w stronę.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div>
+        <div class="g3" style="gap:10px;margin-bottom:14px">
+          <div class="ana" style="padding:16px">
+            <div class="ana-icon">🧩</div>
+            <div class="ana-body">
+              <div class="ana-title" style="font-size:.9rem">Reużywalność</div>
+              <div class="ana-text" style="font-size:.82rem">Jeden komponent <code style="font-family:monospace;color:var(--react2)">&lt;Button&gt;</code> — używasz go 50 razy w całej aplikacji. Zmienisz raz — zmieni się wszędzie.</div>
+            </div>
+          </div>
+          <div class="ana" style="padding:16px">
+            <div class="ana-icon">📦</div>
+            <div class="ana-body">
+              <div class="ana-title" style="font-size:.9rem">Izolacja</div>
+              <div class="ana-text" style="font-size:.82rem">Każdy komponent ma swój kod, styl i logikę. Błąd w jednym nie psuje innych.</div>
+            </div>
+          </div>
+          <div class="ana" style="padding:16px">
+            <div class="ana-icon">🗂️</div>
+            <div class="ana-body">
+              <div class="ana-title" style="font-size:.9rem">Organizacja</div>
+              <div class="ana-text" style="font-size:.82rem">Każdy komponent w osobnym pliku. Łatwo znaleźć co szukasz w dużym projekcie.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-h" style="color:var(--green)">🧱 Anatomia aplikacji React</div>
+          <div class="card-b" style="font-size:.88rem;color:var(--tx2);line-height:1.9">
+            <p style="margin-bottom:10px">Typowa aplikacja wygląda jak drzewo:</p>
+            <div class="flow" style="justify-content:flex-start;flex-direction:column;align-items:flex-start;padding:10px 0;gap:4px">
+              <div style="display:flex;align-items:center;gap:8px"><span style="color:var(--react);font-family:monospace;font-size:.85rem">App</span> <span style="color:var(--mt);font-size:.8rem">← korzeń, rodzic wszystkich</span></div>
+              <div style="display:flex;align-items:center;gap:8px;padding-left:20px"><span style="color:var(--mt)">├─</span> <span style="color:var(--violet);font-family:monospace;font-size:.85rem">Navbar</span></div>
+              <div style="display:flex;align-items:center;gap:8px;padding-left:40px"><span style="color:var(--mt)">├─</span> <span style="color:var(--teal);font-family:monospace;font-size:.85rem">Logo</span></div>
+              <div style="display:flex;align-items:center;gap:8px;padding-left:40px"><span style="color:var(--mt)">└─</span> <span style="color:var(--teal);font-family:monospace;font-size:.85rem">NavLinks</span></div>
+              <div style="display:flex;align-items:center;gap:8px;padding-left:20px"><span style="color:var(--mt)">├─</span> <span style="color:var(--violet);font-family:monospace;font-size:.85rem">ProductList</span></div>
+              <div style="display:flex;align-items:center;gap:8px;padding-left:40px"><span style="color:var(--mt)">├─</span> <span style="color:var(--teal);font-family:monospace;font-size:.85rem">ProductCard</span></div>
+              <div style="display:flex;align-items:center;gap:8px;padding-left:40px"><span style="color:var(--mt)">├─</span> <span style="color:var(--teal);font-family:monospace;font-size:.85rem">ProductCard</span></div>
+              <div style="display:flex;align-items:center;gap:8px;padding-left:40px"><span style="color:var(--mt)">└─</span> <span style="color:var(--teal);font-family:monospace;font-size:.85rem">ProductCard</span></div>
+              <div style="display:flex;align-items:center;gap:8px;padding-left:20px"><span style="color:var(--mt)">└─</span> <span style="color:var(--violet);font-family:monospace;font-size:.85rem">Footer</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--green)"></div>Twój pierwszy komponent React</div>
+        <pre><span class="cm">// Komponent to funkcja która zwraca JSX (HTML-like kod)</span>
+<span class="cm">// Nazwa MUSI zaczynać się od WIELKIEJ litery!</span>
+
+<span class="kw">function</span> <span class="ty">Powitanie</span>() {
+  <span class="kw">return</span> (
+    &lt;div&gt;
+      &lt;h1&gt;Cześć! 👋&lt;/h1&gt;
+      &lt;p&gt;Witaj w moim pierwszym komponencie React!&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}
+
+<span class="cm">// Albo jako arrow function (to samo!):</span>
+<span class="kw">const</span> <span class="ty">Powitanie</span> = () => {
+  <span class="kw">return</span> &lt;h1&gt;Cześć! 👋&lt;/h1&gt;;
+};
+
+<span class="cm">// Używasz go jak tag HTML — ale z WIELKĄ literą:</span>
+<span class="kw">function</span> <span class="ty">App</span>() {
+  <span class="kw">return</span> (
+    &lt;div&gt;
+      &lt;<span class="ty">Powitanie</span> /&gt;   <span class="cm">← używasz jak tag!</span>
+      &lt;<span class="ty">Powitanie</span> /&gt;   <span class="cm">← możesz wiele razy!</span>
+      &lt;<span class="ty">Powitanie</span> /&gt;
+    &lt;/div&gt;
+  );
+}
+
+<span class="cm">// Eksportowanie — żeby użyć w innych plikach:</span>
+<span class="kw">export default</span> <span class="ty">Powitanie</span>;
+
+<span class="cm">// W innym pliku:</span>
+<span class="kw">import</span> <span class="ty">Powitanie</span> <span class="kw">from</span> <span class="st">"./Powitanie"</span>;</pre>
+      </div>
+    </div>
+
+    <div class="gap16"></div>
+    <div class="alert al-amber">
+      <span class="alert-label">⚠️ Reguła nr 1 — zapamiętaj na zawsze</span>
+      Nazwa komponentu <strong>musi zaczynać się od wielkiej litery</strong>. <code style="font-family:monospace;color:var(--react2)">&lt;button&gt;</code> to zwykły HTML. <code style="font-family:monospace;color:var(--react2)">&lt;Button&gt;</code> to komponent React. React rozróżnia je właśnie po tej literze. Pisanie <code style="font-family:monospace;color:var(--react2)">function mojaFunkcja()</code> i używanie jako <code style="font-family:monospace;color:var(--react2)">&lt;mojaFunkcja /&gt;</code> nie zadziała — React potraktuje to jako nieznany tag HTML.
+    </div>
+  </section>
+
+  <!-- ══ 03 JSX ══ -->
+  <section class="chapter" id="jsx">
+    <div class="ch-head">
+      <div class="ch-num">03 / 12</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--teal)">Składnia</div>
+        <div class="ch-title">JSX — HTML wewnątrz JavaScript (tak, to nie pomyłka)</div>
+        <div class="ch-desc">Gdy po raz pierwszy widzisz JSX, myślisz: "moment, to jest HTML w środku JavaScript?!". Tak — i to celowo. JSX to specjalna składnia która wygląda jak HTML, ale jest tak naprawdę JavaScript. Przeglądarka tego nie rozumie bezpośrednio — narzędzie o nazwie Babel tłumaczy JSX na zwykłe wywołania JavaScript zanim kod trafi do przeglądarki.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--teal)"></div>JSX — podstawowe zasady</div>
+        <pre><span class="cm">// ─── Zasada 1: Jeden element root ────────────────────────</span>
+<span class="cm">// ❌ Błąd — dwa elementy obok siebie:</span>
+<span class="kw">return</span> (
+  &lt;h1&gt;Tytuł&lt;/h1&gt;
+  &lt;p&gt;Tekst&lt;/p&gt;
+);
+
+<span class="cm">// ✅ Opakuj w jeden element:</span>
+<span class="kw">return</span> (
+  &lt;div&gt;
+    &lt;h1&gt;Tytuł&lt;/h1&gt;
+    &lt;p&gt;Tekst&lt;/p&gt;
+  &lt;/div&gt;
+);
+
+<span class="cm">// ✅ Albo użyj Fragment (puste tagi &lt;&gt;) — nie dodaje div do HTML:</span>
+<span class="kw">return</span> (
+  &lt;&gt;
+    &lt;h1&gt;Tytuł&lt;/h1&gt;
+    &lt;p&gt;Tekst&lt;/p&gt;
+  &lt;/&gt;
+);
+
+<span class="cm">// ─── Zasada 2: Tagi muszą być zamknięte ──────────────────</span>
+<span class="cm">// ❌ W HTML możesz: &lt;input&gt; lub &lt;br&gt;</span>
+<span class="cm">// ✅ W JSX musisz: &lt;input /&gt; lub &lt;br /&gt;</span>
+
+<span class="cm">// ─── Zasada 3: class → className ─────────────────────────</span>
+<span class="cm">// ❌ &lt;div class="box"&gt; — class to słowo kluczowe JS!</span>
+&lt;div <span class="an">className</span>=<span class="st">"box"</span>&gt;...&lt;/div&gt;  <span class="cm">// ✅</span>
+
+<span class="cm">// ─── Zasada 4: for → htmlFor ─────────────────────────────</span>
+&lt;label <span class="an">htmlFor</span>=<span class="st">"email"</span>&gt;Email:&lt;/label&gt;  <span class="cm">// ✅</span></pre>
+      </div>
+
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--teal)"></div>JSX — wyrażenia JavaScript wewnątrz {}</div>
+        <pre><span class="cm">// {} pozwala wstawić dowolne wyrażenie JS do JSX</span>
+
+<span class="kw">const</span> imie = <span class="st">"Anna"</span>;
+<span class="kw">const</span> wiek = <span class="nu">28</span>;
+<span class="kw">const</span> zalogowany = <span class="kw">true</span>;
+
+<span class="kw">return</span> (
+  &lt;div&gt;
+    <span class="cm">{ /* Zmienne: */ }</span>
+    &lt;h1&gt;Cześć, {imie}!&lt;/h1&gt;
+    &lt;p&gt;Masz {wiek} lat&lt;/p&gt;
+
+    <span class="cm">{ /* Wyrażenia matematyczne: */ }</span>
+    &lt;p&gt;Za rok będziesz mieć {wiek + <span class="nu">1</span>} lat&lt;/p&gt;
+
+    <span class="cm">{ /* Wywołania funkcji: */ }</span>
+    &lt;p&gt;{imie.toUpperCase()}&lt;/p&gt;
+
+    <span class="cm">{ /* Operator trójkowy (if-else): */ }</span>
+    &lt;p&gt;{zalogowany ? <span class="st">"Zalogowany ✅"</span> : <span class="st">"Niezalogowany ❌"</span>}&lt;/p&gt;
+
+    <span class="cm">{ /* Styl inline — obiekt JS: */ }</span>
+    &lt;p <span class="an">style</span>={{ color: <span class="st">"red"</span>, fontSize: <span class="st">"20px"</span> }}&gt;
+      Czerwony tekst
+    &lt;/p&gt;
+    <span class="cm">{ /* ↑ Dwie klamry: zewnętrzna = "tu jest JS",</span>
+    <span class="cm">     wewnętrzna = obiekt JS z właściwościami CSS */ }</span>
+
+    <span class="cm">{ /* Komentarz w JSX: */ }</span>
+    {<span class="cm">/* To jest komentarz — nie widać go na stronie */</span>}
+  &lt;/div&gt;
+);
+
+<span class="cm">// ❌ W {} NIE możesz pisać: if, for, while (to statements)</span>
+<span class="cm">// ✅ Możesz: wyrażenia, funkcje, ternary, &&, metody tablic</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 04 PROPS ══ -->
+  <section class="chapter" id="props">
+    <div class="ch-head">
+      <div class="ch-num">04 / 12</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--violet)">Dane między komponentami</div>
+        <div class="ch-title">Props — jak przekazać dane do komponentu</div>
+        <div class="ch-desc">Props (skrót od <em>properties</em>) to sposób przekazywania danych do komponentu — jak argumenty do funkcji. Dzięki propsom jeden komponent <code style="font-family:monospace;color:var(--react2)">&lt;KartaUzytkownika&gt;</code> może wyświetlać różnych użytkowników zależnie od tego co do niego przekażesz. Bez propsów każdy komponent byłby identyczną kopią.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--violet)"></div>Props — przekazywanie i odbieranie</div>
+        <pre><span class="cm">// ─── Przekazywanie propsów (rodzic → dziecko) ────────────</span>
+<span class="kw">function</span> <span class="ty">App</span>() {
+  <span class="kw">return</span> (
+    &lt;div&gt;
+      <span class="cm">{ /* Przekazujesz propsy jak atrybuty HTML: */ }</span>
+      &lt;<span class="ty">Karta</span>
+        imie=<span class="st">"Anna"</span>
+        wiek={<span class="nu">28</span>}
+        zalogowana={<span class="kw">true</span>}
+        kolory={[<span class="st">"niebieski"</span>, <span class="st">"zielony"</span>]}
+      /&gt;
+      &lt;<span class="ty">Karta</span>
+        imie=<span class="st">"Marek"</span>
+        wiek={<span class="nu">35</span>}
+        zalogowana={<span class="kw">false</span>}
+        kolory={[<span class="st">"czerwony"</span>]}
+      /&gt;
+    &lt;/div&gt;
+  );
+}
+
+<span class="cm">// ─── Odbieranie propsów (komponent dziecko) ──────────────</span>
+<span class="kw">function</span> <span class="ty">Karta</span>(props) {
+  <span class="cm">// props to obiekt ze wszystkimi przekazanymi wartościami</span>
+  <span class="kw">return</span> (
+    &lt;div&gt;
+      &lt;h2&gt;{props.imie}&lt;/h2&gt;
+      &lt;p&gt;Wiek: {props.wiek}&lt;/p&gt;
+      &lt;p&gt;Status: {props.zalogowana ? <span class="st">"✅"</span> : <span class="st">"❌"</span>}&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}
+
+<span class="cm">// ─── Krócej — destructuring propsów ──────────────────────</span>
+<span class="kw">function</span> <span class="ty">Karta</span>({ imie, wiek, zalogowana }) {
+  <span class="cm">// wyciągasz od razu po nazwach — czytelniej!</span>
+  <span class="kw">return</span> (
+    &lt;div&gt;
+      &lt;h2&gt;{imie}&lt;/h2&gt;
+      &lt;p&gt;Wiek: {wiek}&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}</pre>
+      </div>
+
+      <div>
+        <div class="code" style="margin-bottom:14px">
+          <div class="cbar"><div class="fdot" style="background:var(--violet)"></div>Domyślne wartości i prop children</div>
+          <pre><span class="cm">// ─── Wartości domyślne ────────────────────────────────────</span>
+<span class="kw">function</span> <span class="ty">Przycisk</span>({ tekst = <span class="st">"Kliknij"</span>, kolor = <span class="st">"blue"</span> }) {
+  <span class="kw">return</span> (
+    &lt;button style={{ background: kolor }}&gt;
+      {tekst}
+    &lt;/button&gt;
+  );
+}
+
+<span class="cm">// Użycie bez propsów — użyje domyślnych:</span>
+&lt;<span class="ty">Przycisk</span> /&gt;                    <span class="cm">// "Kliknij", niebieski</span>
+&lt;<span class="ty">Przycisk</span> tekst=<span class="st">"Wyślij"</span> /&gt;     <span class="cm">// "Wyślij", niebieski</span>
+&lt;<span class="ty">Przycisk</span> tekst=<span class="st">"Usuń"</span> kolor=<span class="st">"red"</span> /&gt; <span class="cm">// "Usuń", czerwony</span>
+
+<span class="cm">// ─── Specjalny prop: children ─────────────────────────────</span>
+<span class="cm">// children = wszystko co wpisujesz MIĘDZY tagami</span>
+<span class="kw">function</span> <span class="ty">Ramka</span>({ children }) {
+  <span class="kw">return</span> (
+    &lt;div style={{ border: <span class="st">"2px solid blue"</span>, padding: <span class="st">"16px"</span> }}&gt;
+      {children}   <span class="cm">← renderuje zawartość między tagami</span>
+    &lt;/div&gt;
+  );
+}
+
+<span class="cm">// Użycie:</span>
+&lt;<span class="ty">Ramka</span>&gt;
+  &lt;h2&gt;To jest w środku ramki&lt;/h2&gt;
+  &lt;p&gt;Dowolna zawartość!&lt;/p&gt;
+&lt;/<span class="ty">Ramka</span>&gt;</pre>
+        </div>
+
+        <div class="rule">
+          <div class="rule-title">🔒 Kluczowa zasada propsów</div>
+          <div class="rule-text">Props są <strong>tylko do odczytu</strong>. Komponent który dostaje propsy NIE może ich modyfikować. Dane płyną zawsze w jednym kierunku: od rodzica do dziecka. Nigdy odwrotnie.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 05 STAN ══ -->
+  <section class="chapter" id="stan">
+    <div class="ch-head">
+      <div class="ch-num">05 / 12</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--amber)">Interaktywność</div>
+        <div class="ch-title">Stan (State) — pamięć komponentu która powoduje re-render</div>
+        <div class="ch-desc">Props to dane z zewnątrz. Stan to wewnętrzna pamięć komponentu — rzeczy które się zmieniają w czasie (licznik kliknięć, czy menu jest otwarte, co wpisał użytkownik w formularzu). Gdy stan się zmienia, React automatycznie przerendrowuje komponent — wyświetla aktualną wartość. To jest magia Reacta.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--amber)"></div>useState — podstawowy hook stanu</div>
+        <pre><span class="cm">// Importujesz useState z React:</span>
+<span class="kw">import</span> { useState } <span class="kw">from</span> <span class="st">"react"</span>;
+
+<span class="kw">function</span> <span class="ty">Licznik</span>() {
+  <span class="cm">// useState(0) — zaczynamy od wartości 0</span>
+  <span class="cm">// count     — aktualna wartość stanu</span>
+  <span class="cm">// setCount  — funkcja do zmiany stanu</span>
+  <span class="kw">const</span> [count, setCount] = useState(<span class="nu">0</span>);
+
+  <span class="kw">return</span> (
+    &lt;div&gt;
+      &lt;p&gt;Kliknięcia: {count}&lt;/p&gt;
+
+      &lt;button onClick={() => setCount(count + <span class="nu">1</span>)}&gt;
+        Dodaj +1
+      &lt;/button&gt;
+
+      &lt;button onClick={() => setCount(count - <span class="nu">1</span>)}&gt;
+        Odejmij -1
+      &lt;/button&gt;
+
+      &lt;button onClick={() => setCount(<span class="nu">0</span>)}&gt;
+        Reset
+      &lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+
+<span class="cm">// ─── Inne typy stanu ──────────────────────────────────────</span>
+<span class="kw">const</span> [imie, setImie]           = useState(<span class="st">""</span>);         <span class="cm">// string</span>
+<span class="kw">const</span> [zalogowany, setZalogow] = useState(<span class="kw">false</span>);     <span class="cm">// boolean</span>
+<span class="kw">const</span> [lista, setLista]         = useState([]);          <span class="cm">// tablica</span>
+<span class="kw">const</span> [user, setUser]           = useState(<span class="kw">null</span>);       <span class="cm">// obiekt/null</span>
+<span class="kw">const</span> [tryb, setTryb]           = useState(<span class="st">"light"</span>);   <span class="cm">// string-enum</span></pre>
+      </div>
+
+      <div>
+        <div class="code" style="margin-bottom:14px">
+          <div class="cbar"><div class="fdot" style="background:var(--amber)"></div>Stan obiektów i tablic</div>
+          <pre><span class="cm">// ─── Stan jako obiekt ─────────────────────────────────────</span>
+<span class="kw">const</span> [user, setUser] = useState({
+  imie: <span class="st">"Anna"</span>,
+  wiek: <span class="nu">28</span>
+});
+
+<span class="cm">// ❌ NIE rób tak — bezpośrednia mutacja:</span>
+user.imie = <span class="st">"Marek"</span>;   <span class="cm">// React nie zauważy zmiany!</span>
+
+<span class="cm">// ✅ Stwórz nowy obiekt ze spread operator:</span>
+setUser({ ...user, imie: <span class="st">"Marek"</span> });
+<span class="cm">// ...user kopiuje wszystkie pola, imie nadpisuje</span>
+
+<span class="cm">// ─── Stan jako tablica ────────────────────────────────────</span>
+<span class="kw">const</span> [lista, setLista] = useState([<span class="st">"a"</span>, <span class="st">"b"</span>]);
+
+<span class="cm">// ✅ Dodaj element:</span>
+setLista([...lista, <span class="st">"c"</span>]);           <span class="cm">// ["a","b","c"]</span>
+
+<span class="cm">// ✅ Usuń element (po indeksie):</span>
+setLista(lista.filter((_, i) => i !== <span class="nu">1</span>)); <span class="cm">// ["a","c"]</span>
+
+<span class="cm">// ✅ Zmień element:</span>
+setLista(lista.map((el, i) =>
+  i === <span class="nu">0</span> ? <span class="st">"X"</span> : el               <span class="cm">// ["X","b"]</span>
+));</pre>
+        </div>
+
+        <div class="alert al-rose">
+          <span class="alert-label">🚨 Pułapka nr 1</span>
+          <strong>Nigdy nie zmieniaj stanu bezpośrednio!</strong> Zawsze używaj funkcji <code style="font-family:monospace;color:var(--react2)">setState</code>. Gdy modyfikujesz obiekt lub tablicę, stwórz nową kopię. React wykrywa zmiany porównując referencje — jeśli zmodyfikujesz oryginalny obiekt, React pomyśli że nic się nie zmieniło i nie przerendrowuje.
+        </div>
+      </div>
+    </div>
+
+    <div class="gap16"></div>
+    <div class="g3">
+      <div class="ana">
+        <div class="ana-icon">🧠</div>
+        <div class="ana-body">
+          <div class="ana-title">Jak myśleć o stanie?</div>
+          <div class="ana-text">Stan to <strong>minimalne informacje</strong> które musi pamiętać komponent żeby wiedzieć jak się wyświetlić. Nie trzymaj w stanie rzeczy które możesz obliczyć z innych danych.</div>
+        </div>
+      </div>
+      <div class="ana">
+        <div class="ana-icon">🔄</div>
+        <div class="ana-body">
+          <div class="ana-title">Re-render = odświeżenie</div>
+          <div class="ana-text">Gdy wywołujesz <span class="ana-code">setState</span>, React uruchamia funkcję komponentu od nowa i porównuje wynik z poprzednim. Aktualizuje tylko to co się zmieniło w DOM.</div>
+        </div>
+      </div>
+      <div class="ana">
+        <div class="ana-icon">📍</div>
+        <div class="ana-body">
+          <div class="ana-title">Stan jest lokalny</div>
+          <div class="ana-text">Stan żyje w konkretnym komponencie. Inne komponenty nie widzą jego stanu (chyba że przekażesz go przez propsy lub użyjesz globalnego stanu).</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 06 USEEFFECT ══ -->
+  <section class="chapter" id="useeffect">
+    <div class="ch-head">
+      <div class="ch-num">06 / 12</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--teal)">Efekty uboczne</div>
+        <div class="ch-title">useEffect — co robić po renderze (API, timery, subskrypcje)</div>
+        <div class="ch-desc">useEffect służy do wykonywania rzeczy które dzieją się "obok" renderowania — pobieranie danych z API, ustawianie timera, nasłuchiwanie na zdarzenia, zmiana tytułu strony. Tych rzeczy nie można robić bezpośrednio podczas renderowania — muszą poczekać aż komponent pojawi się na stronie.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--teal)"></div>useEffect — trzy formy</div>
+        <pre><span class="kw">import</span> { useState, useEffect } <span class="kw">from</span> <span class="st">"react"</span>;
+
+<span class="kw">function</span> <span class="ty">MojKomponent</span>() {
+  <span class="kw">const</span> [dane, setDane] = useState(<span class="kw">null</span>);
+
+  <span class="cm">// ─── Forma 1: Bez dependency array ───────────────────────</span>
+  <span class="cm">// Uruchamia się PO KAŻDYM renderze</span>
+  useEffect(() => {
+    console.log(<span class="st">"Komponent się wyrenderował!"</span>);
+  }); <span class="cm">← brak []</span>
+
+  <span class="cm">// ─── Forma 2: Pusta tablica [] ────────────────────────────</span>
+  <span class="cm">// Uruchamia się TYLKO RAZ — gdy komponent pojawia się na stronie</span>
+  useEffect(() => {
+    <span class="cm">// Idealne do pobierania danych przy starcie:</span>
+    fetch(<span class="st">"https://api.example.com/dane"</span>)
+      .then(res => res.json())
+      .then(data => setDane(data));
+  }, []); <span class="cm">← pusta tablica = tylko raz</span>
+
+  <span class="cm">// ─── Forma 3: Z zależnościami ─────────────────────────────</span>
+  <span class="cm">// Uruchamia się gdy zmieni się wartość w tablicy</span>
+  <span class="kw">const</span> [userId, setUserId] = useState(<span class="nu">1</span>);
+
+  useEffect(() => {
+    fetch(<span class="st">`https://api.example.com/user/</span>${userId}<span class="st">`</span>)
+      .then(res => res.json())
+      .then(data => setDane(data));
+  }, [userId]); <span class="cm">← uruchom gdy userId się zmieni</span>
+
+  <span class="kw">return</span> &lt;div&gt;{dane ? dane.imie : <span class="st">"Ładowanie..."</span>}&lt;/div&gt;;
+}</pre>
+      </div>
+
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--teal)"></div>useEffect — funkcja cleanup (sprzątanie)</div>
+        <pre><span class="cm">// Czasem useEffect tworzy rzeczy które trzeba posprzątać</span>
+<span class="cm">// gdy komponent znika ze strony (unmount)</span>
+
+<span class="kw">function</span> <span class="ty">Zegar</span>() {
+  <span class="kw">const</span> [czas, setCzas] = useState(<span class="kw">new</span> Date());
+
+  useEffect(() => {
+    <span class="cm">// Uruchamiamy timer</span>
+    <span class="kw">const</span> timer = setInterval(() => {
+      setCzas(<span class="kw">new</span> Date());
+    }, <span class="nu">1000</span>);
+
+    <span class="cm">// Zwracamy funkcję cleanup — React wywoła ją:</span>
+    <span class="cm">// - gdy komponent znika ze strony</span>
+    <span class="cm">// - przed następnym uruchomieniem tego efektu</span>
+    <span class="kw">return</span> () => {
+      clearInterval(timer); <span class="cm">← wyczyść timer!</span>
+    };
+  }, []); <span class="cm">← tylko raz przy mount</span>
+
+  <span class="kw">return</span> &lt;p&gt;{czas.toLocaleTimeString()}&lt;/p&gt;;
+}
+
+<span class="cm">// Bez cleanup: timer działałby nadal po usunięciu komponentu</span>
+<span class="cm">// = wyciek pamięci (memory leak) i błędy w konsoli</span>
+
+<span class="cm">// ─── Kolejność wykonania ──────────────────────────────────</span>
+<span class="cm">// 1. React renderuje komponent (zwraca JSX)</span>
+<span class="cm">// 2. React aktualizuje DOM</span>
+<span class="cm">// 3. TERAZ useEffect się uruchamia</span>
+<span class="cm">// 4. (gdy stan się zmieni → wróć do 1)</span></pre>
+      </div>
+    </div>
+
+    <div class="gap16"></div>
+    <div class="card">
+      <div class="card-h" style="color:var(--teal)">📋 Kiedy używać useEffect — cheatsheet</div>
+      <div class="card-b">
+        <table class="tbl">
+          <thead><tr><th>Chcę...</th><th>Dependency array</th><th>Przykład</th></tr></thead>
+          <tbody>
+            <tr><td>Pobrać dane gdy komponent się pojawi</td><td><code>[]</code> — raz</td><td>Lista produktów przy starcie</td></tr>
+            <tr><td>Pobrać dane gdy zmieni się ID</td><td><code>[userId]</code></td><td>Profil użytkownika po kliknięciu</td></tr>
+            <tr><td>Uruchomić timer / subskrypcję</td><td><code>[]</code> z cleanup</td><td>Zegar, WebSocket</td></tr>
+            <tr><td>Zmienić tytuł karty</td><td><code>[tytuł]</code></td><td>document.title = tytuł</td></tr>
+            <tr><td>Zapisać do localStorage</td><td><code>[wartość]</code></td><td>Zapisz gdy wartość się zmieni</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 07 LISTY ══ -->
+  <section class="chapter" id="listy">
+    <div class="ch-head">
+      <div class="ch-num">07 / 12</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--green)">Renderowanie danych</div>
+        <div class="ch-title">Listy i klucze — wyświetlanie wielu elementów naraz</div>
+        <div class="ch-desc">Aplikacje rzadko wyświetlają pojedyncze elementy — zwykle listy produktów, komentarzy, użytkowników. W React listy renderujesz przez metodę <code style="font-family:monospace;color:var(--react2)">.map()</code> — przekształcasz tablicę danych w tablicę elementów JSX. Każdy element musi mieć unikalny atrybut <code style="font-family:monospace;color:var(--react2)">key</code> — React używa go do śledzenia co się zmieniło.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--green)"></div>Renderowanie listy przez .map()</div>
+        <pre><span class="kw">function</span> <span class="ty">ListaOwoców</span>() {
+  <span class="kw">const</span> owoce = [<span class="st">"🍎 Jabłko"</span>, <span class="st">"🍌 Banan"</span>, <span class="st">"🍊 Pomarańcza"</span>];
+
+  <span class="kw">return</span> (
+    &lt;ul&gt;
+      {owoce.map((owoc, index) => (
+        &lt;li key={index}&gt;{owoc}&lt;/li&gt;
+      ))}
+    &lt;/ul&gt;
+  );
+}
+
+<span class="cm">// ─── Realistyczny przykład z obiektami ───────────────────</span>
+<span class="kw">function</span> <span class="ty">ListaUzytkownikow</span>() {
+  <span class="kw">const</span> uzytkownicy = [
+    { id: <span class="nu">1</span>, imie: <span class="st">"Anna"</span>,  email: <span class="st">"anna@example.com"</span>  },
+    { id: <span class="nu">2</span>, imie: <span class="st">"Marek"</span>, email: <span class="st">"marek@example.com"</span> },
+    { id: <span class="nu">3</span>, imie: <span class="st">"Kasia"</span>, email: <span class="st">"kasia@example.com"</span> },
+  ];
+
+  <span class="kw">return</span> (
+    &lt;div&gt;
+      {uzytkownicy.map(user => (
+        &lt;<span class="ty">KartaUzytkownika</span>
+          key={user.id}          <span class="cm">← ZAWSZE unikalny key!</span>
+          imie={user.imie}
+          email={user.email}
+        /&gt;
+      ))}
+    &lt;/div&gt;
+  );
+}
+
+<span class="kw">function</span> <span class="ty">KartaUzytkownika</span>({ imie, email }) {
+  <span class="kw">return</span> (
+    &lt;div style={{ border: <span class="st">"1px solid #ccc"</span>, padding: <span class="st">"12px"</span> }}&gt;
+      &lt;h3&gt;{imie}&lt;/h3&gt;
+      &lt;p&gt;{email}&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}</pre>
+      </div>
+
+      <div>
+        <div class="code" style="margin-bottom:14px">
+          <div class="cbar"><div class="fdot" style="background:var(--green)"></div>Klucze — dlaczego są ważne</div>
+          <pre><span class="cm">// key pomaga React śledzić które elementy się zmieniły</span>
+
+<span class="cm">// ❌ Zły key — indeks tablicy:</span>
+{lista.map((item, index) => (
+  &lt;Item key={index} data={item} /&gt;
+))}
+<span class="cm">// Problem: gdy dodajesz/usuwasz elementy,</span>
+<span class="cm">// indeksy się zmieniają → React myli elementy</span>
+<span class="cm">// → utrata stanu formularzy, błędne animacje</span>
+
+<span class="cm">// ✅ Dobry key — unikalny, stały identyfikator:</span>
+{lista.map(item => (
+  &lt;Item key={item.id} data={item} /&gt;
+))}
+<span class="cm">// id nigdy się nie zmienia → React wie co to co</span>
+
+<span class="cm">// ─── Filtrowanie listy przed renderem ────────────────────</span>
+<span class="kw">const</span> [szukaj, setSzukaj] = useState(<span class="st">""</span>);
+
+<span class="kw">const</span> przefiltrowane = uzytkownicy.filter(u =>
+  u.imie.toLowerCase().includes(szukaj.toLowerCase())
+);
+
+<span class="cm">// Renderuj przefiltrowaną listę:</span>
+{przefiltrowane.map(user => (
+  &lt;<span class="ty">KartaUzytkownika</span> key={user.id} {...user} /&gt;
+))}</pre>
+        </div>
+
+        <div class="alert al-amber">
+          <span class="alert-label">⚠️ Klucze — złota reguła</span>
+          Używaj <code style="font-family:monospace;color:var(--react2)">key={item.id}</code> gdy masz ID z bazy danych. Używaj <code style="font-family:monospace;color:var(--react2)">key={index}</code> <strong>tylko gdy lista nigdy się nie zmienia</strong> (nie dodajesz, nie usuwasz, nie resortujesz). Klucz nie jest dostępny przez propsy — jest tylko dla Reacta.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 08 ZDARZENIA ══ -->
+  <section class="chapter" id="zdarzenia">
+    <div class="ch-head">
+      <div class="ch-num">08 / 12</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--rose)">Interakcja</div>
+        <div class="ch-title">Obsługa zdarzeń — kliknięcia, najechanie, klawiatura</div>
+        <div class="ch-desc">Zdarzenia w React działają podobnie jak w HTML — ale nazwy są camelCase (<code style="font-family:monospace;color:var(--react2)">onClick</code> zamiast <code style="font-family:monospace;color:var(--react2)">onclick</code>), a jako wartość przekazujesz funkcję (nie wywołanie funkcji!). React opakowuje natywne zdarzenia przeglądarki w swój "SyntheticEvent" — działa tak samo, ale spójnie we wszystkich przeglądarkach.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--rose)"></div>Obsługa zdarzeń — podstawy</div>
+        <pre><span class="kw">function</span> <span class="ty">Przyciski</span>() {
+  <span class="cm">// ─── Sposób 1: funkcja inline (prosta logika) ─────────</span>
+  <span class="kw">return</span> (
+    &lt;button onClick={() => alert(<span class="st">"Kliknięto!"</span>)}&gt;
+      Kliknij mnie
+    &lt;/button&gt;
+  );
+}
+
+<span class="kw">function</span> <span class="ty">Przyciski2</span>() {
+  <span class="cm">// ─── Sposób 2: nazwana funkcja (lepsza przy złożonej logice)</span>
+  <span class="kw">const</span> handleClick = () => {
+    console.log(<span class="st">"Kliknięto!"</span>);
+    <span class="cm">// możesz tu pisać dużo logiki</span>
+  };
+
+  <span class="kw">const</span> handleMouseEnter = () => {
+    console.log(<span class="st">"Najechano kursorem!"</span>);
+  };
+
+  <span class="kw">return</span> (
+    &lt;div&gt;
+      &lt;button onClick={handleClick}&gt;Kliknij&lt;/button&gt;
+
+      &lt;button onMouseEnter={handleMouseEnter}&gt;Najedź&lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+
+<span class="cm">// ─── WAŻNE: przekazujesz funkcję, nie jej wywołanie! ─────</span>
+<span class="cm">// ✅ onClick={handleClick}     — OK, przekazujesz funkcję</span>
+<span class="cm">// ❌ onClick={handleClick()}   — ŹLE! Wywołujesz od razu!</span>
+<span class="cm">//    (nawias () wywołuje funkcję przy renderze, nie przy kliknięciu)</span>
+
+<span class="cm">// ─── Przekazywanie argumentów ────────────────────────────</span>
+<span class="cm">// Gdy chcesz przekazać argument — opakuj w arrow function:</span>
+{produkty.map(p => (
+  &lt;button key={p.id} onClick={() => usun(p.id)}&gt;Usuń&lt;/button&gt;
+))}</pre>
+      </div>
+
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--rose)"></div>Zdarzenie (event) i zapobieganie domyślnemu</div>
+        <pre><span class="cm">// Każdy handler otrzymuje obiekt zdarzenia (event):</span>
+<span class="kw">const</span> handleClick = (event) => {
+  console.log(event.target);     <span class="cm">// element który kliknięto</span>
+  console.log(event.type);       <span class="cm">// "click"</span>
+  console.log(event.clientX);    <span class="cm">// pozycja X kursora</span>
+};
+
+<span class="cm">// ─── Zapobieganie domyślnemu zachowaniu ──────────────────</span>
+<span class="cm">// Link domyślnie przeładowuje stronę:</span>
+<span class="kw">const</span> handleLink = (event) => {
+  event.preventDefault(); <span class="cm">← ZATRZYMAJ domyślne działanie</span>
+  console.log(<span class="st">"Link kliknięty, ale strona się nie przeładowała"</span>);
+};
+
+&lt;a href=<span class="st">"#"</span> onClick={handleLink}&gt;Kliknij&lt;/a&gt;
+
+<span class="cm">// Form domyślnie przeładowuje stronę przy submit:</span>
+<span class="kw">const</span> handleSubmit = (event) => {
+  event.preventDefault(); <span class="cm">← OBOWIĄZKOWE przy formularzach React!</span>
+  <span class="cm">// teraz możesz obsłużyć dane samodzielnie</span>
+};
+
+&lt;form onSubmit={handleSubmit}&gt;...&lt;/form&gt;
+
+<span class="cm">// ─── Popularne zdarzenia React ───────────────────────────</span>
+<span class="cm">// onClick      — kliknięcie</span>
+<span class="cm">// onChange     — zmiana wartości (input, select)</span>
+<span class="cm">// onSubmit     — wysłanie formularza</span>
+<span class="cm">// onKeyDown    — wciśnięcie klawisza</span>
+<span class="cm">// onMouseEnter — najechanie kursorem</span>
+<span class="cm">// onMouseLeave — opuszczenie kursorem</span>
+<span class="cm">// onFocus / onBlur — focus na element / utrata focusa</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 09 FORMULARZE ══ -->
+  <section class="chapter" id="formularze">
+    <div class="ch-head">
+      <div class="ch-num">09 / 12</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--violet)">Dane od użytkownika</div>
+        <div class="ch-title">Formularze — jak zbierać i obsługiwać dane od użytkownika</div>
+        <div class="ch-desc">Formularze w React działają przez "controlled components" — każdy input ma swoją wartość zapisaną w stanie React, i aktualizuje się przez <code style="font-family:monospace;color:var(--react2)">onChange</code>. React jest jedynym źródłem prawdy o wartości inputa — stąd nazwa "controlled" (kontrolowany).</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--violet)"></div>Controlled Input — podstawowy wzorzec</div>
+        <pre><span class="kw">import</span> { useState } <span class="kw">from</span> <span class="st">"react"</span>;
+
+<span class="kw">function</span> <span class="ty">FormularzLogowania</span>() {
+  <span class="cm">// Każde pole = osobny stan</span>
+  <span class="kw">const</span> [email, setEmail]       = useState(<span class="st">""</span>);
+  <span class="kw">const</span> [haslo, setHaslo]       = useState(<span class="st">""</span>);
+  <span class="kw">const</span> [blad, setBlad]         = useState(<span class="st">""</span>);
+
+  <span class="kw">const</span> handleSubmit = (e) => {
+    e.preventDefault();         <span class="cm">← zatrzymaj przeładowanie!</span>
+
+    <span class="cm">// Walidacja</span>
+    <span class="kw">if</span> (!email || !haslo) {
+      setBlad(<span class="st">"Wypełnij wszystkie pola"</span>);
+      <span class="kw">return</span>;
+    }
+
+    <span class="cm">// Dane do wysłania:</span>
+    console.log({ email, haslo });
+    <span class="cm">// fetch("/api/login", { method: "POST", body: ... })</span>
+  };
+
+  <span class="kw">return</span> (
+    &lt;form onSubmit={handleSubmit}&gt;
+      &lt;div&gt;
+        &lt;label&gt;Email:&lt;/label&gt;
+        &lt;input
+          type=<span class="st">"email"</span>
+          value={email}            <span class="cm">← React kontroluje wartość</span>
+          onChange={(e) => setEmail(e.target.value)} <span class="cm">← aktualizuj stan</span>
+          placeholder=<span class="st">"twoj@email.pl"</span>
+        /&gt;
+      &lt;/div&gt;
+
+      &lt;div&gt;
+        &lt;label&gt;Hasło:&lt;/label&gt;
+        &lt;input
+          type=<span class="st">"password"</span>
+          value={haslo}
+          onChange={(e) => setHaslo(e.target.value)}
+        /&gt;
+      &lt;/div&gt;
+
+      {blad &amp;&amp; &lt;p style={{ color: <span class="st">"red"</span> }}&gt;{blad}&lt;/p&gt;}
+
+      &lt;button type=<span class="st">"submit"</span>&gt;Zaloguj się&lt;/button&gt;
+    &lt;/form&gt;
+  );
+}</pre>
+      </div>
+
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--violet)"></div>Różne typy inputów</div>
+        <pre><span class="cm">// ─── Checkbox ─────────────────────────────────────────────</span>
+<span class="kw">const</span> [zgoda, setZgoda] = useState(<span class="kw">false</span>);
+
+&lt;input
+  type=<span class="st">"checkbox"</span>
+  checked={zgoda}            <span class="cm">← zamiast value użyj checked</span>
+  onChange={(e) => setZgoda(e.target.checked)} <span class="cm">← .checked nie .value</span>
+/&gt;
+&lt;label&gt;Akceptuję regulamin&lt;/label&gt;
+
+<span class="cm">// ─── Select (dropdown) ────────────────────────────────────</span>
+<span class="kw">const</span> [kraj, setKraj] = useState(<span class="st">"pl"</span>);
+
+&lt;select value={kraj} onChange={(e) => setKraj(e.target.value)}&gt;
+  &lt;option value=<span class="st">"pl"</span>&gt;Polska&lt;/option&gt;
+  &lt;option value=<span class="st">"de"</span>&gt;Niemcy&lt;/option&gt;
+  &lt;option value=<span class="st">"uk"</span>&gt;Wielka Brytania&lt;/option&gt;
+&lt;/select&gt;
+
+<span class="cm">// ─── Textarea ─────────────────────────────────────────────</span>
+<span class="kw">const</span> [wiadomosc, setWiadomosc] = useState(<span class="st">""</span>);
+
+&lt;textarea
+  value={wiadomosc}
+  onChange={(e) => setWiadomosc(e.target.value)}
+  rows={<span class="nu">4</span>}
+  placeholder=<span class="st">"Napisz wiadomość..."</span>
+/&gt;
+
+<span class="cm">// ─── Radio buttons ────────────────────────────────────────</span>
+<span class="kw">const</span> [plec, setPlec] = useState(<span class="st">"K"</span>);
+
+&lt;label&gt;
+  &lt;input type=<span class="st">"radio"</span> value=<span class="st">"K"</span>
+    checked={plec === <span class="st">"K"</span>}
+    onChange={(e) => setPlec(e.target.value)} /&gt;
+  Kobieta
+&lt;/label&gt;
+&lt;label&gt;
+  &lt;input type=<span class="st">"radio"</span> value=<span class="st">"M"</span>
+    checked={plec === <span class="st">"M"</span>}
+    onChange={(e) => setPlec(e.target.value)} /&gt;
+  Mężczyzna
+&lt;/label&gt;</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 10 WARUNKOWE ══ -->
+  <section class="chapter" id="warunkowe">
+    <div class="ch-head">
+      <div class="ch-num">10 / 12</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--emerald)">Logika wyświetlania</div>
+        <div class="ch-title">Warunkowe renderowanie — pokazuj i chowaj elementy</div>
+        <div class="ch-desc">Nie zawsze chcesz wyświetlać wszystko. Spinner ładowania tylko gdy czekasz na dane, komunikat błędu tylko gdy coś pójdzie nie tak, menu tylko gdy jest otwarte. W React masz kilka sposobów na warunkowe renderowanie — każdy do innych sytuacji.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--emerald)"></div>5 wzorców warunkowego renderowania</div>
+        <pre><span class="kw">function</span> <span class="ty">Przyklad</span>({ isLoading, error, user, isAdmin }) {
+
+  <span class="cm">// ─── 1. If/else przed return — dla złożonej logiki ───────</span>
+  <span class="kw">if</span> (isLoading) <span class="kw">return</span> &lt;<span class="ty">Spinner</span> /&gt;;
+  <span class="kw">if</span> (error)     <span class="kw">return</span> &lt;<span class="ty">Error</span> message={error} /&gt;;
+
+  <span class="kw">return</span> (
+    &lt;div&gt;
+
+      {<span class="cm">/* 2. Operator && — pokaż TYLKO gdy warunek true */</span>}
+      {isAdmin &amp;&amp; &lt;<span class="ty">AdminPanel</span> /&gt;}
+      {user.verified &amp;&amp; &lt;span&gt;✅ Zweryfikowany&lt;/span&gt;}
+
+      {<span class="cm">/* 3. Operator trójkowy ? : — jedno LUB drugie */</span>}
+      {user ? &lt;<span class="ty">UserInfo</span> user={user} /&gt; : &lt;<span class="ty">LoginPrompt</span> /&gt;}
+
+      {<span class="cm">/* 4. Null — nic nie renderuj */</span>}
+      {error ? &lt;<span class="ty">ErrorBox</span> /&gt; : <span class="kw">null</span>}
+
+      {<span class="cm">/* 5. Zmienna przechowująca JSX */</span>}
+      {(() => {
+        <span class="kw">if</span> (user.rola === <span class="st">"admin"</span>)  <span class="kw">return</span> &lt;<span class="ty">AdminBadge</span> /&gt;;
+        <span class="kw">if</span> (user.rola === <span class="st">"mod"</span>)    <span class="kw">return</span> &lt;<span class="ty">ModBadge</span> /&gt;;
+        <span class="kw">return</span> &lt;<span class="ty">UserBadge</span> /&gt;;
+      })()}
+    &lt;/div&gt;
+  );
+}</pre>
+      </div>
+
+      <div>
+        <div class="code" style="margin-bottom:14px">
+          <div class="cbar"><div class="fdot" style="background:var(--emerald)"></div>Praktyczny przykład — Loading / Error / Data</div>
+          <pre><span class="kw">function</span> <span class="ty">ListaPostow</span>() {
+  <span class="kw">const</span> [posty, setPosty]       = useState([]);
+  <span class="kw">const</span> [laduje, setLaduje]     = useState(<span class="kw">true</span>);
+  <span class="kw">const</span> [blad, setBlad]         = useState(<span class="kw">null</span>);
+
+  useEffect(() => {
+    fetch(<span class="st">"https://jsonplaceholder.typicode.com/posts"</span>)
+      .then(r => r.json())
+      .then(data => {
+        setPosty(data.slice(<span class="nu">0</span>, <span class="nu">5</span>));
+        setLaduje(<span class="kw">false</span>);
+      })
+      .catch(err => {
+        setBlad(err.message);
+        setLaduje(<span class="kw">false</span>);
+      });
+  }, []);
+
+  <span class="cm">// Trzy stany — każdy inny widok:</span>
+  <span class="kw">if</span> (laduje) <span class="kw">return</span> &lt;p&gt;⏳ Ładuję posty...&lt;/p&gt;;
+  <span class="kw">if</span> (blad)   <span class="kw">return</span> &lt;p style={{color:<span class="st">"red"</span>}}&gt;❌ {blad}&lt;/p&gt;;
+  <span class="kw">if</span> (posty.length === <span class="nu">0</span>) <span class="kw">return</span> &lt;p&gt;Brak postów&lt;/p&gt;;
+
+  <span class="kw">return</span> (
+    &lt;ul&gt;
+      {posty.map(post => (
+        &lt;li key={post.id}&gt;{post.title}&lt;/li&gt;
+      ))}
+    &lt;/ul&gt;
+  );
+}</pre>
+        </div>
+
+        <div class="alert al-react">
+          <span class="alert-label">💡 Pułapka z &&</span>
+          <code style="font-family:monospace;color:var(--react2)">{liczba && &lt;Komponent /&gt;}</code> — gdy <code style="font-family:monospace;color:var(--react2)">liczba</code> to <strong>0</strong>, React wyrenderuje samo <code style="font-family:monospace;color:var(--react2)">0</code> na stronie (bo 0 jest falsy ale nie null/undefined)! Bezpieczniej: <code style="font-family:monospace;color:var(--react2)">{liczba > 0 && &lt;Komponent /&gt;}</code> lub <code style="font-family:monospace;color:var(--react2)">{!!liczba && &lt;Komponent /&gt;}</code>.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 11 DRZEWO ══ -->
+  <section class="chapter" id="drzewo">
+    <div class="ch-head">
+      <div class="ch-num">11 / 12</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--pink)">Architektura</div>
+        <div class="ch-title">Drzewo komponentów — jak dane przepływają w górę i w dół</div>
+        <div class="ch-desc">Gdy budujesz aplikację React, dane naturalnie płyną z góry na dół — od rodzica przez propsy do dzieci. Ale co gdy dziecko chce zmienić stan rodzica? Przekazujesz funkcję jako prop. Gdy dwa różne komponenty potrzebują tego samego stanu, "winda go w górę" do wspólnego rodzica — to wzorzec zwany <em>lifting state up</em>.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--pink)"></div>Lifting state up — stan w górę do rodzica</div>
+        <pre><span class="cm">// Problem: dwa komponenty chcą wiedzieć o tym samym</span>
+
+<span class="cm">// ─── Rozwiązanie: stan w wspólnym rodzicu ─────────────────</span>
+<span class="kw">function</span> <span class="ty">App</span>() {
+  <span class="cm">// Stan jest TU — w rodzicu który widzi oba dzieci</span>
+  <span class="kw">const</span> [koszyk, setKoszyk] = useState([]);
+
+  <span class="kw">const</span> dodajDoKoszyka = (produkt) => {
+    setKoszyk(prev => [...prev, produkt]);
+  };
+
+  <span class="kw">return</span> (
+    &lt;div&gt;
+      <span class="cm">{ /* Dziecko 1: wyświetla produkty, przekazuje funkcję */ }</span>
+      &lt;<span class="ty">ListaProduktow</span> onDodaj={dodajDoKoszyka} /&gt;
+
+      <span class="cm">{ /* Dziecko 2: wyświetla koszyk */ }</span>
+      &lt;<span class="ty">Koszyk</span> produkty={koszyk} /&gt;
+    &lt;/div&gt;
+  );
+}
+
+<span class="kw">function</span> <span class="ty">ListaProduktow</span>({ onDodaj }) {
+  <span class="kw">const</span> produkty = [
+    { id: <span class="nu">1</span>, nazwa: <span class="st">"Laptop"</span>, cena: <span class="nu">3000</span> },
+    { id: <span class="nu">2</span>, nazwa: <span class="st">"Mysz"</span>,   cena: <span class="nu">150</span>  },
+  ];
+  <span class="kw">return</span> (
+    &lt;ul&gt;
+      {produkty.map(p => (
+        &lt;li key={p.id}&gt;
+          {p.nazwa} - {p.cena} zł
+          <span class="cm">{ /* Wywołuje funkcję rodzica */ }</span>
+          &lt;button onClick={() => onDodaj(p)}&gt;Dodaj 🛒&lt;/button&gt;
+        &lt;/li&gt;
+      ))}
+    &lt;/ul&gt;
+  );
+}
+
+<span class="kw">function</span> <span class="ty">Koszyk</span>({ produkty }) {
+  <span class="kw">const</span> suma = produkty.reduce((s, p) => s + p.cena, <span class="nu">0</span>);
+  <span class="kw">return</span> (
+    &lt;div&gt;
+      &lt;h3&gt;Koszyk ({produkty.length})&lt;/h3&gt;
+      &lt;p&gt;Suma: {suma} zł&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}</pre>
+      </div>
+
+      <div>
+        <div class="g2" style="gap:10px;margin-bottom:14px">
+          <div class="ana" style="padding:16px">
+            <div class="ana-icon">⬇️</div>
+            <div class="ana-body">
+              <div class="ana-title" style="font-size:.9rem">Dane w dół</div>
+              <div class="ana-text" style="font-size:.82rem">Przez <strong>propsy</strong>. Rodzic → Dziecko → Wnuczek. Jedynkierunkowy przepływ danych.</div>
+            </div>
+          </div>
+          <div class="ana" style="padding:16px">
+            <div class="ana-icon">⬆️</div>
+            <div class="ana-body">
+              <div class="ana-title" style="font-size:.9rem">Zdarzenia w górę</div>
+              <div class="ana-text" style="font-size:.82rem">Przez <strong>funkcje jako propsy</strong>. Dziecko wywołuje callback rodzica. Rodzic zmienia stan.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-h" style="color:var(--pink)">📋 Gdzie trzymać stan — zasada</div>
+          <div class="card-b" style="font-size:.87rem;color:var(--tx2);line-height:1.9">
+            <div class="steps">
+              <div class="step">
+                <div class="step-num">1</div>
+                <div class="step-body">
+                  <div class="step-title">Identyfikuj — które komponenty potrzebują tego stanu?</div>
+                  <div class="step-text">Czy tylko jeden? Trzymaj tam.</div>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-num">2</div>
+                <div class="step-body">
+                  <div class="step-title">Znajdź wspólnego rodzica</div>
+                  <div class="step-text">Jeśli wiele komponentów — trzymaj w ich najbliższym wspólnym przodku.</div>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-num">3</div>
+                <div class="step-body">
+                  <div class="step-title">Winda w górę (lift state up)</div>
+                  <div class="step-text">Przenieś stan do tego rodzica, przekaż przez propsy.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 12 PIERWSZY PROJEKT ══ -->
+  <section class="chapter" id="pierwszy-projekt">
+    <div class="ch-head">
+      <div class="ch-num">12 / 12</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--react)">Podsumowanie i start</div>
+        <div class="ch-title">Jak zacząć — setup projektu i co dalej</div>
+        <div class="ch-desc">Masz już teorię. Czas na praktykę. Oto jak w 3 minutach uruchomić swój pierwszy projekt React, i co budować żeby nauczyć się jak najszybciej.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div>
+        <div class="card" style="margin-bottom:14px">
+          <div class="card-h" style="color:var(--react)">🚀 Uruchom projekt — 3 komendy</div>
+          <div class="card-b">
+            <div class="code" style="border:none;border-radius:0;background:transparent">
+              <pre style="padding:0;font-size:.82rem"><span class="cm"># Vite — szybkie, nowoczesne narzędzie (zalecane)</span>
+npm create vite@latest moja-aplikacja -- --template react
+
+<span class="cm"># Wejdź do folderu</span>
+cd moja-aplikacja
+
+<span class="cm"># Zainstaluj zależności</span>
+npm install
+
+<span class="cm"># Uruchom serwer deweloperski (http://localhost:5173)</span>
+npm run dev
+
+<span class="cm"># Alternatywa: Create React App (wolniejsze, ale starszy standard)</span>
+npx create-react-app moja-aplikacja</pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-h" style="color:var(--react)">📁 Struktura plików po starcie</div>
+          <div class="card-b" style="font-size:.86rem;color:var(--tx2);line-height:1.95">
+            <div style="font-family:monospace;font-size:.82rem;line-height:1.9">
+              <span style="color:var(--react2)">moja-aplikacja/</span><br>
+              &nbsp;&nbsp;<span style="color:var(--mt)">├─</span> <span style="color:var(--tx)">src/</span> <span style="color:var(--mt)">← tu piszesz kod!</span><br>
+              &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--mt)">├─</span> <span style="color:var(--green)">main.jsx</span> <span style="color:var(--mt)">← punkt wejścia</span><br>
+              &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--mt)">├─</span> <span style="color:var(--green)">App.jsx</span> <span style="color:var(--mt)">← główny komponent</span><br>
+              &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--mt)">└─</span> <span style="color:var(--green)">App.css</span> <span style="color:var(--mt)">← style</span><br>
+              &nbsp;&nbsp;<span style="color:var(--mt)">├─</span> <span style="color:var(--tx)">public/</span> <span style="color:var(--mt)">← statyczne pliki</span><br>
+              &nbsp;&nbsp;<span style="color:var(--mt)">├─</span> <span style="color:var(--amber)">index.html</span> <span style="color:var(--mt)">← jeden HTML na całą SPA</span><br>
+              &nbsp;&nbsp;<span style="color:var(--mt)">└─</span> <span style="color:var(--amber)">package.json</span> <span style="color:var(--mt)">← konfiguracja projektu</span>
+            </div>
+            <p style="margin-top:12px">Tworzysz nowe komponenty w <code style="font-family:monospace;color:var(--react2)">src/</code> — np. <code style="font-family:monospace;color:var(--react2)">src/components/Button.jsx</code></p>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card" style="margin-bottom:14px">
+          <div class="card-h" style="color:var(--green)">🎯 Co budować żeby się nauczyć</div>
+          <div class="card-b">
+            <div class="steps">
+              <div class="step">
+                <div class="step-num" style="background:var(--green)">1</div>
+                <div class="step-body">
+                  <div class="step-title">Licznik kliknięć</div>
+                  <div class="step-text">useState, onClick, warunkowe renderowanie — wszystko w jednym prostym komponencie.</div>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-num" style="background:var(--green)">2</div>
+                <div class="step-body">
+                  <div class="step-title">Lista zadań (Todo)</div>
+                  <div class="step-text">Formularz, lista, dodawanie, usuwanie, filtrowanie. Kompletny cykl CRUD.</div>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-num" style="background:var(--green)">3</div>
+                <div class="step-body">
+                  <div class="step-title">Dane z API</div>
+                  <div class="step-text">useEffect + fetch z JSONPlaceholder. Loading/error/data pattern.</div>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-num" style="background:var(--green)">4</div>
+                <div class="step-body">
+                  <div class="step-title">Kalkulator / Quiz</div>
+                  <div class="step-text">Złożony stan, wiele komponentów, przekazywanie danych.</div>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-num" style="background:var(--green)">5</div>
+                <div class="step-body">
+                  <div class="step-title">Klon prostej aplikacji</div>
+                  <div class="step-text">Uproszczone Pogoda, Twitter, Sklep. Routing, komponenty, API.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="gap16"></div>
+
+    <div class="card">
+      <div class="card-h" style="color:var(--react)">✅ Checklist — co powinieneś umieć po tym poradniku</div>
+      <div class="card-b">
+        <div class="g3" style="gap:8px">
+          <div class="checklist">
+            <div class="check-item done"><div class="check-box">✓</div><div>Stworzyć komponent funkcyjny</div></div>
+            <div class="check-item done"><div class="check-box">✓</div><div>Zrozumieć składnię JSX</div></div>
+            <div class="check-item done"><div class="check-box">✓</div><div>Przekazywać propsy do komponentu</div></div>
+            <div class="check-item done"><div class="check-box">✓</div><div>Użyć useState do lokalnego stanu</div></div>
+          </div>
+          <div class="checklist">
+            <div class="check-item done"><div class="check-box">✓</div><div>Obsłużyć zdarzenia (onClick, onChange)</div></div>
+            <div class="check-item done"><div class="check-box">✓</div><div>Wyrenderować listę przez .map()</div></div>
+            <div class="check-item done"><div class="check-box">✓</div><div>Używać key w listach</div></div>
+            <div class="check-item done"><div class="check-box">✓</div><div>Warunkowo renderować elementy</div></div>
+          </div>
+          <div class="checklist">
+            <div class="check-item done"><div class="check-box">✓</div><div>Zbudować kontrolowany formularz</div></div>
+            <div class="check-item done"><div class="check-box">✓</div><div>Używać useEffect do API calls</div></div>
+            <div class="check-item done"><div class="check-box">✓</div><div>Rozumieć lifting state up</div></div>
+            <div class="check-item done"><div class="check-box">✓</div><div>Uruchomić projekt przez Vite</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="gap24"></div>
+    <div class="strip" style="border-color:var(--react)">
+      <div class="strip-icon">⚛️</div>
+      <div>
+        <strong>Najważniejsza rzecz w nauce React:</strong> po prostu buduj. Przeczytaj dokumentację gdy utkniesz, a nie zanim zaczniesz. Twój pierwszy kod będzie nieczytelny i to jest normalne. Każdy senior kiedyś napisał swoje pierwsze <code style="font-family:monospace;color:var(--react2)">useState</code>. Zbuduj licznik → todo listę → coś z API → coś co sam wymyślisz. Postęp w programowaniu mierzy się projektami, nie przeczytanymi tutorialami. <strong>Zacznij teraz.</strong>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div><span class="footer-title">React dla każdego — Podstawy od zera</span> · Komponenty, JSX, Props, Stan, Hooki, Listy, Formularze, Zdarzenia</div>
+  <div>react.dev · Poradnik w stylu deep-knowledge-map · Light Mode</div>
+</footer>
+
+</body>
+</html>

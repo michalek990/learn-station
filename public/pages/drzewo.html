@@ -1,0 +1,1414 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>App — Explorer</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #1e1e1e;
+  --sidebar: #252526;
+  --sidebar-hover: #2a2d2e;
+  --sidebar-active: #37373d;
+  --editor: #1e1e1e;
+  --tab-bar: #252526;
+  --tab-active: #1e1e1e;
+  --tab-inactive: #2d2d2d;
+  --border: #3e3e42;
+  --tx: #cccccc;
+  --tx2: #858585;
+  --tx3: #6e7681;
+  --blue: #4ec9b0;
+  --blue2: #9cdcfe;
+  --green: #4ec94e;
+  --green2: #6a9955;
+  --violet: #c586c0;
+  --yellow: #dcdcaa;
+  --orange: #ce9178;
+  --red: #f44747;
+  --ts-blue: #007acc;
+  --tsx-teal: #00b4b4;
+  --json-yellow: #cbcb41;
+  --js-yellow: #f5de19;
+  --md-blue: #519aba;
+  --sh-green: #89e051;
+  --html-orange: #e34c26;
+  --css-blue: #563d7c;
+  --white: #d4d4d4;
+  --keyword: #569cd6;
+  --string: #ce9178;
+  --comment: #6a9955;
+  --type: #4ec9b0;
+  --number: #b5cea8;
+  --func: #dcdcaa;
+  --prop: #9cdcfe;
+  --indent: 12px;
+}
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--tx);font-family:'JetBrains Mono',monospace;font-size:13px;display:flex;flex-direction:column}
+
+/* TITLEBAR */
+.titlebar{height:30px;background:#323233;display:flex;align-items:center;padding:0 16px;gap:8px;flex-shrink:0;border-bottom:1px solid #000;user-select:none}
+.tb-dots{display:flex;gap:6px}
+.tb-dot{width:12px;height:12px;border-radius:50%}
+.tb-title{flex:1;text-align:center;font-size:11px;color:var(--tx2);letter-spacing:.3px}
+.tb-icons{display:flex;gap:14px;color:var(--tx2);font-size:11px}
+
+/* ACTIVITY BAR */
+.layout{display:flex;flex:1;overflow:hidden}
+.actbar{width:48px;background:#333333;display:flex;flex-direction:column;align-items:center;padding:4px 0;gap:2px;border-right:1px solid #000;flex-shrink:0}
+.act-icon{width:36px;height:36px;display:flex;align-items:center;justify-content:center;color:var(--tx2);cursor:pointer;border-radius:4px;font-size:14px;transition:color .15s;position:relative}
+.act-icon:hover{color:var(--tx)}
+.act-icon.active{color:#fff}
+.act-icon.active::before{content:'';position:absolute;left:-4px;top:6px;bottom:6px;width:2px;background:#fff;border-radius:0 2px 2px 0}
+
+/* SIDEBAR */
+.sidebar{width:280px;background:var(--sidebar);display:flex;flex-direction:column;border-right:1px solid #000;flex-shrink:0;overflow:hidden}
+.sidebar-title{height:35px;display:flex;align-items:center;padding:0 14px;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx2);flex-shrink:0}
+.tree{flex:1;overflow-y:auto;overflow-x:hidden;padding-bottom:20px}
+.tree::-webkit-scrollbar{width:6px}
+.tree::-webkit-scrollbar-track{background:transparent}
+.tree::-webkit-scrollbar-thumb{background:#424242;border-radius:3px}
+.tree::-webkit-scrollbar-thumb:hover{background:#555}
+
+/* TREE ITEMS */
+.tree-item{display:flex;align-items:center;height:22px;cursor:pointer;padding-right:8px;white-space:nowrap;position:relative;transition:background .08s}
+.tree-item:hover{background:var(--sidebar-hover)}
+.tree-item.active{background:var(--sidebar-active)}
+.tree-item.active::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:#007acc}
+.tree-indent{display:inline-flex;align-items:center;flex-shrink:0}
+.tree-indent-unit{width:var(--indent);height:100%;flex-shrink:0;position:relative}
+.tree-arrow{width:16px;height:22px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--tx2);font-size:9px;transition:transform .15s}
+.tree-arrow.open{transform:rotate(90deg)}
+.tree-arrow.leaf{opacity:0;pointer-events:none}
+.file-icon{font-size:13px;margin-right:5px;flex-shrink:0}
+.tree-label{font-size:13px;color:var(--tx);overflow:hidden;text-overflow:ellipsis}
+.tree-label.folder{color:#e8e8e8;font-weight:500}
+.children{display:none}
+.children.open{display:block}
+
+/* MAIN EDITOR AREA */
+.editor-area{flex:1;display:flex;flex-direction:column;overflow:hidden}
+
+/* TABS */
+.tabs{height:35px;background:var(--tab-bar);display:flex;align-items:flex-end;overflow-x:auto;overflow-y:hidden;flex-shrink:0;border-bottom:1px solid #000}
+.tabs::-webkit-scrollbar{height:3px}
+.tabs::-webkit-scrollbar-thumb{background:#555}
+.tab{display:flex;align-items:center;gap:6px;padding:0 14px 0 12px;height:35px;background:var(--tab-inactive);border-right:1px solid #000;cursor:pointer;white-space:nowrap;font-size:12px;color:var(--tx2);flex-shrink:0;position:relative;transition:background .1s}
+.tab:hover{background:#2e2e2e}
+.tab.active{background:var(--tab-active);color:var(--tx)}
+.tab.active::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:#007acc}
+.tab-icon{font-size:12px}
+.tab-close{width:16px;height:16px;display:flex;align-items:center;justify-content:center;border-radius:3px;font-size:10px;opacity:0;transition:opacity .1s}
+.tab:hover .tab-close{opacity:.6}
+.tab.active .tab-close{opacity:.6}
+.tab-close:hover{opacity:1!important;background:#555}
+
+/* EDITOR CONTENT */
+.editor-content{flex:1;overflow:hidden;display:flex;flex-direction:column}
+.welcome{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--tx2);gap:8px}
+.welcome-logo{font-size:64px;opacity:.15;margin-bottom:8px}
+.welcome-title{font-size:20px;color:var(--tx2);font-weight:300;letter-spacing:1px}
+.welcome-sub{font-size:12px;color:var(--tx3)}
+
+/* CODE VIEW */
+.code-view{flex:1;overflow:auto;display:flex}
+.code-view::-webkit-scrollbar{width:10px;height:10px}
+.code-view::-webkit-scrollbar-track{background:#1e1e1e}
+.code-view::-webkit-scrollbar-thumb{background:#424242}
+.code-view::-webkit-scrollbar-thumb:hover{background:#555}
+.line-numbers{width:50px;background:var(--editor);padding:16px 0;text-align:right;flex-shrink:0;user-select:none;border-right:1px solid #2d2d2d}
+.ln{height:19px;line-height:19px;padding-right:12px;font-size:12px;color:#4a4a4a}
+.code-lines{padding:16px 20px;flex:1;overflow:visible}
+.cl{height:19px;line-height:19px;font-size:13px;white-space:pre}
+
+/* DESCRIPTION PANEL */
+.desc-panel{background:#252526;border-top:1px solid var(--border);padding:14px 20px;font-size:12px;line-height:1.8;color:#aaa;flex-shrink:0;max-height:110px;overflow-y:auto}
+.desc-panel::-webkit-scrollbar{width:4px}
+.desc-panel::-webkit-scrollbar-thumb{background:#424242}
+.desc-title{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#569cd6;margin-bottom:4px}
+.desc-panel b{color:#dcdcaa}
+
+/* STATUSBAR */
+.statusbar{height:22px;background:#007acc;display:flex;align-items:center;padding:0 12px;gap:16px;flex-shrink:0}
+.sb-item{font-size:11px;color:rgba(255,255,255,.8);display:flex;align-items:center;gap:4px;cursor:pointer}
+.sb-item:hover{color:#fff}
+.sb-right{margin-left:auto;display:flex;gap:16px}
+
+/* SYNTAX HIGHLIGHT */
+.kw{color:#569cd6}
+.st{color:#ce9178}
+.cm{color:#6a9955}
+.ty{color:#4ec9b0}
+.nu{color:#b5cea8}
+.fn{color:#dcdcaa}
+.pr{color:#9cdcfe}
+.op{color:#d4d4d4}
+.at{color:#9cdcfe}
+.tg{color:#4ec9b0}
+
+/* RESPONSIVE */
+@media(max-width:700px){.sidebar{width:220px}.actbar{width:36px}}
+</style>
+</head>
+<body>
+
+<!-- TITLEBAR -->
+<div class="titlebar">
+  <div class="tb-dots">
+    <div class="tb-dot" style="background:#ff5f57"></div>
+    <div class="tb-dot" style="background:#febc2e"></div>
+    <div class="tb-dot" style="background:#28c840"></div>
+  </div>
+  <div class="tb-title">App — Visual Studio Code</div>
+  <div class="tb-icons">
+    <span>⊟</span><span>⊡</span><span>✕</span>
+  </div>
+</div>
+
+<div class="layout">
+
+  <!-- ACTIVITY BAR -->
+  <div class="actbar">
+    <div class="act-icon active" title="Explorer">📁</div>
+    <div class="act-icon" title="Search">🔍</div>
+    <div class="act-icon" title="Git">⎇</div>
+    <div class="act-icon" title="Extensions">⧉</div>
+    <div style="flex:1"></div>
+    <div class="act-icon" title="Settings">⚙️</div>
+  </div>
+
+  <!-- SIDEBAR / FILE TREE -->
+  <div class="sidebar">
+    <div class="sidebar-title">Explorer</div>
+    <div class="tree" id="tree"></div>
+  </div>
+
+  <!-- EDITOR -->
+  <div class="editor-area">
+    <div class="tabs" id="tabs"></div>
+    <div class="editor-content" id="editor-content">
+      <div class="welcome" id="welcome">
+        <div class="welcome-logo">⬡</div>
+        <div class="welcome-title">App Explorer</div>
+        <div class="welcome-sub">Kliknij na plik żeby zobaczyć kod i opis</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STATUSBAR -->
+<div class="statusbar">
+  <div class="sb-item">⎇ main</div>
+  <div class="sb-item">⚠ 0 &nbsp; ✗ 0</div>
+  <div class="sb-right">
+    <div class="sb-item" id="sb-lang">—</div>
+    <div class="sb-item">UTF-8</div>
+    <div class="sb-item">TypeScript React</div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+// FILE DATABASE
+// ═══════════════════════════════════════════
+const FILES = {
+  'package.json': {
+    icon: '📦', ext: 'json', color: '#cbcb41',
+    desc: '<b>Serce projektu.</b> Lista wszystkich zależności (react, tailwind, firebase...), skrypty uruchamiania (dev, build, test) i metadane. Bez tego pliku projekt nie istnieje.',
+    code: `<span class="op">{</span>
+  <span class="pr">"name"</span><span class="op">:</span> <span class="st">"my-app"</span><span class="op">,</span>
+  <span class="pr">"version"</span><span class="op">:</span> <span class="st">"1.0.0"</span><span class="op">,</span>
+  <span class="pr">"scripts"</span><span class="op">:</span> <span class="op">{</span>
+    <span class="pr">"dev"</span><span class="op">:</span> <span class="st">"vite"</span><span class="op">,</span>              <span class="cm">// yarn dev → localhost:5173</span>
+    <span class="pr">"build:prod"</span><span class="op">:</span> <span class="st">"tsc && vite build --mode prod"</span><span class="op">,</span>
+    <span class="pr">"test"</span><span class="op">:</span> <span class="st">"vitest run"</span><span class="op">,</span>        <span class="cm">// uruchamia testy</span>
+    <span class="pr">"lint"</span><span class="op">:</span> <span class="st">"eslint . --max-warnings 0"</span><span class="op">,</span>
+    <span class="pr">"format"</span><span class="op">:</span> <span class="st">"prettier . --write"</span><span class="op">,</span>
+    <span class="pr">"storybook"</span><span class="op">:</span> <span class="st">"storybook dev -p 6006"</span><span class="op">,</span>
+    <span class="pr">"prepare"</span><span class="op">:</span> <span class="st">"husky install"</span>    <span class="cm">// auto-instalacja git hooków</span>
+  <span class="op">},</span>
+  <span class="pr">"dependencies"</span><span class="op">:</span> <span class="op">{</span>
+    <span class="pr">"react"</span><span class="op">:</span> <span class="st">"^18.2.0"</span><span class="op">,</span>
+    <span class="pr">"firebase"</span><span class="op">:</span> <span class="st">"^10.7.1"</span><span class="op">,</span>
+    <span class="pr">"@tanstack/react-table"</span><span class="op">:</span> <span class="st">"^8.21.3"</span><span class="op">,</span>
+    <span class="pr">"leaflet"</span><span class="op">:</span> <span class="st">"^1.9.4"</span><span class="op">,</span>        <span class="cm">// mapy</span>
+    <span class="pr">"recharts"</span><span class="op">:</span> <span class="st">"^2.13.0"</span><span class="op">,</span>      <span class="cm">// wykresy</span>
+    <span class="pr">"jotai"</span><span class="op">:</span> <span class="st">"^2.8.0"</span><span class="op">,</span>           <span class="cm">// zarządzanie stanem</span>
+    <span class="pr">"react-hook-form"</span><span class="op">:</span> <span class="st">"^7.52.1"</span><span class="op">,</span>
+    <span class="pr">"zod"</span><span class="op">:</span> <span class="st">"^3.23.8"</span>              <span class="cm">// walidacja</span>
+  <span class="op">}</span>
+<span class="op">}</span>`
+  },
+  'yarn.lock': {
+    icon: '🔒', ext: 'lock', color: '#89e051',
+    desc: '<b>Zamrożone wersje wszystkich paczek.</b> Yarn generuje go automatycznie. Gwarantuje że każdy developer ma dokładnie te same wersje bibliotek. Zawsze commituj do gita, nigdy nie edytuj ręcznie.',
+    code: `<span class="cm"># yarn lockfile v1</span>
+
+react@^<span class="nu">18.2.0</span><span class="op">:</span>
+  version <span class="st">"18.2.0"</span>
+  resolved <span class="st">"https://registry.yarnpkg.com/react/-/react-18.2.0.tgz"</span>
+  integrity sha512-<span class="cm">...</span>
+
+<span class="cm"># Bez tego pliku:</span>
+<span class="cm"># developer A instaluje → react 18.2.0</span>
+<span class="cm"># developer B tydzień później → react 18.3.0</span>
+<span class="cm"># "u mnie działa, u ciebie nie" 😅</span>
+
+<span class="cm"># Z yarn.lock wszyscy mają DOKŁADNIE to samo ✅</span>`
+  },
+  '.npmrc': {
+    icon: '⚙', ext: 'rc', color: '#e37933',
+    desc: '<b>Konfiguracja npm/yarn.</b> Jedna linijka która sprawia że terminal jest czysty podczas instalacji — pokazuje tylko błędy, nie ostrzeżenia.',
+    code: `loglevel<span class="op">=</span>error
+
+<span class="cm"># bez tego yarn install pokazuje setki żółtych ostrzeżeń</span>
+<span class="cm"># z tym — tylko to co ważne (błędy)</span>`
+  },
+  'index.html': {
+    icon: '🌐', ext: 'html', color: '#e34c26',
+    desc: '<b>Jedyna strona HTML w całej aplikacji (SPA).</b> Przeglądarka otwiera ten jeden plik, React wypełnia pusty div całą aplikacją. Zmiana strony = React podmienia zawartość diva, przeglądarka nie przeładowuje HTML.',
+    code: `<span class="op">&lt;!</span><span class="kw">doctype</span> html<span class="op">&gt;</span>
+<span class="tg">&lt;html</span> <span class="at">lang</span><span class="op">=</span><span class="st">"pl"</span><span class="tg">&gt;</span>
+  <span class="tg">&lt;head&gt;</span>
+    <span class="tg">&lt;meta</span> <span class="at">charset</span><span class="op">=</span><span class="st">"UTF-8"</span> <span class="tg">/&gt;</span>
+    <span class="tg">&lt;link</span> <span class="at">rel</span><span class="op">=</span><span class="st">"icon"</span> <span class="at">href</span><span class="op">=</span><span class="st">"/ico.svg"</span> <span class="tg">/&gt;</span>
+    <span class="tg">&lt;title&gt;</span>App<span class="tg">&lt;/title&gt;</span>
+  <span class="tg">&lt;/head&gt;</span>
+  <span class="tg">&lt;body</span> <span class="at">class</span><span class="op">=</span><span class="st">"min-h-screen bg-muted"</span><span class="tg">&gt;</span>
+
+    <span class="cm">&lt;!-- React wstrzykuje tu całą aplikację --&gt;</span>
+    <span class="tg">&lt;div</span> <span class="at">id</span><span class="op">=</span><span class="st">"root"</span><span class="tg">&gt;&lt;/div&gt;</span>
+
+    <span class="cm">&lt;!-- punkt startowy React --&gt;</span>
+    <span class="tg">&lt;script</span> <span class="at">type</span><span class="op">=</span><span class="st">"module"</span> <span class="at">src</span><span class="op">=</span><span class="st">"/src/index.tsx"</span><span class="tg">&gt;&lt;/script&gt;</span>
+
+  <span class="tg">&lt;/body&gt;</span>
+<span class="tg">&lt;/html&gt;</span>`
+  },
+  'vite.config.ts': {
+    icon: '⚡', ext: 'ts', color: '#007acc',
+    desc: '<b>Konfiguracja Vite</b> — narzędzia które buduje i serwuje projekt. Najważniejsze: aliasy @/ (skróty do folderów). Uwaga: aliasy MUSZĄ być też w tsconfig.json — dwa osobne narzędzia, dwie konfiguracje.',
+    code: `<span class="kw">import</span> <span class="op">{</span> <span class="pr">defineConfig</span> <span class="op">}</span> <span class="kw">from</span> <span class="st">'vite'</span>
+<span class="kw">import</span> <span class="pr">react</span> <span class="kw">from</span> <span class="st">'@vitejs/plugin-react'</span>
+<span class="kw">import</span> <span class="pr">eslint</span> <span class="kw">from</span> <span class="st">'vite-plugin-eslint'</span>
+
+<span class="kw">export default</span> <span class="fn">defineConfig</span><span class="op">({</span>
+  plugins<span class="op">:</span> <span class="op">[</span><span class="fn">react</span><span class="op">(),</span> <span class="fn">eslint</span><span class="op">()],</span>  <span class="cm">// ESLint podczas dev!</span>
+  resolve<span class="op">:</span> <span class="op">{</span>
+    alias<span class="op">:</span> <span class="op">[</span>
+      <span class="op">{</span> find<span class="op">:</span> <span class="st">'@/shared'</span><span class="op">,</span>   replacement<span class="op">:</span> <span class="st">'/src/app/shared'</span> <span class="op">},</span>
+      <span class="op">{</span> find<span class="op">:</span> <span class="st">'@/features'</span><span class="op">,</span> replacement<span class="op">:</span> <span class="st">'/src/app/features'</span> <span class="op">},</span>
+      <span class="op">{</span> find<span class="op">:</span> <span class="st">'@/layouts'</span><span class="op">,</span>  replacement<span class="op">:</span> <span class="st">'/src/app/layouts'</span> <span class="op">},</span>
+      <span class="op">{</span> find<span class="op">:</span> <span class="st">'@/services'</span><span class="op">,</span> replacement<span class="op">:</span> <span class="st">'/src/app/services'</span> <span class="op">},</span>
+      <span class="cm">// zamiast: '../../../shared/utils'</span>
+      <span class="cm">// piszesz:  '@/shared/utils'  ✅</span>
+    <span class="op">]</span>
+  <span class="op">}</span>
+<span class="op">})</span>`
+  },
+  'vitest.config.ts': {
+    icon: '🧪', ext: 'ts', color: '#007acc',
+    desc: '<b>Konfiguracja testów.</b> Dziedziczy ustawienia Vite (aliasy @/ działają też w testach). jsdom symuluje przeglądarkę w Node.js — można używać document, window, DOM.',
+    code: `<span class="kw">import</span> <span class="op">{</span> <span class="pr">defineConfig</span><span class="op">,</span> <span class="pr">mergeConfig</span> <span class="op">}</span> <span class="kw">from</span> <span class="st">'vitest/config'</span>
+<span class="kw">import</span> <span class="pr">viteConfig</span> <span class="kw">from</span> <span class="st">'./vite.config'</span>
+
+<span class="kw">export default</span> <span class="fn">mergeConfig</span><span class="op">(</span>
+  viteConfig<span class="op">,</span>         <span class="cm">// dziedziczy aliasy @/ z Vite ✅</span>
+  <span class="fn">defineConfig</span><span class="op">({</span>
+    test<span class="op">:</span> <span class="op">{</span>
+      globals<span class="op">:</span> <span class="kw">true</span><span class="op">,</span>          <span class="cm">// describe/it/expect bez importu</span>
+      environment<span class="op">:</span> <span class="st">'jsdom'</span><span class="op">,</span>  <span class="cm">// symuluj przeglądarkę</span>
+      setupFiles<span class="op">:</span> <span class="st">'./tests/setup.ts'</span><span class="op">,</span>
+      include<span class="op">:</span> <span class="op">[</span><span class="st">'**/*.test.tsx'</span><span class="op">]</span>
+    <span class="op">}</span>
+  <span class="op">})</span>
+<span class="op">)</span>`
+  },
+  'tsconfig.json': {
+    icon: '📘', ext: 'json', color: '#cbcb41',
+    desc: '<b>Konfiguracja TypeScripta.</b> strict: true = surowy tryb, błąd za nieużywane zmienne. paths = aliasy @/ dla edytora (TSConfig + vite.config = te same aliasy w dwóch miejscach).',
+    code: `<span class="op">{</span>
+  <span class="pr">"compilerOptions"</span><span class="op">:</span> <span class="op">{</span>
+    <span class="pr">"target"</span><span class="op">:</span> <span class="st">"ES2020"</span><span class="op">,</span>
+    <span class="pr">"jsx"</span><span class="op">:</span> <span class="st">"react-jsx"</span><span class="op">,</span>       <span class="cm">// JSX bez importu React</span>
+
+    <span class="pr">"strict"</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span>            <span class="cm">// surowy tryb TS</span>
+    <span class="pr">"noUnusedLocals"</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span>   <span class="cm">// błąd za nieużywane zmienne</span>
+    <span class="pr">"noUnusedParameters"</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span>
+
+    <span class="pr">"types"</span><span class="op">:</span> <span class="op">[</span><span class="st">"vitest/globals"</span><span class="op">,</span> <span class="st">"@testing-library/jest-dom"</span><span class="op">],</span>
+    <span class="cm">// TS rozumie describe/it/expect w testach</span>
+
+    <span class="pr">"paths"</span><span class="op">:</span> <span class="op">{</span>
+      <span class="pr">"@/shared/*"</span><span class="op">:</span>   <span class="op">[</span><span class="st">"src/app/shared/*"</span><span class="op">],</span>
+      <span class="pr">"@/features/*"</span><span class="op">:</span> <span class="op">[</span><span class="st">"src/app/features/*"</span><span class="op">],</span>
+      <span class="pr">"@/layouts/*"</span><span class="op">:</span>  <span class="op">[</span><span class="st">"src/app/layouts/*"</span><span class="op">]</span>
+    <span class="op">}</span>
+  <span class="op">}</span>
+<span class="op">}</span>`
+  },
+  'tailwind.config.js': {
+    icon: '🎨', ext: 'js', color: '#f5de19',
+    desc: '<b>Konfiguracja Tailwinda.</b> Kolory przez CSS zmienne — zmiana motywu = zmiana jednej zmiennej CSS. darkMode przez klasę CSS. Animacje dla accordion i migającego kursora.',
+    code: `<span class="kw">module</span>.exports <span class="op">=</span> <span class="op">{</span>
+  darkMode<span class="op">:</span> <span class="op">[</span><span class="st">'class'</span><span class="op">],</span>  <span class="cm">// dark mode przez klasę CSS</span>
+  content<span class="op">:</span> <span class="op">[</span><span class="st">'./src/**/*.{ts,tsx}'</span><span class="op">],</span>
+  theme<span class="op">:</span> <span class="op">{</span>
+    extend<span class="op">:</span> <span class="op">{</span>
+      colors<span class="op">:</span> <span class="op">{</span>
+        primary<span class="op">:</span>    <span class="st">'hsl(var(--primary))'</span><span class="op">,</span>
+        secondary<span class="op">:</span>  <span class="st">'hsl(var(--secondary))'</span><span class="op">,</span>
+        destructive<span class="op">:</span> <span class="st">'hsl(var(--destructive))'</span><span class="op">,</span>
+        <span class="cm">// kolor = CSS zmienna → zmiana motywu</span>
+        <span class="cm">// = zmiana jednej zmiennej, cała apka ✅</span>
+      <span class="op">},</span>
+      keyframes<span class="op">:</span> <span class="op">{</span>
+        <span class="st">'accordion-down'</span><span class="op">:</span> <span class="op">{</span>
+          from<span class="op">:</span> <span class="op">{</span> height<span class="op">:</span> <span class="st">'0'</span> <span class="op">},</span>
+          to<span class="op">:</span>   <span class="op">{</span> height<span class="op">:</span> <span class="st">'var(--radix-accordion-content-height)'</span> <span class="op">}</span>
+        <span class="op">}</span>
+      <span class="op">}</span>
+    <span class="op">}</span>
+  <span class="op">},</span>
+  plugins<span class="op">:</span> <span class="op">[</span><span class="fn">require</span><span class="op">(</span><span class="st">'tailwindcss-animate'</span><span class="op">)]</span>
+<span class="op">}</span>`
+  },
+  'postcss.config.js': {
+    icon: '🔧', ext: 'js', color: '#f5de19',
+    desc: '<b>Procesor CSS wymagany przez Tailwind.</b> Bez tego Tailwind nie działa. Autoprefixer automatycznie dodaje prefiksy -webkit-, -moz- dla starszych przeglądarek.',
+    code: `<span class="kw">export default</span> <span class="op">{</span>
+  plugins<span class="op">:</span> <span class="op">{</span>
+    tailwindcss<span class="op">:</span>  <span class="op">{},</span>   <span class="cm">// przetwarza klasy Tailwinda na CSS</span>
+    autoprefixer<span class="op">:</span> <span class="op">{},</span>   <span class="cm">// dodaje -webkit-, -moz- automatycznie</span>
+  <span class="op">}</span>
+<span class="op">}</span>
+
+<span class="cm">// Tailwind potrzebuje PostCSS żeby działać</span>
+<span class="cm">// PostCSS = procesor CSS — działa między Tailwindem a przeglądarką</span>`
+  },
+  'components.json': {
+    icon: '🧩', ext: 'json', color: '#cbcb41',
+    desc: '<b>Instrukcja dla CLI shadcn/ui.</b> Gdy robisz "npx shadcn-ui add button", shadcn czyta ten plik — wie gdzie wrzucić komponent, jakiego stylu użyć i gdzie są CSS zmienne.',
+    code: `<span class="op">{</span>
+  <span class="pr">"style"</span><span class="op">:</span> <span class="st">"new-york"</span><span class="op">,</span>       <span class="cm">// styl komponentów (new-york / default)</span>
+  <span class="pr">"tailwind"</span><span class="op">:</span> <span class="op">{</span>
+    <span class="pr">"config"</span><span class="op">:</span> <span class="st">"tailwind.config.js"</span><span class="op">,</span>
+    <span class="pr">"css"</span><span class="op">:</span> <span class="st">"src/app/shared/assets/styles/globals.css"</span><span class="op">,</span>
+    <span class="pr">"cssVariables"</span><span class="op">:</span> <span class="kw">true</span>      <span class="cm">// używaj var(--primary) zamiast #hex</span>
+  <span class="op">},</span>
+  <span class="pr">"aliases"</span><span class="op">:</span> <span class="op">{</span>
+    <span class="pr">"components"</span><span class="op">:</span> <span class="st">"src/app/components"</span>
+    <span class="cm">// tu lądują skopiowane komponenty</span>
+  <span class="op">}</span>
+<span class="op">}</span>
+
+<span class="cm">// shadcn NIE instaluje paczki</span>
+<span class="cm">// shadcn KOPIUJE kod komponentu do twojego projektu</span>
+<span class="cm">// twój plik → możesz zmieniać co chcesz ✅</span>`
+  },
+  '.eslintrc.cjs': {
+    icon: '🔍', ext: 'cjs', color: '#4b32c3',
+    desc: '<b>Reguły ESLint.</b> Pilnuje poprawności kodu (nie wyglądu — to Prettier). Używa surowego zestawu reguł Airbnb. Odpala się na bieżąco w edytorze i podczas yarn dev.',
+    code: `module.exports <span class="op">=</span> <span class="op">{</span>
+  extends<span class="op">:</span> <span class="op">[</span>
+    <span class="st">'eslint:recommended'</span><span class="op">,</span>
+    <span class="st">'plugin:@typescript-eslint/recommended'</span><span class="op">,</span>
+    <span class="st">'airbnb'</span><span class="op">,</span>              <span class="cm">// surowe reguły Airbnb</span>
+    <span class="st">'airbnb-typescript'</span><span class="op">,</span>
+    <span class="st">'eslint-config-prettier'</span> <span class="cm">// nie koliduj z Prettierem</span>
+  <span class="op">],</span>
+  rules<span class="op">:</span> <span class="op">{</span>
+    <span class="st">'no-console'</span><span class="op">:</span> <span class="op">[</span><span class="st">'warn'</span><span class="op">,</span> <span class="op">{</span> allow<span class="op">:</span> <span class="op">[</span><span class="st">'warn'</span><span class="op">,</span> <span class="st">'error'</span><span class="op">]</span> <span class="op">}],</span>
+    <span class="cm">// console.log = ostrzeżenie ⚠️</span>
+
+    <span class="st">'react/function-component-definition'</span><span class="op">:</span> <span class="op">[</span><span class="nu">2</span><span class="op">,</span> <span class="op">{</span>
+      namedComponents<span class="op">:</span> <span class="st">'arrow-function'</span>
+    <span class="op">}],</span>
+    <span class="cm">// TYLKO: const X = () => {} ✅</span>
+    <span class="cm">// ZAKAZ: function X() {}  ❌</span>
+
+    <span class="st">'react/react-in-jsx-scope'</span><span class="op">:</span> <span class="st">'off'</span><span class="op">,</span>  <span class="cm">// nie trzeba importować React</span>
+    <span class="st">'react/prop-types'</span><span class="op">:</span> <span class="st">'off'</span>          <span class="cm">// używamy TypeScript zamiast</span>
+  <span class="op">}</span>
+<span class="op">}</span>`
+  },
+  '.prettierrc': {
+    icon: '✨', ext: 'rc', color: '#ea5e5e',
+    desc: '<b>Konfiguracja Prettiera.</b> Automatycznie formatuje kod żeby wszyscy pisali tak samo. Odpala się przez "yarn format" lub przy każdym Ctrl+S w VSCode (po konfiguracji formatOnSave).',
+    code: `<span class="op">{</span>
+  <span class="pr">"singleQuote"</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span>        <span class="cm">// 'tak' zamiast "tak"</span>
+  <span class="pr">"semi"</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span>               <span class="cm">// średniki na końcu linii</span>
+  <span class="pr">"tabWidth"</span><span class="op">:</span> <span class="nu">2</span><span class="op">,</span>              <span class="cm">// 2 spacje wcięcia</span>
+  <span class="pr">"printWidth"</span><span class="op">:</span> <span class="nu">120</span><span class="op">,</span>          <span class="cm">// max 120 znaków w linii</span>
+  <span class="pr">"trailingComma"</span><span class="op">:</span> <span class="st">"all"</span><span class="op">,</span>    <span class="cm">// przecinek po ostatnim elemencie</span>
+  <span class="pr">"useTabs"</span><span class="op">:</span> <span class="kw">false</span><span class="op">,</span>
+  <span class="pr">"plugins"</span><span class="op">:</span> <span class="op">[</span><span class="st">"prettier-plugin-tailwindcss"</span><span class="op">]</span>
+  <span class="cm">// sortuje klasy Tailwinda automatycznie:</span>
+  <span class="cm">// "text-sm flex mt-2" → "mt-2 flex text-sm" ✅</span>
+<span class="op">}</span>`
+  },
+  'vite-env.d.ts': {
+    icon: '📝', ext: 'ts', color: '#007acc',
+    desc: '<b>Typy dla zmiennych środowiskowych Vite.</b> Bez tego TS podkreślałby import.meta.env na czerwono. Jeden plik, jedna linijka, nie ruszasz.',
+    code: `<span class="cm">/// &lt;reference types="vite/client" /&gt;</span>
+
+<span class="cm">// dzięki tej jednej linijce TypeScript rozumie:</span>
+<span class="kw">import</span>.meta.env.VITE_API_URL    <span class="cm">// ✅ zna typ</span>
+<span class="kw">import</span>.meta.env.VITE_MAP_KEY    <span class="cm">// ✅ zna typ</span>
+<span class="kw">import</span>.meta.hot                 <span class="cm">// ✅ hot reload</span>
+
+<span class="cm">// bez tego pliku:</span>
+<span class="cm">// TS: "Property 'env' does not exist on type ImportMeta" ❌</span>`
+  },
+  'pre-commit': {
+    icon: '🐕', ext: 'sh', color: '#89e051',
+    desc: '<b>Git hook — odpala się PRZED każdym commitem.</b> Uruchamia testy. Jeśli testy nie przejdą → commit zablokowany. Nie możesz wrzucić zepsutego kodu.',
+    code: `#!/usr/bin/env sh
+. <span class="st">"$(dirname -- "$0")/_/husky.sh"</span>
+
+yarn run test
+
+<span class="cm"># Działanie:</span>
+<span class="cm"># git commit -m "feat: coś"</span>
+<span class="cm">#     ↓</span>
+<span class="cm"># uruchamia: yarn run test</span>
+<span class="cm">#     ↓ testy OK</span>
+<span class="cm"># commit idzie dalej ✅</span>
+<span class="cm">#     ↓ testy FAIL</span>
+<span class="cm"># commit ZABLOKOWANY ❌</span>`
+  },
+  'commit-msg': {
+    icon: '📝', ext: 'sh', color: '#89e051',
+    desc: '<b>Git hook — sprawdza format wiadomości commita.</b> Wymusza Conventional Commits. "poprawki" = błąd. "feat: dodanie strony" = OK.',
+    code: `#!/usr/bin/env sh
+. <span class="st">"$(dirname -- "$0")/_/husky.sh"</span>
+
+yarn commitlint --edit <span class="op">$1</span>
+
+<span class="cm"># Dozwolone formaty:</span>
+<span class="cm"># ✅ feat: dodanie strony logowania</span>
+<span class="cm"># ✅ fix: naprawienie błędu w tabeli</span>
+<span class="cm"># ✅ chore: aktualizacja zależności</span>
+<span class="cm"># ✅ refactor: przepisanie serwisu</span>
+<span class="cm"># ✅ docs: aktualizacja README</span>
+
+<span class="cm"># ❌ "poprawki"</span>
+<span class="cm"># ❌ "fix"</span>
+<span class="cm"># ❌ "WIP"</span>`
+  },
+  'bug_report.md': {
+    icon: '🐛', ext: 'md', color: '#519aba',
+    desc: '<b>Szablon zgłaszania błędów na GitHubie.</b> Gdy ktoś klika "New Issue" — zamiast pustego pola dostaje gotowy formularz. Automatycznie dodaje labelki: bug, need analysis.',
+    code: `<span class="cm">---</span>
+<span class="pr">name:</span> Bug report
+<span class="pr">labels:</span> bug, need analysis
+<span class="cm">---</span>
+
+<span class="fn">**Describe the bug**</span>
+A clear description of what the bug is.
+
+<span class="fn">**To Reproduce**</span>
+<span class="nu">1.</span> Go to <span class="st">'...'</span>
+<span class="nu">2.</span> Click on <span class="st">'...'</span>
+<span class="nu">3.</span> See error
+
+<span class="fn">**Expected behavior**</span>
+What you expected to happen.
+
+<span class="fn">**Desktop:**</span>
+- Browser: [e.g. Chrome]
+- OS: [e.g. Windows]
+
+<span class="cm"># Bez szablonu: "nie działa" 🙄</span>
+<span class="cm"># Z szablonem: developer ma wszystko ✅</span>`
+  },
+  'feature_request.md': {
+    icon: '💡', ext: 'md', color: '#519aba',
+    desc: '<b>Szablon prośby o nową funkcjonalność.</b> Pyta o problem który rozwiązuje, jak powinna działać i jakie alternatywy rozważano. Labelki: enhancement, need analysis.',
+    code: `<span class="cm">---</span>
+<span class="pr">name:</span> Feature request
+<span class="pr">labels:</span> enhancement, need analysis
+<span class="cm">---</span>
+
+<span class="fn">**Is your feature request related to a problem?**</span>
+I'm always frustrated when [...]
+
+<span class="fn">**Describe the solution you'd like**</span>
+What you want to happen.
+
+<span class="fn">**Describe alternatives you've considered**</span>
+Any alternative solutions you've considered.`
+  },
+  'app.tsx': {
+    icon: '⚛', ext: 'tsx', color: '#00b4b4',
+    desc: '<b>Główny komponent aplikacji.</b> Owija wszystko w providery (auth, theme, query) i przekazuje do routera. To co dodasz tu — dostępne w całej aplikacji.',
+    code: `<span class="kw">import</span> <span class="op">{</span> <span class="pr">RouterProvider</span> <span class="op">}</span> <span class="kw">from</span> <span class="st">'react-router-dom'</span>
+<span class="kw">import</span> <span class="op">{</span> <span class="pr">QueryClientProvider</span> <span class="op">}</span> <span class="kw">from</span> <span class="st">'react-query'</span>
+<span class="kw">import</span> <span class="op">{</span> <span class="pr">AuthProvider</span> <span class="op">}</span> <span class="kw">from</span> <span class="st">'@/providers/auth-provider'</span>
+<span class="kw">import</span> <span class="op">{</span> <span class="pr">ThemeProvider</span> <span class="op">}</span> <span class="kw">from</span> <span class="st">'@/providers/theme-provider'</span>
+<span class="kw">import</span> <span class="op">{</span> <span class="pr">router</span> <span class="op">}</span> <span class="kw">from</span> <span class="st">'./routes'</span>
+
+<span class="kw">const</span> <span class="fn">App</span> <span class="op">=</span> <span class="op">()</span> <span class="op">=&gt;</span> <span class="op">(</span>
+  <span class="op">&lt;</span><span class="tg">ThemeProvider</span><span class="op">&gt;</span>
+    <span class="op">&lt;</span><span class="tg">AuthProvider</span><span class="op">&gt;</span>
+      <span class="op">&lt;</span><span class="tg">QueryClientProvider</span> client<span class="op">={</span>queryClient<span class="op">}&gt;</span>
+        <span class="op">&lt;</span><span class="tg">RouterProvider</span> router<span class="op">={</span>router<span class="op">} /&gt;</span>
+      <span class="op">&lt;/</span><span class="tg">QueryClientProvider</span><span class="op">&gt;</span>
+    <span class="op">&lt;/</span><span class="tg">AuthProvider</span><span class="op">&gt;</span>
+  <span class="op">&lt;/</span><span class="tg">ThemeProvider</span><span class="op">&gt;</span>
+<span class="op">)</span>
+
+<span class="kw">export default</span> App`
+  },
+  'routes.tsx': {
+    icon: '🗺', ext: 'tsx', color: '#00b4b4',
+    desc: '<b>Mapa URL → strona.</b> Definiuje wszystkie ścieżki aplikacji. URL /vehicles = VehiclesPage. Nesting: layout owija strony dzieci (Outlet).',
+    code: `<span class="kw">import</span> <span class="op">{</span> <span class="pr">createBrowserRouter</span> <span class="op">}</span> <span class="kw">from</span> <span class="st">'react-router-dom'</span>
+
+<span class="kw">export const</span> router <span class="op">=</span> <span class="fn">createBrowserRouter</span><span class="op">([</span>
+  <span class="op">{</span>
+    path<span class="op">:</span> <span class="st">'/'</span><span class="op">,</span>
+    element<span class="op">:</span> <span class="op">&lt;</span><span class="tg">TopNavigationLayout</span> <span class="op">/&gt;,</span>  <span class="cm">// layout z menu</span>
+    children<span class="op">:</span> <span class="op">[</span>
+      <span class="op">{</span> path<span class="op">:</span> <span class="st">'dashboard'</span><span class="op">,</span>   element<span class="op">:</span> <span class="op">&lt;</span><span class="tg">Dashboard</span> <span class="op">/&gt;</span> <span class="op">},</span>
+      <span class="op">{</span> path<span class="op">:</span> <span class="st">'vehicles'</span><span class="op">,</span>    element<span class="op">:</span> <span class="op">&lt;</span><span class="tg">VehiclesPage</span> <span class="op">/&gt;</span> <span class="op">},</span>
+      <span class="op">{</span> path<span class="op">:</span> <span class="st">'analytics'</span><span class="op">,</span>   element<span class="op">:</span> <span class="op">&lt;</span><span class="tg">AnalyticsPage</span> <span class="op">/&gt;</span> <span class="op">},</span>
+      <span class="op">{</span> path<span class="op">:</span> <span class="st">'live'</span><span class="op">,</span>        element<span class="op">:</span> <span class="op">&lt;</span><span class="tg">LivePage</span> <span class="op">/&gt;</span> <span class="op">},</span>
+      <span class="op">{</span> path<span class="op">:</span> <span class="st">'*'</span><span class="op">,</span>           element<span class="op">:</span> <span class="op">&lt;</span><span class="tg">Page404</span> <span class="op">/&gt;</span> <span class="op">},</span>
+    <span class="op">]</span>
+  <span class="op">},</span>
+  <span class="op">{</span>
+    path<span class="op">:</span> <span class="st">'/auth'</span><span class="op">,</span>
+    element<span class="op">:</span> <span class="op">&lt;</span><span class="tg">AuthLayout</span> <span class="op">/&gt;,</span>         <span class="cm">// layout logowania</span>
+    children<span class="op">:</span> <span class="op">[</span>
+      <span class="op">{</span> path<span class="op">:</span> <span class="st">'login'</span><span class="op">,</span> element<span class="op">:</span> <span class="op">&lt;</span><span class="tg">LoginPage</span> <span class="op">/&gt;</span> <span class="op">},</span>
+    <span class="op">]</span>
+  <span class="op">}</span>
+<span class="op">])</span>`
+  },
+  'auth.context.ts': {
+    icon: '🔐', ext: 'ts', color: '#007acc',
+    desc: '<b>Tworzy kontekst autoryzacji + hook useAuth().</b> "Gniazdko elektryczne" — samo nie robi nic, tylko definiuje interfejs. Hook useAuth() = sposób na odczyt stanu autoryzacji z każdego komponentu.',
+    code: `<span class="kw">import</span> <span class="op">{</span> <span class="pr">createContext</span><span class="op">,</span> <span class="pr">useContext</span> <span class="op">}</span> <span class="kw">from</span> <span class="st">'react'</span>
+<span class="kw">import</span> <span class="kw">type</span> <span class="op">{</span> <span class="ty">AuthContextType</span> <span class="op">}</span> <span class="kw">from</span> <span class="st">'./types'</span>
+
+<span class="cm">// tworzy pusty pojemnik — "gniazdko"</span>
+<span class="kw">export const</span> AuthContext <span class="op">=</span>
+  <span class="fn">createContext</span><span class="op">&lt;</span><span class="ty">AuthContextType</span> <span class="op">|</span> <span class="kw">null</span><span class="op">&gt;(</span><span class="kw">null</span><span class="op">)</span>
+
+<span class="cm">// hook — odczyt stanu z dowolnego komponentu</span>
+<span class="kw">export const</span> <span class="fn">useAuth</span> <span class="op">=</span> <span class="op">()</span> <span class="op">=&gt;</span> <span class="op">{</span>
+  <span class="kw">const</span> ctx <span class="op">=</span> <span class="fn">useContext</span><span class="op">(</span>AuthContext<span class="op">)</span>
+  <span class="kw">if</span> <span class="op">(!</span>ctx<span class="op">)</span> <span class="kw">throw new</span> <span class="fn">Error</span><span class="op">(</span><span class="st">'Brak AuthProvider!'</span><span class="op">)</span>
+  <span class="kw">return</span> ctx
+<span class="op">}</span>
+
+<span class="cm">// użycie w komponentach:</span>
+<span class="cm">// const { user, login, logout } = useAuth()</span>`
+  },
+  'auth.provider.tsx': {
+    icon: '🔐', ext: 'tsx', color: '#00b4b4',
+    desc: '<b>Implementacja autoryzacji — "prąd w gniazdku".</b> Tu żyje logika: stan, efekty, funkcje login/logout. Owija children i dostarcza dane przez kontekst.',
+    code: `<span class="kw">import</span> <span class="op">{</span> <span class="pr">useState</span><span class="op">,</span> <span class="pr">useEffect</span> <span class="op">}</span> <span class="kw">from</span> <span class="st">'react'</span>
+<span class="kw">import</span> <span class="op">{</span> <span class="pr">AuthContext</span> <span class="op">}</span> <span class="kw">from</span> <span class="st">'./auth.context'</span>
+<span class="kw">import</span> <span class="kw">type</span> <span class="op">{</span> <span class="ty">AuthUser</span> <span class="op">}</span> <span class="kw">from</span> <span class="st">'./types'</span>
+
+<span class="kw">export const</span> <span class="fn">AuthProvider</span> <span class="op">=</span> <span class="op">({</span> children <span class="op">})</span> <span class="op">=&gt;</span> <span class="op">{</span>
+  <span class="kw">const</span> <span class="op">[</span>user<span class="op">,</span> setUser<span class="op">]</span> <span class="op">=</span> <span class="fn">useState</span><span class="op">&lt;</span><span class="ty">AuthUser</span> <span class="op">|</span> <span class="kw">null</span><span class="op">&gt;(</span><span class="kw">null</span><span class="op">)</span>
+
+  <span class="fn">useEffect</span><span class="op">(()</span> <span class="op">=&gt;</span> <span class="op">{</span>
+    <span class="cm">// sprawdź token przy starcie apki</span>
+    <span class="kw">const</span> token <span class="op">=</span> localStorage.<span class="fn">getItem</span><span class="op">(</span><span class="st">'token'</span><span class="op">)</span>
+    <span class="kw">if</span> <span class="op">(</span>token<span class="op">)</span> <span class="fn">fetchCurrentUser</span><span class="op">(</span>token<span class="op">)</span>
+  <span class="op">},</span> <span class="op">[])</span>
+
+  <span class="kw">const</span> <span class="fn">login</span> <span class="op">=</span> <span class="kw">async</span> <span class="op">(</span>email<span class="op">:</span> <span class="ty">string</span><span class="op">,</span> password<span class="op">:</span> <span class="ty">string</span><span class="op">)</span> <span class="op">=&gt;</span> <span class="op">{</span>
+    <span class="cm">// wywołaj Firebase / API, zapisz token</span>
+  <span class="op">}</span>
+
+  <span class="kw">const</span> <span class="fn">logout</span> <span class="op">=</span> <span class="op">()</span> <span class="op">=&gt;</span> <span class="op">{</span>
+    localStorage.<span class="fn">removeItem</span><span class="op">(</span><span class="st">'token'</span><span class="op">)</span>
+    <span class="fn">setUser</span><span class="op">(</span><span class="kw">null</span><span class="op">)</span>
+  <span class="op">}</span>
+
+  <span class="kw">return</span> <span class="op">(</span>
+    <span class="op">&lt;</span><span class="tg">AuthContext.Provider</span> value<span class="op">={{</span> user<span class="op">,</span> login<span class="op">,</span> logout <span class="op">}}&gt;</span>
+      <span class="op">{</span>children<span class="op">}</span>
+    <span class="op">&lt;/</span><span class="tg">AuthContext.Provider</span><span class="op">&gt;</span>
+  <span class="op">)</span>
+<span class="op">}</span>`
+  },
+  'http.ts': {
+    icon: '🌐', ext: 'ts', color: '#007acc',
+    desc: '<b>Instancja Axiosa z interceptorami.</b> Serce komunikacji z API. Interceptor request = auto-dodaje token Bearer do KAŻDEGO zapytania. Nie musisz robić tego ręcznie w serwisach.',
+    code: `<span class="kw">import</span> <span class="pr">axios</span> <span class="kw">from</span> <span class="st">'axios'</span>
+
+<span class="kw">const</span> http <span class="op">=</span> axios.<span class="fn">create</span><span class="op">({</span>
+  baseURL<span class="op">:</span> <span class="kw">import</span>.meta.env.VITE_API_URL<span class="op">,</span>
+  headers<span class="op">:</span> <span class="op">{</span>
+    <span class="st">'Content-type'</span><span class="op">:</span> <span class="st">'application/json'</span><span class="op">,</span>
+    <span class="st">'Cache-Control'</span><span class="op">:</span> <span class="st">'no-cache'</span><span class="op">,</span>
+  <span class="op">}</span>
+<span class="op">})</span>
+
+<span class="cm">// PRZED każdym zapytaniem — dodaj token</span>
+http.interceptors.request.<span class="fn">use</span><span class="op">((</span>config<span class="op">)</span> <span class="op">=&gt;</span> <span class="op">{</span>
+  <span class="kw">const</span> token <span class="op">=</span> localStorage.<span class="fn">getItem</span><span class="op">(</span><span class="st">'token'</span><span class="op">)</span>
+  <span class="kw">if</span> <span class="op">(</span>token<span class="op">)</span>
+    config.headers.Authorization <span class="op">=</span> <span class="st">\`Bearer \${token}\`</span>
+  <span class="kw">return</span> config
+<span class="op">})</span>
+
+<span class="cm">// PO każdym zapytaniu — obsługa błędów</span>
+http.interceptors.response.<span class="fn">use</span><span class="op">(</span>
+  <span class="op">(</span>response<span class="op">)</span> <span class="op">=&gt;</span> response<span class="op">,</span>   <span class="cm">// sukces → zwróć dane</span>
+  <span class="op">(</span>error<span class="op">)</span> <span class="op">=&gt;</span> <span class="op">{</span>
+    console.<span class="fn">error</span><span class="op">(</span>error<span class="op">)</span>
+    <span class="kw">return</span> Promise.<span class="fn">reject</span><span class="op">(</span>error<span class="op">)</span>
+  <span class="op">}</span>
+<span class="op">)</span>
+
+<span class="kw">export default</span> http`
+  },
+  'common.utils.ts': {
+    icon: '🔧', ext: 'ts', color: '#007acc',
+    desc: '<b>Dwie kluczowe funkcje używane wszędzie.</b> cn() — łączy klasy Tailwinda bez konfliktów (najczęściej używana funkcja w projekcie). processSnapshot() — naprawia format danych z Firebase.',
+    code: `<span class="kw">import</span> <span class="op">{</span> <span class="kw">type</span> <span class="ty">ClassValue</span><span class="op">,</span> <span class="pr">clsx</span> <span class="op">}</span> <span class="kw">from</span> <span class="st">'clsx'</span>
+<span class="kw">import</span> <span class="op">{</span> <span class="pr">twMerge</span> <span class="op">}</span> <span class="kw">from</span> <span class="st">'tailwind-merge'</span>
+<span class="kw">import</span> <span class="kw">type</span> <span class="op">{</span> <span class="ty">QuerySnapshot</span> <span class="op">}</span> <span class="kw">from</span> <span class="st">'firebase/firestore'</span>
+
+<span class="cm">// cn() — łączy klasy Tailwinda ✅</span>
+<span class="cm">// problem bez cn:</span>
+<span class="cm">// 'bg-red-500 bg-blue-500' → która wygra? losowo!</span>
+<span class="cm">// cn('bg-red-500', 'bg-blue-500') → wygrywa ostatnia</span>
+<span class="kw">export const</span> <span class="fn">cn</span> <span class="op">=</span> <span class="op">(...</span>inputs<span class="op">:</span> <span class="ty">ClassValue</span><span class="op">[])</span> <span class="op">=&gt;</span>
+  <span class="fn">twMerge</span><span class="op">(</span><span class="fn">clsx</span><span class="op">(</span>inputs<span class="op">))</span>
+
+<span class="cm">// processSnapshot() — naprawia format Firebase</span>
+<span class="cm">// Firebase: { data: {...}, id: 'abc' }  ← id osobno</span>
+<span class="cm">// po fix:   { ...data, id: 'abc' }      ← id w środku</span>
+<span class="kw">export const</span> <span class="fn">processSnapshot</span> <span class="op">=</span>
+  <span class="op">(</span>snapshot<span class="op">:</span> <span class="ty">QuerySnapshot</span><span class="op">)</span> <span class="op">=&gt;</span>
+    snapshot.docs.<span class="fn">map</span><span class="op">((</span>doc<span class="op">)</span> <span class="op">=&gt;</span> <span class="op">({</span> <span class="op">...</span>doc.<span class="fn">data</span><span class="op">(),</span> id<span class="op">:</span> doc.id <span class="op">}))</span>`
+  },
+  'helpPage.component.tsx': {
+    icon: '📄', ext: 'tsx', color: '#00b4b4',
+    desc: '<b>Komponent strony Pomoc — tylko wyświetla.</b> Nie fetuje danych, nie zarządza stanem. Importuje gotowe dane z utils/ i renderuje UI. To jest "kelner" — tylko podaje gotowe danie.',
+    code: `<span class="kw">import</span> <span class="op">{</span> <span class="pr">helpPageBreadcrumbItems</span><span class="op">,</span> <span class="pr">mockHelpPage</span> <span class="op">}</span>
+  <span class="kw">from</span> <span class="st">'@/app/pages/helpPage/utils'</span>
+<span class="kw">import</span> <span class="op">{</span> <span class="pr">Card</span><span class="op">,</span> <span class="pr">Accordion</span> <span class="op">}</span> <span class="kw">from</span> <span class="st">'@/ui/src/ui'</span>
+<span class="kw">import</span> <span class="op">{</span> <span class="pr">ContentWrapper</span> <span class="op">}</span> <span class="kw">from</span> <span class="st">'@/app/pages/partials'</span>
+<span class="kw">import</span> <span class="op">{</span> <span class="pr">PdfIcon</span> <span class="op">}</span> <span class="kw">from</span> <span class="st">'@/shared/assets/images'</span>
+
+<span class="kw">const</span> <span class="fn">HelpPage</span> <span class="op">=</span> <span class="op">()</span> <span class="op">=&gt;</span> <span class="op">(</span>
+  <span class="op">&lt;</span><span class="tg">ContentWrapper</span>
+    headTitle<span class="op">=</span><span class="st">"Pomoc"</span>
+    breadcrumbItems<span class="op">={</span>helpPageBreadcrumbItems<span class="op">}</span>
+  <span class="op">&gt;</span>
+    <span class="op">&lt;</span><span class="tg">Card</span> title<span class="op">=</span><span class="st">"Dokumentacja"</span><span class="op">&gt;</span>
+      <span class="op">&lt;</span><span class="tg">PdfIcon</span> <span class="op">/&gt;</span>
+      <span class="op">&lt;</span><span class="tg">a</span> href<span class="op">=</span><span class="st">"/"</span><span class="op">&gt;</span>Instrukcja użytkownika<span class="op">&lt;/</span><span class="tg">a</span><span class="op">&gt;</span>
+    <span class="op">&lt;/</span><span class="tg">Card</span><span class="op">&gt;</span>
+    <span class="op">&lt;</span><span class="tg">Card</span> title<span class="op">=</span><span class="st">"Warto wiedzieć"</span><span class="op">&gt;</span>
+      <span class="op">&lt;</span><span class="tg">Accordion</span>
+        type<span class="op">=</span><span class="st">"single"</span>
+        items<span class="op">={</span>mockHelpPage<span class="op">}</span>
+        collapsible
+      <span class="op">/&gt;</span>
+    <span class="op">&lt;/</span><span class="tg">Card</span><span class="op">&gt;</span>
+  <span class="op">&lt;/</span><span class="tg">ContentWrapper</span><span class="op">&gt;</span>
+<span class="op">)</span>
+
+<span class="kw">export default</span> HelpPage`
+  },
+  'TableActionButtons.tsx': {
+    icon: '🔘', ext: 'tsx', color: '#00b4b4',
+    desc: '<b>Pasek przycisków nad tabelami.</b> Współdzielona feature używana na wielu stronach. Generyk <TData> = działa z dowolnym typem tabeli. Przyciski: Kopiuj, Drukuj, Widok, Export (CSV/PDF/Excel).',
+    code: `<span class="kw">import</span> <span class="op">{</span> <span class="pr">Copy</span><span class="op">,</span> <span class="pr">Printer</span><span class="op">,</span> <span class="pr">FileInput</span> <span class="op">}</span> <span class="kw">from</span> <span class="st">'lucide-react'</span>
+<span class="kw">import</span> <span class="kw">type</span> <span class="op">{</span> <span class="ty">Table</span> <span class="op">}</span> <span class="kw">from</span> <span class="st">'@tanstack/react-table'</span>
+
+<span class="kw">interface</span> <span class="ty">Props</span><span class="op">&lt;</span><span class="ty">TData</span><span class="op">&gt;</span> <span class="op">{</span>
+  tableObject<span class="op">?:</span> <span class="ty">Table</span><span class="op">&lt;</span><span class="ty">TData</span><span class="op">&gt;</span>   <span class="cm">// działa z każdym typem!</span>
+<span class="op">}</span>
+
+<span class="cm">// generyk &lt;TData,&gt; — ten sam komponent dla</span>
+<span class="cm">// tabeli pojazdów, raportów, zamówień... ✅</span>
+<span class="kw">const</span> <span class="fn">TableActionButtons</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ty">TData</span><span class="op">,&gt;({</span> tableObject <span class="op">}:</span> <span class="ty">Props</span><span class="op">&lt;</span><span class="ty">TData</span><span class="op">&gt;)</span> <span class="op">=&gt;</span> <span class="op">(</span>
+  <span class="op">&lt;</span><span class="tg">div</span> className<span class="op">=</span><span class="st">"flex gap-2"</span><span class="op">&gt;</span>
+    <span class="op">&lt;</span><span class="tg">Button</span> variant<span class="op">=</span><span class="st">"outline"</span><span class="op">&gt;&lt;</span><span class="tg">Copy</span> <span class="op">/&gt;</span> Kopiuj<span class="op">&lt;/</span><span class="tg">Button</span><span class="op">&gt;</span>
+    <span class="op">&lt;</span><span class="tg">Button</span> variant<span class="op">=</span><span class="st">"outline"</span><span class="op">&gt;&lt;</span><span class="tg">Printer</span> <span class="op">/&gt;</span> Drukuj<span class="op">&lt;/</span><span class="tg">Button</span><span class="op">&gt;</span>
+    <span class="op">{</span>tableObject <span class="op">&amp;&amp;</span> <span class="op">&lt;</span><span class="tg">Button</span><span class="op">&gt;</span>Widok<span class="op">&lt;/</span><span class="tg">Button</span><span class="op">&gt;}</span>
+    <span class="op">&lt;</span><span class="tg">Dropdown</span><span class="op">&gt;</span>
+      <span class="op">&lt;</span><span class="tg">Button</span><span class="op">&gt;&lt;</span><span class="tg">FileInput</span> <span class="op">/&gt;</span> Export<span class="op">&lt;/</span><span class="tg">Button</span><span class="op">&gt;</span>
+      <span class="cm">// CSV / PDF / Excel</span>
+    <span class="op">&lt;/</span><span class="tg">Dropdown</span><span class="op">&gt;</span>
+  <span class="op">&lt;/</span><span class="tg">div</span><span class="op">&gt;</span>
+<span class="op">)</span>`
+  },
+  'storybook-main.ts': {
+    icon: '📚', ext: 'ts', color: '#007acc',
+    desc: '<b>Konfiguracja Storybooka.</b> Szuka plików *.stories.tsx w całym projekcie. Storybook to osobna aplikacja na localhost:6006 — przeglądasz komponenty bez uruchamiania całej apki.',
+    code: `<span class="kw">import type</span> <span class="op">{</span> <span class="ty">StorybookConfig</span> <span class="op">}</span> <span class="kw">from</span> <span class="st">'@storybook/react-vite'</span>
+
+<span class="kw">const</span> config<span class="op">:</span> <span class="ty">StorybookConfig</span> <span class="op">=</span> <span class="op">{</span>
+  stories<span class="op">:</span> <span class="op">[</span><span class="st">'../src/**/*.stories.@(ts|tsx)'</span><span class="op">],</span>
+  framework<span class="op">:</span> <span class="op">{</span>
+    name<span class="op">:</span> <span class="st">'@storybook/react-vite'</span><span class="op">,</span>  <span class="cm">// Vite pod spodem</span>
+  <span class="op">},</span>
+  core<span class="op">:</span> <span class="op">{</span> disableTelemetry<span class="op">:</span> <span class="kw">true</span> <span class="op">}</span>
+<span class="op">}</span>
+
+<span class="cm">// plik stories.tsx wygląda tak:</span>
+<span class="kw">export default</span> <span class="op">{</span> component<span class="op">:</span> Button <span class="op">}</span>
+
+<span class="kw">export const</span> Primary <span class="op">=</span> <span class="op">{</span>
+  args<span class="op">:</span> <span class="op">{</span> label<span class="op">:</span> <span class="st">'Kliknij'</span><span class="op">,</span> variant<span class="op">:</span> <span class="st">'primary'</span> <span class="op">}</span>
+<span class="op">}</span>
+<span class="kw">export const</span> Outline <span class="op">=</span> <span class="op">{</span>
+  args<span class="op">:</span> <span class="op">{</span> label<span class="op">:</span> <span class="st">'Kliknij'</span><span class="op">,</span> variant<span class="op">:</span> <span class="st">'outline'</span> <span class="op">}</span>
+<span class="op">}</span>
+<span class="cm">// każdy export = osobny wariant w UI ✅</span>`
+  },
+
+  'storybook-preview.ts': {
+    icon: '📄', ext: 'ts', color: '#007acc',
+    desc: '<b>Konfiguracja podglądu Storybook.</b> Propsy z "color" w nazwie → color picker. Propsy zaczynające się od "on" → panel akcji z automatycznym logowaniem kliknięć.',
+    code: `<span class="kw">import type</span> <span class="op">{</span> <span class="ty">Preview</span> <span class="op">}</span> <span class="kw">from</span> <span class="st">'@storybook/react'</span>
+
+<span class="kw">const</span> preview<span class="op">:</span> <span class="ty">Preview</span> <span class="op">=</span> <span class="op">{</span>
+  parameters<span class="op">:</span> <span class="op">{</span>
+    actions<span class="op">:</span> <span class="op">{</span> argTypesRegex<span class="op">:</span> <span class="st">'^on[A-Z].*'</span> <span class="op">},</span>
+    <span class="cm">// onClick, onChange → auto-log w panelu akcji</span>
+    controls<span class="op">:</span> <span class="op">{</span>
+      matchers<span class="op">:</span> <span class="op">{</span>
+        color<span class="op">:</span> <span class="op">/(</span>background<span class="op">|</span>color<span class="op">)$/</span>i<span class="op">,</span>  <span class="cm">// → color picker</span>
+        date<span class="op">:</span>  <span class="op">/</span>Date<span class="op">$/</span>i<span class="op">,</span>               <span class="cm">// → date picker</span>
+      <span class="op">}</span>
+    <span class="op">}</span>
+  <span class="op">}</span>
+<span class="op">}</span>
+<span class="kw">export default</span> preview`
+  },
+
+  'index.tsx-src': {
+    icon: '⚛', ext: 'tsx', color: '#00b4b4',
+    desc: '<b>Punkt wejścia React — src/index.tsx.</b> Montuje App w div#root z index.html. Ładuje też globalne style CSS.',
+    code: `<span class="kw">import</span> <span class="op">{</span> <span class="pr">StrictMode</span> <span class="op">}</span> <span class="kw">from</span> <span class="st">'react'</span>
+<span class="kw">import</span> <span class="op">{</span> <span class="pr">createRoot</span> <span class="op">}</span> <span class="kw">from</span> <span class="st">'react-dom/client'</span>
+<span class="kw">import</span> <span class="st">'./app/shared/assets/styles/globals.css'</span>
+<span class="kw">import</span> <span class="pr">App</span> <span class="kw">from</span> <span class="st">'./app/app'</span>
+
+<span class="fn">createRoot</span><span class="op">(</span>document.<span class="fn">getElementById</span><span class="op">(</span><span class="st">'root'</span><span class="op">)!)</span>
+  .<span class="fn">render</span><span class="op">(</span>
+    <span class="op">&lt;</span><span class="tg">StrictMode</span><span class="op">&gt;</span>
+      <span class="op">&lt;</span><span class="tg">App</span> <span class="op">/&gt;</span>
+    <span class="op">&lt;/</span><span class="tg">StrictMode</span><span class="op">&gt;</span>
+  <span class="op">)</span>`
+  },
+
+  'button-shadcn.tsx': {
+    icon: '🧩', ext: 'tsx', color: '#00b4b4',
+    desc: '<b>Button wygenerowany przez shadcn/ui.</b> Twój kod — możesz edytować. Zbudowany na cva (class-variance-authority) — definiuje warianty i rozmiary przez klasy Tailwinda.',
+    code: `<span class="kw">import</span> <span class="op">{</span> <span class="pr">cva</span> <span class="op">}</span> <span class="kw">from</span> <span class="st">'class-variance-authority'</span>
+<span class="kw">import</span> <span class="op">{</span> <span class="pr">cn</span> <span class="op">}</span> <span class="kw">from</span> <span class="st">'@/app/lib/utils'</span>
+
+<span class="kw">const</span> buttonVariants <span class="op">=</span> <span class="fn">cva</span><span class="op">(</span>
+  <span class="st">'inline-flex items-center rounded-md text-sm font-medium'</span><span class="op">,</span>
+  <span class="op">{</span>
+    variants<span class="op">:</span> <span class="op">{</span>
+      variant<span class="op">:</span> <span class="op">{</span>
+        default<span class="op">:</span>     <span class="st">'bg-primary text-primary-foreground'</span><span class="op">,</span>
+        outline<span class="op">:</span>     <span class="st">'border border-input bg-background'</span><span class="op">,</span>
+        destructive<span class="op">:</span> <span class="st">'bg-destructive text-destructive-foreground'</span><span class="op">,</span>
+        ghost<span class="op">:</span>       <span class="st">'hover:bg-accent'</span><span class="op">,</span>
+      <span class="op">},</span>
+      size<span class="op">:</span> <span class="op">{</span>
+        default<span class="op">:</span> <span class="st">'h-10 px-4 py-2'</span><span class="op">,</span>
+        xs<span class="op">:</span>      <span class="st">'h-7 px-2 text-xs'</span><span class="op">,</span>
+        sm<span class="op">:</span>      <span class="st">'h-9 px-3'</span><span class="op">,</span>
+        lg<span class="op">:</span>      <span class="st">'h-11 px-8'</span><span class="op">,</span>
+      <span class="op">}</span>
+    <span class="op">}</span>
+  <span class="op">}</span>
+<span class="op">)</span>`
+  },
+
+  'index.ts-barrel': {
+    icon: '📤', ext: 'ts', color: '#007acc',
+    desc: '<b>Barrel export — drzwi wejściowe modułu.</b> Re-eksportuje wszystko z public-api.ts. Jeden punkt importu zamiast ścieżek do konkretnych plików.',
+    code: `<span class="cm">// index.ts — jeden punkt wejścia</span>
+<span class="kw">export</span> <span class="op">*</span> <span class="kw">from</span> <span class="st">'./public-api'</span>
+
+<span class="cm">// dzięki temu zamiast:</span>
+<span class="kw">import</span> <span class="op">{</span> <span class="pr">AuthProvider</span> <span class="op">}</span> <span class="kw">from</span> <span class="st">'../../providers/auth-provider/auth.provider'</span>
+
+<span class="cm">// piszesz:</span>
+<span class="kw">import</span> <span class="op">{</span> <span class="pr">AuthProvider</span> <span class="op">}</span> <span class="kw">from</span> <span class="st">'@/providers/auth-provider'</span>`
+  },
+
+  'public-api.ts-barrel': {
+    icon: '📤', ext: 'ts', color: '#007acc',
+    desc: '<b>Public API — witryna sklepu.</b> Decyduje co jest dostępne na zewnątrz modułu. Wewnętrzne detale (context.ts) mogą nie być eksportowane — nikt poza modułem ich nie potrzebuje.',
+    code: `<span class="cm">// public-api.ts — co udostępniamy</span>
+<span class="kw">import</span> <span class="op">{</span> <span class="pr">AuthProvider</span> <span class="op">}</span>  <span class="kw">from</span> <span class="st">'./auth.provider'</span>
+<span class="kw">import</span> <span class="op">{</span> <span class="pr">useAuth</span> <span class="op">}</span>       <span class="kw">from</span> <span class="st">'./auth.context'</span>
+<span class="kw">import</span> <span class="kw">type</span> <span class="op">{</span> <span class="ty">AuthUser</span> <span class="op">}</span> <span class="kw">from</span> <span class="st">'./types'</span>
+
+<span class="kw">export</span> <span class="op">{</span> <span class="pr">AuthProvider</span><span class="op">,</span> <span class="pr">useAuth</span> <span class="op">}</span>
+<span class="kw">export type</span> <span class="op">{</span> <span class="ty">AuthUser</span> <span class="op">}</span>
+
+<span class="cm">// AuthContext NIE jest eksportowany</span>
+<span class="cm">// to wewnętrzny detal modułu</span>`
+  },
+
+  'types.ts-provider': {
+    icon: '📐', ext: 'ts', color: '#007acc',
+    desc: '<b>Interfejsy TypeScript dla providera.</b> Zero logiki — tylko definicje kształtu danych. Można importować wszędzie lekko bez importowania Reacta czy logiki.',
+    code: `<span class="kw">export interface</span> <span class="ty">AuthUser</span> <span class="op">{</span>
+  id<span class="op">:</span>    <span class="ty">string</span>
+  email<span class="op">:</span> <span class="ty">string</span>
+  role<span class="op">:</span>  <span class="st">'admin'</span> <span class="op">|</span> <span class="st">'user'</span> <span class="op">|</span> <span class="st">'viewer'</span>
+<span class="op">}</span>
+
+<span class="kw">export interface</span> <span class="ty">AuthContextType</span> <span class="op">{</span>
+  user<span class="op">:</span>    <span class="ty">AuthUser</span> <span class="op">|</span> <span class="kw">null</span>
+  login<span class="op">:</span>   <span class="op">(</span>email<span class="op">:</span> <span class="ty">string</span><span class="op">,</span> pass<span class="op">:</span> <span class="ty">string</span><span class="op">)</span> <span class="op">=&gt;</span> <span class="ty">Promise</span><span class="op">&lt;</span><span class="ty">void</span><span class="op">&gt;</span>
+  logout<span class="op">:</span>  <span class="op">()</span> <span class="op">=&gt;</span> <span class="ty">void</span>
+  loading<span class="op">:</span> <span class="ty">boolean</span>
+<span class="op">}</span>`
+  },
+
+  'auth.layout.tsx-file': {
+    icon: '🏗', ext: 'tsx', color: '#00b4b4',
+    desc: '<b>Layout dla stron autoryzacji.</b> Wyśrodkowana karta. Outlet = miejsce gdzie router wstrzykuje konkretną stronę (login, register, reset hasła).',
+    code: `<span class="kw">import</span> <span class="op">{</span> <span class="pr">Outlet</span> <span class="op">}</span> <span class="kw">from</span> <span class="st">'react-router-dom'</span>
+
+<span class="kw">const</span> <span class="fn">AuthLayout</span> <span class="op">=</span> <span class="op">()</span> <span class="op">=&gt;</span> <span class="op">(</span>
+  <span class="op">&lt;</span><span class="tg">div</span> className<span class="op">=</span><span class="st">"min-h-screen flex items-center justify-center bg-muted"</span><span class="op">&gt;</span>
+    <span class="op">&lt;</span><span class="tg">div</span> className<span class="op">=</span><span class="st">"w-full max-w-md bg-white rounded-xl p-8 shadow-sm border"</span><span class="op">&gt;</span>
+      <span class="op">&lt;</span><span class="tg">Outlet</span> <span class="op">/&gt;</span>  <span class="cm">{/* LoginPage / RegisterPage */}</span>
+    <span class="op">&lt;/</span><span class="tg">div</span><span class="op">&gt;</span>
+  <span class="op">&lt;/</span><span class="tg">div</span><span class="op">&gt;</span>
+<span class="op">)</span>
+<span class="kw">export default</span> AuthLayout`
+  },
+
+  'Navbar.tsx-file': {
+    icon: '🧭', ext: 'tsx', color: '#00b4b4',
+    desc: '<b>Górna nawigacja — partial layoutu.</b> Siedzi w partials/ bo to kawałek layoutu, nie osobna strona. Korzysta z useAuth() żeby pokazać zalogowanego usera.',
+    code: `<span class="kw">import</span> <span class="op">{</span> <span class="pr">useAuth</span> <span class="op">}</span> <span class="kw">from</span> <span class="st">'@/providers/auth-provider'</span>
+
+<span class="kw">const</span> <span class="fn">Navbar</span> <span class="op">=</span> <span class="op">()</span> <span class="op">=&gt;</span> <span class="op">{</span>
+  <span class="kw">const</span> <span class="op">{</span> user<span class="op">,</span> logout <span class="op">}</span> <span class="op">=</span> <span class="fn">useAuth</span><span class="op">()</span>
+
+  <span class="kw">return</span> <span class="op">(</span>
+    <span class="op">&lt;</span><span class="tg">header</span> className<span class="op">=</span><span class="st">"h-14 border-b flex items-center px-6 gap-4"</span><span class="op">&gt;</span>
+      <span class="op">&lt;</span><span class="tg">img</span> src<span class="op">=</span><span class="st">"/logo.svg"</span> className<span class="op">=</span><span class="st">"h-7"</span> <span class="op">/&gt;</span>
+      <span class="op">&lt;</span><span class="tg">nav</span> className<span class="op">=</span><span class="st">"flex gap-2 flex-1"</span><span class="op">&gt;</span>
+        <span class="cm">{/* linki menu */}</span>
+      <span class="op">&lt;/</span><span class="tg">nav</span><span class="op">&gt;</span>
+      <span class="op">&lt;</span><span class="tg">span</span><span class="op">&gt;{</span>user<span class="op">?.</span>email<span class="op">}&lt;/</span><span class="tg">span</span><span class="op">&gt;</span>
+      <span class="op">&lt;</span><span class="tg">button</span> onClick<span class="op">={</span>logout<span class="op">}&gt;</span>Wyloguj<span class="op">&lt;/</span><span class="tg">button</span><span class="op">&gt;</span>
+    <span class="op">&lt;/</span><span class="tg">header</span><span class="op">&gt;</span>
+  <span class="op">)</span>
+<span class="op">}</span>`
+  },
+
+  'bi-service.ts': {
+    icon: '📡', ext: 'ts', color: '#007acc',
+    desc: '<b>Serwis API dla modułu BI.</b> Konkretne wywołania HTTP. Używa http.ts która auto-dodaje token — nie musisz tego robić ręcznie.',
+    code: `<span class="kw">import</span> <span class="pr">http</span> <span class="kw">from</span> <span class="st">'@/shared/utils/http-client'</span>
+<span class="kw">import</span> <span class="kw">type</span> <span class="op">{</span> <span class="ty">BiReportRequest</span><span class="op">,</span> <span class="ty">BiReportResponse</span> <span class="op">}</span> <span class="kw">from</span> <span class="st">'./types'</span>
+
+<span class="kw">export const</span> BiService <span class="op">=</span> <span class="op">{</span>
+
+  <span class="fn">getReports</span><span class="op">:</span> <span class="op">(</span>params<span class="op">:</span> <span class="ty">BiReportRequest</span><span class="op">)</span> <span class="op">=&gt;</span>
+    http.<span class="fn">get</span><span class="op">&lt;</span><span class="ty">BiReportResponse</span><span class="op">&gt;(</span><span class="st">'/bi/reports'</span><span class="op">,</span> <span class="op">{</span> params <span class="op">}),</span>
+
+  <span class="fn">getReportById</span><span class="op">:</span> <span class="op">(</span>id<span class="op">:</span> <span class="ty">string</span><span class="op">)</span> <span class="op">=&gt;</span>
+    http.<span class="fn">get</span><span class="op">(</span><span class="st">\`/bi/reports/\${id}\`</span><span class="op">),</span>
+
+  <span class="fn">deleteReport</span><span class="op">:</span> <span class="op">(</span>id<span class="op">:</span> <span class="ty">string</span><span class="op">)</span> <span class="op">=&gt;</span>
+    http.<span class="fn">delete</span><span class="op">(</span><span class="st">\`/bi/reports/\${id}\`</span><span class="op">),</span>
+<span class="op">}</span>`
+  },
+
+  'bi-types.ts': {
+    icon: '📐', ext: 'ts', color: '#007acc',
+    desc: '<b>Typy dla BI API.</b> Request = co wysyłasz. Response = co dostajesz. TypeScript pilnuje żebyś nie używał złych właściwości.',
+    code: `<span class="kw">export interface</span> <span class="ty">BiReportRequest</span> <span class="op">{</span>
+  dateFrom<span class="op">:</span> <span class="ty">string</span>
+  dateTo<span class="op">:</span>   <span class="ty">string</span>
+  type<span class="op">?:</span>    <span class="st">'daily'</span> <span class="op">|</span> <span class="st">'monthly'</span>
+<span class="op">}</span>
+
+<span class="kw">export interface</span> <span class="ty">BiReport</span> <span class="op">{</span>
+  id<span class="op">:</span>    <span class="ty">string</span>
+  title<span class="op">:</span> <span class="ty">string</span>
+  value<span class="op">:</span> <span class="ty">number</span>
+<span class="op">}</span>
+
+<span class="kw">export interface</span> <span class="ty">BiReportResponse</span> <span class="op">{</span>
+  data<span class="op">:</span>  <span class="ty">BiReport</span><span class="op">[]</span>
+  total<span class="op">:</span> <span class="ty">number</span>
+<span class="op">}</span>`
+  },
+
+  'getAuthToken.ts': {
+    icon: '🔑', ext: 'ts', color: '#007acc',
+    desc: '<b>Pobiera token z localStorage.</b> Zwraca "Bearer xxx". Null gdy niezalogowany. Używane przez interceptor http.ts automatycznie przy każdym zapytaniu.',
+    code: `<span class="kw">export default</span> <span class="op">()</span> <span class="op">=&gt;</span> <span class="op">{</span>
+  <span class="kw">const</span> token <span class="op">=</span> localStorage.<span class="fn">getItem</span><span class="op">(</span><span class="st">'token'</span><span class="op">)</span>
+  <span class="kw">if</span> <span class="op">(!</span>token<span class="op">)</span> <span class="kw">return null</span>
+  <span class="kw">return</span> <span class="st">\`Bearer \${token}\`</span>
+  <span class="cm">// → "Bearer eyJhbGciOiJSUzI1NiJ9..."</span>
+<span class="op">}</span>`
+  },
+
+  'getUserId.ts': {
+    icon: '👤', ext: 'ts', color: '#007acc',
+    desc: '<b>Pobiera ID usera z localStorage.</b> Wysyłane jako X-User-Id. Serwer wie kto wykonał zapytanie — ważne dla logów, uprawnień i audytu.',
+    code: `<span class="kw">export default</span> <span class="op">()</span> <span class="op">=&gt;</span> <span class="op">{</span>
+  <span class="kw">const</span> userId <span class="op">=</span> localStorage.<span class="fn">getItem</span><span class="op">(</span><span class="st">'userId'</span><span class="op">)</span>
+  <span class="kw">if</span> <span class="op">(!</span>userId<span class="op">)</span> <span class="kw">return null</span>
+  <span class="kw">return</span> userId  <span class="cm">// → "usr_abc123"</span>
+<span class="op">}</span>`
+  },
+
+  'getTimezone.ts': {
+    icon: '🕐', ext: 'ts', color: '#007acc',
+    desc: '<b>Strefa czasowa przeglądarki.</b> Wysyłana jako X-Time-Zone. Serwer zwraca daty przeliczone na strefę użytkownika — nie musisz przeliczać po stronie frontu.',
+    code: `<span class="kw">export default</span> <span class="op">()</span> <span class="op">=&gt;</span>
+  Intl.<span class="fn">DateTimeFormat</span><span class="op">()</span>
+    .<span class="fn">resolvedOptions</span><span class="op">().</span>timeZone
+<span class="cm">// → "Europe/Warsaw"</span>
+<span class="cm">// → "America/New_York"</span>`
+  },
+
+  'withAccessToken.ts': {
+    icon: '🔑', ext: 'ts', color: '#007acc',
+    desc: '<b>Kompletne nagłówki autoryzacji.</b> Składa token + user ID + strefę czasową. Używane tam gdzie http.ts interceptor nie wystarczy.',
+    code: `<span class="kw">import</span> <span class="pr">getAuthToken</span>    <span class="kw">from</span> <span class="st">'./getAuthToken'</span>
+<span class="kw">import</span> <span class="pr">getUserId</span>       <span class="kw">from</span> <span class="st">'./getUserId'</span>
+<span class="kw">import</span> <span class="pr">getTimezone</span>     <span class="kw">from</span> <span class="st">'./getTimezone'</span>
+<span class="kw">import</span> <span class="op">{</span> <span class="pr">defaultHeaders</span> <span class="op">}</span> <span class="kw">from</span> <span class="st">'./http'</span>
+
+<span class="kw">export default</span> <span class="op">()</span> <span class="op">=&gt; ({</span>
+  <span class="op">...</span>defaultHeaders<span class="op">,</span>
+  headers<span class="op">:</span> <span class="op">{</span>
+    Authorization<span class="op">:</span> <span class="fn">getAuthToken</span><span class="op">(),</span>
+    <span class="st">'X-User-Id'</span><span class="op">:</span>   <span class="fn">getUserId</span><span class="op">(),</span>
+    <span class="st">'X-Time-Zone'</span><span class="op">:</span> <span class="fn">getTimezone</span><span class="op">(),</span>
+  <span class="op">}</span>
+<span class="op">})</span>`
+  },
+
+  'http.config.ts': {
+    icon: '⚙', ext: 'ts', color: '#007acc',
+    desc: '<b>Konfiguracja środowisk HTTP.</b> Różne URL API dla różnych środowisk. Vite ładuje odpowiedni .env na podstawie trybu budowania (dev/test/prod).',
+    code: `<span class="kw">export const</span> httpConfig <span class="op">=</span> <span class="op">{</span>
+  baseURL<span class="op">:</span> <span class="kw">import</span>.meta.env.VITE_API_URL<span class="op">,</span>
+  timeout<span class="op">:</span> <span class="nu">30000</span><span class="op">,</span>
+<span class="op">}</span>
+
+<span class="cm">// .env.dev     → localhost:3000</span>
+<span class="cm">// .env.test    → api-test.App.pl</span>
+<span class="cm">// .env.prod    → api.App.pl</span>
+<span class="cm">// .env.preprod → api-preprod.App.pl</span>
+
+<span class="cm">// yarn build:prod    → ładuje .env.prod</span>
+<span class="cm">// yarn build:test    → ładuje .env.test</span>`
+  },
+
+  'mock-breadcrumb.ts': {
+    icon: '🔗', ext: 'ts', color: '#007acc',
+    desc: '<b>Dane breadcrumb dla helpPage.</b> Statyczna tablica definiująca ścieżkę nawigacyjną "BI › Pomoc". Specyficzna dla tej jednej strony — siedzi w utils/, nie w shared/.',
+    code: `<span class="kw">export const</span> helpPageBreadcrumbItems <span class="op">=</span> <span class="op">[</span>
+  <span class="op">{</span>
+    href<span class="op">:</span>  <span class="st">'/'</span><span class="op">,</span>
+    key<span class="op">:</span>   <span class="st">'BI'</span><span class="op">,</span>
+    label<span class="op">:</span> <span class="st">'BI'</span><span class="op">,</span>       <span class="cm">// klikalny link</span>
+  <span class="op">},</span>
+  <span class="op">{</span>
+    key<span class="op">:</span>   <span class="st">'Pomoc'</span><span class="op">,</span>
+    label<span class="op">:</span> <span class="st">'Pomoc'</span><span class="op">,</span>   <span class="cm">// aktywna strona (brak href)</span>
+  <span class="op">},</span>
+<span class="op">]</span>
+<span class="cm">// wyświetla:  BI › Pomoc</span>`
+  },
+
+  'mock-help-data.ts': {
+    icon: '🗂', ext: 'ts', color: '#007acc',
+    desc: '<b>Tymczasowe dane dla accordionu.</b> mock- w nazwie = placeholder. Gdy API gotowe → usuń ten plik i pobieraj dane w containers/HelpContainer.tsx.',
+    code: `<span class="kw">export const</span> mockHelpPage <span class="op">=</span> <span class="op">[</span>
+  <span class="op">{</span>
+    key<span class="op">:</span>         <span class="st">'1'</span><span class="op">,</span>
+    label<span class="op">:</span>       <span class="st">'Przydatne informacje'</span><span class="op">,</span>
+    description<span class="op">:</span> <span class="st">'Lorem ipsum...'</span><span class="op">,</span>
+  <span class="op">},</span>
+  <span class="op">{</span>
+    key<span class="op">:</span>         <span class="st">'2'</span><span class="op">,</span>
+    label<span class="op">:</span>       <span class="st">'Skróty klawiszowe'</span><span class="op">,</span>
+    description<span class="op">:</span> <span class="st">'Lorem ipsum...'</span><span class="op">,</span>
+  <span class="op">},</span>
+<span class="op">]</span>
+<span class="cm">// mock = fejkowe dane, docelowo z API</span>`
+  },
+}
+
+// ═══════════════════════════════════════════
+// TREE STRUCTURE
+// ═══════════════════════════════════════════
+const TREE = [
+  { label: 'my-app', type: 'root', open: true, children: [
+    { label: '.github', type: 'folder', open: false, children: [
+      { label: 'ISSUE_TEMPLATE', type: 'folder', open: false, children: [
+        { label: 'bug_report.md',      type: 'file', file: 'bug_report.md' },
+        { label: 'feature_request.md', type: 'file', file: 'feature_request.md' },
+      ]},
+      { label: 'husky', type: 'folder', open: false, children: [
+        { label: 'pre-commit',  type: 'file', file: 'pre-commit' },
+        { label: 'commit-msg',  type: 'file', file: 'commit-msg' },
+      ]},
+    ]},
+    { label: '.storybook', type: 'folder', open: false, children: [
+      { label: 'main.ts',    type: 'file', file: 'storybook-main.ts' },
+      { label: 'preview.ts', type: 'file', file: 'storybook-preview.ts' },
+    ]},
+    { label: 'src', type: 'folder', open: true, children: [
+      { label: 'app', type: 'folder', open: true, children: [
+        { label: 'components', type: 'folder', open: false, children: [
+          { label: 'ui', type: 'folder', open: false, children: [
+            { label: 'button.tsx',   type: 'file', file: 'button-shadcn.tsx' },
+            { label: 'dialog.tsx',   type: 'file', fileIcon: '🧩', ext: 'tsx' },
+            { label: 'dropdown.tsx', type: 'file', fileIcon: '🧩', ext: 'tsx' },
+          ]}
+        ]},
+        { label: 'features', type: 'folder', open: false, children: [
+          { label: 'table-action-buttons', type: 'folder', open: false, children: [
+            { label: 'TableActionButtons.tsx', type: 'file', file: 'TableActionButtons.tsx' },
+            { label: 'index.ts',               type: 'file', file: 'index.ts-barrel' },
+            { label: 'public-api.ts',          type: 'file', file: 'public-api.ts-barrel' },
+          ]}
+        ]},
+        { label: 'layouts', type: 'folder', open: false, children: [
+          { label: 'auth-layout', type: 'folder', open: false, children: [
+            { label: 'auth.layout.tsx', type: 'file', file: 'auth.layout.tsx-file' },
+            { label: 'index.ts',        type: 'file', file: 'index.ts-barrel' },
+          ]},
+          { label: 'top-navigation-layout', type: 'folder', open: false, children: [
+            { label: 'partials', type: 'folder', open: false, children: [
+              { label: 'Navbar.tsx',  type: 'file', file: 'Navbar.tsx-file' },
+              { label: 'Sidebar.tsx', type: 'file', fileIcon: '🧭', ext: 'tsx' },
+            ]},
+            { label: 'utils', type: 'folder', open: false, children: [] },
+            { label: 'top-navigation.layout.tsx', type: 'file', file: 'auth.layout.tsx-file' },
+          ]},
+        ]},
+        { label: 'pages', type: 'folder', open: false, children: [
+          { label: 'helpPage', type: 'folder', open: false, children: [
+            { label: 'containers', type: 'folder', open: false, children: [] },
+            { label: 'utils', type: 'folder', open: false, children: [
+              { label: 'breadcrumb-items.ts',    type: 'file', file: 'mock-breadcrumb.ts' },
+              { label: 'mock-help-page-data.ts', type: 'file', file: 'mock-help-data.ts' },
+              { label: 'index.ts',               type: 'file', file: 'index.ts-barrel' },
+            ]},
+            { label: 'helpPage.component.tsx', type: 'file', file: 'helpPage.component.tsx' },
+          ]},
+          { label: 'vehiclesPage',        type: 'folder', open: false, children: [] },
+          { label: 'dashboard',           type: 'folder', open: false, children: [] },
+          { label: 'analyticsPage',       type: 'folder', open: false, children: [] },
+          { label: 'live',                type: 'folder', open: false, children: [] },
+          { label: 'auth',                type: 'folder', open: false, children: [] },
+          { label: 'page404',             type: 'folder', open: false, children: [] },
+        ]},
+        { label: 'providers', type: 'folder', open: false, children: [
+          { label: 'auth-provider', type: 'folder', open: false, children: [
+            { label: 'auth.context.ts',  type: 'file', file: 'auth.context.ts' },
+            { label: 'auth.provider.tsx',type: 'file', file: 'auth.provider.tsx' },
+            { label: 'types.ts',         type: 'file', file: 'types.ts-provider' },
+            { label: 'index.ts',         type: 'file', file: 'index.ts-barrel' },
+            { label: 'public-api.ts',    type: 'file', file: 'public-api.ts-barrel' },
+          ]},
+          { label: 'theme-provider', type: 'folder', open: false, children: [
+            { label: 'theme.context.ts',  type: 'file', file: 'auth.context.ts' },
+            { label: 'theme.provider.tsx',type: 'file', fileIcon: '🎨', ext: 'tsx' },
+            { label: 'types.ts',          type: 'file', file: 'types.ts-provider' },
+          ]},
+        ]},
+        { label: 'services', type: 'folder', open: false, children: [
+          { label: 'bi', type: 'folder', open: false, children: [
+            { label: 'service.ts', type: 'file', file: 'bi-service.ts' },
+            { label: 'types.ts',   type: 'file', file: 'bi-types.ts' },
+            { label: 'index.ts',   type: 'file', file: 'index.ts-barrel' },
+          ]},
+          { label: 'app', type: 'folder', open: false, children: [] },
+          { label: 'live', type: 'folder', open: false, children: [] },
+        ]},
+        { label: 'shared', type: 'folder', open: false, children: [
+          { label: 'assets', type: 'folder', open: false, children: [
+            { label: 'images',  type: 'folder', open: false, children: [] },
+            { label: 'styles',  type: 'folder', open: false, children: [] },
+          ]},
+          { label: 'components', type: 'folder', open: false, children: [] },
+          { label: 'ui-base', type: 'folder', open: false, children: [
+            { label: 'button',       type: 'folder', open: false, children: [] },
+            { label: 'loading',      type: 'folder', open: false, children: [] },
+            { label: 'head-section', type: 'folder', open: false, children: [] },
+          ]},
+          { label: 'utils', type: 'folder', open: false, children: [
+            { label: 'http-client', type: 'folder', open: false, children: [
+              { label: 'http.ts',             type: 'file', file: 'http.ts' },
+              { label: 'getAuthToken.ts',     type: 'file', file: 'getAuthToken.ts' },
+              { label: 'getUserId.ts',        type: 'file', file: 'getUserId.ts' },
+              { label: 'getTimezone.ts',      type: 'file', file: 'getTimezone.ts' },
+              { label: 'withAccessToken.ts',  type: 'file', file: 'withAccessToken.ts' },
+              { label: 'index.ts',            type: 'file', file: 'index.ts-barrel' },
+              { label: 'public-api.ts',       type: 'file', file: 'public-api.ts-barrel' },
+            ]},
+            { label: 'common.utils.ts', type: 'file', file: 'common.utils.ts' },
+            { label: 'index.ts',        type: 'file', file: 'index.ts-barrel' },
+            { label: 'public-api.ts',   type: 'file', file: 'public-api.ts-barrel' },
+          ]},
+        ]},
+        { label: 'app.tsx',    type: 'file', file: 'app.tsx' },
+        { label: 'routes.tsx', type: 'file', file: 'routes.tsx' },
+      ]},
+      { label: 'environments', type: 'folder', open: false, children: [
+        { label: 'http.config.ts', type: 'file', file: 'http.config.ts' },
+        { label: 'index.tsx',      type: 'file', file: 'index.ts-barrel' },
+      ]},
+      { label: 'index.tsx', type: 'file', file: 'index.tsx-src' },
+    ]},
+    { label: '.eslintrc.cjs',     type: 'file', file: '.eslintrc.cjs' },
+    { label: '.npmrc',            type: 'file', file: '.npmrc' },
+    { label: '.prettierrc',       type: 'file', file: '.prettierrc' },
+    { label: 'components.json',   type: 'file', file: 'components.json' },
+    { label: 'index.html',        type: 'file', file: 'index.html' },
+    { label: 'package.json',      type: 'file', file: 'package.json' },
+    { label: 'postcss.config.js', type: 'file', file: 'postcss.config.js' },
+    { label: 'tailwind.config.js',type: 'file', file: 'tailwind.config.js' },
+    { label: 'tsconfig.json',     type: 'file', file: 'tsconfig.json' },
+    { label: 'tsconfig.node.json',type: 'file', fileIcon: '📘', ext: 'json' },
+    { label: 'vite-env.d.ts',     type: 'file', file: 'vite-env.d.ts' },
+    { label: 'vite.config.ts',    type: 'file', file: 'vite.config.ts' },
+    { label: 'vitest.config.ts',  type: 'file', file: 'vitest.config.ts' },
+    { label: 'yarn.lock',         type: 'file', file: 'yarn.lock' },
+  ]}
+]
+
+// ═══════════════════════════════════════════
+// RENDER TREE
+// ═══════════════════════════════════════════
+function getFileIcon(node) {
+  if (node.file && FILES[node.file]) return FILES[node.file].icon
+  if (node.fileIcon) return node.fileIcon
+  const ext = node.ext || (node.label.split('.').pop())
+  const icons = { ts:'🟦', tsx:'🟩', json:'🟨', js:'🟡', md:'📄', sh:'🟢', html:'🟠', css:'🟣', lock:'🔒', rc:'⚙', cjs:'🟣' }
+  return icons[ext] || '📄'
+}
+
+function getExtColor(node) {
+  if (node.file && FILES[node.file]) return FILES[node.file].color
+  const ext = node.ext || (node.label.includes('.') ? node.label.split('.').pop() : '')
+  const colors = { ts:'#007acc', tsx:'#00b4b4', json:'#cbcb41', js:'#f5de19', md:'#519aba', sh:'#89e051', html:'#e34c26', css:'#563d7c', lock:'#89e051', rc:'#e37933', cjs:'#4b32c3' }
+  return colors[ext] || '#858585'
+}
+
+// ═══════════════════════════════════════════
+// GENERATE EXAMPLE CODE for unknown files
+// ═══════════════════════════════════════════
+function generateCode(label, ext) {
+  const name = label.replace(/\.(tsx?|jsx?|json|md|sh|css|html)$/, '')
+  const isTsx = ext === 'tsx'
+  const isTs  = ext === 'ts'
+  const isJson = ext === 'json'
+  const isMd  = ext === 'md'
+  const isSh  = ext === 'sh'
+  const isCss = ext === 'css'
+
+  if (label === 'index.ts' || label === 'public-api.ts') {
+    return `<span class="cm">// ${label} — barrel export</span>\n<span class="kw">export</span> <span class="op">*</span> <span class="kw">from</span> <span class="st">'./public-api'</span>`
+  }
+  if (label === 'types.ts') {
+    return `<span class="cm">// types.ts — interfejsy TypeScript</span>\n\n<span class="kw">export interface</span> <span class="ty">${name.charAt(0).toUpperCase() + name.slice(1)}Type</span> <span class="op">{</span>\n  id<span class="op">:</span>    <span class="ty">string</span>\n  name<span class="op">:</span>  <span class="ty">string</span>\n  value<span class="op">:</span> <span class="ty">number</span>\n<span class="op">}</span>`
+  }
+  if (isTsx && (label.includes('Page') || label.includes('page'))) {
+    return `<span class="kw">const</span> <span class="fn">${name}</span> <span class="op">=</span> <span class="op">()</span> <span class="op">=&gt;</span> <span class="op">(</span>\n  <span class="op">&lt;</span><span class="tg">div</span> className<span class="op">=</span><span class="st">"p-6"</span><span class="op">&gt;</span>\n    <span class="op">&lt;</span><span class="tg">h1</span><span class="op">&gt;</span>${name}<span class="op">&lt;/</span><span class="tg">h1</span><span class="op">&gt;</span>\n  <span class="op">&lt;/</span><span class="tg">div</span><span class="op">&gt;</span>\n<span class="op">)</span>\n\n<span class="kw">export default</span> ${name}`
+  }
+  if (isTsx && label.includes('layout')) {
+    return `<span class="kw">import</span> <span class="op">{</span> <span class="pr">Outlet</span> <span class="op">}</span> <span class="kw">from</span> <span class="st">'react-router-dom'</span>\n\n<span class="kw">const</span> <span class="fn">${name}</span> <span class="op">=</span> <span class="op">()</span> <span class="op">=&gt;</span> <span class="op">(</span>\n  <span class="op">&lt;</span><span class="tg">div</span><span class="op">&gt;</span>\n    <span class="op">&lt;</span><span class="tg">Outlet</span> <span class="op">/&gt;</span>\n  <span class="op">&lt;/</span><span class="tg">div</span><span class="op">&gt;</span>\n<span class="op">)</span>\n\n<span class="kw">export default</span> ${name}`
+  }
+  if (isTsx) {
+    return `<span class="kw">import</span> <span class="op">{</span> <span class="kw">type</span> <span class="ty">FC</span> <span class="op">}</span> <span class="kw">from</span> <span class="st">'react'</span>\n\n<span class="kw">const</span> <span class="fn">${name}</span><span class="op">:</span> <span class="ty">FC</span> <span class="op">=</span> <span class="op">()</span> <span class="op">=&gt;</span> <span class="op">(</span>\n  <span class="op">&lt;</span><span class="tg">div</span> className<span class="op">=</span><span class="st">"flex items-center gap-2"</span><span class="op">&gt;</span>\n    <span class="cm">{/* ${name} */}</span>\n  <span class="op">&lt;/</span><span class="tg">div</span><span class="op">&gt;</span>\n<span class="op">)</span>\n\n<span class="kw">export default</span> ${name}`
+  }
+  if (isTs && label.includes('service')) {
+    return `<span class="kw">import</span> <span class="pr">http</span> <span class="kw">from</span> <span class="st">'@/shared/utils/http-client'</span>\n\n<span class="kw">export const</span> ${name.charAt(0).toUpperCase() + name.slice(1)} <span class="op">=</span> <span class="op">{</span>\n  <span class="fn">getAll</span><span class="op">:</span> <span class="op">()</span> <span class="op">=&gt;</span> http.<span class="fn">get</span><span class="op">(</span><span class="st">'/${name}'</span><span class="op">),</span>\n  <span class="fn">getById</span><span class="op">:</span> <span class="op">(</span>id<span class="op">:</span> <span class="ty">string</span><span class="op">)</span> <span class="op">=&gt;</span> http.<span class="fn">get</span><span class="op">(</span><span class="st">\`/${name}/\${id}\`</span><span class="op">),</span>\n<span class="op">}</span>`
+  }
+  if (isTs && label.includes('context')) {
+    return `<span class="kw">import</span> <span class="op">{</span> <span class="pr">createContext</span><span class="op">,</span> <span class="pr">useContext</span> <span class="op">}</span> <span class="kw">from</span> <span class="st">'react'</span>\n\n<span class="kw">export const</span> ${name}Context <span class="op">=</span> <span class="fn">createContext</span><span class="op">&lt;</span><span class="ty">any</span><span class="op">&gt;(</span><span class="kw">null</span><span class="op">)</span>\n\n<span class="kw">export const</span> <span class="fn">use${name.charAt(0).toUpperCase() + name.slice(1)}</span> <span class="op">=</span> <span class="op">()</span> <span class="op">=&gt;</span> <span class="op">{</span>\n  <span class="kw">const</span> ctx <span class="op">=</span> <span class="fn">useContext</span><span class="op">(</span>${name}Context<span class="op">)</span>\n  <span class="kw">if</span> <span class="op">(!</span>ctx<span class="op">)</span> <span class="kw">throw new</span> <span class="fn">Error</span><span class="op">(</span><span class="st">'Missing provider'</span><span class="op">)</span>\n  <span class="kw">return</span> ctx\n<span class="op">}</span>`
+  }
+  if (isTs && label.includes('provider')) {
+    return `<span class="kw">import</span> <span class="op">{</span> <span class="pr">useState</span> <span class="op">}</span> <span class="kw">from</span> <span class="st">'react'</span>\n\n<span class="kw">export const</span> <span class="fn">${name}</span> <span class="op">=</span> <span class="op">({</span> children <span class="op">})</span> <span class="op">=&gt;</span> <span class="op">{</span>\n  <span class="kw">const</span> <span class="op">[</span>state<span class="op">,</span> setState<span class="op">]</span> <span class="op">=</span> <span class="fn">useState</span><span class="op">(</span><span class="kw">null</span><span class="op">)</span>\n\n  <span class="kw">return</span> <span class="op">(</span>\n    <span class="op">&lt;</span><span class="tg">Context.Provider</span> value<span class="op">={{</span> state<span class="op">,</span> setState <span class="op">}}&gt;</span>\n      <span class="op">{</span>children<span class="op">}</span>\n    <span class="op">&lt;/</span><span class="tg">Context.Provider</span><span class="op">&gt;</span>\n  <span class="op">)</span>\n<span class="op">}</span>`
+  }
+  if (isTs && label.includes('config')) {
+    return `<span class="kw">export const</span> config <span class="op">=</span> <span class="op">{</span>\n  baseURL<span class="op">:</span> <span class="kw">import</span>.meta.env.VITE_API_URL<span class="op">,</span>\n  timeout<span class="op">:</span> <span class="nu">30000</span><span class="op">,</span>\n  retries<span class="op">:</span> <span class="nu">3</span><span class="op">,</span>\n<span class="op">}</span>`
+  }
+  if (isTs && (label.includes('utils') || label.includes('helper'))) {
+    return `<span class="cm">// utils / helper functions</span>\n\n<span class="kw">export const</span> <span class="fn">formatDate</span> <span class="op">=</span> <span class="op">(</span>date<span class="op">:</span> <span class="ty">string</span><span class="op">)</span> <span class="op">=&gt;</span>\n  <span class="kw">new</span> <span class="fn">Date</span><span class="op">(</span>date<span class="op">).</span><span class="fn">toLocaleDateString</span><span class="op">(</span><span class="st">'pl-PL'</span><span class="op">)</span>\n\n<span class="kw">export const</span> <span class="fn">truncate</span> <span class="op">=</span> <span class="op">(</span>str<span class="op">:</span> <span class="ty">string</span><span class="op">,</span> n <span class="op">=</span> <span class="nu">50</span><span class="op">)</span> <span class="op">=&gt;</span>\n  str.length <span class="op">&gt;</span> n <span class="op">?</span> str.<span class="fn">slice</span><span class="op">(</span><span class="nu">0</span><span class="op">,</span> n<span class="op">) +</span> <span class="st">'...'</span> <span class="op">:</span> str`
+  }
+  if (isJson) {
+    return `<span class="op">{</span>\n  <span class="pr">"name"</span><span class="op">:</span> <span class="st">"${name}"</span><span class="op">,</span>\n  <span class="pr">"version"</span><span class="op">:</span> <span class="st">"1.0.0"</span>\n<span class="op">}</span>`
+  }
+  if (isCss) {
+    return `<span class="cm">/* globals.css */</span>\n<span class="kw">@tailwind</span> base<span class="op">;</span>\n<span class="kw">@tailwind</span> components<span class="op">;</span>\n<span class="kw">@tailwind</span> utilities<span class="op">;</span>\n\n<span class="kw">:root</span> <span class="op">{</span>\n  <span class="pr">--primary</span><span class="op">:</span> <span class="nu">222.2 47.4% 11.2%</span><span class="op">;</span>\n  <span class="pr">--background</span><span class="op">:</span> <span class="nu">0 0% 100%</span><span class="op">;</span>\n<span class="op">}</span>`
+  }
+  if (isMd) {
+    return `<span class="fn"># ${name}</span>\n\n<span class="cm">Dokumentacja dla modułu \`${name}\`.</span>\n\n<span class="fn">## Użycie</span>\n\n<span class="op">\`\`\`ts</span>\nimport { ... } from './${name}'\n<span class="op">\`\`\`</span>`
+  }
+  if (isSh) {
+    return `#!/usr/bin/env sh\n<span class="cm"># ${label}</span>\n\necho <span class="st">"Running ${name}..."</span>`
+  }
+  // default TS
+  return `<span class="cm">// ${label}</span>\n\n<span class="kw">export const</span> ${name.replace(/[^a-zA-Z0-9]/g,'_')} <span class="op">=</span> <span class="op">{}</span>`
+}
+
+function buildTree(nodes, depth = 0) {
+  return nodes.map(node => {
+    const isFolder = node.type === 'folder' || node.type === 'root'
+    const icon = isFolder ? (node.type === 'root' ? '📁' : '📂') : getFileIcon(node)
+    const color = isFolder ? '#e8e8e8' : getExtColor(node)
+    const indent = Array(depth).fill('<span class="tree-indent-unit"></span>').join('')
+    const arrowClass = isFolder ? (node.open ? 'tree-arrow open' : 'tree-arrow') : 'tree-arrow leaf'
+    const labelClass = isFolder ? 'tree-label folder' : 'tree-label'
+    const ext = node.ext || (node.label.includes('.') ? node.label.split('.').pop() : '')
+    const clickable = isFolder
+      ? `onclick="toggleFolder(this)"`
+      : `onclick="openAny('${node.file||''}','${node.label}','${ext}',this)"`
+
+    let html = `<div class="tree-item" ${clickable} data-depth="${depth}">
+      <span class="tree-indent">${indent}</span>
+      <span class="${arrowClass}">▶</span>
+      <span class="file-icon">${icon}</span>
+      <span class="${labelClass}" style="color:${color}">${node.label}</span>
+    </div>`
+
+    if (isFolder && node.children && node.children.length > 0) {
+      html += `<div class="children ${node.open ? 'open' : ''}">${buildTree(node.children, depth + 1)}</div>`
+    }
+    return html
+  }).join('')
+}
+
+document.getElementById('tree').innerHTML = buildTree(TREE)
+
+// ═══════════════════════════════════════════
+// INTERACTIONS
+// ═══════════════════════════════════════════
+let openTabs = []
+let activeTab = null
+
+function toggleFolder(el) {
+  const arrow = el.querySelector('.tree-arrow')
+  const children = el.nextElementSibling
+  if (!children || !children.classList.contains('children')) return
+  arrow.classList.toggle('open')
+  children.classList.toggle('open')
+}
+
+function openAny(fileKey, label, ext, el) {
+  // highlight
+  document.querySelectorAll('.tree-item').forEach(i => i.classList.remove('active'))
+  el.classList.add('active')
+
+  // use existing FILES entry or create a temporary generated one
+  const tabKey = fileKey || label
+  if (fileKey && FILES[fileKey]) {
+    // known file — use as is
+  } else {
+    // generate example on the fly
+    FILES[tabKey] = {
+      icon: getFileIconByExt(ext),
+      ext: ext || 'ts',
+      color: getColorByExt(ext),
+      desc: `<b>${label}</b> — przykładowy kod dla tego pliku. W prawdziwym projekcie zawartość zależy od konkretnej implementacji.`,
+      code: generateCode(label, ext)
+    }
+  }
+
+  if (!openTabs.includes(tabKey)) {
+    openTabs.push(tabKey)
+  }
+  setActiveTab(tabKey)
+}
+
+function getFileIconByExt(ext) {
+  const m = {ts:'🟦',tsx:'🟩',json:'🟨',js:'🟡',md:'📄',sh:'🟢',html:'🟠',css:'🟣',lock:'🔒'}
+  return m[ext] || '📄'
+}
+function getColorByExt(ext) {
+  const m = {ts:'#007acc',tsx:'#00b4b4',json:'#cbcb41',js:'#f5de19',md:'#519aba',sh:'#89e051',html:'#e34c26',css:'#563d7c',lock:'#89e051'}
+  return m[ext] || '#858585'
+}
+
+function renderTabs() {
+  const tabsEl = document.getElementById('tabs')
+  tabsEl.innerHTML = openTabs.map(key => {
+    const d = FILES[key]
+    const label = d ? key.replace(/-(file|barrel|provider|src)$/, '') : key
+    return `<div class="tab ${key === activeTab ? 'active' : ''}" onclick="setActiveTab('${key}')">
+      <span class="tab-icon">${d ? d.icon : '📄'}</span>
+      <span>${label}</span>
+      <span class="tab-close" onclick="closeTab(event,'${key}')">✕</span>
+    </div>`
+  }).join('')
+}
+
+function setActiveTab(key) {
+  activeTab = key
+  renderTabs()
+  renderEditor(key)
+  const ext = FILES[key] ? FILES[key].ext : ''
+  document.getElementById('sb-lang').textContent = ext ? ext.toUpperCase() : '—'
+}
+
+function closeTab(e, key) {
+  e.stopPropagation()
+  openTabs = openTabs.filter(k => k !== key)
+  if (activeTab === key) activeTab = openTabs[openTabs.length - 1] || null
+  renderTabs()
+  if (activeTab) renderEditor(activeTab)
+  else {
+    document.getElementById('editor-content').innerHTML = `<div class="welcome">
+      <div class="welcome-logo">⬡</div>
+      <div class="welcome-title">App Explorer</div>
+      <div class="welcome-sub">Kliknij na plik żeby zobaczyć kod i opis</div>
+    </div>`
+    document.getElementById('sb-lang').textContent = '—'
+  }
+}
+
+function renderEditor(key) {
+  const d = FILES[key]
+  if (!d) return
+  const lines = d.code.split('\n')
+  const lineNums = lines.map((_, i) => `<div class="ln">${i + 1}</div>`).join('')
+  const codeLines = lines.map(l => `<div class="cl">${l}</div>`).join('')
+  document.getElementById('editor-content').innerHTML = `
+    <div class="code-view">
+      <div class="line-numbers">${lineNums}</div>
+      <div class="code-lines">${codeLines}</div>
+    </div>
+    <div class="desc-panel">
+      <div class="desc-title">📌 Co to jest i do czego służy</div>
+      ${d.desc}
+    </div>
+  `
+}
+</script>
+</body>
+</html>

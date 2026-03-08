@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TypeScript & React/JSX — Składnia, Triki & Pułapki</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f7fa;--s1:#ffffff;--s2:#f0f2f5;--s3:#e8ebef;
+  --bd:#dde1e8;--bd2:#c8cdd7;--tx:#1a2332;--tx2:#4a6080;--mt:#7a96b0;
+  --k1:#2563eb;--k2:#1d4ed8;
+  --green:#16a34a;--teal:#0d9488;--violet:#7c3aed;--rose:#e11d48;
+  --amber:#d97706;--pink:#c026d3;--sky:#0284c7;--orange:#ea580c;--blue:#2563eb;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;line-height:1.65;overflow-x:hidden}
+.back{position:fixed;top:22px;left:22px;z-index:9999;background:rgba(255,255,255,.95);backdrop-filter:blur(14px);border:1px solid var(--bd2);border-radius:40px;padding:10px 20px;display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--tx2);font-family:'IBM Plex Mono',monospace;font-size:.72rem;font-weight:500;letter-spacing:1px;transition:all .25s;box-shadow:0 2px 12px rgba(0,0,0,.08)}
+.back:hover{color:var(--blue);border-color:var(--blue)}
+.hdr{min-height:500px;padding:110px 80px 80px;position:relative;overflow:hidden;display:flex;align-items:flex-end}
+.hdr-bg{position:absolute;inset:0;background:linear-gradient(160deg,#eef2ff 0%,#f0f9ff 50%,#ecfdf5 100%)}
+.hdr-bg::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 55% at 3% 100%,rgba(37,99,235,.09) 0%,transparent 55%),radial-gradient(ellipse 50% 65% at 97% 5%,rgba(124,58,237,.07) 0%,transparent 50%),radial-gradient(ellipse 45% 50% at 50% 50%,rgba(13,148,136,.04) 0%,transparent 60%)}
+.hdr-grid{position:absolute;inset:0;background-image:linear-gradient(var(--bd) 1px,transparent 1px),linear-gradient(90deg,var(--bd) 1px,transparent 1px);background-size:48px 48px;opacity:.4;mask-image:radial-gradient(ellipse 85% 90% at 50% 50%,black,transparent)}
+.hdr-content{position:relative;max-width:1400px;width:100%}
+.hdr-tier{display:inline-flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:.65rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--blue);margin-bottom:28px;padding:7px 16px;border:1px solid rgba(37,99,235,.35);border-radius:4px;background:rgba(37,99,235,.07)}
+.tier-dot{width:6px;height:6px;border-radius:50%;background:var(--blue);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+h1{font-size:clamp(2.6rem,6vw,5.5rem);font-weight:800;line-height:.9;letter-spacing:-4px;margin-bottom:28px;color:var(--tx)}
+h1 em{font-style:normal;background:linear-gradient(135deg,var(--blue),var(--violet));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+h1 small{display:block;font-size:.36em;letter-spacing:-1px;color:var(--tx2);font-weight:500;margin-top:14px;-webkit-text-fill-color:var(--tx2)}
+.hdr-desc{font-size:1rem;color:var(--tx2);max-width:680px;line-height:1.9}
+.hdr-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.chip{font-family:'IBM Plex Mono',monospace;font-size:.63rem;font-weight:600;letter-spacing:.5px;padding:5px 12px;border-radius:3px;border:1px solid}
+.ck{color:var(--k1);border-color:rgba(37,99,235,.4);background:rgba(37,99,235,.08)}
+.cg{color:var(--green);border-color:rgba(22,163,74,.35);background:rgba(22,163,74,.06)}
+.ct{color:var(--teal);border-color:rgba(13,148,136,.35);background:rgba(13,148,136,.06)}
+.cv{color:var(--violet);border-color:rgba(124,58,237,.35);background:rgba(124,58,237,.06)}
+.cr{color:var(--rose);border-color:rgba(225,29,72,.35);background:rgba(225,29,72,.06)}
+.ca{color:var(--amber);border-color:rgba(217,119,6,.35);background:rgba(217,119,6,.06)}
+.co{color:var(--orange);border-color:rgba(234,88,12,.35);background:rgba(234,88,12,.06)}
+.cs{color:var(--sky);border-color:rgba(2,132,199,.35);background:rgba(2,132,199,.06)}
+.nav{position:sticky;top:0;z-index:300;background:rgba(255,255,255,.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--bd);display:flex;overflow-x:auto;scrollbar-width:none;padding:0 80px;box-shadow:0 1px 8px rgba(0,0,0,.06)}
+.nav::-webkit-scrollbar{display:none}
+.nav-a{color:var(--mt);text-decoration:none;font-family:'IBM Plex Mono',monospace;font-size:.63rem;font-weight:600;letter-spacing:.5px;padding:14px 12px;white-space:nowrap;border-bottom:2px solid transparent;transition:all .18s}
+.nav-a:hover{color:var(--blue);border-bottom-color:var(--blue)}
+.main{max-width:1400px;margin:0 auto;padding:80px 24px 160px}
+.chapter{margin-bottom:100px;animation:fadeUp .5s ease backwards}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.chapter:nth-child(1){animation-delay:.04s}.chapter:nth-child(2){animation-delay:.08s}
+.chapter:nth-child(3){animation-delay:.12s}.chapter:nth-child(4){animation-delay:.16s}
+.chapter:nth-child(5){animation-delay:.20s}.chapter:nth-child(6){animation-delay:.24s}
+.chapter:nth-child(7){animation-delay:.28s}.chapter:nth-child(8){animation-delay:.32s}
+.chapter:nth-child(9){animation-delay:.36s}.chapter:nth-child(10){animation-delay:.40s}
+.chapter:nth-child(11){animation-delay:.44s}
+.ch-head{display:flex;align-items:flex-start;gap:22px;margin-bottom:36px;padding-bottom:28px;border-bottom:1px solid var(--bd)}
+.ch-num{font-family:'IBM Plex Mono',monospace;font-size:.62rem;font-weight:700;letter-spacing:3px;color:var(--mt);padding-top:6px;white-space:nowrap}
+.ch-info{flex:1}
+.ch-cat{font-family:'IBM Plex Mono',monospace;font-size:.58rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:6px}
+.ch-title{font-size:1.9rem;font-weight:800;letter-spacing:-1px;line-height:1.1;margin-bottom:10px;color:var(--tx)}
+.ch-desc{font-size:.9rem;color:var(--tx2);max-width:840px;line-height:1.9}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:1100px){.g4{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:900px){.g2,.g3,.g4{grid-template-columns:1fr}.hdr{padding:80px 24px 56px}.nav{padding:0 16px}h1{font-size:2.6rem;letter-spacing:-2px}}
+.card{background:var(--s1);border:1px solid var(--bd);border-radius:8px;overflow:hidden;transition:border-color .2s,box-shadow .2s}
+.card:hover{border-color:var(--bd2);box-shadow:0 6px 28px rgba(0,0,0,.10)}
+.card-h{padding:11px 18px;font-family:'IBM Plex Mono',monospace;font-size:.66rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:8px;background:var(--s2)}
+.card-b{padding:18px}
+.code{background:#f8f9fb;border:1px solid var(--bd);border-radius:8px;overflow:hidden;margin-bottom:0}
+.cbar{background:var(--s2);border-bottom:1px solid var(--bd);padding:9px 16px;font-family:'IBM Plex Mono',monospace;font-size:.64rem;color:var(--mt);display:flex;align-items:center;gap:7px}
+.fdot{width:7px;height:7px;border-radius:50%}
+pre{padding:20px;font-family:'IBM Plex Mono',monospace;font-size:.77rem;line-height:1.75;overflow-x:auto;color:#3a5068}
+.kw{color:#7c3aed}.cls{color:#b45309}.fn{color:#0369a1}.str{color:#15803d}
+.cm{color:#94a3b8;font-style:italic}.num{color:#c2410c}.ann{color:#be185d}
+.prop{color:#0f766e}.op{color:#0369a1}.ty{color:#2563eb}.jsx{color:#c026d3}
+.alert{padding:16px 20px;border-radius:6px;border-left:3px solid;font-size:.87rem;line-height:1.85;color:var(--tx2)}
+.alert strong{color:var(--tx)}
+.alert-label{font-family:'IBM Plex Mono',monospace;font-size:.58rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;display:block;margin-bottom:6px}
+.al-k{background:rgba(37,99,235,.06);border-color:var(--k1)}.al-k .alert-label{color:var(--k1)}
+.al-green{background:rgba(22,163,74,.06);border-color:var(--green)}.al-green .alert-label{color:var(--green)}
+.al-rose{background:rgba(225,29,72,.06);border-color:var(--rose)}.al-rose .alert-label{color:var(--rose)}
+.al-violet{background:rgba(124,58,237,.06);border-color:var(--violet)}.al-violet .alert-label{color:var(--violet)}
+.al-amber{background:rgba(217,119,6,.06);border-color:var(--amber)}.al-amber .alert-label{color:var(--amber)}
+.al-orange{background:rgba(234,88,12,.06);border-color:var(--orange)}.al-orange .alert-label{color:var(--orange)}
+.al-sky{background:rgba(2,132,199,.06);border-color:var(--sky)}.al-sky .alert-label{color:var(--sky)}
+.tbl{width:100%;border-collapse:collapse;font-size:.84rem}
+.tbl th{background:var(--s2);color:var(--tx2);font-family:'IBM Plex Mono',monospace;font-size:.63rem;letter-spacing:2px;text-transform:uppercase;font-weight:700;padding:11px 16px;text-align:left;border-bottom:1px solid var(--bd)}
+.tbl td{padding:11px 16px;border-bottom:1px solid var(--bd);color:var(--tx2);vertical-align:top;line-height:1.75}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:var(--s2);color:var(--tx)}
+.tbl code{font-family:'IBM Plex Mono',monospace;font-size:.76rem;color:var(--k2);background:rgba(37,99,235,.10);padding:2px 7px;border-radius:3px}
+.ritem{display:flex;gap:16px;padding:12px 0;border-bottom:1px solid var(--bd);align-items:flex-start}
+.ritem:last-child{border-bottom:none}
+.ritem-key{font-family:'IBM Plex Mono',monospace;font-size:.76rem;white-space:nowrap;padding-top:2px;min-width:180px;flex-shrink:0}
+.ritem-val{font-size:.85rem;color:var(--tx2);line-height:1.75}
+.ritem-val code{font-family:'IBM Plex Mono',monospace;font-size:.76rem;color:var(--k2);background:rgba(37,99,235,.10);padding:1px 6px;border-radius:3px}
+.ritem-val strong{color:var(--tx)}
+.strip{border:1px solid var(--bd);border-radius:8px;padding:18px 22px;font-size:.87rem;color:var(--tx2);line-height:1.85;display:flex;gap:16px;align-items:flex-start;background:var(--s1)}
+.strip-icon{font-size:1.3rem;flex-shrink:0;padding-top:2px}
+.strip strong{color:var(--tx)}
+.gap8{margin-top:8px}.gap12{margin-top:12px}.gap16{margin-top:16px}.gap24{margin-top:24px}
+.footer{border-top:1px solid var(--bd);background:var(--s1);padding:36px 80px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;font-family:'IBM Plex Mono',monospace;font-size:.68rem;color:var(--mt)}
+.footer-title{color:var(--blue);font-weight:700}
+.badge{display:inline-flex;align-items:center;gap:4px;font-family:'IBM Plex Mono',monospace;font-size:.62rem;font-weight:700;padding:2px 9px;border-radius:3px}
+.badge-green{background:rgba(22,163,74,.12);color:var(--green);border:1px solid rgba(22,163,74,.3)}
+.badge-rose{background:rgba(225,29,72,.10);color:var(--rose);border:1px solid rgba(225,29,72,.3)}
+.badge-amber{background:rgba(217,119,6,.10);color:var(--amber);border:1px solid rgba(217,119,6,.3)}
+.badge-sky{background:rgba(2,132,199,.10);color:var(--sky);border:1px solid rgba(2,132,199,.3)}
+.badge-violet{background:rgba(124,58,237,.10);color:var(--violet);border:1px solid rgba(124,58,237,.3)}
+.badge-blue{background:rgba(37,99,235,.10);color:var(--blue);border:1px solid rgba(37,99,235,.3)}
+.output-box{background:var(--s2);border:1px solid var(--bd);border-radius:5px;padding:12px 16px;font-family:'IBM Plex Mono',monospace;font-size:.78rem;color:var(--green);margin-top:8px}
+.output-box .label{color:var(--mt);font-size:.65rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px}
+.output-box .wrong{color:var(--rose)}
+.output-box .note{color:var(--amber)}
+</style>
+</head>
+<body>
+<a class="back" href="#">← MENU</a>
+<header class="hdr">
+  <div class="hdr-bg"></div><div class="hdr-grid"></div>
+  <div class="hdr-content">
+    <div class="hdr-tier"><div class="tier-dot"></div> TypeScript · React · JSX · Triki & Pułapki</div>
+    <h1><em>TypeScript & React</em><small>Składnia, typy, JSX, hooki — wszystko co ważne w jednym miejscu</small></h1>
+    <p class="hdr-desc">Nie teoria — konkretny kod. Czym jest TypeScript, jak działa system typów, co to .tsx i JSX. Wszystko co musisz wiedzieć jako developer React używający TypeScriptu.</p>
+    <div class="hdr-chips">
+      <span class="chip ck">● Czym jest TS</span>
+      <span class="chip cv">Typy & Interfejsy</span>
+      <span class="chip cg">Utility Types</span>
+      <span class="chip ca">Generyki</span>
+      <span class="chip cr">JSX & .tsx</span>
+      <span class="chip ct">React + TS</span>
+      <span class="chip co">Hooki & Typy</span>
+      <span class="chip cs">Pułapki & Triki</span>
+    </div>
+  </div>
+</header>
+<nav class="nav">
+  <a class="nav-a" href="#czym">Czym jest TS</a>
+  <a class="nav-a" href="#typy">Typy podstawowe</a>
+  <a class="nav-a" href="#interfejsy">interface vs type</a>
+  <a class="nav-a" href="#utility">Utility Types</a>
+  <a class="nav-a" href="#generyki">Generyki</a>
+  <a class="nav-a" href="#narrowing">Narrowing & Guards</a>
+  <a class="nav-a" href="#jsx">JSX & .tsx</a>
+  <a class="nav-a" href="#react">React + TypeScript</a>
+  <a class="nav-a" href="#hooki">Hooki & Typy</a>
+  <a class="nav-a" href="#pulapki">Pułapki & Triki</a>
+</nav>
+<main class="main">
+
+<!-- ══ 01 CZYM JEST TYPESCRIPT ══ -->
+<section class="chapter" id="czym">
+  <div class="ch-head">
+    <div class="ch-num">01 / 10</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--blue)">Fundamenty języka</div>
+      <div class="ch-title">Czym jest TypeScript — jak działa, co daje, czym nie jest</div>
+      <div class="ch-desc">TypeScript to JavaScript z systemem typów. Kompiluje się do czystego JS — przeglądarka nigdy nie widzi kodu TS. Typy istnieją <em>tylko w czasie kompilacji</em> i całkowicie znikają w runtime. Każdy poprawny JS jest poprawnym TS.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--blue)"></div> TypeScript → JavaScript — co robi kompilator</div>
+      <pre><span class="cm">// ══ CO PISZESZ W .ts / .tsx ═══════════════════</span>
+<span class="kw">function</span> <span class="fn">greet</span>(name: <span class="ty">string</span>): <span class="ty">string</span> {
+  <span class="kw">return</span> <span class="str">`Cześć, ${name}!`</span>;
+}
+
+<span class="kw">interface</span> <span class="ty">User</span> {
+  id:    <span class="ty">number</span>;
+  name:  <span class="ty">string</span>;
+  email?: <span class="ty">string</span>;   <span class="cm">// ? = opcjonalne</span>
+}
+
+<span class="kw">const</span> user: <span class="ty">User</span> = { id: <span class="num">1</span>, name: <span class="str">"Jan"</span> };
+
+<span class="cm">// ══ CO DOSTAJE PRZEGLĄDARKA (po tsc / Vite) ═══</span>
+<span class="cm">// function greet(name) {</span>
+<span class="cm">//   return `Cześć, ${name}!`;</span>
+<span class="cm">// }</span>
+<span class="cm">// const user = { id: 1, name: "Jan" };</span>
+<span class="cm">//</span>
+<span class="cm">// interface User — ZNIKA CAŁKOWICIE</span>
+<span class="cm">// : string, : number — ZNIKAJĄ CAŁKOWICIE</span>
+
+<span class="cm">// ══ SUPERSET — JS jest poprawnym TS ═══════════</span>
+<span class="kw">const</span> x = <span class="num">5</span>;          <span class="cm">// TS inferuje: number</span>
+<span class="kw">const</span> y: <span class="ty">number</span> = <span class="num">5</span>;  <span class="cm">// jawna adnotacja — to samo</span>
+<span class="cm">// Inference > jawna adnotacja gdy typ jest oczywisty</span>
+
+<span class="cm">// ══ BŁĘDY TYLKO W KOMPILACJI ══════════════════</span>
+<span class="kw">function</span> <span class="fn">add</span>(a: <span class="ty">number</span>, b: <span class="ty">number</span>) { <span class="kw">return</span> a + b; }
+
+<span class="fn">add</span>(<span class="str">"1"</span>, <span class="num">2</span>);  <span class="cm">// ❌ błąd kompilacji: string ≠ number</span>
+<span class="cm">// W runtime i tak by zadziałało — TS tylko ostrzega</span>
+<span class="cm">// Kompilator TS NIE zatrzymuje działania aplikacji</span></pre>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-h" style="color:var(--blue)">📁 Pliki i narzędzia — co co robi</div>
+        <div class="card-b">
+          <div class="ritem">
+            <div class="ritem-key" style="color:var(--blue)">.ts</div>
+            <div class="ritem-val">Czysty TypeScript — logika, serwisy, hooki, utility. <strong>Bez JSX.</strong> Próba użycia &lt;div&gt; tutaj = błąd.</div>
+          </div>
+          <div class="ritem">
+            <div class="ritem-key" style="color:var(--violet)">.tsx</div>
+            <div class="ritem-val">TypeScript + JSX. <strong>Komponenty React muszą być .tsx</strong> — nawet jeśli jedna linia używa JSX.</div>
+          </div>
+          <div class="ritem">
+            <div class="ritem-key" style="color:var(--amber)">tsconfig.json</div>
+            <div class="ritem-val">Konfiguracja kompilatora. <code>strict: true</code> włącza wszystkie rygorystyczne opcje — używaj zawsze.</div>
+          </div>
+          <div class="ritem">
+            <div class="ritem-key" style="color:var(--green)">tsc --noEmit</div>
+            <div class="ritem-val">Sprawdza typy bez generowania plików JS. Używaj w CI do weryfikacji typów.</div>
+          </div>
+          <div class="ritem">
+            <div class="ritem-key" style="color:var(--rose)">Vite / esbuild</div>
+            <div class="ritem-val"><strong>Nie sprawdza typów!</strong> Tylko transpiluje TS→JS. Aplikacja uruchomi się mimo błędów typów.</div>
+          </div>
+          <div class="ritem">
+            <div class="ritem-key" style="color:var(--teal)">@types/*</div>
+            <div class="ritem-val">Paczki z typami dla bibliotek JS: <code>@types/node</code>. Instaluj jako <code>devDependencies</code>.</div>
+          </div>
+          <div class="ritem">
+            <div class="ritem-key" style="color:var(--orange)">.d.ts</div>
+            <div class="ritem-val">Plik deklaracji — same typy, zero logiki. Opisuje kształt bibliotek napisanych w JS.</div>
+          </div>
+        </div>
+      </div>
+      <div class="gap12"></div>
+      <div class="alert al-amber">
+        <span class="alert-label">Vite nie sprawdza typów — pułapka!</span>
+        W projekcie React z Vite możesz mieć <strong>błędy TypeScript i aplikacja nadal się uruchomi</strong>. Vite używa esbuild — szybki, ale ignoruje błędy typów. Dodaj <code>tsc --noEmit</code> do skryptów CI albo zainstaluj <code>vite-plugin-checker</code> żeby widzieć błędy podczas dev.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 02 TYPY PODSTAWOWE ══ -->
+<section class="chapter" id="typy">
+  <div class="ch-head">
+    <div class="ch-num">02 / 10</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--violet)">System Typów</div>
+      <div class="ch-title">Typy podstawowe — any, unknown, never, union, literal, tuple</div>
+      <div class="ch-desc">TypeScript ma bogaty system typów. <code>any</code> wyłącza sprawdzanie — to rezygnacja z TS. <code>unknown</code> to bezpieczna alternatywa — zmusza do sprawdzenia przed użyciem. <code>never</code> to typ niemożliwy — używany do exhaustive checks i funkcji które nigdy nie wracają.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--violet)"></div> Prymitywy, arrays, tuples, union, literal</div>
+      <pre><span class="cm">// ══ TYPY PRYMITYWNE ═══════════════════════════</span>
+<span class="kw">let</span> n:   <span class="ty">number</span>    = <span class="num">42</span>;
+<span class="kw">let</span> s:   <span class="ty">string</span>    = <span class="str">"hello"</span>;
+<span class="kw">let</span> b:   <span class="ty">boolean</span>   = <span class="kw">true</span>;
+<span class="kw">let</span> u:   <span class="ty">undefined</span> = <span class="kw">undefined</span>;
+<span class="kw">let</span> nl:  <span class="ty">null</span>      = <span class="kw">null</span>;
+<span class="kw">let</span> big: <span class="ty">bigint</span>    = <span class="num">9007199254740991n</span>;
+
+<span class="cm">// ══ TABLICE ═══════════════════════════════════</span>
+<span class="kw">const</span> nums: <span class="ty">number</span>[]       = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>];
+<span class="kw">const</span> strs: <span class="ty">Array</span>&lt;<span class="ty">string</span>&gt; = [<span class="str">"a"</span>, <span class="str">"b"</span>]; <span class="cm">// to samo</span>
+
+<span class="cm">// ══ TUPLE — znana długość i kolejność typów ════</span>
+<span class="kw">const</span> pair:  [<span class="ty">string</span>, <span class="ty">number</span>]  = [<span class="str">"Jan"</span>, <span class="num">30</span>];
+<span class="kw">const</span> [name, age] = pair;        <span class="cm">// destructuring z typami</span>
+
+<span class="cm">// Named tuple (TS 4.0)</span>
+<span class="kw">type</span> <span class="ty">Range</span> = [min: <span class="ty">number</span>, max: <span class="ty">number</span>];
+
+<span class="cm">// ══ UNION — jeden z kilku typów ═══════════════</span>
+<span class="kw">let</span> id: <span class="ty">string</span> | <span class="ty">number</span>;
+id = <span class="str">"abc"</span>; <span class="cm">// ok</span>
+id = <span class="num">123</span>;   <span class="cm">// ok</span>
+id = <span class="kw">true</span>;  <span class="cm">// ❌ boolean nie pasuje</span>
+
+<span class="cm">// ══ LITERAL TYPES — konkretna wartość jako typ ═</span>
+<span class="kw">type</span> <span class="ty">Direction</span> = <span class="str">"left"</span> | <span class="str">"right"</span> | <span class="str">"up"</span> | <span class="str">"down"</span>;
+<span class="kw">type</span> <span class="ty">Status</span>    = <span class="str">"active"</span> | <span class="str">"inactive"</span> | <span class="str">"pending"</span>;
+<span class="kw">type</span> <span class="ty">DiceRoll</span>  = <span class="num">1</span> | <span class="num">2</span> | <span class="num">3</span> | <span class="num">4</span> | <span class="num">5</span> | <span class="num">6</span>;
+
+<span class="kw">function</span> <span class="fn">move</span>(dir: <span class="ty">Direction</span>) { <span class="cm">/* ... */</span> }
+<span class="fn">move</span>(<span class="str">"left"</span>);      <span class="cm">// ✅</span>
+<span class="fn">move</span>(<span class="str">"diagonal"</span>);  <span class="cm">// ❌ nie ma w union</span>
+
+<span class="cm">// ══ INTERSECTION — oba naraz ══════════════════</span>
+<span class="kw">type</span> <span class="ty">AdminUser</span> = <span class="ty">User</span> &amp; { permissions: <span class="ty">string</span>[] };
+<span class="cm">// obiekt musi spełniać OBA interfejsy jednocześnie</span></pre>
+    </div>
+    <div>
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--rose)"></div> any vs unknown vs never vs void — kluczowe różnice</div>
+        <pre><span class="cm">// ══ ANY — wyłącza type checking (unikaj!) ═════</span>
+<span class="kw">let</span> danger: <span class="ty">any</span> = <span class="str">"hello"</span>;
+danger = <span class="num">42</span>;               <span class="cm">// ok</span>
+danger.<span class="fn">toUpperCase</span>();      <span class="cm">// ok (nawet jeśli number!)</span>
+danger.<span class="fn">nieIstniejąca</span>();  <span class="cm">// ok — zero sprawdzania</span>
+<span class="cm">// any "zaraża" — przekazanie do funkcji wyłącza check tam też</span>
+
+<span class="cm">// ══ UNKNOWN — bezpieczny any ══════════════════</span>
+<span class="kw">let</span> safe: <span class="ty">unknown</span> = <span class="str">"hello"</span>;
+safe.<span class="fn">toUpperCase</span>();        <span class="cm">// ❌ BŁĄD — musisz sprawdzić typ!</span>
+
+<span class="kw">if</span> (<span class="kw">typeof</span> safe === <span class="str">"string"</span>) {
+  safe.<span class="fn">toUpperCase</span>();      <span class="cm">// ✅ po sprawdzeniu działa</span>
+}
+<span class="cm">// unknown = "coś dostałem ale nie wiem co"</span>
+<span class="cm">// Używaj dla danych z API, catch(e: unknown), JSON.parse</span>
+
+<span class="cm">// ══ NEVER — typ niemożliwy ════════════════════</span>
+<span class="cm">// 1. Funkcja która nigdy nie wraca</span>
+<span class="kw">function</span> <span class="fn">throwError</span>(msg: <span class="ty">string</span>): <span class="ty">never</span> {
+  <span class="kw">throw new</span> <span class="cls">Error</span>(msg); <span class="cm">// nigdy nie dochodzi do return</span>
+}
+
+<span class="cm">// 2. Exhaustive check — TS pilnuje że obsłużysz wszystkie przypadki</span>
+<span class="kw">type</span> <span class="ty">Shape</span> = <span class="str">"circle"</span> | <span class="str">"square"</span> | <span class="str">"triangle"</span>;
+<span class="kw">function</span> <span class="fn">getArea</span>(s: <span class="ty">Shape</span>): <span class="ty">number</span> {
+  <span class="kw">switch</span>(s) {
+    <span class="kw">case</span> <span class="str">"circle"</span>:   <span class="kw">return</span> <span class="num">3.14</span>;
+    <span class="kw">case</span> <span class="str">"square"</span>:   <span class="kw">return</span> <span class="num">1</span>;
+    <span class="kw">case</span> <span class="str">"triangle"</span>: <span class="kw">return</span> <span class="num">0.5</span>;
+    <span class="kw">default</span>: <span class="kw">const</span> _check: <span class="ty">never</span> = s;
+    <span class="cm">// Gdy dodasz nowy Shape bez nowego case → błąd kompilacji!</span>
+  }
+}
+
+<span class="cm">// ══ VOID — brak znaczącej wartości zwracanej ══</span>
+<span class="kw">function</span> <span class="fn">log</span>(msg: <span class="ty">string</span>): <span class="ty">void</span> { <span class="cls">console</span>.<span class="fn">log</span>(msg); }
+<span class="cm">// void ≠ undefined. void = "nie interesuje mnie wynik"</span></pre>
+      </div>
+      <div class="gap12"></div>
+      <div class="alert al-rose">
+        <span class="alert-label">any = rezygnacja z TypeScript</span>
+        Każde <code>any</code> to dziura. Zamiast tego: <code>unknown</code> gdy nie znasz typu (dane z API, catch block), <code>never</code> gdy coś jest niemożliwe, konkretny typ gdy wiesz co to. Włącz <code>"noImplicitAny": true</code> w tsconfig — błąd gdy TS nie może wyinferować bez pomocy.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 03 INTERFACE VS TYPE ══ -->
+<section class="chapter" id="interfejsy">
+  <div class="ch-head">
+    <div class="ch-num">03 / 10</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--teal)">Struktury typów</div>
+      <div class="ch-title">interface vs type — różnice, kiedy co używać</div>
+      <div class="ch-desc">Dwa sposoby opisywania kształtu obiektów. <code>interface</code> ma declaration merging i może być extends-owany — lepszy dla publicznych API i OOP. <code>type</code> jest elastyczniejszy — obsługuje union, mapped types, conditional types. W React używaj obu — ważna konsekwencja w projekcie.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--teal)"></div> interface — składnia, extends, declaration merging</div>
+      <pre><span class="cm">// ══ PODSTAWOWY INTERFACE ══════════════════════</span>
+<span class="kw">interface</span> <span class="ty">User</span> {
+  id:       <span class="ty">number</span>;
+  name:     <span class="ty">string</span>;
+  email?:   <span class="ty">string</span>;         <span class="cm">// ? = opcjonalne pole</span>
+  <span class="kw">readonly</span> createdAt: <span class="ty">Date</span>; <span class="cm">// readonly = nie można nadpisać</span>
+}
+
+<span class="cm">// ══ EXTENDS — dziedziczenie interface ══════════</span>
+<span class="kw">interface</span> <span class="ty">Admin</span> <span class="kw">extends</span> <span class="ty">User</span> {
+  permissions: <span class="ty">string</span>[];
+  level:       <span class="num">1</span> | <span class="num">2</span> | <span class="num">3</span>;
+}
+
+<span class="cm">// Wielokrotne extends</span>
+<span class="kw">interface</span> <span class="ty">SuperAdmin</span> <span class="kw">extends</span> <span class="ty">Admin</span>, <span class="ty">Auditable</span> {
+  superKey: <span class="ty">string</span>;
+}
+
+<span class="cm">// ══ DECLARATION MERGING — tylko interface ══════</span>
+<span class="cm">// Można zdeklarować dwa razy — TS łączy je!</span>
+<span class="kw">interface</span> <span class="ty">Window</span> {
+  myApp: { version: <span class="ty">string</span> };
+}
+<span class="cm">// Teraz window.myApp jest znane TypeScriptowi</span>
+<span class="cm">// Używane do augmentacji typów bibliotek np. Express.Request</span>
+
+<span class="cm">// ══ INTERFACE DLA FUNKCJI ═════════════════════</span>
+<span class="kw">interface</span> <span class="ty">Comparator</span>&lt;<span class="ty">T</span>&gt; {
+  (a: <span class="ty">T</span>, b: <span class="ty">T</span>): <span class="ty">number</span>;
+}
+<span class="kw">const</span> byAge: <span class="ty">Comparator</span>&lt;<span class="ty">User</span>&gt; = (a, b) => a.id - b.id;
+
+<span class="cm">// ══ INDEX SIGNATURE ═══════════════════════════</span>
+<span class="kw">interface</span> <span class="ty">Dict</span>&lt;<span class="ty">V</span>&gt; {
+  [key: <span class="ty">string</span>]: <span class="ty">V</span>;  <span class="cm">// dowolne klucze string → wartość V</span>
+}
+<span class="kw">const</span> scores: <span class="ty">Dict</span>&lt;<span class="ty">number</span>&gt; = { jan: <span class="num">95</span>, anna: <span class="num">88</span> };</pre>
+    </div>
+    <div>
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--violet)"></div> type — alias, union, intersection, obiekty</div>
+        <pre><span class="cm">// ══ TYPE ALIAS — może być czymkolwiek ═════════</span>
+<span class="kw">type</span> <span class="ty">ID</span>       = <span class="ty">string</span> | <span class="ty">number</span>;
+<span class="kw">type</span> <span class="ty">Status</span>   = <span class="str">"active"</span> | <span class="str">"inactive"</span>;
+<span class="kw">type</span> <span class="ty">Callback</span> = (err: <span class="ty">Error</span> | <span class="kw">null</span>, data?: <span class="ty">string</span>) => <span class="ty">void</span>;
+<span class="kw">type</span> <span class="ty">Pair</span>&lt;<span class="ty">T</span>&gt;  = [<span class="ty">T</span>, <span class="ty">T</span>];   <span class="cm">// tuple z generykiem</span>
+
+<span class="cm">// Obiektowy type — podobny do interface</span>
+<span class="kw">type</span> <span class="ty">Point</span> = {
+  x: <span class="ty">number</span>;
+  y: <span class="ty">number</span>;
+};
+
+<span class="cm">// "Extends" przez intersection</span>
+<span class="kw">type</span> <span class="ty">Point3D</span> = <span class="ty">Point</span> &amp; { z: <span class="ty">number</span> };
+
+<span class="cm">// ══ RÓŻNICE interface vs type ══════════════════</span>
+<span class="cm">// interface: declaration merging ✅  type: ❌</span>
+<span class="cm">// interface: extends              ✅  type: & intersection</span>
+<span class="cm">// type: union types               ✅  interface: ❌</span>
+<span class="cm">// type: conditional types         ✅  interface: ❌</span>
+<span class="cm">// type: mapped types              ✅  interface: ❌</span>
+<span class="cm">// type: tuple aliases             ✅  interface: ❌</span>
+
+<span class="cm">// ══ DISCRIMINATED UNION — złoty wzorzec ════════</span>
+<span class="kw">type</span> <span class="ty">ApiState</span>&lt;<span class="ty">T</span>&gt; =
+  | { status: <span class="str">"idle"</span> }
+  | { status: <span class="str">"loading"</span> }
+  | { status: <span class="str">"success"</span>; data: <span class="ty">T</span> }
+  | { status: <span class="str">"error"</span>;   error: <span class="ty">string</span> };
+
+<span class="cm">// Switch na status.status daje pełne narrowing</span>
+<span class="kw">function</span> <span class="fn">render</span>(state: <span class="ty">ApiState</span>&lt;<span class="ty">User</span>&gt;) {
+  <span class="kw">switch</span>(state.status) {
+    <span class="kw">case</span> <span class="str">"success"</span>: <span class="kw">return</span> state.data.name; <span class="cm">// data: User ✅</span>
+    <span class="kw">case</span> <span class="str">"error"</span>:   <span class="kw">return</span> state.error;     <span class="cm">// error: string ✅</span>
+    <span class="kw">case</span> <span class="str">"loading"</span>: <span class="kw">return</span> <span class="str">"Ładowanie..."</span>;
+    <span class="kw">case</span> <span class="str">"idle"</span>:    <span class="kw">return</span> <span class="kw">null</span>;
+  }
+}</pre>
+      </div>
+      <div class="gap12"></div>
+      <div class="alert al-k">
+        <span class="alert-label">Kiedy interface, kiedy type?</span>
+        <strong>interface</strong> → obiekty, klasy, publiczne API biblioteki, gdy potrzebujesz declaration merging. <strong>type</strong> → union, tuple, funkcje, mapped/conditional types, gdy nie budujesz klasy. W React: oba działają dla Props — ważna konsekwencja w projekcie. Mieszanie to chaos.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 04 UTILITY TYPES ══ -->
+<section class="chapter" id="utility">
+  <div class="ch-head">
+    <div class="ch-num">04 / 10</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--green)">Wbudowane transformacje typów</div>
+      <div class="ch-title">Utility Types — Partial, Pick, Omit, Record, keyof, typeof, as const</div>
+      <div class="ch-desc">TypeScript ma wbudowane typy-narzędzia do transformowania innych typów. Zamiast pisać nowe interfejsy ręcznie, możesz wyprowadzać je ze starych. <code>keyof</code> i <code>typeof</code> to operatory poziome typów. <code>as const</code> zamraża wartości na literal types.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--green)"></div> Partial, Required, Readonly, Pick, Omit, Record</div>
+      <pre><span class="kw">interface</span> <span class="ty">User</span> {
+  id:    <span class="ty">number</span>;
+  name:  <span class="ty">string</span>;
+  email: <span class="ty">string</span>;
+  age:   <span class="ty">number</span>;
+}
+
+<span class="cm">// ══ PARTIAL — wszystkie pola opcjonalne ═══════</span>
+<span class="kw">type</span> <span class="ty">UpdateUser</span> = <span class="ty">Partial</span>&lt;<span class="ty">User</span>&gt;;
+<span class="cm">// { id?: number; name?: string; email?: string; age?: number }</span>
+<span class="cm">// Używane np. dla PATCH requests — możesz wysłać tylko część</span>
+
+<span class="cm">// ══ REQUIRED — wszystkie wymagane ════════════</span>
+<span class="kw">type</span> <span class="ty">FullUser</span> = <span class="ty">Required</span>&lt;<span class="ty">User</span>&gt;;
+
+<span class="cm">// ══ READONLY — pola tylko do odczytu ══════════</span>
+<span class="kw">type</span> <span class="ty">FrozenUser</span> = <span class="ty">Readonly</span>&lt;<span class="ty">User</span>&gt;;
+<span class="kw">const</span> u: <span class="ty">FrozenUser</span> = { id: <span class="num">1</span>, name: <span class="str">"Jan"</span>, email: <span class="str">""</span>, age: <span class="num">30</span> };
+u.name = <span class="str">"Anna"</span>;  <span class="cm">// ❌ Cannot assign to 'name' — readonly</span>
+
+<span class="cm">// ══ PICK — wybierz konkretne pola ════════════</span>
+<span class="kw">type</span> <span class="ty">UserPreview</span> = <span class="ty">Pick</span>&lt;<span class="ty">User</span>, <span class="str">"id"</span> | <span class="str">"name"</span>&gt;;
+<span class="cm">// { id: number; name: string } — tylko te dwa pola</span>
+
+<span class="cm">// ══ OMIT — usuń konkretne pola ═══════════════</span>
+<span class="kw">type</span> <span class="ty">CreateUser</span> = <span class="ty">Omit</span>&lt;<span class="ty">User</span>, <span class="str">"id"</span>&gt;;
+<span class="cm">// { name: string; email: string; age: number } — bez id</span>
+
+<span class="cm">// ══ RECORD — mapa klucz→wartość ══════════════</span>
+<span class="kw">type</span> <span class="ty">ScoreMap</span>   = <span class="ty">Record</span>&lt;<span class="ty">string</span>, <span class="ty">number</span>&gt;;
+<span class="kw">type</span> <span class="ty">UserByRole</span> = <span class="ty">Record</span>&lt;<span class="str">"admin"</span> | <span class="str">"user"</span>, <span class="ty">User</span>[]&gt;;
+<span class="cm">// { admin: User[]; user: User[] } — klucze muszą istnieć</span>
+
+<span class="cm">// ══ EXCLUDE / EXTRACT ════════════════════════</span>
+<span class="kw">type</span> <span class="ty">T</span> = <span class="str">"a"</span> | <span class="str">"b"</span> | <span class="str">"c"</span>;
+<span class="kw">type</span> <span class="ty">NoA</span>     = <span class="ty">Exclude</span>&lt;<span class="ty">T</span>, <span class="str">"a"</span>&gt;;       <span class="cm">// "b" | "c"</span>
+<span class="kw">type</span> <span class="ty">OnlyAB</span>  = <span class="ty">Extract</span>&lt;<span class="ty">T</span>, <span class="str">"a"</span> | <span class="str">"b"</span>&gt;; <span class="cm">// "a" | "b"</span>
+<span class="kw">type</span> <span class="ty">NoNull</span>  = <span class="ty">NonNullable</span>&lt;<span class="ty">string</span> | <span class="kw">null</span> | <span class="kw">undefined</span>&gt;; <span class="cm">// string</span></pre>
+    </div>
+    <div>
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--amber)"></div> keyof, typeof, as const, ReturnType, Awaited</div>
+        <pre><span class="cm">// ══ KEYOF — klucze obiektu jako union ════════</span>
+<span class="kw">type</span> <span class="ty">UserKey</span> = <span class="kw">keyof</span> <span class="ty">User</span>; <span class="cm">// "id" | "name" | "email" | "age"</span>
+
+<span class="cm">// Bezpieczny getter — klucz musi istnieć w T</span>
+<span class="kw">function</span> <span class="fn">get</span>&lt;<span class="ty">T</span>, <span class="ty">K</span> <span class="kw">extends</span> <span class="kw">keyof</span> <span class="ty">T</span>&gt;(obj: <span class="ty">T</span>, key: <span class="ty">K</span>): <span class="ty">T</span>[<span class="ty">K</span>] {
+  <span class="kw">return</span> obj[key];
+}
+<span class="fn">get</span>(user, <span class="str">"name"</span>);   <span class="cm">// ➜ string ✅</span>
+<span class="fn">get</span>(user, <span class="str">"xyz"</span>);    <span class="cm">// ➜ ❌ błąd — "xyz" nie jest kluczem User</span>
+
+<span class="cm">// ══ TYPEOF — wyciągnij typ ze zmiennej ════════</span>
+<span class="kw">const</span> config = { host: <span class="str">"localhost"</span>, port: <span class="num">3000</span> };
+<span class="kw">type</span> <span class="ty">Config</span> = <span class="kw">typeof</span> config; <span class="cm">// { host: string; port: number }</span>
+
+<span class="cm">// ══ AS CONST — literal types z wartości ═══════</span>
+<span class="kw">const</span> ROLES = [<span class="str">"admin"</span>, <span class="str">"user"</span>, <span class="str">"coordinator"</span>] <span class="kw">as const</span>;
+<span class="cm">// Bez as const: string[]  ← bezsensownie szeroki</span>
+<span class="cm">// Z as const:   readonly ["admin", "user", "coordinator"]</span>
+<span class="kw">type</span> <span class="ty">Role</span> = <span class="kw">typeof</span> ROLES[<span class="ty">number</span>]; <span class="cm">// "admin" | "user" | "coordinator"</span>
+
+<span class="kw">const</span> COLORS = { red: <span class="str">"#ff0000"</span>, blue: <span class="str">"#0000ff"</span> } <span class="kw">as const</span>;
+<span class="kw">type</span> <span class="ty">Color</span> = <span class="kw">typeof</span> <span class="ty">COLORS</span>[<span class="kw">keyof</span> <span class="kw">typeof</span> <span class="ty">COLORS</span>];
+<span class="cm">// "#ff0000" | "#0000ff"</span>
+
+<span class="cm">// ══ RETURNTYPE / PARAMETERS ═══════════════════</span>
+<span class="kw">function</span> <span class="fn">fetchUser</span>(id: <span class="ty">number</span>) { <span class="kw">return</span> { id, name: <span class="str">"Jan"</span> }; }
+
+<span class="kw">type</span> <span class="ty">UserResult</span> = <span class="ty">ReturnType</span>&lt;<span class="kw">typeof</span> <span class="fn">fetchUser</span>&gt;;
+<span class="cm">// { id: number; name: string }</span>
+<span class="kw">type</span> <span class="ty">FetchParams</span> = <span class="ty">Parameters</span>&lt;<span class="kw">typeof</span> <span class="fn">fetchUser</span>&gt;;
+<span class="cm">// [id: number]</span>
+
+<span class="cm">// ══ AWAITED — unwrap Promise ═══════════════════</span>
+<span class="kw">async function</span> <span class="fn">getUser</span>(): <span class="ty">Promise</span>&lt;<span class="ty">User</span>&gt; { <span class="cm">/* ... */</span> }
+<span class="kw">type</span> <span class="ty">Resolved</span> = <span class="ty">Awaited</span>&lt;<span class="ty">ReturnType</span>&lt;<span class="kw">typeof</span> <span class="fn">getUser</span>&gt;&gt;;
+<span class="cm">// User  ← unwrap Promise&lt;User&gt; → User</span></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 05 GENERYKI ══ -->
+<section class="chapter" id="generyki">
+  <div class="ch-head">
+    <div class="ch-num">05 / 10</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--amber)">Generyki</div>
+      <div class="ch-title">Generic types — parametry typów, constrainty, infer</div>
+      <div class="ch-desc">Generyki to typy-parametry — jak argumenty funkcji, ale dla typów. Pozwalają pisać reużywalny, w pełni typowany kod. Constrainty (<code>extends</code>) ograniczają co może być przekazane. <code>infer</code> pozwala wyciągać typy z innych typów.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--amber)"></div> Generyki — funkcje, interfejsy, constrainty</div>
+      <pre><span class="cm">// ══ PODSTAWOWY GENERYK ════════════════════════</span>
+<span class="kw">function</span> <span class="fn">identity</span>&lt;<span class="ty">T</span>&gt;(value: <span class="ty">T</span>): <span class="ty">T</span> { <span class="kw">return</span> value; }
+
+<span class="fn">identity</span>&lt;<span class="ty">string</span>&gt;(<span class="str">"hello"</span>);  <span class="cm">// jawny typ</span>
+<span class="fn">identity</span>(<span class="num">42</span>);               <span class="cm">// T inferowane jako number</span>
+
+<span class="cm">// ══ GENERYCZNY INTERFEJS ══════════════════════</span>
+<span class="kw">interface</span> <span class="ty">ApiResponse</span>&lt;<span class="ty">T</span>&gt; {
+  data:    <span class="ty">T</span>;
+  status:  <span class="ty">number</span>;
+  message: <span class="ty">string</span>;
+}
+<span class="kw">type</span> <span class="ty">UserResp</span>  = <span class="ty">ApiResponse</span>&lt;<span class="ty">User</span>&gt;;       <span class="cm">// data: User</span>
+<span class="kw">type</span> <span class="ty">UsersResp</span> = <span class="ty">ApiResponse</span>&lt;<span class="ty">User</span>[]&gt;;     <span class="cm">// data: User[]</span>
+
+<span class="cm">// ══ CONSTRAINTY — T musi spełniać warunek ═════</span>
+<span class="cm">// T musi mieć pole .length</span>
+<span class="kw">function</span> <span class="fn">getLength</span>&lt;<span class="ty">T</span> <span class="kw">extends</span> { length: <span class="ty">number</span> }&gt;(val: <span class="ty">T</span>): <span class="ty">number</span> {
+  <span class="kw">return</span> val.length;
+}
+<span class="fn">getLength</span>(<span class="str">"hello"</span>);    <span class="cm">// 5 ✅ string ma length</span>
+<span class="fn">getLength</span>([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]);  <span class="cm">// 3 ✅ array ma length</span>
+<span class="fn">getLength</span>(<span class="num">42</span>);          <span class="cm">// ❌ number nie ma length</span>
+
+<span class="cm">// K musi być kluczem T</span>
+<span class="kw">function</span> <span class="fn">pluck</span>&lt;<span class="ty">T</span>, <span class="ty">K</span> <span class="kw">extends</span> <span class="kw">keyof</span> <span class="ty">T</span>&gt;(arr: <span class="ty">T</span>[], key: <span class="ty">K</span>): <span class="ty">T</span>[<span class="ty">K</span>][] {
+  <span class="kw">return</span> arr.<span class="fn">map</span>(item => item[key]);
+}
+<span class="kw">const</span> names = <span class="fn">pluck</span>(users, <span class="str">"name"</span>); <span class="cm">// string[] ✅</span>
+<span class="fn">pluck</span>(users, <span class="str">"xyz"</span>);                <span class="cm">// ❌ nie ma takiego klucza</span>
+
+<span class="cm">// ══ WIELE PARAMETRÓW ══════════════════════════</span>
+<span class="kw">function</span> <span class="fn">zip</span>&lt;<span class="ty">A</span>, <span class="ty">B</span>&gt;(a: <span class="ty">A</span>[], b: <span class="ty">B</span>[]): [<span class="ty">A</span>, <span class="ty">B</span>][] {
+  <span class="kw">return</span> a.<span class="fn">map</span>((v, i) => [v, b[i]]);
+}
+<span class="fn">zip</span>([<span class="num">1</span>, <span class="num">2</span>], [<span class="str">"a"</span>, <span class="str">"b"</span>]); <span class="cm">// [number, string][]</span></pre>
+    </div>
+    <div>
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--orange)"></div> Conditional types, infer, default type params</div>
+        <pre><span class="cm">// ══ CONDITIONAL TYPE ══════════════════════════</span>
+<span class="kw">type</span> <span class="ty">IsArray</span>&lt;<span class="ty">T</span>&gt; = <span class="ty">T</span> <span class="kw">extends</span> <span class="ty">any</span>[] ? <span class="str">"array"</span> : <span class="str">"not array"</span>;
+<span class="kw">type</span> <span class="ty">R1</span> = <span class="ty">IsArray</span>&lt;<span class="ty">string</span>[]&gt;;  <span class="cm">// "array"</span>
+<span class="kw">type</span> <span class="ty">R2</span> = <span class="ty">IsArray</span>&lt;<span class="ty">number</span>&gt;;    <span class="cm">// "not array"</span>
+
+<span class="cm">// ══ INFER — wyciągnij typ "w środku" ══════════</span>
+<span class="cm">// Wyciągnij typ elementu tablicy</span>
+<span class="kw">type</span> <span class="ty">Unwrap</span>&lt;<span class="ty">T</span>&gt; = <span class="ty">T</span> <span class="kw">extends</span> (<span class="kw">infer</span> <span class="ty">U</span>)[] ? <span class="ty">U</span> : <span class="ty">T</span>;
+<span class="kw">type</span> <span class="ty">A</span> = <span class="ty">Unwrap</span>&lt;<span class="ty">string</span>[]&gt;;  <span class="cm">// string</span>
+<span class="kw">type</span> <span class="ty">B</span> = <span class="ty">Unwrap</span>&lt;<span class="ty">number</span>&gt;;    <span class="cm">// number (nie jest array)</span>
+
+<span class="cm">// Wyciągnij typ zwracany funkcji (jak ReturnType)</span>
+<span class="kw">type</span> <span class="ty">Ret</span>&lt;<span class="ty">T</span>&gt; = <span class="ty">T</span> <span class="kw">extends</span> (...<span class="ty">args</span>: <span class="ty">any</span>[]) => <span class="kw">infer</span> <span class="ty">R</span> ? <span class="ty">R</span> : <span class="ty">never</span>;
+
+<span class="cm">// ══ DEFAULT TYPE PARAMS ════════════════════════</span>
+<span class="kw">interface</span> <span class="ty">State</span>&lt;<span class="ty">T</span> = <span class="ty">unknown</span>&gt; {
+  data: <span class="ty">T</span>;
+  loading: <span class="ty">boolean</span>;
+  error: <span class="ty">string</span> | <span class="kw">null</span>;
+}
+<span class="kw">const</span> s1: <span class="ty">State</span>          = { data: <span class="kw">null</span>, loading: <span class="kw">false</span>, error: <span class="kw">null</span> };
+<span class="kw">const</span> s2: <span class="ty">State</span>&lt;<span class="ty">User</span>&gt;    = { data: user, loading: <span class="kw">false</span>, error: <span class="kw">null</span> };
+<span class="kw">const</span> s3: <span class="ty">State</span>&lt;<span class="ty">User</span>[]&gt; = { data: [],   loading: <span class="kw">true</span>,  error: <span class="kw">null</span> };
+
+<span class="cm">// ══ TEMPLATE LITERAL TYPES (TS 4.1) ═══════════</span>
+<span class="kw">type</span> <span class="ty">EventName</span>&lt;<span class="ty">T</span> <span class="kw">extends</span> <span class="ty">string</span>&gt; = <span class="str">`on${Capitalize&lt;T&gt;}`</span>;
+<span class="kw">type</span> <span class="ty">ClickEv</span> = <span class="ty">EventName</span>&lt;<span class="str">"click"</span>&gt;;   <span class="cm">// "onClick"</span>
+<span class="kw">type</span> <span class="ty">CSSPx</span>   = <span class="str">`${number}px`</span>;          <span class="cm">// "0px", "16px" itp</span>
+<span class="kw">type</span> <span class="ty">ApiPath</span> = <span class="str">`/api/${string}`</span>;        <span class="cm">// "/api/users" itd</span></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 06 NARROWING & TYPE GUARDS ══ -->
+<section class="chapter" id="narrowing">
+  <div class="ch-head">
+    <div class="ch-num">06 / 10</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--sky)">Zwężanie typów</div>
+      <div class="ch-title">Narrowing — typeof, instanceof, in, type guards, satisfies</div>
+      <div class="ch-desc">TypeScript analizuje kod i zwęża typy automatycznie po sprawdzeniach warunkowych. Type guards to funkcje które mówią kompilatorowi "jeśli zwraca true, wiem jaki to konkretny typ". <code>satisfies</code> (TS 4.9) sprawdza typ bez tracenia precyzji.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--sky)"></div> typeof, instanceof, in — wbudowane narrowing</div>
+      <pre><span class="cm">// ══ TYPEOF NARROWING ══════════════════════════</span>
+<span class="kw">function</span> <span class="fn">format</span>(val: <span class="ty">string</span> | <span class="ty">number</span> | <span class="ty">boolean</span>) {
+  <span class="kw">if</span> (<span class="kw">typeof</span> val === <span class="str">"string"</span>)  <span class="kw">return</span> val.<span class="fn">toUpperCase</span>(); <span class="cm">// string</span>
+  <span class="kw">if</span> (<span class="kw">typeof</span> val === <span class="str">"number"</span>)  <span class="kw">return</span> val.<span class="fn">toFixed</span>(<span class="num">2</span>);    <span class="cm">// number</span>
+  <span class="kw">return</span> val ? <span class="str">"tak"</span> : <span class="str">"nie"</span>;                             <span class="cm">// boolean</span>
+}
+
+<span class="cm">// ══ INSTANCEOF NARROWING ══════════════════════</span>
+<span class="kw">function</span> <span class="fn">handle</span>(e: <span class="ty">unknown</span>) {
+  <span class="kw">if</span> (e <span class="kw">instanceof</span> <span class="cls">Error</span>)     <span class="kw">return</span> e.message;    <span class="cm">// Error ✅</span>
+  <span class="kw">if</span> (e <span class="kw">instanceof</span> <span class="cls">TypeError</span>) <span class="kw">return</span> e.message;    <span class="cm">// TypeError ✅</span>
+  <span class="kw">return</span> <span class="cls">String</span>(e);
+}
+
+<span class="cm">// ══ IN OPERATOR — sprawdź czy pole istnieje ════</span>
+<span class="kw">interface</span> <span class="ty">Cat</span> { meow(): <span class="ty">void</span> }
+<span class="kw">interface</span> <span class="ty">Dog</span> { bark(): <span class="ty">void</span>; fetch(): <span class="ty">void</span> }
+
+<span class="kw">function</span> <span class="fn">speak</span>(animal: <span class="ty">Cat</span> | <span class="ty">Dog</span>) {
+  <span class="kw">if</span> (<span class="str">"meow"</span> <span class="kw">in</span> animal) {
+    animal.<span class="fn">meow</span>(); <span class="cm">// TS wie: Cat ✅</span>
+  } <span class="kw">else</span> {
+    animal.<span class="fn">bark</span>(); <span class="cm">// TS wie: Dog ✅</span>
+  }
+}
+
+<span class="cm">// ══ TRUTHINESS NARROWING ═════════════════════</span>
+<span class="kw">function</span> <span class="fn">greet</span>(name: <span class="ty">string</span> | <span class="kw">null</span> | <span class="kw">undefined</span>) {
+  <span class="kw">if</span> (name) {
+    <span class="kw">return</span> <span class="str">`Cześć, ${name}!`</span>; <span class="cm">// name: string (nie null/undefined)</span>
+  }
+  <span class="kw">return</span> <span class="str">"Cześć, nieznajomy!"</span>;
+}
+<span class="cm">// UWAGA: "" (pusty string) też jest falsy! Uważaj.</span></pre>
+    </div>
+    <div>
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--teal)"></div> Custom type guards, as, satisfies, non-null assertion</div>
+        <pre><span class="cm">// ══ CUSTOM TYPE GUARD — predykat typu ══════════</span>
+<span class="cm">// Zwraca "value is Type" — TS ufa tej funkcji</span>
+<span class="kw">function</span> <span class="fn">isUser</span>(val: <span class="ty">unknown</span>): val <span class="kw">is</span> <span class="ty">User</span> {
+  <span class="kw">return</span> (
+    <span class="kw">typeof</span> val === <span class="str">"object"</span> &amp;&amp; val !== <span class="kw">null</span> &amp;&amp;
+    <span class="str">"id"</span> <span class="kw">in</span> val &amp;&amp; <span class="str">"name"</span> <span class="kw">in</span> val
+  );
+}
+
+<span class="kw">const</span> data: <span class="ty">unknown</span> = <span class="fn">JSON</span>.<span class="fn">parse</span>(response);
+<span class="kw">if</span> (<span class="fn">isUser</span>(data)) {
+  data.name; <span class="cm">// TS wie: User ✅ — bo type guard mówi prawdę</span>
+}
+
+<span class="cm">// ══ TYPE ASSERTION — as ═══════════════════════</span>
+<span class="cm">// Mówisz TS: "wiem lepiej niż ty"</span>
+<span class="kw">const</span> inp = document.<span class="fn">getElementById</span>(<span class="str">"email"</span>) <span class="kw">as</span> <span class="ty">HTMLInputElement</span>;
+inp.value; <span class="cm">// TS ufa — ale jeśli element nie istnieje = crash</span>
+
+<span class="cm">// Double assertion — niebezpieczne!</span>
+<span class="kw">const</span> x = <span class="str">"hello"</span> <span class="kw">as</span> <span class="ty">unknown</span> <span class="kw">as</span> <span class="ty">number</span>; <span class="cm">// TS pozwoli, runtime może crashnąć</span>
+
+<span class="cm">// ══ NON-NULL ASSERTION — ! ════════════════════</span>
+<span class="kw">const</span> name = user.name!; <span class="cm">// "wiem że nie jest null/undefined"</span>
+<span class="cm">// Używaj rzadko — lepsza opcja: optional chaining + if</span>
+
+<span class="cm">// ══ SATISFIES (TS 4.9) — sprawdź bez utraty ══</span>
+<span class="kw">const</span> palette = {
+  red:   [<span class="num">255</span>, <span class="num">0</span>, <span class="num">0</span>],
+  green: <span class="str">"#00ff00"</span>,
+} <span class="kw">satisfies</span> <span class="ty">Record</span>&lt;<span class="ty">string</span>, <span class="ty">string</span> | <span class="ty">number</span>[]&gt;;
+
+palette.red.<span class="fn">map</span>(<span class="fn">Math</span>.round);   <span class="cm">// ✅ TS wie że red = number[]</span>
+palette.green.<span class="fn">toUpperCase</span>();  <span class="cm">// ✅ TS wie że green = string</span>
+<span class="cm">// "as" straciłoby tę informację — satisfies zachowuje</span></pre>
+      </div>
+      <div class="gap12"></div>
+      <div class="alert al-sky">
+        <span class="alert-label">as vs satisfies — różnica kluczowa</span>
+        <code>as Type</code> mówi TS "traktuj to jako Type" i <strong>traci precyzję</strong> — TS zapomina o wewnętrznych typach. <code>satisfies Type</code> sprawdza czy pasuje do Type ale <strong>zachowuje precyzyjny typ</strong>. Używaj <code>satisfies</code> gdy chcesz walidować kształt bez tracenia szczegółów.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 07 JSX & .TSX ══ -->
+<section class="chapter" id="jsx">
+  <div class="ch-head">
+    <div class="ch-num">07 / 10</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--pink)">JSX & Pliki .tsx</div>
+      <div class="ch-title">Czym jest JSX — jak działa, różnice vs HTML, typy elementów</div>
+      <div class="ch-desc">JSX to rozszerzenie składni JS które wygląda jak HTML, ale nim nie jest. Kompiluje się do wywołań <code>React.createElement()</code>. Plik <code>.tsx</code> = TypeScript + JSX. Każdy tag JSX, każda prop, każde zdarzenie mają swoje typy w TS.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--pink)"></div> JSX → JavaScript — co robi kompilator</div>
+      <pre><span class="cm">// ══ JSX (piszesz w .tsx) ══════════════════════</span>
+<span class="kw">const</span> el = (
+  <span class="jsx">&lt;div</span> <span class="prop">className</span>=<span class="str">"box"</span><span class="jsx">&gt;</span>
+    <span class="jsx">&lt;h1&gt;</span>{title}<span class="jsx">&lt;/h1&gt;</span>
+    <span class="jsx">&lt;p</span> <span class="prop">style</span>={{ color: <span class="str">"red"</span> }}<span class="jsx">&gt;</span>Treść<span class="jsx">&lt;/p&gt;</span>
+  <span class="jsx">&lt;/div&gt;</span>
+);
+
+<span class="cm">// ══ CO PRODUKUJE KOMPILATOR (React 17-) ═══════</span>
+<span class="kw">const</span> el = <span class="cls">React</span>.<span class="fn">createElement</span>(
+  <span class="str">"div"</span>, { className: <span class="str">"box"</span> },
+  <span class="cls">React</span>.<span class="fn">createElement</span>(<span class="str">"h1"</span>, <span class="kw">null</span>, title),
+  <span class="cls">React</span>.<span class="fn">createElement</span>(<span class="str">"p"</span>, { style: { color: <span class="str">"red"</span> } }, <span class="str">"Treść"</span>)
+);
+<span class="cm">// React 18+ (new JSX transform): importuje automatycznie</span>
+<span class="cm">// z "react/jsx-runtime" — nie musisz importować React ręcznie</span>
+
+<span class="cm">// ══ JSX vs HTML — ważne różnice ═══════════════</span>
+<span class="cm">// HTML: class         →  JSX: className</span>
+<span class="cm">// HTML: for           →  JSX: htmlFor</span>
+<span class="cm">// HTML: onclick       →  JSX: onClick  (camelCase!)</span>
+<span class="cm">// HTML: style="..."   →  JSX: style={{ }} (obiekt!)</span>
+<span class="cm">// HTML: &lt;br&gt;          →  JSX: &lt;br /&gt;  (musi być zamknięty)</span>
+<span class="cm">// HTML: &lt;!-- --&gt;      →  JSX: {/* komentarz */}</span>
+<span class="cm">// HTML: tabindex      →  JSX: tabIndex</span>
+<span class="cm">// HTML: readonly      →  JSX: readOnly</span>
+<span class="cm">// HTML: colspan       →  JSX: colSpan</span>
+
+<span class="cm">// ══ WYRAŻENIA W JSX — tylko w {} ══════════════</span>
+<span class="kw">const</span> jsx = (
+  <span class="jsx">&lt;div&gt;</span>
+    {<span class="num">2</span> + <span class="num">2</span>}                    <span class="cm">// liczby i wyrażenia</span>
+    {name.<span class="fn">toUpperCase</span>()}       <span class="cm">// wywołania funkcji</span>
+    {isOk &amp;&amp; <span class="jsx">&lt;span&gt;</span>OK<span class="jsx">&lt;/span&gt;</span>}   <span class="cm">// warunkowe (uważaj na 0!)</span>
+    {items.<span class="fn">map</span>(i =&gt; (
+      <span class="jsx">&lt;li</span> <span class="prop">key</span>={i.id}<span class="jsx">&gt;</span>{i.name}<span class="jsx">&lt;/li&gt;</span>  <span class="cm">// key wymagany w mapie!</span>
+    ))}
+  <span class="jsx">&lt;/div&gt;</span>
+);</pre>
+    </div>
+    <div>
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--violet)"></div> .tsx — typy elementów JSX, Fragment, renderowanie warunkowe</div>
+        <pre><span class="cm">// ══ WYMOGI PLIKU .TSX ════════════════════════</span>
+<span class="cm">// 1. Rozszerzenie MUSI być .tsx (nie .ts)</span>
+<span class="cm">// 2. tsconfig.json: "jsx": "react-jsx"</span>
+<span class="cm">// 3. Jeden root element lub Fragment</span>
+
+<span class="cm">// ══ TYPY ELEMENTÓW JSX ═══════════════════════</span>
+<span class="kw">import</span> <span class="kw">type</span> { <span class="ty">ReactNode</span>, <span class="ty">ReactElement</span> } <span class="kw">from</span> <span class="str">"react"</span>;
+
+<span class="cm">// ReactNode — wszystko co React może wyrenderować</span>
+<span class="cm">// string | number | boolean | null | undefined</span>
+<span class="cm">// | ReactElement | ReactNode[]</span>
+<span class="cm">// Użyj dla prop children</span>
+
+<span class="cm">// ReactElement — konkretny element JSX (&lt;div&gt; itp.)</span>
+<span class="cm">// Bardziej restrykcyjny — nie przyjmie stringa ani null</span>
+
+<span class="cm">// JSX.Element — stary alias dla ReactElement, unikaj</span>
+
+<span class="cm">// ══ FRAGMENT — bez zbędnego wrappera ══════════</span>
+<span class="kw">function</span> <span class="fn">Component</span>() {
+  <span class="kw">return</span> (
+    <span class="jsx">&lt;&gt;</span>                        <span class="cm">// &lt;React.Fragment&gt; lub &lt;&gt;</span>
+      <span class="jsx">&lt;h1&gt;</span>Tytuł<span class="jsx">&lt;/h1&gt;</span>
+      <span class="jsx">&lt;p&gt;</span>Treść<span class="jsx">&lt;/p&gt;</span>
+    <span class="jsx">&lt;/&gt;</span>
+  );
+}
+<span class="cm">// Fragment z key (wymagane w mapach)</span>
+items.<span class="fn">map</span>(item =&gt; (
+  <span class="jsx">&lt;React.Fragment</span> <span class="prop">key</span>={item.id}<span class="jsx">&gt;</span>
+    <span class="jsx">&lt;dt&gt;</span>{item.label}<span class="jsx">&lt;/dt&gt;</span>
+    <span class="jsx">&lt;dd&gt;</span>{item.value}<span class="jsx">&lt;/dd&gt;</span>
+  <span class="jsx">&lt;/React.Fragment&gt;</span>
+));
+
+<span class="cm">// ══ RENDEROWANIE WARUNKOWE — pułapki ══════════</span>
+<span class="cm">// ❌ PUŁAPKA: 0 renderuje się jako "0" na ekranie!</span>
+{count &amp;&amp; <span class="jsx">&lt;List /&gt;</span>}          <span class="cm">// gdy count=0 → wyświetla "0"!</span>
+
+<span class="cm">// ✅ Bezpieczne opcje:</span>
+{count &gt; <span class="num">0</span> &amp;&amp; <span class="jsx">&lt;List /&gt;</span>}      <span class="cm">// porównanie boolean</span>
+{count ? <span class="jsx">&lt;List /&gt;</span> : <span class="kw">null</span>}    <span class="cm">// ternary z null</span>
+{!!count &amp;&amp; <span class="jsx">&lt;List /&gt;</span>}        <span class="cm">// podwójna negacja → boolean</span>
+
+<span class="cm">// null, undefined, false → nic nie renderuje</span>
+<span class="cm">// 0, "" → RENDERUJĄ SIĘ — pułapka!</span></pre>
+      </div>
+      <div class="gap12"></div>
+      <div class="alert al-rose">
+        <span class="alert-label">Pułapka z && i liczbami</span>
+        <code>{list.length &amp;&amp; &lt;Items /&gt;}</code> — gdy <code>list.length === 0</code>, JSX renderuje <strong>"0"</strong> na stronie zamiast nic. Zawsze używaj: <code>{list.length &gt; 0 &amp;&amp; &lt;Items /&gt;}</code> albo <code>{list.length ? &lt;Items /&gt; : null}</code>. Dotyczy każdej wartości numerycznej w warunkowym renderowaniu.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 08 REACT + TYPESCRIPT ══ -->
+<section class="chapter" id="react">
+  <div class="ch-head">
+    <div class="ch-num">08 / 10</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--k1)">React + TypeScript</div>
+      <div class="ch-title">Komponenty, Props, Events, Ref, forwardRef — typowanie</div>
+      <div class="ch-desc">Typowanie komponentów React to codzienność. Props jako <code>type</code> lub <code>interface</code>. Unikaj <code>FC&lt;Props&gt;</code> — zwykła funkcja z jawnym typem jest czytelniejsza i od React 18 <code>FC</code> nie dodaje automatycznie <code>children</code>. Eventy mają szczegółowe typy generyczne.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--k1)"></div> Props, children, spread props — wzorce typowania</div>
+      <pre><span class="cm">// ══ TYPOWANIE PROPSÓW ═════════════════════════</span>
+<span class="kw">type</span> <span class="ty">ButtonProps</span> = {
+  label:     <span class="ty">string</span>;
+  onClick:   () =&gt; <span class="ty">void</span>;
+  variant?:  <span class="str">"primary"</span> | <span class="str">"secondary"</span> | <span class="str">"danger"</span>;
+  disabled?: <span class="ty">boolean</span>;
+  children?: <span class="ty">React.ReactNode</span>;  <span class="cm">// wszystko co React wyrenderuje</span>
+};
+
+<span class="cm">// Preferowany wzorzec — zwykła funkcja z typem propsów</span>
+<span class="kw">function</span> <span class="fn">Button</span>({ label, onClick, variant = <span class="str">"primary"</span>, disabled }: <span class="ty">ButtonProps</span>) {
+  <span class="kw">return</span> (
+    <span class="jsx">&lt;button</span>
+      <span class="prop">onClick</span>={onClick}
+      <span class="prop">disabled</span>={disabled}
+      <span class="prop">className</span>={`btn btn--${variant}`}
+    <span class="jsx">&gt;</span>
+      {label}
+    <span class="jsx">&lt;/button&gt;</span>
+  );
+}
+
+<span class="cm">// ❌ Stary sposób — React.FC (unikaj w nowym kodzie)</span>
+<span class="cm">// const Button: React.FC&lt;ButtonProps&gt; = (props) =&gt; ...</span>
+<span class="cm">// FC w React 17 niejawnie dodawał children — w 18 usunięto</span>
+
+<span class="cm">// ══ SPREAD PROPS — rozszerzenie natywnych atrybutów</span>
+<span class="kw">type</span> <span class="ty">InputProps</span> = <span class="ty">React.InputHTMLAttributes</span>&lt;<span class="ty">HTMLInputElement</span>&gt; &amp; {
+  label: <span class="ty">string</span>;
+  error?: <span class="ty">string</span>;
+};
+
+<span class="kw">function</span> <span class="fn">Input</span>({ label, error, ...rest }: <span class="ty">InputProps</span>) {
+  <span class="kw">return</span> (
+    <span class="jsx">&lt;div&gt;</span>
+      <span class="jsx">&lt;label&gt;</span>{label}<span class="jsx">&lt;/label&gt;</span>
+      <span class="jsx">&lt;input</span> {...rest} <span class="jsx">/&gt;</span>          <span class="cm">// wszystkie natywne atrybuty</span>
+      {error &amp;&amp; <span class="jsx">&lt;span&gt;</span>{error}<span class="jsx">&lt;/span&gt;</span>}
+    <span class="jsx">&lt;/div&gt;</span>
+  );
+}
+<span class="cm">// Działa: &lt;Input label="Email" type="email" required /&gt;</span>
+<span class="cm">// Wszystkie atrybuty input są teraz dostępne!</span></pre>
+    </div>
+    <div>
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--sky)"></div> Eventy, Ref, forwardRef — typy</div>
+        <pre><span class="cm">// ══ TYPY EVENTÓW ══════════════════════════════</span>
+<span class="kw">function</span> <span class="fn">Form</span>() {
+  <span class="cm">// onChange — React.ChangeEvent&lt;HTMLElement&gt;</span>
+  <span class="kw">const</span> <span class="fn">handleChange</span> = (e: <span class="ty">React.ChangeEvent</span>&lt;<span class="ty">HTMLInputElement</span>&gt;) =&gt; {
+    <span class="cls">console</span>.<span class="fn">log</span>(e.target.value);      <span class="cm">// string ✅</span>
+    <span class="cls">console</span>.<span class="fn">log</span>(e.target.checked);    <span class="cm">// boolean (dla checkbox)</span>
+  };
+
+  <span class="cm">// onClick — React.MouseEvent&lt;HTMLElement&gt;</span>
+  <span class="kw">const</span> <span class="fn">handleClick</span> = (e: <span class="ty">React.MouseEvent</span>&lt;<span class="ty">HTMLButtonElement</span>&gt;) =&gt; {
+    e.<span class="fn">preventDefault</span>();
+    e.clientX;  <span class="cm">// pozycja kursora ✅</span>
+  };
+
+  <span class="cm">// onSubmit — React.FormEvent&lt;HTMLFormElement&gt;</span>
+  <span class="kw">const</span> <span class="fn">handleSubmit</span> = (e: <span class="ty">React.FormEvent</span>&lt;<span class="ty">HTMLFormElement</span>&gt;) =&gt; {
+    e.<span class="fn">preventDefault</span>();
+  };
+
+  <span class="kw">return</span> <span class="jsx">&lt;form</span> <span class="prop">onSubmit</span>={handleSubmit}<span class="jsx">&gt;</span>...<span class="jsx">&lt;/form&gt;</span>;
+}
+
+<span class="cm">// Inne typy eventów:</span>
+<span class="cm">// React.KeyboardEvent&lt;HTMLInputElement&gt;  → e.key, e.code</span>
+<span class="cm">// React.FocusEvent&lt;HTMLInputElement&gt;     → e.target, e.relatedTarget</span>
+<span class="cm">// React.DragEvent&lt;HTMLDivElement&gt;        → e.dataTransfer</span>
+
+<span class="cm">// ══ REF ════════════════════════════════════════</span>
+<span class="kw">const</span> inputRef = <span class="fn">useRef</span>&lt;<span class="ty">HTMLInputElement</span>&gt;(<span class="kw">null</span>);
+<span class="cm">// Typ: RefObject&lt;HTMLInputElement&gt;</span>
+inputRef.current?.<span class="fn">focus</span>(); <span class="cm">// optional chain — może być null przed mount</span>
+
+<span class="cm">// ══ FORWARDREF — przekaż ref do dziecka ════════</span>
+<span class="kw">const</span> <span class="cls">FancyInput</span> = <span class="cls">React</span>.<span class="fn">forwardRef</span>&lt;<span class="ty">HTMLInputElement</span>, <span class="ty">InputProps</span>&gt;(
+  ({ label, ...rest }, ref) =&gt; (
+    <span class="jsx">&lt;div&gt;</span>
+      <span class="jsx">&lt;label&gt;</span>{label}<span class="jsx">&lt;/label&gt;</span>
+      <span class="jsx">&lt;input</span> <span class="prop">ref</span>={ref} {...rest} <span class="jsx">/&gt;</span>
+    <span class="jsx">&lt;/div&gt;</span>
+  )
+);
+<span class="cm">// forwardRef&lt;RefType, PropsType&gt; — oba typy jawnie</span></pre>
+      </div>
+      <div class="gap12"></div>
+      <div class="alert al-k">
+        <span class="alert-label">Natywne atrybuty HTML jako typy</span>
+        Nie pisz wszystkich propsów od zera — rozszerz wbudowane: <code>React.ButtonHTMLAttributes&lt;HTMLButtonElement&gt;</code>, <code>React.InputHTMLAttributes&lt;HTMLInputElement&gt;</code>, <code>React.HTMLAttributes&lt;HTMLDivElement&gt;</code>. Połącz z własnymi przez <code>&amp;</code> i dostaniesz wszystkie natywne atrybuty za darmo.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 09 HOOKI & TYPY ══ -->
+<section class="chapter" id="hooki">
+  <div class="ch-head">
+    <div class="ch-num">09 / 10</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--orange)">React Hooks z TypeScript</div>
+      <div class="ch-title">useState, useEffect, useCallback, useMemo, useContext, custom hooks</div>
+      <div class="ch-desc">Każdy hook ma swoje typy. <code>useState</code> inferuje typ z wartości początkowej — ale gdy inicjalizujesz <code>null</code>, musisz podać typ jawnie. Custom hook musi zaczynać się od <code>use</code> i zwracać dobrze oztypowaną wartość. Stale closures w <code>useEffect</code> to jedna z najczęstszych pułapek.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--orange)"></div> useState, useReducer, useContext — typy</div>
+      <pre><span class="cm">// ══ USESTATE ══════════════════════════════════</span>
+<span class="kw">const</span> [count, setCount] = <span class="fn">useState</span>(<span class="num">0</span>);          <span class="cm">// infer: number</span>
+<span class="kw">const</span> [name,  setName]  = <span class="fn">useState</span>(<span class="str">""</span>);          <span class="cm">// infer: string</span>
+<span class="kw">const</span> [flag,  setFlag]  = <span class="fn">useState</span>(<span class="kw">false</span>);       <span class="cm">// infer: boolean</span>
+
+<span class="cm">// Gdy może być null — jawny typ!</span>
+<span class="kw">const</span> [user, setUser] = <span class="fn">useState</span>&lt;<span class="ty">User</span> | <span class="kw">null</span>&gt;(<span class="kw">null</span>);
+<span class="kw">const</span> [data, setData] = <span class="fn">useState</span>&lt;<span class="ty">string</span>[]&gt;([]);   <span class="cm">// nie infer z []</span>
+
+<span class="cm">// Functional updater — nowy stan zależy od starego</span>
+<span class="fn">setCount</span>(prev =&gt; prev + <span class="num">1</span>);    <span class="cm">// prev: number — bezpieczne</span>
+
+<span class="cm">// ══ USEREDUCER ════════════════════════════════</span>
+<span class="kw">type</span> <span class="ty">Action</span> =
+  | { type: <span class="str">"increment"</span> }
+  | { type: <span class="str">"decrement"</span> }
+  | { type: <span class="str">"reset"</span>; payload: <span class="ty">number</span> };
+
+<span class="kw">function</span> <span class="fn">reducer</span>(state: <span class="ty">number</span>, action: <span class="ty">Action</span>): <span class="ty">number</span> {
+  <span class="kw">switch</span>(action.type) {
+    <span class="kw">case</span> <span class="str">"increment"</span>: <span class="kw">return</span> state + <span class="num">1</span>;
+    <span class="kw">case</span> <span class="str">"decrement"</span>: <span class="kw">return</span> state - <span class="num">1</span>;
+    <span class="kw">case</span> <span class="str">"reset"</span>:     <span class="kw">return</span> action.payload; <span class="cm">// payload dostępny ✅</span>
+  }
+}
+<span class="kw">const</span> [count, dispatch] = <span class="fn">useReducer</span>(reducer, <span class="num">0</span>);
+
+<span class="cm">// ══ USECONTEXT ════════════════════════════════</span>
+<span class="kw">type</span> <span class="ty">AuthCtx</span> = { user: <span class="ty">User</span> | <span class="kw">null</span>; logout: () =&gt; <span class="ty">void</span> };
+<span class="kw">const</span> <span class="cls">AuthContext</span> = <span class="fn">createContext</span>&lt;<span class="ty">AuthCtx</span> | <span class="kw">null</span>&gt;(<span class="kw">null</span>);
+
+<span class="cm">// Custom hook z guard — nigdy nie zwróci null</span>
+<span class="kw">function</span> <span class="fn">useAuth</span>(): <span class="ty">AuthCtx</span> {
+  <span class="kw">const</span> ctx = <span class="fn">useContext</span>(<span class="cls">AuthContext</span>);
+  <span class="kw">if</span> (!ctx) <span class="kw">throw new</span> <span class="cls">Error</span>(<span class="str">"useAuth must be inside AuthProvider"</span>);
+  <span class="kw">return</span> ctx; <span class="cm">// TS wie: nie null ✅</span>
+}</pre>
+    </div>
+    <div>
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--violet)"></div> useEffect, useCallback, useMemo, custom hook</div>
+        <pre><span class="cm">// ══ USEEFFECT — stale closure pułapka ════════</span>
+<span class="kw">const</span> [count, setCount] = <span class="fn">useState</span>(<span class="num">0</span>);
+
+<span class="fn">useEffect</span>(() =&gt; {
+  <span class="kw">const</span> id = <span class="fn">setInterval</span>(() =&gt; {
+    <span class="cm">// ❌ count zawsze = 0 — stale closure!</span>
+    <span class="cm">// Efekt "zapamiętał" count=0 z pierwszego render</span>
+    <span class="fn">setCount</span>(count + <span class="num">1</span>); <span class="cm">// zawsze 1</span>
+  }, <span class="num">1000</span>);
+  <span class="kw">return</span> () =&gt; <span class="fn">clearInterval</span>(id);
+}, []); <span class="cm">// pusta deps = closure zamraża count</span>
+
+<span class="cm">// ✅ Functional updater — zawsze aktualny stan</span>
+<span class="fn">setCount</span>(prev =&gt; prev + <span class="num">1</span>); <span class="cm">// prev = aktualny count</span>
+
+<span class="cm">// ══ USECALLBACK — stabilna referencja funkcji ═</span>
+<span class="kw">const</span> <span class="fn">handleSubmit</span> = <span class="fn">useCallback</span>(
+  (data: <span class="ty">FormData</span>) =&gt; {
+    <span class="fn">submitForm</span>(data);
+  },
+  [submitForm]  <span class="cm">// zmieniaj callback gdy submitForm się zmieni</span>
+); <span class="cm">// Typ inferowany z funkcji — nie musisz podawać jawnie</span>
+
+<span class="cm">// ══ USEMEMO — zapamiętaj wynik obliczeń ═══════</span>
+<span class="kw">const</span> sortedUsers = <span class="fn">useMemo</span>(
+  () =&gt; [...users].<span class="fn">sort</span>((a, b) =&gt; a.name.<span class="fn">localeCompare</span>(b.name)),
+  [users]
+); <span class="cm">// User[] — inferowany z wartości zwracanej</span>
+
+<span class="cm">// ══ CUSTOM HOOK — z generykiem ════════════════</span>
+<span class="kw">function</span> <span class="fn">useLocalStorage</span>&lt;<span class="ty">T</span>&gt;(key: <span class="ty">string</span>, initial: <span class="ty">T</span>) {
+  <span class="kw">const</span> [value, setValue] = <span class="fn">useState</span>&lt;<span class="ty">T</span>&gt;(() =&gt; {
+    <span class="kw">const</span> stored = localStorage.<span class="fn">getItem</span>(key);
+    <span class="kw">return</span> stored ? (<span class="fn">JSON</span>.<span class="fn">parse</span>(stored) <span class="kw">as</span> <span class="ty">T</span>) : initial;
+  });
+
+  <span class="kw">const</span> <span class="fn">set</span> = <span class="fn">useCallback</span>((v: <span class="ty">T</span>) =&gt; {
+    <span class="fn">setValue</span>(v);
+    localStorage.<span class="fn">setItem</span>(key, <span class="fn">JSON</span>.<span class="fn">stringify</span>(v));
+  }, [key]);
+
+  <span class="kw">return</span> [value, set] <span class="kw">as const</span>; <span class="cm">// as const → tuple nie array</span>
+}
+<span class="kw">const</span> [theme, setTheme] = <span class="fn">useLocalStorage</span>&lt;<span class="str">"light"</span> | <span class="str">"dark"</span>&gt;(<span class="str">"theme"</span>, <span class="str">"light"</span>);</pre>
+      </div>
+      <div class="gap12"></div>
+      <div class="alert al-orange">
+        <span class="alert-label">Custom hook — zasady TypeScript</span>
+        Hook musi zaczynać się od <code>use</code> (React tego wymaga). Gdy zwracasz tuple (np. <code>[value, setter]</code>), dodaj <code>as const</code> — inaczej TS inferuje <code>(string | Function)[]</code> zamiast precyzyjnego <code>[string, (v: string) =&gt; void]</code>. Typuj jawnie zwracaną wartość hooków publicznych — lepsze DX.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 10 PUŁAPKI & TRIKI ══ -->
+<section class="chapter" id="pulapki">
+  <div class="ch-head">
+    <div class="ch-num">10 / 10</div>
+    <div class="ch-info">
+      <div class="ch-cat" style="color:var(--rose)">Pułapki, triki & senior patterns</div>
+      <div class="ch-title">Klasyczne błędy, ??, ?., mutacja state, key, Rules of Hooks</div>
+      <div class="ch-desc">Tutaj mieszkają błędy które zjadają godziny. Mutacja state bez nowej referencji, złe key w listach, stale closures, reguły hooków. Oraz triki seniorów: branded types, discriminated unions jako jedyne źródło prawdy o stanie.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="code">
+      <div class="cbar"><div class="fdot" style="background:var(--rose)"></div> Operatory TS — ??, ?., !, różnice od JS</div>
+      <pre><span class="cm">// ══ OPTIONAL CHAINING — ?. ════════════════════</span>
+<span class="kw">const</span> city  = user?.address?.city;      <span class="cm">// undefined jeśli brak</span>
+<span class="kw">const</span> first = arr?.[<span class="num">0</span>];                 <span class="cm">// optional element</span>
+<span class="kw">const</span> res   = callback?.();             <span class="cm">// optional call</span>
+<span class="kw">const</span> len   = str?.length ?? <span class="num">0</span>;        <span class="cm">// chain z ??</span>
+
+<span class="cm">// ══ NULLISH COALESCING — ?? ════════════════════</span>
+<span class="kw">const</span> name = user.name ?? <span class="str">"Anonim"</span>;   <span class="cm">// tylko null/undefined</span>
+<span class="kw">const</span> port = config.port ?? <span class="num">3000</span>;
+
+<span class="cm">// RÓŻNICA od || (OR):</span>
+<span class="kw">const</span> a = <span class="num">0</span>  || <span class="str">"default"</span>;  <span class="cm">// ➜ "default"   (0 jest falsy!)</span>
+<span class="kw">const</span> b = <span class="num">0</span>  ?? <span class="str">"default"</span>;  <span class="cm">// ➜ 0           (0 nie jest null)</span>
+<span class="kw">const</span> c = <span class="str">""</span> || <span class="str">"default"</span>;  <span class="cm">// ➜ "default"   ("" jest falsy!)</span>
+<span class="kw">const</span> d = <span class="str">""</span> ?? <span class="str">"default"</span>;  <span class="cm">// ➜ ""          ("" nie jest null)</span>
+
+<span class="cm">// ══ NON-NULL ASSERTION — ! ════════════════════</span>
+<span class="kw">const</span> el = document.<span class="fn">getElementById</span>(<span class="str">"app"</span>)!;
+<span class="cm">// Mówisz TS: "wiem że nie jest null"</span>
+<span class="cm">// Jeśli się mylisz → runtime error. Używaj oszczędnie.</span>
+
+<span class="cm">// ══ BRANDED TYPES — unikaj pomyłek z ID ═══════</span>
+<span class="kw">declare const</span> __brand: <span class="ty">unique symbol</span>;
+<span class="kw">type</span> <span class="ty">Brand</span>&lt;<span class="ty">T</span>, <span class="ty">B</span>&gt; = <span class="ty">T</span> &amp; { [__brand]: <span class="ty">B</span> };
+
+<span class="kw">type</span> <span class="ty">UserId</span>    = <span class="ty">Brand</span>&lt;<span class="ty">string</span>, <span class="str">"UserId"</span>&gt;;
+<span class="kw">type</span> <span class="ty">ProductId</span> = <span class="ty">Brand</span>&lt;<span class="ty">string</span>, <span class="str">"ProductId"</span>&gt;;
+
+<span class="kw">function</span> <span class="fn">getUser</span>(id: <span class="ty">UserId</span>) { <span class="cm">/* ... */</span> }
+<span class="kw">const</span> pid = <span class="str">"p-123"</span> <span class="kw">as</span> <span class="ty">ProductId</span>;
+<span class="fn">getUser</span>(pid);  <span class="cm">// ❌ błąd — nie możesz pomylić ProductId z UserId</span>
+<span class="cm">// Runtime: to nadal zwykły string — zero overhead</span></pre>
+    </div>
+    <div>
+      <div class="code">
+        <div class="cbar"><div class="fdot" style="background:var(--amber)"></div> React pułapki — mutacja, key, Rules of Hooks</div>
+        <pre><span class="cm">// ══ MUTACJA STATE — nigdy! ════════════════════</span>
+<span class="cm">// ❌ Mutacja nie powoduje re-renderu</span>
+<span class="fn">setUsers</span>(prev =&gt; {
+  prev.<span class="fn">push</span>(newUser); <span class="cm">// mutuje oryginał</span>
+  <span class="kw">return</span> prev;       <span class="cm">// ten sam ref → React widzi brak zmiany</span>
+});
+
+<span class="cm">// ✅ Zawsze nowa referencja</span>
+<span class="fn">setUsers</span>(prev =&gt; [...prev, newUser]);            <span class="cm">// add</span>
+<span class="fn">setUsers</span>(prev =&gt; prev.<span class="fn">filter</span>(u =&gt; u.id !== id)); <span class="cm">// remove</span>
+<span class="fn">setUser</span>(prev =&gt; ({ ...prev, name: <span class="str">"Anna"</span> }));   <span class="cm">// update</span>
+
+<span class="cm">// ══ KEY W LISTACH ══════════════════════════════</span>
+<span class="cm">// ❌ Index jako key — błędy przy sortowaniu/dodawaniu</span>
+items.<span class="fn">map</span>((item, i) =&gt; <span class="jsx">&lt;li</span> <span class="prop">key</span>={i}<span class="jsx">&gt;</span>{item}<span class="jsx">&lt;/li&gt;</span>);
+
+<span class="cm">// ✅ Stabilne, unikalne ID</span>
+items.<span class="fn">map</span>(item =&gt; <span class="jsx">&lt;li</span> <span class="prop">key</span>={item.id}<span class="jsx">&gt;</span>{item.name}<span class="jsx">&lt;/li&gt;</span>);
+<span class="cm">// Key musi być unikalny wśród rodzeństwa (nie globalnie)</span>
+
+<span class="cm">// ══ RULES OF HOOKS ════════════════════════════</span>
+<span class="cm">// ❌ Hook w warunku — ZABRONIONEONE</span>
+<span class="kw">if</span> (condition) {
+  <span class="kw">const</span> [x] = <span class="fn">useState</span>(<span class="num">0</span>); <span class="cm">// crash runtime lub ukryte bugi</span>
+}
+
+<span class="cm">// ❌ Hook w pętli — ZABRONIONE</span>
+items.<span class="fn">forEach</span>(item =&gt; {
+  <span class="kw">const</span> [v] = <span class="fn">useState</span>(item); <span class="cm">// BŁĄD</span>
+});
+
+<span class="cm">// ✅ Hooki zawsze na poziomie komponentu, zawsze w tej samej kolejności</span>
+
+<span class="cm">// ══ ZAPOBIEGANIE ZBĘDNYM RE-RENDEROM ══════════</span>
+<span class="cm">// Problem: nowy obiekt przy każdym render</span>
+<span class="jsx">&lt;Component</span> <span class="prop">options</span>={{ foo: <span class="str">"bar"</span> }} <span class="jsx">/&gt;</span>  <span class="cm">// nowy ref = re-render</span>
+<span class="jsx">&lt;Component</span> <span class="prop">onClick</span>={() =&gt; <span class="fn">doSth</span>()} <span class="jsx">/&gt;</span> <span class="cm">// nowa fn = re-render</span>
+
+<span class="cm">// Rozwiązanie:</span>
+<span class="kw">const</span> options = <span class="fn">useMemo</span>(() =&gt; ({ foo: <span class="str">"bar"</span> }), []);
+<span class="kw">const</span> onClick = <span class="fn">useCallback</span>(() =&gt; <span class="fn">doSth</span>(), []);</pre>
+      </div>
+      <div class="gap12"></div>
+      <div class="output-box">
+        <div class="label">Klasyczna pułapka — co renderuje się na ekranie?</div>
+        <div><span class="note">const count = 0;</span></div>
+        <div><span class="note">{count &amp;&amp; &lt;List /&gt;}</span> ➜ <span class="wrong">renderuje "0" na ekranie!</span></div>
+        <div><span class="note">{count &gt; 0 &amp;&amp; &lt;List /&gt;}</span> ➜ nic (false nie renderuje)</div>
+        <div><span class="note">{Boolean(count) &amp;&amp; &lt;List /&gt;}</span> ➜ nic (false)</div>
+      </div>
+    </div>
+  </div>
+  <div class="gap16"></div>
+  <div class="strip" style="border-color:var(--blue);background:rgba(37,99,235,.04)">
+    <div class="strip-icon">🏆</div>
+    <div><strong>Senior TypeScript & React — pełen obraz:</strong> Senior wie że <code>typeof null === "object"</code> to historyczny bug JS który TS dziedziczy. Wie że <code>0 ?? "x"</code> to <code>0</code>, a <code>0 || "x"</code> to <code>"x"</code>. Wie że <code>as const</code> zmienia <code>string[]</code> na <code>readonly ["a", "b"]</code> i pozwala wyciągnąć union. Wie że Vite nie sprawdza typów i <code>tsc --noEmit</code> jest niezbędny w CI. Wie że mutacja state bez nowej referencji nie powoduje re-renderu. Wie że <code>useState([])</code> inferuje <code>never[]</code> — zawsze podaj typ jawnie. Wie że <code>React.FC</code> to stary wzorzec — prosta funkcja z typowanymi propsami jest lepsza. Wie że hook w warunku łamie React Hook Rules i crashuje aplikację w subtelny sposób. <strong>Kluczowe: typy to dokumentacja — pisz je tak, żeby kod był zrozumiały bez czytania implementacji.</strong></div>
+  </div>
+</section>
+
+</main>
+<footer class="footer">
+  <div><span class="footer-title">TypeScript & React/JSX — Składnia, Triki & Pułapki</span> — Kompendium</div>
+  <div>Typy · Interfejsy · Generyki · Narrowing · JSX · tsx · Hooki · Senior Patterns</div>
+</footer>
+</body>
+</html>

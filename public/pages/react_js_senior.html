@@ -1,0 +1,1533 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>React & JavaScript — Deep Knowledge Map</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080a0f;
+  --s1: #0d1017;
+  --s2: #131820;
+  --s3: #1a2030;
+  --bd: #1e2a3a;
+  --bd2: #2a3f58;
+  --tx: #d0e8ff;
+  --tx2: #7899bb;
+  --mt: #3a5878;
+  --react: #61dafb;
+  --react2: #88e5fc;
+  --green: #4ade80;
+  --teal: #2dd4bf;
+  --sky: #38bdf8;
+  --violet: #a78bfa;
+  --rose: #fb7185;
+  --amber: #fbbf24;
+  --pink: #e879f9;
+  --emerald: #34d399;
+  --lime: #a3e635;
+  --slate: #94a3b8;
+  --js: #f7df1e;
+  --js2: #faea6e;
+}
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;line-height:1.65;overflow-x:hidden}
+
+.back{position:fixed;top:22px;left:22px;z-index:9999;background:rgba(255,255,255,.95);backdrop-filter:blur(14px);border:1px solid var(--bd2);border-radius:40px;padding:10px 20px;display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--tx2);font-family:'IBM Plex Mono',monospace;font-size:.72rem;font-weight:500;letter-spacing:1px;transition:all .25s}
+.back:hover{color:var(--react);border-color:var(--react)}
+
+/* HEADER */
+.hdr{min-height:480px;padding:110px 80px 80px;position:relative;overflow:hidden;display:flex;align-items:flex-end}
+.hdr-bg{position:absolute;inset:0;background:var(--s1)}
+.hdr-bg::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 5% 100%,rgba(97,218,251,.11) 0%,transparent 55%),radial-gradient(ellipse 50% 70% at 95% 10%,rgba(247,223,30,.07) 0%,transparent 50%),radial-gradient(ellipse 40% 60% at 50% 50%,rgba(45,212,191,.04) 0%,transparent 60%)}
+.hdr-grid{position:absolute;inset:0;background-image:linear-gradient(var(--bd) 1px,transparent 1px),linear-gradient(90deg,var(--bd) 1px,transparent 1px);background-size:48px 48px;opacity:.12;mask-image:radial-gradient(ellipse 85% 90% at 50% 50%,black,transparent)}
+.hdr-content{position:relative;max-width:1360px;width:100%}
+.hdr-tier{display:inline-flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:.65rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--react);margin-bottom:28px;padding:7px 16px;border:1px solid rgba(97,218,251,.35);border-radius:4px;background:rgba(97,218,251,.06)}
+.tier-dot{width:6px;height:6px;border-radius:50%;background:var(--react);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+h1{font-size:clamp(3rem,7.5vw,7rem);font-weight:800;line-height:.9;letter-spacing:-5px;margin-bottom:28px}
+h1 em{font-style:normal;color:var(--react2)}
+h1 small{display:block;font-size:.36em;letter-spacing:-1px;color:var(--tx2);font-weight:500;margin-top:14px}
+.hdr-desc{font-size:1rem;color:var(--tx2);max-width:640px;line-height:1.9}
+.hdr-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.chip{font-family:'IBM Plex Mono',monospace;font-size:.63rem;font-weight:600;letter-spacing:.5px;padding:5px 12px;border-radius:3px;border:1px solid}
+.cr2{color:var(--react);border-color:rgba(97,218,251,.4);background:rgba(97,218,251,.06)}
+.cjs{color:var(--js);border-color:rgba(247,223,30,.4);background:rgba(247,223,30,.06)}
+.cg{color:var(--green);border-color:rgba(74,222,128,.35);background:rgba(74,222,128,.05)}
+.ct{color:var(--teal);border-color:rgba(45,212,191,.35);background:rgba(45,212,191,.05)}
+.cv{color:var(--violet);border-color:rgba(167,139,250,.35);background:rgba(167,139,250,.07)}
+.cr{color:var(--rose);border-color:rgba(251,113,133,.35);background:rgba(251,113,133,.05)}
+.ca{color:var(--amber);border-color:rgba(251,191,36,.35);background:rgba(251,191,36,.05)}
+.cp{color:var(--pink);border-color:rgba(232,121,249,.35);background:rgba(232,121,249,.06)}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:300;background:rgba(8,10,15,.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--bd);display:flex;overflow-x:auto;scrollbar-width:none;padding:0 80px}
+.nav::-webkit-scrollbar{display:none}
+.nav-a{color:var(--mt);text-decoration:none;font-family:'IBM Plex Mono',monospace;font-size:.64rem;font-weight:600;letter-spacing:.5px;padding:14px 13px;white-space:nowrap;border-bottom:2px solid transparent;transition:all .18s}
+.nav-a:hover{color:var(--react);border-bottom-color:var(--react)}
+
+/* MAIN */
+.main{max-width:1360px;margin:0 auto;padding:80px 24px 160px}
+.chapter{margin-bottom:104px;animation:fadeUp .5s ease backwards}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.chapter:nth-child(1){animation-delay:.04s}.chapter:nth-child(2){animation-delay:.07s}
+.chapter:nth-child(3){animation-delay:.10s}.chapter:nth-child(4){animation-delay:.13s}
+.chapter:nth-child(5){animation-delay:.16s}.chapter:nth-child(6){animation-delay:.19s}
+.chapter:nth-child(7){animation-delay:.22s}.chapter:nth-child(8){animation-delay:.25s}
+.chapter:nth-child(9){animation-delay:.28s}.chapter:nth-child(10){animation-delay:.31s}
+.chapter:nth-child(11){animation-delay:.34s}.chapter:nth-child(12){animation-delay:.37s}
+
+.ch-head{display:flex;align-items:flex-start;gap:22px;margin-bottom:36px;padding-bottom:28px;border-bottom:1px solid var(--bd)}
+.ch-num{font-family:'IBM Plex Mono',monospace;font-size:.62rem;font-weight:700;letter-spacing:3px;color:var(--mt);padding-top:6px;white-space:nowrap}
+.ch-info{flex:1}
+.ch-cat{font-family:'IBM Plex Mono',monospace;font-size:.58rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:6px}
+.ch-title{font-size:1.9rem;font-weight:800;letter-spacing:-1px;line-height:1.1;margin-bottom:10px}
+.ch-desc{font-size:.9rem;color:var(--tx2);max-width:820px;line-height:1.9}
+
+/* GRIDS */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.g13{display:grid;grid-template-columns:1fr 3fr;gap:14px}
+.g32{display:grid;grid-template-columns:3fr 2fr;gap:14px}
+@media(max-width:1100px){.g4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:900px){.g2,.g3,.g4,.g13,.g32{grid-template-columns:1fr}.hdr{padding:80px 24px 56px}.nav{padding:0 16px}h1{font-size:3rem;letter-spacing:-2px}}
+
+/* CARD */
+.card{background:var(--s1);border:1px solid var(--bd);border-radius:8px;overflow:hidden;transition:border-color .2s,box-shadow .2s}
+.card:hover{border-color:var(--bd2);box-shadow:0 6px 28px rgba(0,0,0,.45)}
+.card-h{padding:11px 18px;font-family:'IBM Plex Mono',monospace;font-size:.66rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:8px}
+.card-b{padding:18px}
+
+/* CODE */
+.code{background:#030508;border:1px solid var(--bd);border-radius:8px;overflow:hidden}
+.cbar{background:var(--s1);border-bottom:1px solid var(--bd);padding:9px 16px;font-family:'IBM Plex Mono',monospace;font-size:.64rem;color:var(--mt);display:flex;align-items:center;justify-content:space-between}
+.cbar-l{display:flex;align-items:center;gap:7px}
+.fdot{width:7px;height:7px;border-radius:50%}
+pre{padding:20px;font-family:'IBM Plex Mono',monospace;font-size:.77rem;line-height:1.72;overflow-x:auto;color:#374151}
+.kw{color:#c792ea}.an{color:#ffcb6b}.st{color:#c3e88d}.cm{color:#2a4a3a;font-style:italic}
+.ty{color:#82aaff}.nu{color:#f78c6c}.fn{color:#80cbc4}.op{color:#89ddff}
+.go{color:var(--react2)}.gr{color:var(--green)}.vi{color:var(--violet)}.re{color:var(--rose)}
+.js{color:var(--js)}.jsx{color:var(--react)}
+
+/* ALERTS */
+.alert{padding:16px 20px;border-radius:6px;border-left:3px solid;font-size:.87rem;line-height:1.85;color:var(--tx2)}
+.alert strong{color:var(--tx)}
+.alert-label{font-family:'IBM Plex Mono',monospace;font-size:.58rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;display:block;margin-bottom:6px}
+.al-react{background:rgba(97,218,251,.05);border-color:var(--react)} .al-react .alert-label{color:var(--react)}
+.al-js{background:rgba(247,223,30,.05);border-color:var(--js)} .al-js .alert-label{color:var(--js)}
+.al-rose{background:rgba(251,113,133,.05);border-color:var(--rose)} .al-rose .alert-label{color:var(--rose)}
+.al-teal{background:rgba(45,212,191,.05);border-color:var(--teal)} .al-teal .alert-label{color:var(--teal)}
+.al-violet{background:rgba(167,139,250,.05);border-color:var(--violet)} .al-violet .alert-label{color:var(--violet)}
+.al-green{background:rgba(74,222,128,.05);border-color:var(--green)} .al-green .alert-label{color:var(--green)}
+.al-amber{background:rgba(251,191,36,.05);border-color:var(--amber)} .al-amber .alert-label{color:var(--amber)}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;font-size:.84rem}
+.tbl th{background:var(--s2);color:var(--tx2);font-family:'IBM Plex Mono',monospace;font-size:.63rem;letter-spacing:2px;text-transform:uppercase;font-weight:700;padding:11px 16px;text-align:left;border-bottom:1px solid var(--bd);white-space:nowrap}
+.tbl td{padding:11px 16px;border-bottom:1px solid var(--bd);color:var(--tx2);vertical-align:top;line-height:1.75}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:var(--s2);color:var(--tx)}
+.tbl code{font-family:'IBM Plex Mono',monospace;font-size:.76rem;color:var(--react2);background:rgba(97,218,251,.09);padding:2px 7px;border-radius:3px}
+
+/* RLIST */
+.rlist{}
+.ritem{display:flex;gap:16px;padding:12px 0;border-bottom:1px solid var(--bd);align-items:flex-start}
+.ritem:last-child{border-bottom:none}
+.ritem-key{font-family:'IBM Plex Mono',monospace;font-size:.76rem;white-space:nowrap;padding-top:2px;min-width:185px;flex-shrink:0}
+.ritem-val{font-size:.85rem;color:var(--tx2);line-height:1.75}
+.ritem-val code{font-family:'IBM Plex Mono',monospace;font-size:.76rem;color:var(--react2);background:rgba(97,218,251,.09);padding:1px 6px;border-radius:3px}
+.ritem-val strong{color:var(--tx)}
+
+/* COMPARE */
+.compare{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--bd);border-radius:8px;overflow:hidden}
+.compare-col:first-child{border-right:1px solid var(--bd)}
+.compare-head{padding:11px 18px;font-family:'IBM Plex Mono',monospace;font-size:.66rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border-bottom:1px solid var(--bd)}
+.compare-body{padding:16px 18px;font-size:.84rem;color:var(--tx2);line-height:1.8}
+
+/* STRIP */
+.strip{border:1px solid var(--bd);border-radius:8px;padding:18px 22px;font-size:.87rem;color:var(--tx2);line-height:1.85;display:flex;gap:16px;align-items:flex-start}
+.strip-icon{font-size:1.3rem;flex-shrink:0;padding-top:2px}
+.strip strong{color:var(--tx)}
+
+/* PILLS */
+.pills{display:flex;flex-wrap:wrap;gap:7px;padding:14px}
+.pill{font-family:'IBM Plex Mono',monospace;font-size:.67rem;padding:4px 11px;border-radius:20px;border:1px solid;font-weight:600}
+.pr2{color:var(--react);border-color:rgba(97,218,251,.4);background:rgba(97,218,251,.06)}
+.pjs{color:var(--js);border-color:rgba(247,223,30,.35);background:rgba(247,223,30,.05)}
+.pg{color:var(--green);border-color:rgba(74,222,128,.35);background:rgba(74,222,128,.05)}
+.pt{color:var(--teal);border-color:rgba(45,212,191,.35);background:rgba(45,212,191,.05)}
+.pv{color:var(--violet);border-color:rgba(167,139,250,.35);background:rgba(167,139,250,.07)}
+.pr{color:var(--rose);border-color:rgba(251,113,133,.35);background:rgba(251,113,133,.05)}
+.pa{color:var(--amber);border-color:rgba(251,191,36,.35);background:rgba(251,191,36,.05)}
+
+.gap8{margin-top:8px}.gap12{margin-top:12px}.gap16{margin-top:16px}.gap24{margin-top:24px}
+
+/* FOOTER */
+.footer{border-top:1px solid var(--bd);background:var(--s1);padding:36px 80px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;font-family:'IBM Plex Mono',monospace;font-size:.68rem;color:var(--mt)}
+.footer-title{color:var(--react);font-weight:700}
+</style>
+</head>
+<body>
+
+<a class="back" href="#">← MENU</a>
+
+<!-- ═══ HEADER ═══ -->
+<header class="hdr">
+  <div class="hdr-bg"></div>
+  <div class="hdr-grid"></div>
+  <div class="hdr-content">
+    <div class="hdr-tier"><div class="tier-dot"></div> React & JavaScript · Deep Knowledge</div>
+    <h1>React &<br><em>JavaScript</em><small>Podstawy, ES6+, Hooks, stan, optymalizacja, wzorce zaawansowane</small></h1>
+    <p class="hdr-desc">Kompletna mapa wiedzy — od fundamentów JavaScript (scope, closure, this, prototype) przez nowoczesne ES6+, aż do zaawansowanego Reacta (hooks internals, reconciliation, custom hooks, performance). Kursy eduweb.pl jako punkt startowy, ta mapa jako mapa głęboka.</p>
+    <div class="hdr-chips">
+      <span class="chip cr2">● React Fundamentals</span>
+      <span class="chip cjs">JavaScript Deep</span>
+      <span class="chip cg">ES6+ / ESNext</span>
+      <span class="chip ct">Hooks & State</span>
+      <span class="chip cv">Performance</span>
+      <span class="chip cr">Async / Promises</span>
+      <span class="chip ca">Wzorce & Architektura</span>
+    </div>
+  </div>
+</header>
+
+<!-- ═══ NAV ═══ -->
+<nav class="nav">
+  <a class="nav-a" href="#js-podstawy">JS Podstawy</a>
+  <a class="nav-a" href="#scope">Scope & Closure</a>
+  <a class="nav-a" href="#this">this & Prototype</a>
+  <a class="nav-a" href="#es6">ES6+</a>
+  <a class="nav-a" href="#async">Async & Promises</a>
+  <a class="nav-a" href="#react-podstawy">React Podstawy</a>
+  <a class="nav-a" href="#hooks">Hooks Internals</a>
+  <a class="nav-a" href="#stan">Stan & Dane</a>
+  <a class="nav-a" href="#custom-hooks">Custom Hooks</a>
+  <a class="nav-a" href="#performance">Performance</a>
+  <a class="nav-a" href="#wzorce">Wzorce React</a>
+  <a class="nav-a" href="#praktyka">React w Praktyce</a>
+</nav>
+
+<main class="main">
+
+  <!-- ══ 01 JS PODSTAWY ══ -->
+  <section class="chapter" id="js-podstawy">
+    <div class="ch-head">
+      <div class="ch-num">01 / 12</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--js)">JavaScript — Fundament</div>
+        <div class="ch-title">Typy, wartości i jak JavaScript naprawdę działa</div>
+        <div class="ch-desc">JavaScript ma 8 typów danych, dynamiczne typowanie i kilka pułapek których nie widać na kursach dla początkujących. Zrozumienie jak działa silnik JS (event loop, call stack, heap) jest kluczowe dla każdego seniora.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--js)"></div>Typy danych — pułapki i niespodzianki</div></div>
+        <pre><span class="cm">// ─── 8 typów w JS ────────────────────────────────────────</span>
+<span class="cm">// Primitive: string, number, bigint, boolean, undefined, null, symbol</span>
+<span class="cm">// Reference: object (w tym Array, Function, Date...)</span>
+
+<span class="cm">// ─── typeof — zaskakujące wyniki ─────────────────────────</span>
+<span class="kw">typeof</span> <span class="kw">null</span>        <span class="cm">// ❌ "object" — historyczny bug w JS!</span>
+<span class="kw">typeof</span> []          <span class="cm">// "object" — nie "array"</span>
+<span class="kw">typeof</span> <span class="fn">function</span>(){} <span class="cm">// "function" (specjalny przypadek)</span>
+<span class="kw">typeof</span> <span class="kw">undefined</span>   <span class="cm">// "undefined"</span>
+<span class="kw">typeof</span> <span class="nu">42n</span>         <span class="cm">// "bigint"</span>
+
+<span class="cm">// ✅ Sprawdzanie null:</span>
+value === <span class="kw">null</span>
+<span class="cm">// ✅ Sprawdzanie Array:</span>
+<span class="ty">Array</span>.isArray(value)
+
+<span class="cm">// ─── Porównania == vs === ─────────────────────────────────</span>
+<span class="nu">0</span> == <span class="st">""</span>      <span class="cm">// true  ← type coercion (unikaj!)</span>
+<span class="nu">0</span> === <span class="st">""</span>     <span class="cm">// false ← strict equality</span>
+<span class="kw">null</span> == <span class="kw">undefined</span>  <span class="cm">// true  ← jedyny wyjątek gdzie == ma sens</span>
+<span class="kw">null</span> === <span class="kw">undefined</span> <span class="cm">// false</span>
+<span class="ty">NaN</span> === <span class="ty">NaN</span>        <span class="cm">// false — NaN nie równa się sobie!</span>
+<span class="ty">Number</span>.isNaN(<span class="ty">NaN</span>)  <span class="cm">// true  ← prawidłowe sprawdzenie</span>
+
+<span class="cm">// ─── Falsy values — wszystkie 7 ──────────────────────────</span>
+<span class="cm">// false, 0, -0, 0n, "", null, undefined, NaN</span>
+<span class="cm">// Uwaga: [] i {} są TRUTHY!</span></pre>
+      </div>
+
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--js)"></div>Event Loop — jak JS jest jednowątkowy ale asynchroniczny</div></div>
+        <pre><span class="cm">// ─── Call Stack / Heap / Event Loop ──────────────────────</span>
+<span class="cm">// Call Stack — aktualnie wykonywane funkcje (LIFO)</span>
+<span class="cm">// Heap      — alokacja pamięci dla obiektów</span>
+<span class="cm">// Web APIs  — setTimeout, fetch, DOM events (poza V8)</span>
+<span class="cm">// Callback Queue — oczekujące callbacki (macrotasks)</span>
+<span class="cm">// Microtask Queue — Promise .then(), queueMicrotask()</span>
+
+<span class="cm">// ─── Kolejność wykonywania ────────────────────────────────</span>
+console.log(<span class="st">"1"</span>);                          <span class="cm">// sync</span>
+
+<span class="fn">setTimeout</span>(() => console.log(<span class="st">"2"</span>), <span class="nu">0</span>);    <span class="cm">// macrotask</span>
+
+<span class="ty">Promise</span>.resolve()
+  .then(() => console.log(<span class="st">"3"</span>));           <span class="cm">// microtask</span>
+
+<span class="fn">queueMicrotask</span>(() => console.log(<span class="st">"4"</span>));  <span class="cm">// microtask</span>
+
+console.log(<span class="st">"5"</span>);                          <span class="cm">// sync</span>
+
+<span class="cm">// Output: 1, 5, 3, 4, 2</span>
+<span class="cm">// Dlaczego? Sync → Microtasks → Macrotasks</span>
+<span class="cm">// Microtask queue jest opróżniana w CAŁOŚCI</span>
+<span class="cm">// przed każdym macrotask (np. setTimeout)</span>
+
+<span class="cm">// ─── Praktyczne implikacje ───────────────────────────────</span>
+<span class="cm">// ✅ await w async fn → zawiesza tylko tę funkcję</span>
+<span class="cm">// ✅ long sync code blokuje UI (main thread)</span>
+<span class="cm">// ✅ Web Workers → prawdziwa wielowątkowość</span></pre>
+      </div>
+    </div>
+
+    <div class="gap16"></div>
+    <div class="g3">
+      <div class="card">
+        <div class="card-h" style="color:var(--js)">🔢 Number — pułapki</div>
+        <div class="card-b" style="font-size:.83rem;color:var(--tx2);line-height:1.85">
+          <p><strong style="color:var(--rose)">0.1 + 0.2 ≠ 0.3</strong> — IEEE 754 float. Używaj <code style="color:var(--react2);font-family:monospace">toFixed()</code> lub dedykowanej biblioteki do finansów.</p>
+          <p><strong style="color:var(--amber)">Number.MAX_SAFE_INTEGER</strong> = 2^53-1. Przekroczenie: użyj <code style="color:var(--react2);font-family:monospace">BigInt</code>.</p>
+          <p><strong style="color:var(--green)">Number.isInteger(n)</strong> vs <code style="color:var(--react2);font-family:monospace">n % 1 === 0</code> — pierwsze bezpieczniejsze.</p>
+          <p><strong style="color:var(--violet)">parseInt("08")</strong> → zawsze podawaj radix: <code style="color:var(--react2);font-family:monospace">parseInt("08", 10)</code>.</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h" style="color:var(--js)">📦 Wartości vs Referencje</div>
+        <div class="card-b">
+          <div class="code" style="border:none;background:transparent">
+            <pre style="padding:0;font-size:.74rem"><span class="cm">// Primitives — kopiowane przez wartość</span>
+<span class="kw">let</span> a = <span class="nu">5</span>;
+<span class="kw">let</span> b = a;
+b = <span class="nu">10</span>;
+<span class="cm">// a nadal 5</span>
+
+<span class="cm">// Objects — kopiowane przez referencję</span>
+<span class="kw">const</span> obj1 = { x: <span class="nu">1</span> };
+<span class="kw">const</span> obj2 = obj1;
+obj2.x = <span class="nu">99</span>;
+<span class="cm">// obj1.x === 99 !</span>
+
+<span class="cm">// ✅ Shallow copy</span>
+<span class="kw">const</span> copy = { ...obj1 };
+<span class="cm">// ✅ Deep copy (nowoczesny)</span>
+<span class="kw">const</span> deep = <span class="ty">structuredClone</span>(obj1);</pre>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h" style="color:var(--js)">⚡ Coercion — kiedy JS zmienia typy</div>
+        <div class="card-b" style="font-size:.83rem;color:var(--tx2);line-height:1.85">
+          <p><code style="color:var(--react2);font-family:monospace">"5" + 1 = "51"</code> — konkatenacja, nie dodawanie</p>
+          <p><code style="color:var(--react2);font-family:monospace">"5" - 1 = 4</code> — odejmowanie, coercion do number</p>
+          <p><code style="color:var(--react2);font-family:monospace">+[] = 0</code>, <code style="color:var(--react2);font-family:monospace">+{} = NaN</code></p>
+          <p><code style="color:var(--react2);font-family:monospace">[] + [] = ""</code>, <code style="color:var(--react2);font-family:monospace">[] + {} = "[object Object]"</code></p>
+          <p style="margin-top:8px"><strong>Reguła:</strong> używaj zawsze <code style="color:var(--react2);font-family:monospace">===</code> i jawnej konwersji typów.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 02 SCOPE & CLOSURE ══ -->
+  <section class="chapter" id="scope">
+    <div class="ch-head">
+      <div class="ch-num">02 / 12</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--green)">JavaScript — Scope, Closure & Hoisting</div>
+        <div class="ch-title">Leksykalny zakres, domknięcia i podnoszenie deklaracji</div>
+        <div class="ch-desc">Closure to jeden z najważniejszych konceptów JS. Bez jego zrozumienia nie zrozumiesz jak działają moduły, hooks w Reakcie, ani wzorce takie jak memoization czy factory functions. Hoisting to kolejna pułapka dla nieświadomych.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--green)"></div>Scope — var / let / const</div></div>
+        <pre><span class="cm">// ─── var: function-scoped + hoisting ─────────────────────</span>
+<span class="kw">function</span> <span class="fn">example</span>() {
+  <span class="kw">if</span> (<span class="kw">true</span>) {
+    <span class="kw">var</span> x = <span class="nu">10</span>;  <span class="cm">// dostępna W CAŁEJ funkcji!</span>
+  }
+  console.log(x); <span class="cm">// 10 — mimo że poza if-blokiem</span>
+}
+
+<span class="cm">// ─── let/const: block-scoped ──────────────────────────────</span>
+<span class="kw">function</span> <span class="fn">example2</span>() {
+  <span class="kw">if</span> (<span class="kw">true</span>) {
+    <span class="kw">let</span> y = <span class="nu">10</span>;
+  }
+  console.log(y); <span class="cm">// ❌ ReferenceError — poza blokiem</span>
+}
+
+<span class="cm">// ─── Hoisting — deklaracje przenoszone na górę ────────────</span>
+console.log(a); <span class="cm">// undefined (var hoisted, nie wartość)</span>
+<span class="kw">var</span> a = <span class="nu">5</span>;
+
+console.log(b); <span class="cm">// ❌ ReferenceError — Temporal Dead Zone!</span>
+<span class="kw">let</span> b = <span class="nu">5</span>;
+
+<span class="cm">// ─── Function declaration vs expression ──────────────────</span>
+<span class="fn">foo</span>();         <span class="cm">// ✅ działa! Function declaration jest hoisted</span>
+<span class="kw">function</span> <span class="fn">foo</span>() {}
+
+<span class="fn">bar</span>();         <span class="cm">// ❌ TypeError: bar is not a function</span>
+<span class="kw">var</span> bar = <span class="kw">function</span>() {}; <span class="cm">// expression — nie hoisted</span></pre>
+      </div>
+
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--green)"></div>Closure — praktyczne przykłady</div></div>
+        <pre><span class="cm">// ─── Czym jest closure? ───────────────────────────────────</span>
+<span class="cm">// Funkcja która "pamięta" swój leksykalny zakres</span>
+<span class="cm">// nawet gdy jest wykonywana poza nim</span>
+
+<span class="kw">function</span> <span class="fn">makeCounter</span>() {
+  <span class="kw">let</span> count = <span class="nu">0</span>;           <span class="cm">// zmienna w zewnętrznym scope</span>
+  <span class="kw">return</span> {
+    increment: () => ++count,
+    decrement: () => --count,
+    value: () => count
+  };
+}
+
+<span class="kw">const</span> counter = <span class="fn">makeCounter</span>();
+counter.increment(); <span class="cm">// 1</span>
+counter.increment(); <span class="cm">// 2</span>
+counter.value();     <span class="cm">// 2 — count żyje w closure</span>
+
+<span class="cm">// ─── Klasyczna pułapka z var w pętli ─────────────────────</span>
+<span class="kw">for</span> (<span class="kw">var</span> i = <span class="nu">0</span>; i < <span class="nu">3</span>; i++) {
+  <span class="fn">setTimeout</span>(() => console.log(i), <span class="nu">100</span>);
+}
+<span class="cm">// Wynik: 3, 3, 3 — wszystkie closures dzielą TEN SAM i!</span>
+
+<span class="cm">// ✅ Naprawione przez let (block scope):</span>
+<span class="kw">for</span> (<span class="kw">let</span> i = <span class="nu">0</span>; i < <span class="nu">3</span>; i++) {
+  <span class="fn">setTimeout</span>(() => console.log(i), <span class="nu">100</span>);
+}
+<span class="cm">// Wynik: 0, 1, 2 ✅</span>
+
+<span class="cm">// ─── Closure w Reakcie (useCallback/useMemo) ─────────────</span>
+<span class="cm">// Każdy render tworzy nową closure dla handlerów!</span>
+<span class="cm">// Dlatego useCallback "zapamiętuje" closure ze starego renderu</span></pre>
+      </div>
+    </div>
+
+    <div class="gap16"></div>
+    <div class="alert al-green">
+      <span class="alert-label">💡 Closure w praktyce</span>
+      <strong>Closure</strong> to fundament wielu wzorców JS: moduły (IIFE), fabryki funkcji, memoization, partial application, currying, a w Reakcie — każdy hook opiera się na closure. Zrozumienie TDZ (Temporal Dead Zone) dla <code style="font-family:monospace;color:var(--react2)">let/const</code> pozwala unikać trudnych do debugowania bugów.
+    </div>
+  </section>
+
+  <!-- ══ 03 THIS & PROTOTYPE ══ -->
+  <section class="chapter" id="this">
+    <div class="ch-head">
+      <div class="ch-num">03 / 12</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--violet)">JavaScript — this, Prototype & Class</div>
+        <div class="ch-title">Kontekst wykonania, łańcuch prototypów i nowoczesne klasy</div>
+        <div class="ch-desc">Słowo kluczowe <code style="font-family:monospace;color:var(--react2)">this</code> to jedno z najbardziej mylących pojęć w JS — jego wartość zależy od sposobu wywołania funkcji, nie od miejsca jej definicji. Łańcuch prototypów to podstawa dziedziczenia w JS.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--violet)"></div>this — 4 reguły wiązania</div></div>
+        <pre><span class="cm">// ─── 1. Default binding — "use strict" vs normalny ───────</span>
+<span class="kw">function</span> <span class="fn">whoAmI</span>() { <span class="kw">return</span> <span class="kw">this</span>; }
+<span class="fn">whoAmI</span>(); <span class="cm">// window (browser) / global (Node) / undefined (strict)</span>
+
+<span class="cm">// ─── 2. Implicit binding — obiekt przed kropką ────────────</span>
+<span class="kw">const</span> obj = {
+  name: <span class="st">"React"</span>,
+  <span class="fn">greet</span>() { <span class="kw">return</span> <span class="kw">this</span>.name; }
+};
+obj.greet(); <span class="cm">// "React" ✅ — this = obj</span>
+
+<span class="kw">const</span> fn = obj.greet;
+fn();        <span class="cm">// undefined ❌ — this utracone po przypisaniu!</span>
+
+<span class="cm">// ─── 3. Explicit binding — call / apply / bind ────────────</span>
+fn.call(obj);         <span class="cm">// "React" ✅</span>
+fn.apply(obj);        <span class="cm">// "React" ✅</span>
+<span class="kw">const</span> bound = fn.bind(obj);
+bound();              <span class="cm">// "React" ✅ — permanently bound</span>
+
+<span class="cm">// ─── 4. new binding ───────────────────────────────────────</span>
+<span class="kw">function</span> <span class="ty">Person</span>(name) {
+  <span class="kw">this</span>.name = name;  <span class="cm">// this = nowo tworzony obiekt</span>
+}
+<span class="kw">const</span> p = <span class="kw">new</span> <span class="ty">Person</span>(<span class="st">"Anna"</span>);
+
+<span class="cm">// ─── Arrow functions — BRAK własnego this! ───────────────</span>
+<span class="kw">const</span> obj2 = {
+  name: <span class="st">"React"</span>,
+  greet: () => <span class="kw">this</span>.name   <span class="cm">// ❌ this = enclosing scope (window!)</span>
+};
+<span class="cm">// ✅ Arrow functions dziedziczą this z miejsca definicji</span>
+<span class="cm">// Idealne do callbacków: setTimeout(() => this.doSth())</span></pre>
+      </div>
+
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--violet)"></div>Prototype Chain & Class syntax</div></div>
+        <pre><span class="cm">// ─── Łańcuch prototypów ───────────────────────────────────</span>
+<span class="kw">const</span> animal = { breathes: <span class="kw">true</span> };
+<span class="kw">const</span> dog = <span class="ty">Object</span>.create(animal);
+dog.barks = <span class="kw">true</span>;
+
+dog.breathes; <span class="cm">// true — znalezione w prototype chain!</span>
+dog.hasOwnProperty(<span class="st">"breathes"</span>); <span class="cm">// false — nie własne</span>
+dog.hasOwnProperty(<span class="st">"barks"</span>);    <span class="cm">// true</span>
+
+<span class="cm">// ─── Class (ES6) — syntactic sugar nad prototype ─────────</span>
+<span class="kw">class</span> <span class="ty">Animal</span> {
+  <span class="kw">constructor</span>(name) {
+    <span class="kw">this</span>.name = name;
+  }
+  speak() {
+    <span class="kw">return</span> <span class="st">`</span><span class="go">${this.name}</span><span class="st"> makes a noise`</span>;
+  }
+  <span class="kw">static</span> <span class="fn">create</span>(name) { <span class="kw">return</span> <span class="kw">new</span> <span class="ty">Animal</span>(name); }
+}
+
+<span class="kw">class</span> <span class="ty">Dog</span> <span class="kw">extends</span> <span class="ty">Animal</span> {
+  speak() {
+    <span class="kw">return</span> <span class="kw">super</span>.speak() + <span class="st">" — Woof!"</span>;
+  }
+}
+
+<span class="cm">// ─── Private fields (ES2022) ──────────────────────────────</span>
+<span class="kw">class</span> <span class="ty">Counter</span> {
+  <span class="an">#count</span> = <span class="nu">0</span>;            <span class="cm">// naprawdę prywatne (# prefix)</span>
+  increment() { <span class="kw">this</span>.<span class="an">#count</span>++; }
+  get value() { <span class="kw">return</span> <span class="kw">this</span>.<span class="an">#count</span>; }
+}
+<span class="cm">// counter.#count → SyntaxError z zewnątrz</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 04 ES6+ ══ -->
+  <section class="chapter" id="es6">
+    <div class="ch-head">
+      <div class="ch-num">04 / 12</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--teal)">ECMAScript 6+ — Nowy Standard</div>
+        <div class="ch-title">Destructuring, spread, modules, iterators i nowości ESNext</div>
+        <div class="ch-desc">ES6 zmienił JavaScript na zawsze. Każdy React developer musi biegle posługiwać się destructuringiem, spread operatorem, template literals, optional chaining i nullish coalescing. Te cechy to chleb powszedni każdego projektu.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--teal)"></div>Destructuring — obiekty i tablice</div></div>
+        <pre><span class="cm">// ─── Destructuring obiektów ───────────────────────────────</span>
+<span class="kw">const</span> user = { name: <span class="st">"Anna"</span>, age: <span class="nu">28</span>, city: <span class="st">"Warsaw"</span> };
+
+<span class="kw">const</span> { name, age } = user;            <span class="cm">// podstawowe</span>
+<span class="kw">const</span> { name: userName } = user;       <span class="cm">// zmiana nazwy</span>
+<span class="kw">const</span> { role = <span class="st">"user"</span> } = user;       <span class="cm">// wartość domyślna</span>
+<span class="kw">const</span> { name, ...rest } = user;        <span class="cm">// rest: {age, city}</span>
+
+<span class="cm">// ─── Destructuring tablic ────────────────────────────────</span>
+<span class="kw">const</span> [first, second, ...others] = [<span class="nu">1</span>, <span class="nu">2</span>, <span class="nu">3</span>, <span class="nu">4</span>];
+<span class="kw">const</span> [, , third] = [<span class="nu">1</span>, <span class="nu">2</span>, <span class="nu">3</span>];       <span class="cm">// pomijanie elementów</span>
+
+<span class="cm">// ─── Zagnieżdżony destructuring ──────────────────────────</span>
+<span class="kw">const</span> { address: { street, city: userCity } } = {
+  address: { street: <span class="st">"Main St"</span>, city: <span class="st">"Warsaw"</span> }
+};
+
+<span class="cm">// ─── W parametrach funkcji ───────────────────────────────</span>
+<span class="kw">function</span> <span class="fn">greet</span>({ name, age = <span class="nu">0</span> }) {
+  <span class="kw">return</span> <span class="st">`</span><span class="go">${name}</span><span class="st">, lat: </span><span class="go">${age}</span><span class="st">`</span>;
+}
+
+<span class="cm">// ─── Swap variables ───────────────────────────────────────</span>
+<span class="kw">let</span> a = <span class="nu">1</span>, b = <span class="nu">2</span>;
+[a, b] = [b, a];  <span class="cm">// ✅ swap bez temp variable</span></pre>
+      </div>
+
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--teal)"></div>Optional chaining, Nullish coalescing, Logical operators</div></div>
+        <pre><span class="cm">// ─── Optional chaining ?. (ES2020) ───────────────────────</span>
+<span class="kw">const</span> user = { profile: { avatar: <span class="kw">null</span> } };
+
+user.profile?.avatar?.url    <span class="cm">// undefined (nie TypeError!)</span>
+user.settings?.theme         <span class="cm">// undefined</span>
+user.getAge?.()              <span class="cm">// undefined (metoda opcjonalna)</span>
+arr?.[<span class="nu">0</span>]?.name               <span class="cm">// bezpieczny dostęp do array</span>
+
+<span class="cm">// ─── Nullish coalescing ?? (ES2020) ──────────────────────</span>
+<span class="kw">const</span> count = data.count ?? <span class="nu">0</span>;    <span class="cm">// 0 jeśli null/undefined</span>
+<span class="cm">// Vs. || (OR) który też reaguje na falsy: 0, "", false</span>
+<span class="kw">const</span> n = <span class="nu">0</span> || <span class="nu">42</span>;               <span class="cm">// 42 — 0 jest falsy!</span>
+<span class="kw">const</span> m = <span class="nu">0</span> ?? <span class="nu">42</span>;               <span class="cm">// 0  — ?? sprawdza null/undef</span>
+
+<span class="cm">// ─── Nullish assignment ??= (ES2021) ─────────────────────</span>
+user.role ??= <span class="st">"guest"</span>;  <span class="cm">// przypisz tylko jeśli null/undefined</span>
+user.score ||= <span class="nu">0</span>;       <span class="cm">// przypisz jeśli falsy</span>
+user.count &&= user.count + <span class="nu">1</span>; <span class="cm">// przypisz jeśli truthy</span>
+
+<span class="cm">// ─── Spread operator ─────────────────────────────────────</span>
+<span class="kw">const</span> merged = { ...defaults, ...overrides };  <span class="cm">// merge</span>
+<span class="kw">const</span> copy = [...original];                    <span class="cm">// shallow copy</span>
+<span class="kw">const</span> args = [<span class="nu">1</span>, <span class="nu">2</span>, <span class="nu">3</span>];
+<span class="ty">Math</span>.max(...args);                             <span class="cm">// 3</span>
+
+<span class="cm">// ─── Modules (ES6) ───────────────────────────────────────</span>
+<span class="kw">export</span> <span class="kw">const</span> PI = <span class="nu">3.14</span>;          <span class="cm">// named export</span>
+<span class="kw">export default function</span> <span class="fn">main</span>() {} <span class="cm">// default export</span>
+<span class="kw">import</span> { PI } <span class="kw">from</span> <span class="st">"./math"</span>;
+<span class="kw">import</span> * <span class="kw">as</span> math <span class="kw">from</span> <span class="st">"./math"</span>; <span class="cm">// namespace import</span></pre>
+      </div>
+    </div>
+
+    <div class="gap16"></div>
+    <div class="g4">
+      <div class="card">
+        <div class="card-h" style="color:var(--teal)">🔄 Array Methods</div>
+        <div class="card-b" style="font-size:.82rem;color:var(--tx2);line-height:1.85">
+          <p><code style="color:var(--react2);font-family:monospace">.map()</code> — transformacja, zwraca nową tablicę</p>
+          <p><code style="color:var(--react2);font-family:monospace">.filter()</code> — filtrowanie, zwraca nową tablicę</p>
+          <p><code style="color:var(--react2);font-family:monospace">.reduce()</code> — agregacja do jednej wartości</p>
+          <p><code style="color:var(--react2);font-family:monospace">.find()</code> — pierwszy pasujący element</p>
+          <p><code style="color:var(--react2);font-family:monospace">.some()</code> / <code style="color:var(--react2);font-family:monospace">.every()</code> — warunek</p>
+          <p><code style="color:var(--react2);font-family:monospace">.flat()</code> / <code style="color:var(--react2);font-family:monospace">.flatMap()</code> — spłaszczanie</p>
+          <p><code style="color:var(--react2);font-family:monospace">.at(-1)</code> — ostatni element (ES2022)</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h" style="color:var(--teal)">🗺️ Map & Set</div>
+        <div class="card-b" style="font-size:.82rem;color:var(--tx2);line-height:1.85">
+          <p><strong>Map</strong> — klucz może być dowolnym typem (też obiekt!). Zachowuje kolejność. <code style="color:var(--react2);font-family:monospace">.get/.set/.has</code></p>
+          <p><strong>Set</strong> — unikalne wartości. Deduplikacja: <code style="color:var(--react2);font-family:monospace">[...new Set(arr)]</code></p>
+          <p><strong>WeakMap/WeakSet</strong> — klucze tylko obiekty, garbage-collectable. Brak iteracji.</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h" style="color:var(--teal)">📝 Template Literals</div>
+        <div class="card-b">
+          <div class="code" style="border:none;background:transparent">
+            <pre style="padding:0;font-size:.74rem"><span class="cm">// Interpolacja wyrażeń</span>
+<span class="kw">const</span> s = <span class="st">`Hello </span><span class="go">${name}</span><span class="st">!`</span>;
+
+<span class="cm">// Wieloliniowe stringi</span>
+<span class="kw">const</span> html = <span class="st">`
+  &lt;div&gt;
+    </span><span class="go">${items.map(i => `&lt;li&gt;${i}&lt;/li&gt;`).join("")}</span><span class="st">
+  &lt;/div&gt;
+`</span>;
+
+<span class="cm">// Tagged templates (np. css``, gql``)</span>
+<span class="kw">const</span> q = gql<span class="st">`query { user { name } }`</span>;</pre>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h" style="color:var(--teal)">🔁 Iterators & Generators</div>
+        <div class="card-b" style="font-size:.82rem;color:var(--tx2);line-height:1.85">
+          <p><strong>Iterator protocol</strong> — obiekt z metodą <code style="color:var(--react2);font-family:monospace">[Symbol.iterator]()</code></p>
+          <p><strong>Generator</strong> — funkcja z <code style="color:var(--react2);font-family:monospace">function*</code> i <code style="color:var(--react2);font-family:monospace">yield</code>. Leniwe sekwencje nieskończone.</p>
+          <p><code style="color:var(--react2);font-family:monospace">for...of</code> działa na każdym iterowalnym.</p>
+          <p>Generatory rzadko w React, ale ważne w Redux-Saga.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 05 ASYNC ══ -->
+  <section class="chapter" id="async">
+    <div class="ch-head">
+      <div class="ch-num">05 / 12</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--amber)">JavaScript — Asynchroniczność</div>
+        <div class="ch-title">Callbacks, Promises, async/await i obsługa błędów</div>
+        <div class="ch-desc">Asynchroniczność to serce nowoczesnego JS. Ewolucja od callbacków (callback hell) przez Promises do async/await. Znajomość metod <code style="font-family:monospace;color:var(--react2)">Promise.all</code>, <code style="font-family:monospace;color:var(--react2)">allSettled</code>, <code style="font-family:monospace;color:var(--react2)">race</code>, <code style="font-family:monospace;color:var(--react2)">any</code> jest obowiązkowa.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--amber)"></div>Promises — stany i łańcuchowanie</div></div>
+        <pre><span class="cm">// ─── Promise — 3 stany ───────────────────────────────────</span>
+<span class="cm">// pending → fulfilled | rejected</span>
+
+<span class="kw">const</span> p = <span class="kw">new</span> <span class="ty">Promise</span>((resolve, reject) => {
+  <span class="fn">setTimeout</span>(() => {
+    <span class="kw">if</span> (ok) resolve(data);
+    <span class="kw">else</span> reject(<span class="kw">new</span> <span class="ty">Error</span>(<span class="st">"Failed"</span>));
+  }, <span class="nu">1000</span>);
+});
+
+<span class="cm">// ─── .then() / .catch() / .finally() ────────────────────</span>
+p.then(data => <span class="fn">process</span>(data))
+ .catch(err => console.error(err))
+ .finally(() => setLoading(<span class="kw">false</span>));
+
+<span class="cm">// ─── Promise kombinatory ─────────────────────────────────</span>
+
+<span class="cm">// Promise.all — czeka na WSZYSTKIE, fail-fast przy błędzie</span>
+<span class="kw">const</span> [users, posts] = <span class="kw">await</span> <span class="ty">Promise</span>.all([
+  <span class="fn">fetchUsers</span>(), <span class="fn">fetchPosts</span>()
+]);
+
+<span class="cm">// Promise.allSettled — czeka na WSZYSTKIE, nawet jeśli błąd</span>
+<span class="kw">const</span> results = <span class="kw">await</span> <span class="ty">Promise</span>.allSettled([p1, p2, p3]);
+results.forEach(r => {
+  <span class="kw">if</span> (r.status === <span class="st">"fulfilled"</span>) use(r.value);
+  <span class="kw">else</span> log(r.reason);
+});
+
+<span class="cm">// Promise.race — pierwszy który się rozstrzygnie</span>
+<span class="kw">const</span> result = <span class="kw">await</span> <span class="ty">Promise</span>.race([fetch1, timeout5s]);
+
+<span class="cm">// Promise.any — pierwszy SPEŁNIONY (ignoruje rejection)</span>
+<span class="kw">const</span> fastest = <span class="kw">await</span> <span class="ty">Promise</span>.any([mirror1, mirror2, mirror3]);</pre>
+      </div>
+
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--amber)"></div>async/await — wzorce i pułapki</div></div>
+        <pre><span class="cm">// ─── Podstawowy wzorzec ──────────────────────────────────</span>
+<span class="kw">async function</span> <span class="fn">fetchUser</span>(id) {
+  <span class="kw">try</span> {
+    <span class="kw">const</span> response = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="st">`/api/users/</span><span class="go">${id}</span><span class="st">`</span>);
+    <span class="kw">if</span> (!response.ok) <span class="kw">throw new</span> <span class="ty">Error</span>(<span class="st">`HTTP </span><span class="go">${response.status}</span><span class="st">`</span>);
+    <span class="kw">return await</span> response.json();
+  } <span class="kw">catch</span> (err) {
+    console.error(<span class="st">"Fetch failed:"</span>, err);
+    <span class="kw">throw</span> err; <span class="cm">// re-throw lub obsłuż</span>
+  }
+}
+
+<span class="cm">// ─── PUŁAPKA: await w pętli sekwencyjny! ────────────────</span>
+<span class="cm">// ❌ Wolny — czeka na każdy request po kolei:</span>
+<span class="kw">for</span> (<span class="kw">const</span> id <span class="kw">of</span> ids) {
+  <span class="kw">const</span> user = <span class="kw">await</span> <span class="fn">fetchUser</span>(id);
+}
+
+<span class="cm">// ✅ Szybki — wszystkie requesty równolegle:</span>
+<span class="kw">const</span> users = <span class="kw">await</span> <span class="ty">Promise</span>.all(ids.map(<span class="fn">fetchUser</span>));
+
+<span class="cm">// ─── AbortController — anulowanie żądań ─────────────────</span>
+<span class="kw">const</span> controller = <span class="kw">new</span> <span class="ty">AbortController</span>();
+<span class="kw">const</span> signal = controller.signal;
+
+<span class="fn">fetch</span>(<span class="st">"/api/data"</span>, { signal })
+  .then(r => r.json())
+  .catch(err => {
+    <span class="kw">if</span> (err.name === <span class="st">"AbortError"</span>) <span class="kw">return</span>;
+    <span class="kw">throw</span> err;
+  });
+
+controller.abort(); <span class="cm">// np. przy unmount komponentu React</span>
+
+<span class="cm">// ─── async/await zawsze zwraca Promise ───────────────────</span>
+<span class="kw">async function</span> <span class="fn">getValue</span>() { <span class="kw">return</span> <span class="nu">42</span>; }
+<span class="fn">getValue</span>(); <span class="cm">// Promise&lt;42&gt; — nie 42!</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 06 REACT PODSTAWY ══ -->
+  <section class="chapter" id="react-podstawy">
+    <div class="ch-head">
+      <div class="ch-num">06 / 12</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--react)">React — Fundamenty</div>
+        <div class="ch-title">JSX, komponenty, props, cykl życia i Virtual DOM</div>
+        <div class="ch-desc">React to biblioteka do budowania interfejsów użytkownika oparta na komponentach. Kluczem jest zrozumienie jak działa Virtual DOM i reconciliation — bez tego ciężko zrozumieć dlaczego re-render zachowuje się tak a nie inaczej.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--react)"></div>JSX — co to jest i jak działa</div></div>
+        <pre><span class="cm">// ─── JSX to syntactic sugar dla React.createElement ──────</span>
+<span class="cm">// JSX:</span>
+<span class="kw">const</span> element = &lt;<span class="ty">Button</span> onClick={handler} color=<span class="st">"blue"</span>&gt;
+  Click me
+&lt;/<span class="ty">Button</span>&gt;;
+
+<span class="cm">// Kompiluje się do:</span>
+<span class="kw">const</span> element = <span class="ty">React</span>.<span class="fn">createElement</span>(
+  <span class="ty">Button</span>,
+  { onClick: handler, color: <span class="st">"blue"</span> },
+  <span class="st">"Click me"</span>
+);
+
+<span class="cm">// ─── Reguły JSX ──────────────────────────────────────────</span>
+<span class="cm">// 1. Jeden root element (lub Fragment)</span>
+<span class="cm">// 2. className zamiast class</span>
+<span class="cm">// 3. htmlFor zamiast for</span>
+<span class="cm">// 4. Atrybuty camelCase: onClick, onChange, tabIndex</span>
+<span class="cm">// 5. {} dla wyrażeń JS (nie statements!)</span>
+<span class="cm">// 6. Komponenty z wielkiej litery, html z małej</span>
+
+<span class="cm">// ─── Fragment — nie tworzy DOM node ─────────────────────</span>
+<span class="kw">return</span> (
+  &lt;&gt;
+    &lt;<span class="ty">Header</span> /&gt;
+    &lt;<span class="ty">Main</span> /&gt;
+    &lt;<span class="ty">Footer</span> /&gt;
+  &lt;/&gt;
+);
+
+<span class="cm">// ─── Warunkowe renderowanie ───────────────────────────────</span>
+{isLoading &amp;&amp; &lt;<span class="ty">Spinner</span> /&gt;}
+{error ? &lt;<span class="ty">Error</span> msg={error} /&gt; : &lt;<span class="ty">Data</span> /&gt;}</pre>
+      </div>
+
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--react)"></div>Virtual DOM & Reconciliation</div></div>
+        <pre><span class="cm">// ─── Jak działa Virtual DOM ───────────────────────────────</span>
+<span class="cm">// 1. Render → React tworzy VDOM (drzewo obiektów JS)</span>
+<span class="cm">// 2. Stan zmienia się → nowy VDOM</span>
+<span class="cm">// 3. Diffing — porównanie starego i nowego VDOM</span>
+<span class="cm">// 4. Reconciliation — minimalne zmiany w prawdziwym DOM</span>
+
+<span class="cm">// ─── key prop — krytyczna dla list ───────────────────────</span>
+<span class="cm">// ❌ Zły key — React nie wie co się zmieniło:</span>
+{items.map((item, index) =&gt; (
+  &lt;<span class="ty">Item</span> key={index} data={item} /&gt;  <span class="cm">// index jako key!</span>
+))}
+<span class="cm">// Problemy: re-mountowanie, utrata stanu, zły focus</span>
+
+<span class="cm">// ✅ Dobry key — stabilny, unikalny identyfikator:</span>
+{items.map(item =&gt; (
+  &lt;<span class="ty">Item</span> key={item.id} data={item} /&gt;
+))}
+
+<span class="cm">// ─── Kiedy React re-renderuje komponent? ─────────────────</span>
+<span class="cm">// 1. setState() / hook state change</span>
+<span class="cm">// 2. Parent re-renderuje (chyba że React.memo)</span>
+<span class="cm">// 3. Context value się zmienia</span>
+<span class="cm">// 4. forceUpdate() (class components)</span>
+
+<span class="cm">// ─── React 18: Concurrent Mode ───────────────────────────</span>
+<span class="cm">// Rendering może być przerywany i wznawiany</span>
+<span class="cm">// useTransition() — oznacza aktualizacje jako "non-urgent"</span>
+<span class="cm">// useDeferredValue() — opóźnia aktualizację wartości</span></pre>
+      </div>
+    </div>
+
+    <div class="gap16"></div>
+    <div class="strip" style="border-color:var(--react);background:rgba(97,218,251,.04)">
+      <div class="strip-icon">⚛️</div>
+      <div>
+        <strong>Props vs State</strong> — props to dane przekazane z góry (read-only, jednokierunkowy przepływ danych), state to wewnętrzny stan komponentu (mutable przez setState/hooks). <strong>Lifting state up</strong> — gdy dwa komponenty potrzebują tego samego stanu, przenieś go do wspólnego rodzica. <strong>Derived state</strong> — nie duplikuj danych z propsów do stanu; obliczaj je bezpośrednio lub przez <code style="font-family:monospace;color:var(--react2)">useMemo</code>.
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 07 HOOKS ══ -->
+  <section class="chapter" id="hooks">
+    <div class="ch-head">
+      <div class="ch-num">07 / 12</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--react)">React — Hooks Internals</div>
+        <div class="ch-title">useState, useEffect, useRef, useCallback, useMemo — jak naprawdę działają</div>
+        <div class="ch-desc">Hooks to nie magia — to tablice (linked lists) w wewnętrznej strukturze React. Dlatego <strong>reguły hooków</strong> (tylko na najwyższym poziomie, tylko w funkcjach React) są absolutne — naruszenie ich psuje indeksowanie. Zrozumienie internals eliminuje 80% bugów z hookami.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--react)"></div>useState — pułapki i wzorce</div></div>
+        <pre><span class="cm">// ─── setState jest asynchroniczne! ───────────────────────</span>
+<span class="kw">const</span> [count, setCount] = <span class="fn">useState</span>(<span class="nu">0</span>);
+
+<span class="fn">setCount</span>(count + <span class="nu">1</span>);
+<span class="fn">setCount</span>(count + <span class="nu">1</span>);
+<span class="fn">setCount</span>(count + <span class="nu">1</span>);
+<span class="cm">// Wynik: count = 1, nie 3! Wszystkie używają stale `count`</span>
+
+<span class="cm">// ✅ Functional update — używaj kiedy nowy stan zależy od starego:</span>
+<span class="fn">setCount</span>(prev => prev + <span class="nu">1</span>);
+<span class="fn">setCount</span>(prev => prev + <span class="nu">1</span>);
+<span class="fn">setCount</span>(prev => prev + <span class="nu">1</span>);
+<span class="cm">// Wynik: count = 3 ✅</span>
+
+<span class="cm">// ─── Lazy initialization ─────────────────────────────────</span>
+<span class="cm">// ❌ expensiveCalc() wywołana przy KAŻDYM renderze:</span>
+<span class="kw">const</span> [state, setState] = <span class="fn">useState</span>(<span class="fn">expensiveCalc</span>());
+
+<span class="cm">// ✅ Wywołana tylko raz przy inicjalizacji:</span>
+<span class="kw">const</span> [state, setState] = <span class="fn">useState</span>(() => <span class="fn">expensiveCalc</span>());
+
+<span class="cm">// ─── Update obiektów w stanie ────────────────────────────</span>
+<span class="cm">// ❌ Mutacja — React nie zauważy zmiany:</span>
+state.user.name = <span class="st">"New Name"</span>;
+<span class="fn">setState</span>(state);
+
+<span class="cm">// ✅ Nowy obiekt — immutable update:</span>
+<span class="fn">setState</span>(prev => ({
+  ...prev,
+  user: { ...prev.user, name: <span class="st">"New Name"</span> }
+}));</pre>
+      </div>
+
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--react)"></div>useEffect — dependency array i cleanup</div></div>
+        <pre><span class="cm">// ─── 3 formy useEffect ───────────────────────────────────</span>
+
+<span class="cm">// Bez deps — po każdym renderze:</span>
+<span class="fn">useEffect</span>(() => { <span class="fn">doSomething</span>(); });
+
+<span class="cm">// Pusta tablica [] — tylko po mount/unmount:</span>
+<span class="fn">useEffect</span>(() => { <span class="fn">fetchData</span>(); }, []);
+
+<span class="cm">// Z deps — gdy zmieni się wartość:</span>
+<span class="fn">useEffect</span>(() => { <span class="fn">fetchUser</span>(userId); }, [userId]);
+
+<span class="cm">// ─── Cleanup function ────────────────────────────────────</span>
+<span class="fn">useEffect</span>(() => {
+  <span class="kw">const</span> subscription = api.subscribe(userId, handler);
+  <span class="kw">const</span> timer = <span class="fn">setInterval</span>(tick, <span class="nu">1000</span>);
+
+  <span class="kw">return</span> () => {          <span class="cm">// cleanup!</span>
+    subscription.unsubscribe();
+    <span class="fn">clearInterval</span>(timer);
+  };
+}, [userId]);
+
+<span class="cm">// ─── Fetch z AbortController ─────────────────────────────</span>
+<span class="fn">useEffect</span>(() => {
+  <span class="kw">const</span> controller = <span class="kw">new</span> <span class="ty">AbortController</span>();
+  <span class="fn">fetch</span>(<span class="st">`/api/users/</span><span class="go">${id}</span><span class="st">`</span>, { signal: controller.signal })
+    .then(r => r.json())
+    .then(setUser)
+    .catch(err => {
+      <span class="kw">if</span> (err.name !== <span class="st">"AbortError"</span>) setError(err);
+    });
+  <span class="kw">return</span> () => controller.abort(); <span class="cm">// ✅ anuluj przy cleanup</span>
+}, [id]);
+
+<span class="cm">// ─── Częste błędy z dependency array ────────────────────</span>
+<span class="cm">// Missing dep → stale closure (stare wartości)</span>
+<span class="cm">// Extra dep → zbyt częste re-running</span>
+<span class="cm">// Funkcje w deps → useCallback</span>
+<span class="cm">// Obiekty w deps → useMemo lub prymitywne wartości</span></pre>
+      </div>
+    </div>
+
+    <div class="gap16"></div>
+    <div class="g3">
+      <div class="card">
+        <div class="card-h" style="color:var(--react)">🗄️ useRef</div>
+        <div class="card-b">
+          <div class="code" style="border:none;background:transparent">
+            <pre style="padding:0;font-size:.74rem"><span class="cm">// Dwa zastosowania useRef:</span>
+
+<span class="cm">// 1. Referencja do DOM node</span>
+<span class="kw">const</span> inputRef = <span class="fn">useRef</span>(<span class="kw">null</span>);
+&lt;<span class="ty">input</span> ref={inputRef} /&gt;
+inputRef.current.focus();
+
+<span class="cm">// 2. "Instance variable"</span>
+<span class="cm">// — mutable, NIE powoduje re-render!</span>
+<span class="kw">const</span> timerRef = <span class="fn">useRef</span>(<span class="kw">null</span>);
+timerRef.current = <span class="fn">setInterval</span>(fn, <span class="nu">1000</span>);
+
+<span class="cm">// Poprzednia wartość props/state:</span>
+<span class="kw">function</span> <span class="fn">usePrevious</span>(value) {
+  <span class="kw">const</span> ref = <span class="fn">useRef</span>();
+  <span class="fn">useEffect</span>(() => {
+    ref.current = value;
+  });
+  <span class="kw">return</span> ref.current;
+}</pre>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h" style="color:var(--react)">📦 useReducer</div>
+        <div class="card-b">
+          <div class="code" style="border:none;background:transparent">
+            <pre style="padding:0;font-size:.74rem"><span class="cm">// Gdy logika stanu jest złożona</span>
+<span class="kw">const</span> [state, dispatch] = <span class="fn">useReducer</span>(
+  reducer, initialState
+);
+
+<span class="kw">function</span> <span class="fn">reducer</span>(state, action) {
+  <span class="kw">switch</span> (action.type) {
+    <span class="kw">case</span> <span class="st">"INCREMENT"</span>:
+      <span class="kw">return</span> { ...state, count: state.count + <span class="nu">1</span> };
+    <span class="kw">case</span> <span class="st">"SET_USER"</span>:
+      <span class="kw">return</span> { ...state, user: action.payload };
+    <span class="kw">default</span>:
+      <span class="kw">return</span> state;
+  }
+}
+
+dispatch({ type: <span class="st">"INCREMENT"</span> });
+dispatch({ type: <span class="st">"SET_USER"</span>, payload: user });</pre>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h" style="color:var(--react)">🌐 useContext</div>
+        <div class="card-b">
+          <div class="code" style="border:none;background:transparent">
+            <pre style="padding:0;font-size:.74rem"><span class="cm">// Tworzenie kontekstu</span>
+<span class="kw">const</span> ThemeCtx = <span class="fn">createContext</span>(<span class="st">"light"</span>);
+
+<span class="cm">// Provider — przekazuje wartość</span>
+&lt;<span class="ty">ThemeCtx.Provider</span> value={theme}&gt;
+  &lt;<span class="ty">App</span> /&gt;
+&lt;/<span class="ty">ThemeCtx.Provider</span>&gt;
+
+<span class="cm">// Consumer — odbiera wartość</span>
+<span class="kw">const</span> theme = <span class="fn">useContext</span>(ThemeCtx);
+
+<span class="cm">// ⚠️ Zmiana value re-renderuje</span>
+<span class="cm">// WSZYSTKICH konsumentów!</span>
+<span class="cm">// Rozwiąz: Context Splitting lub</span>
+<span class="cm">// useMemo na value obiektu</span></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 08 STAN & DANE ══ -->
+  <section class="chapter" id="stan">
+    <div class="ch-head">
+      <div class="ch-num">08 / 12</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--violet)">React — Zarządzanie Stanem</div>
+        <div class="ch-title">Local state, global state, server state — strategia i narzędzia</div>
+        <div class="ch-desc">Nie każdy stan musi być globalny. Typowa aplikacja React ma 3 kategorie stanu: lokalny (useState), globalny UI (Context, Zustand, Redux), i serwer (React Query, SWR). Mylenie tych kategorii to źródło wielu problemów.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--violet)"></div>Kategorie stanu — gdzie go trzymać</div></div>
+        <pre><span class="cm">// ─── 1. Local / UI state ─────────────────────────────────</span>
+<span class="cm">// Używaj useState/useReducer</span>
+<span class="cm">// Przykłady: isOpen, formValues, activeTab</span>
+<span class="kw">const</span> [isMenuOpen, setIsMenuOpen] = <span class="fn">useState</span>(<span class="kw">false</span>);
+
+<span class="cm">// ─── 2. Shared / Global UI state ────────────────────────</span>
+<span class="cm">// Context + useReducer, Zustand, Jotai, Redux Toolkit</span>
+<span class="cm">// Przykłady: user, theme, cart, permissions</span>
+
+<span class="cm">// ─── 3. Server state ─────────────────────────────────────</span>
+<span class="cm">// React Query / SWR / RTK Query</span>
+<span class="cm">// Przykłady: dane z API — users, products, posts</span>
+
+<span class="cm">// ─── React Query — najpopularniejszy server state ────────</span>
+<span class="kw">const</span> { data, isLoading, error, refetch } = <span class="fn">useQuery</span>({
+  queryKey: [<span class="st">"user"</span>, userId],   <span class="cm">// cache key</span>
+  queryFn: () => <span class="fn">fetchUser</span>(userId),
+  staleTime: <span class="nu">5</span> * <span class="nu">60</span> * <span class="nu">1000</span>,    <span class="cm">// 5 minut "świeżości"</span>
+  retry: <span class="nu">3</span>,                     <span class="cm">// retry przy błędzie</span>
+});
+
+<span class="kw">const</span> mutation = <span class="fn">useMutation</span>({
+  mutationFn: updateUser,
+  onSuccess: () => <span class="fn">queryClient</span>.invalidateQueries([<span class="st">"user"</span>])
+});</pre>
+      </div>
+
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--violet)"></div>Zustand — minimalistyczny global state</div></div>
+        <pre><span class="cm">// Zustand — prosty, bez boilerplate, bez Provider!</span>
+<span class="kw">import</span> { create } <span class="kw">from</span> <span class="st">"zustand"</span>;
+
+<span class="kw">const</span> useStore = <span class="fn">create</span>((set, get) => ({
+  <span class="cm">// State</span>
+  user: <span class="kw">null</span>,
+  isLoggedIn: <span class="kw">false</span>,
+  cart: [],
+
+  <span class="cm">// Actions</span>
+  login: (userData) => <span class="fn">set</span>({ user: userData, isLoggedIn: <span class="kw">true</span> }),
+  logout: () => <span class="fn">set</span>({ user: <span class="kw">null</span>, isLoggedIn: <span class="kw">false</span> }),
+  addToCart: (item) => <span class="fn">set</span>(state => ({
+    cart: [...state.cart, item]
+  })),
+  totalItems: () => get().cart.length  <span class="cm">// computed z get()</span>
+}));
+
+<span class="cm">// Użycie w komponencie — tylko subskrybuje potrzebne pola!</span>
+<span class="kw">const</span> user = <span class="fn">useStore</span>(state => state.user);
+<span class="kw">const</span> login = <span class="fn">useStore</span>(state => state.login);
+
+<span class="cm">// ─── Redux Toolkit (RTK) — gdy potrzebujesz Redux ────────</span>
+<span class="kw">const</span> counterSlice = <span class="fn">createSlice</span>({
+  name: <span class="st">"counter"</span>,
+  initialState: { value: <span class="nu">0</span> },
+  reducers: {
+    increment: state => { state.value++ },  <span class="cm">// Immer pod spodem</span>
+    decrement: state => { state.value-- },
+  }
+});
+
+<span class="kw">export const</span> { increment, decrement } = counterSlice.actions;</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 09 CUSTOM HOOKS ══ -->
+  <section class="chapter" id="custom-hooks">
+    <div class="ch-head">
+      <div class="ch-num">09 / 12</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--teal)">React — Custom Hooks</div>
+        <div class="ch-title">Tworzenie własnych hooków — wzorce i przykłady</div>
+        <div class="ch-desc">Custom hooks to podstawowy mechanizm reużycia logiki stanowej w React. Każda funkcja zaczynająca się od <code style="font-family:monospace;color:var(--react2)">use</code> która wywołuje inne hooki to custom hook. Dobre custom hooks mają pojedynczą odpowiedzialność i jasne API.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--teal)"></div>Custom Hooks — przykłady użytkowe</div></div>
+        <pre><span class="cm">// ─── useFetch — dane z API ────────────────────────────────</span>
+<span class="kw">function</span> <span class="fn">useFetch</span>(url) {
+  <span class="kw">const</span> [data, setData] = <span class="fn">useState</span>(<span class="kw">null</span>);
+  <span class="kw">const</span> [loading, setLoading] = <span class="fn">useState</span>(<span class="kw">true</span>);
+  <span class="kw">const</span> [error, setError] = <span class="fn">useState</span>(<span class="kw">null</span>);
+
+  <span class="fn">useEffect</span>(() => {
+    <span class="kw">const</span> controller = <span class="kw">new</span> <span class="ty">AbortController</span>();
+    <span class="fn">setLoading</span>(<span class="kw">true</span>);
+
+    <span class="fn">fetch</span>(url, { signal: controller.signal })
+      .then(r => r.json())
+      .then(setData)
+      .catch(err => {
+        <span class="kw">if</span> (err.name !== <span class="st">"AbortError"</span>) setError(err);
+      })
+      .finally(() => <span class="fn">setLoading</span>(<span class="kw">false</span>));
+
+    <span class="kw">return</span> () => controller.abort();
+  }, [url]);
+
+  <span class="kw">return</span> { data, loading, error };
+}
+
+<span class="cm">// ─── useLocalStorage ─────────────────────────────────────</span>
+<span class="kw">function</span> <span class="fn">useLocalStorage</span>(key, initialValue) {
+  <span class="kw">const</span> [value, setValue] = <span class="fn">useState</span>(() => {
+    <span class="kw">try</span> {
+      <span class="kw">const</span> item = localStorage.getItem(key);
+      <span class="kw">return</span> item ? <span class="ty">JSON</span>.parse(item) : initialValue;
+    } <span class="kw">catch</span> { <span class="kw">return</span> initialValue; }
+  });
+
+  <span class="kw">const</span> set = <span class="fn">useCallback</span>(newValue => {
+    setValue(newValue);
+    localStorage.setItem(key, <span class="ty">JSON</span>.stringify(newValue));
+  }, [key]);
+
+  <span class="kw">return</span> [value, set];
+}</pre>
+      </div>
+
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--teal)"></div>Więcej wzorców custom hooks</div></div>
+        <pre><span class="cm">// ─── useDebounce ─────────────────────────────────────────</span>
+<span class="kw">function</span> <span class="fn">useDebounce</span>(value, delay = <span class="nu">300</span>) {
+  <span class="kw">const</span> [debounced, setDebounced] = <span class="fn">useState</span>(value);
+  <span class="fn">useEffect</span>(() => {
+    <span class="kw">const</span> timer = <span class="fn">setTimeout</span>(() => <span class="fn">setDebounced</span>(value), delay);
+    <span class="kw">return</span> () => <span class="fn">clearTimeout</span>(timer);
+  }, [value, delay]);
+  <span class="kw">return</span> debounced;
+}
+
+<span class="cm">// Użycie:</span>
+<span class="kw">const</span> [query, setQuery] = <span class="fn">useState</span>(<span class="st">""</span>);
+<span class="kw">const</span> debouncedQuery = <span class="fn">useDebounce</span>(query, <span class="nu">500</span>);
+<span class="fn">useEffect</span>(() => search(debouncedQuery), [debouncedQuery]);
+
+<span class="cm">// ─── useToggle ────────────────────────────────────────────</span>
+<span class="kw">function</span> <span class="fn">useToggle</span>(initial = <span class="kw">false</span>) {
+  <span class="kw">const</span> [value, setValue] = <span class="fn">useState</span>(initial);
+  <span class="kw">const</span> toggle = <span class="fn">useCallback</span>(() => <span class="fn">setValue</span>(v => !v), []);
+  <span class="kw">return</span> [value, toggle];
+}
+
+<span class="cm">// ─── useEventListener ────────────────────────────────────</span>
+<span class="kw">function</span> <span class="fn">useEventListener</span>(event, handler, element = window) {
+  <span class="kw">const</span> savedHandler = <span class="fn">useRef</span>(handler);
+  <span class="fn">useEffect</span>(() => { savedHandler.current = handler; });
+  <span class="fn">useEffect</span>(() => {
+    <span class="kw">const</span> listener = e => savedHandler.current(e);
+    element.addEventListener(event, listener);
+    <span class="kw">return</span> () => element.removeEventListener(event, listener);
+  }, [event, element]);
+}
+
+<span class="cm">// ─── useMediaQuery ────────────────────────────────────────</span>
+<span class="kw">function</span> <span class="fn">useMediaQuery</span>(query) {
+  <span class="kw">const</span> [matches, setMatches] = <span class="fn">useState</span>(
+    () => window.matchMedia(query).matches
+  );
+  <span class="fn">useEffect</span>(() => {
+    <span class="kw">const</span> media = window.matchMedia(query);
+    <span class="kw">const</span> handler = e => <span class="fn">setMatches</span>(e.matches);
+    media.addEventListener(<span class="st">"change"</span>, handler);
+    <span class="kw">return</span> () => media.removeEventListener(<span class="st">"change"</span>, handler);
+  }, [query]);
+  <span class="kw">return</span> matches;
+}</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 10 PERFORMANCE ══ -->
+  <section class="chapter" id="performance">
+    <div class="ch-head">
+      <div class="ch-num">10 / 12</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--rose)">React — Optymalizacja Wydajności</div>
+        <div class="ch-title">React.memo, useCallback, useMemo — kiedy używać, kiedy nie</div>
+        <div class="ch-desc">Przedwczesna optymalizacja to wróg. Ale gdy profiler pokazuje problem, musisz wiedzieć jak go rozwiązać. <code style="font-family:monospace;color:var(--react2)">React.memo</code>, <code style="font-family:monospace;color:var(--react2)">useCallback</code>, <code style="font-family:monospace;color:var(--react2)">useMemo</code> mają koszt — używaj tylko gdy jest zmierzony problem.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--rose)"></div>React.memo, useCallback, useMemo</div></div>
+        <pre><span class="cm">// ─── React.memo — pomija re-render gdy props się nie zmieniły</span>
+<span class="kw">const</span> <span class="ty">ExpensiveList</span> = <span class="ty">React</span>.memo(<span class="kw">function</span> <span class="ty">List</span>({ items, onSelect }) {
+  console.log(<span class="st">"Render List"</span>);  <span class="cm">// tylko gdy items/onSelect zmieni się</span>
+  <span class="kw">return</span> items.map(item => ...);
+});
+
+<span class="cm">// ─── PUŁAPKA: Funkcja tworzona przy każdym renderze! ─────</span>
+<span class="kw">function</span> <span class="ty">Parent</span>() {
+  <span class="kw">const</span> handleSelect = (id) => <span class="fn">doSomething</span>(id);
+  <span class="cm">// ❌ Nowa referencja przy każdym renderze Parent!</span>
+  <span class="cm">// React.memo na List i tak re-renderuje bo onSelect !== onSelect</span>
+  <span class="kw">return</span> &lt;<span class="ty">ExpensiveList</span> onSelect={handleSelect} /&gt;;
+}
+
+<span class="cm">// ✅ useCallback — memoizuje funkcję:</span>
+<span class="kw">const</span> handleSelect = <span class="fn">useCallback</span>((id) => {
+  <span class="fn">doSomething</span>(id);
+}, []);  <span class="cm">// pusta tablica = ta sama funkcja zawsze</span>
+
+<span class="cm">// ─── useMemo — memoizuje wynik obliczeń ──────────────────</span>
+<span class="cm">// ❌ Oblicza przy każdym renderze:</span>
+<span class="kw">const</span> total = cart.reduce((sum, item) => sum + item.price, <span class="nu">0</span>);
+
+<span class="cm">// ✅ Przelicza tylko gdy cart się zmieni:</span>
+<span class="kw">const</span> total = <span class="fn">useMemo</span>(
+  () => cart.reduce((sum, item) => sum + item.price, <span class="nu">0</span>),
+  [cart]
+);</pre>
+      </div>
+
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--rose)"></div>Code Splitting, Lazy Loading, Virtualizacja</div></div>
+        <pre><span class="cm">// ─── Code Splitting — React.lazy + Suspense ──────────────</span>
+<span class="kw">const</span> <span class="ty">Dashboard</span> = <span class="ty">React</span>.lazy(() => <span class="kw">import</span>(<span class="st">"./Dashboard"</span>));
+<span class="kw">const</span> <span class="ty">Reports</span>   = <span class="ty">React</span>.lazy(() => <span class="kw">import</span>(<span class="st">"./Reports"</span>));
+
+<span class="kw">function</span> <span class="ty">App</span>() {
+  <span class="kw">return</span> (
+    &lt;<span class="ty">Suspense</span> fallback={&lt;<span class="ty">LoadingSpinner</span> /&gt;}&gt;
+      &lt;<span class="ty">Routes</span>&gt;
+        &lt;<span class="ty">Route</span> path=<span class="st">"/dashboard"</span> element={&lt;<span class="ty">Dashboard</span> /&gt;} /&gt;
+        &lt;<span class="ty">Route</span> path=<span class="st">"/reports"</span>   element={&lt;<span class="ty">Reports</span> /&gt;} /&gt;
+      &lt;/<span class="ty">Routes</span>&gt;
+    &lt;/<span class="ty">Suspense</span>&gt;
+  );
+}
+
+<span class="cm">// ─── Virtualizacja — renderuj tylko widoczne elementy ────</span>
+<span class="cm">// @tanstack/react-virtual lub react-window</span>
+<span class="kw">import</span> { useVirtualizer } <span class="kw">from</span> <span class="st">"@tanstack/react-virtual"</span>;
+
+<span class="kw">const</span> virtualizer = <span class="fn">useVirtualizer</span>({
+  count: items.length,
+  getScrollElement: () => parentRef.current,
+  estimateSize: () => <span class="nu">50</span>,  <span class="cm">// szacowana wysokość wiersza</span>
+});
+<span class="cm">// Zamiast 100 000 DOM nodes — tylko ~20 widocznych!</span>
+
+<span class="cm">// ─── Kiedy nie używać memo/useCallback/useMemo? ──────────</span>
+<span class="cm">// - Gdy komponent i tak szybko się renderuje</span>
+<span class="cm">// - Gdy zależności często się zmieniają</span>
+<span class="cm">// - Gdy memoizacja kosztuje więcej niż ponowny render</span>
+<span class="cm">// Zawsze: zmierz profilerem PRZED optymalizacją!</span></pre>
+      </div>
+    </div>
+
+    <div class="gap16"></div>
+    <div class="g3">
+      <div class="card">
+        <div class="card-h" style="color:var(--rose)">📊 React DevTools Profiler</div>
+        <div class="card-b" style="font-size:.83rem;color:var(--tx2);line-height:1.85">
+          <p>□ <strong>Flame Graph</strong> — czas renderowania komponentów</p>
+          <p>□ <strong>"Why did this render?"</strong> — co wywołało re-render</p>
+          <p>□ <strong>Highlight updates</strong> — wizualnie widać re-rendery</p>
+          <p>□ <strong>Record → Interact → Stop</strong> — workflow profilowania</p>
+          <p>□ <strong>Performance tab</strong> w DevTools dla długich tasków</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h" style="color:var(--rose)">🚀 Inne techniki</div>
+        <div class="card-b" style="font-size:.83rem;color:var(--tx2);line-height:1.85">
+          <p><strong>Avoid anonymous functions</strong> w JSX jako props gdzie to możliwe</p>
+          <p><strong>State collocation</strong> — stan jak najniżej w drzewie</p>
+          <p><strong>Context splitting</strong> — osobny context dla różnych danych</p>
+          <p><strong>Avoid object creation</strong> — <code style="color:var(--react2);font-family:monospace">value={{ a, b }}</code> w JSX tworzy nowy obiekt co render!</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h" style="color:var(--rose)">⚡ React 18 Performance</div>
+        <div class="card-b" style="font-size:.83rem;color:var(--tx2);line-height:1.85">
+          <p><strong>Automatic batching</strong> — React 18 grupuje setState w setTimeout, promises, i event handlerach</p>
+          <p><strong>useTransition</strong> — oznacz aktualizacje UI jako non-urgent (nie blokuj input)</p>
+          <p><strong>useDeferredValue</strong> — opóźnij aktualizację ciężkiej listy</p>
+          <p><strong>React.startTransition</strong> — poza komponentami</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 11 WZORCE REACT ══ -->
+  <section class="chapter" id="wzorce">
+    <div class="ch-head">
+      <div class="ch-num">11 / 12</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--amber)">React — Wzorce Projektowe</div>
+        <div class="ch-title">Compound Components, Render Props, HOC i nowoczesne alternatywy</div>
+        <div class="ch-desc">Wzorce projektowe w React ewoluowały przez lata. HOC i Render Props były dominujące przed hookami — teraz custom hooks zastąpiły większość ich zastosowań. Compound Components nadal są aktualne dla bibliotek komponentów.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--amber)"></div>Compound Components — elastyczne API</div></div>
+        <pre><span class="cm">// Wzorzec: Select z sub-komponentami (jak HTML &lt;select&gt;&lt;option&gt;)</span>
+<span class="kw">const</span> SelectCtx = <span class="fn">createContext</span>();
+
+<span class="kw">function</span> <span class="ty">Select</span>({ children, onChange }) {
+  <span class="kw">const</span> [selected, setSelected] = <span class="fn">useState</span>(<span class="kw">null</span>);
+  <span class="kw">const</span> select = <span class="fn">useCallback</span>(value => {
+    <span class="fn">setSelected</span>(value);
+    <span class="fn">onChange</span>?.(value);
+  }, [onChange]);
+
+  <span class="kw">return</span> (
+    &lt;<span class="ty">SelectCtx.Provider</span> value={{ selected, select }}&gt;
+      &lt;div className=<span class="st">"select"</span>&gt;{children}&lt;/div&gt;
+    &lt;/<span class="ty">SelectCtx.Provider</span>&gt;
+  );
+}
+
+<span class="kw">function</span> <span class="ty">Option</span>({ value, children }) {
+  <span class="kw">const</span> { selected, select } = <span class="fn">useContext</span>(SelectCtx);
+  <span class="kw">return</span> (
+    &lt;div
+      className={selected === value ? <span class="st">"active"</span> : <span class="st">""</span>}
+      onClick={() => <span class="fn">select</span>(value)}
+    &gt;{children}&lt;/div&gt;
+  );
+}
+
+<span class="ty">Select</span>.Option = <span class="ty">Option</span>;  <span class="cm">// namespace</span>
+
+<span class="cm">// Użycie — elastyczne, nie musisz znać internals:</span>
+&lt;<span class="ty">Select</span> onChange={setTheme}&gt;
+  &lt;<span class="ty">Select.Option</span> value=<span class="st">"light"</span>&gt;Light&lt;/<span class="ty">Select.Option</span>&gt;
+  &lt;<span class="ty">Select.Option</span> value=<span class="st">"dark"</span>&gt;Dark&lt;/<span class="ty">Select.Option</span>&gt;
+&lt;/<span class="ty">Select</span>&gt;</pre>
+      </div>
+
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--amber)"></div>HOC, Render Props i migracja do hooków</div></div>
+        <pre><span class="cm">// ─── HOC (Higher-Order Component) ────────────────────────</span>
+<span class="cm">// Funkcja przyjmująca komponent i zwracająca nowy komponent</span>
+<span class="kw">function</span> <span class="fn">withAuth</span>(WrappedComponent) {
+  <span class="kw">return function</span> <span class="ty">AuthGuard</span>(props) {
+    <span class="kw">const</span> { isLoggedIn } = <span class="fn">useAuth</span>();
+    <span class="kw">if</span> (!isLoggedIn) <span class="kw">return</span> &lt;<span class="ty">Redirect</span> to=<span class="st">"/login"</span> /&gt;;
+    <span class="kw">return</span> &lt;<span class="ty">WrappedComponent</span> {...props} /&gt;;
+  };
+}
+<span class="kw">const</span> <span class="ty">ProtectedDashboard</span> = <span class="fn">withAuth</span>(<span class="ty">Dashboard</span>);
+
+<span class="cm">// ─── Render Props ────────────────────────────────────────</span>
+<span class="kw">function</span> <span class="ty">DataFetcher</span>({ url, render }) {
+  <span class="kw">const</span> { data, loading } = <span class="fn">useFetch</span>(url);
+  <span class="kw">return</span> <span class="fn">render</span>({ data, loading });
+}
+<span class="cm">// Użycie:</span>
+&lt;<span class="ty">DataFetcher</span>
+  url=<span class="st">"/api/users"</span>
+  render={({ data, loading }) =&gt; loading ? ... : &lt;<span class="ty">List</span> data={data}/&gt;}
+/&gt;
+
+<span class="cm">// ─── Custom hook jako zamiennik obu ──────────────────────</span>
+<span class="cm">// Zamiast HOC/RenderProp useFetch — prościej, bardziej compose</span>
+<span class="kw">function</span> <span class="ty">Users</span>() {
+  <span class="kw">const</span> { data, loading } = <span class="fn">useFetch</span>(<span class="st">"/api/users"</span>);
+  <span class="kw">const</span> { isLoggedIn } = <span class="fn">useAuth</span>();  <span class="cm">// zamiast withAuth HOC</span>
+  ...
+}
+
+<span class="cm">// ─── Controlled vs Uncontrolled Components ───────────────</span>
+<span class="cm">// Controlled: wartość w React state → pełna kontrola</span>
+<span class="cm">// Uncontrolled: wartość w DOM → useRef → prostsze formy</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 12 REACT W PRAKTYCE ══ -->
+  <section class="chapter" id="praktyka">
+    <div class="ch-head">
+      <div class="ch-num">12 / 12</div>
+      <div class="ch-info">
+        <div class="ch-cat" style="color:var(--emerald)">React — Praktyka i Architektura</div>
+        <div class="ch-title">Struktura projektu, Error Boundaries, Forms, Testing i co dalej</div>
+        <div class="ch-desc">Techniczna wiedza to połowa sukcesu. Drugi element to architektura — jak organizować pliki, jak obsługiwać błędy, jak pisać testowalne komponenty i kiedy sięgnąć po zewnętrzne biblioteki. Praktyczne wskazówki dla React w Praktyce (kurs eduweb).</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--emerald)"></div>Error Boundaries i obsługa błędów</div></div>
+        <pre><span class="cm">// ─── Error Boundary — łapie błędy renderowania ───────────</span>
+<span class="cm">// Tylko class component! (lub react-error-boundary library)</span>
+<span class="kw">class</span> <span class="ty">ErrorBoundary</span> <span class="kw">extends</span> <span class="ty">Component</span> {
+  state = { hasError: <span class="kw">false</span>, error: <span class="kw">null</span> };
+
+  <span class="kw">static</span> <span class="fn">getDerivedStateFromError</span>(error) {
+    <span class="kw">return</span> { hasError: <span class="kw">true</span>, error };
+  }
+  <span class="fn">componentDidCatch</span>(error, info) {
+    <span class="fn">logToSentry</span>(error, info.componentStack);
+  }
+  render() {
+    <span class="kw">if</span> (<span class="kw">this</span>.state.hasError)
+      <span class="kw">return</span> &lt;<span class="ty">ErrorFallback</span> error={<span class="kw">this</span>.state.error} /&gt;;
+    <span class="kw">return this</span>.props.children;
+  }
+}
+
+<span class="cm">// ✅ react-error-boundary — prostsze, z hooks:</span>
+&lt;<span class="ty">ErrorBoundary</span> FallbackComponent={ErrorFallback}
+  onError={(err) => <span class="fn">logError</span>(err)}&gt;
+  &lt;<span class="ty">MyFeature</span> /&gt;
+&lt;/<span class="ty">ErrorBoundary</span>&gt;
+
+<span class="cm">// ─── Formularz z react-hook-form ─────────────────────────</span>
+<span class="kw">const</span> { register, handleSubmit, formState: { errors } } = <span class="fn">useForm</span>();
+
+&lt;<span class="ty">form</span> onSubmit={<span class="fn">handleSubmit</span>(onSubmit)}&gt;
+  &lt;<span class="ty">input</span> {...<span class="fn">register</span>(<span class="st">"email"</span>, {
+    required: <span class="st">"Email wymagany"</span>,
+    pattern: { value: /\S+@\S+/, message: <span class="st">"Niepoprawny email"</span> }
+  })} /&gt;
+  {errors.email &amp;&amp; &lt;<span class="ty">span</span>&gt;{errors.email.message}&lt;/<span class="ty">span</span>&gt;}
+&lt;/<span class="ty">form</span>&gt;</pre>
+      </div>
+
+      <div class="code">
+        <div class="cbar"><div class="cbar-l"><div class="fdot" style="background:var(--emerald)"></div>Struktura projektu i testowanie</div></div>
+        <pre><span class="cm">// ─── Struktura projektu (Feature-based) ──────────────────</span>
+<span class="cm">// src/</span>
+<span class="cm">//   features/          ← moduły funkcjonalne</span>
+<span class="cm">//     auth/</span>
+<span class="cm">//       components/    ← LoginForm, RegisterModal</span>
+<span class="cm">//       hooks/         ← useAuth, useLogin</span>
+<span class="cm">//       api/           ← auth.api.ts</span>
+<span class="cm">//       index.ts       ← public API modułu</span>
+<span class="cm">//     users/</span>
+<span class="cm">//   shared/            ← reużywalne UI</span>
+<span class="cm">//     components/      ← Button, Modal, Input</span>
+<span class="cm">//     hooks/           ← useDebounce, useMediaQuery</span>
+<span class="cm">//   app/               ← Router, Providers, global setup</span>
+
+<span class="cm">// ─── Testing — React Testing Library ─────────────────────</span>
+<span class="cm">// Testuj zachowanie, nie implementację</span>
+
+<span class="kw">import</span> { render, screen, fireEvent } <span class="kw">from</span> <span class="st">"@testing-library/react"</span>;
+<span class="kw">import</span> userEvent <span class="kw">from</span> <span class="st">"@testing-library/user-event"</span>;
+
+it(<span class="st">"shows error on empty submit"</span>, <span class="kw">async</span> () => {
+  <span class="fn">render</span>(&lt;<span class="ty">LoginForm</span> /&gt;);
+
+  <span class="kw">await</span> userEvent.click(screen.getByRole(<span class="st">"button"</span>, { name: /login/i }));
+
+  <span class="fn">expect</span>(screen.getByText(<span class="st">/email jest wymagany/i</span>)).toBeInTheDocument();
+});
+
+<span class="cm">// ─── MSW (Mock Service Worker) — mockowanie API ──────────</span>
+<span class="cm">// Interceptuje requesty na poziomie Service Worker</span>
+<span class="cm">// handlers.ts: http.get("/api/user", () => HttpResponse.json(mockUser))</span></pre>
+      </div>
+    </div>
+
+    <div class="gap16"></div>
+    <div class="g3">
+      <div class="card">
+        <div class="card-h" style="color:var(--emerald)">📚 Biblioteki ekosystemu</div>
+        <div class="card-b" style="font-size:.82rem;color:var(--tx2);line-height:1.85">
+          <p><strong style="color:var(--react2)">Routing</strong> — React Router v6 / TanStack Router</p>
+          <p><strong style="color:var(--react2)">Forms</strong> — react-hook-form + zod</p>
+          <p><strong style="color:var(--react2)">Server State</strong> — TanStack Query (React Query)</p>
+          <p><strong style="color:var(--react2)">Global State</strong> — Zustand / Jotai / Redux Toolkit</p>
+          <p><strong style="color:var(--react2)">UI Library</strong> — shadcn/ui, Radix, MUI</p>
+          <p><strong style="color:var(--react2)">Styling</strong> — Tailwind CSS, CSS Modules</p>
+          <p><strong style="color:var(--react2)">Animation</strong> — Framer Motion</p>
+          <p><strong style="color:var(--react2)">Tables</strong> — TanStack Table</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h" style="color:var(--emerald)">🧱 Dobre nawyki React</div>
+        <div class="card-b" style="font-size:.83rem;color:var(--tx2);line-height:1.9">
+          <p>□ Jeden komponent = jeden plik, jeden cel</p>
+          <p>□ Props tylko do prymitywów lub stabilnych referencji</p>
+          <p>□ Derived state obliczaj, nie duplikuj</p>
+          <p>□ Cleanup każdego useEffect z side-effectem</p>
+          <p>□ Klucze list — zawsze <code style="font-family:monospace;color:var(--react2)">id</code>, nigdy <code style="font-family:monospace;color:var(--react2)">index</code></p>
+          <p>□ TypeScript — props interface dla każdego komponentu</p>
+          <p>□ Testy zachowania, nie implementacji</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h" style="color:var(--emerald)">🔮 Co dalej?</div>
+        <div class="card-b" style="font-size:.83rem;color:var(--tx2);line-height:1.85">
+          <p><strong style="color:var(--react2)">Next.js</strong> — SSR, SSG, RSC (React Server Components)</p>
+          <p><strong style="color:var(--react2)">TypeScript</strong> — typy dla React, generics, utility types</p>
+          <p><strong style="color:var(--react2)">Monorepo</strong> — Nx, Turborepo dla dużych projektów</p>
+          <p><strong style="color:var(--react2)">Testing</strong> — Vitest + RTL + Playwright E2E</p>
+          <p><strong style="color:var(--react2)">Storybook</strong> — izolowany development UI</p>
+          <p><strong style="color:var(--react2)">React 19</strong> — Actions, useOptimistic, use() hook</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="gap24"></div>
+    <div class="strip" style="border-color:var(--react);background:rgba(97,218,251,.04)">
+      <div class="strip-icon">⚛️</div>
+      <div>
+        <strong>"Make it work, make it right, make it fast"</strong> — obowiązuje też w React. Najpierw poprawna logika, czytelny kod i dobre testy. Optymalizacje (memo, useCallback) tylko gdy profiler wskazuje problem. Zbyt wczesne memoizowanie wszystkiego nie przyspiesza aplikacji — komplikuje kod i utrudnia debugowanie. Senior React developer pisze prosty, testowalny kod i wie kiedy po prostu nie optymalizować.
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div><span class="footer-title">React & JavaScript — Deep Knowledge Map</span> · Scope, Closures, ES6+, Hooks, Stan, Performance, Wzorce</div>
+  <div>eduweb.pl · react-od-podstaw · react-w-praktyce · react-techniki-zaawansowane · javascript-od-podstaw · ecmascript6</div>
+</footer>
+
+</body>
+</html>

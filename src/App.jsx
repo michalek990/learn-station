@@ -414,15 +414,15 @@ body::before {
 }
 `;
 
-// ─── MODUŁY — skopiowane 1:1 z index.html ──────────────────────────────────
+// ─── MODUŁY ────────────────────────────────────────────────────────────────
 const SECTIONS = [
   {
     label: "☕ Java",
     color: "var(--orange)",
     modules: [
-      { file: "java_complete.html",    icon: "☕", name: "Java Kompletny",    desc: "OOP, kolekcje, generyki, wyjątki, strumienie, lambdy, Optional, wielowątkowość, I/O",                                              status: "COMPLETE GUIDE",  color: "#f89820" },
-      { file: "java_senior.html",      icon: "🏆", name: "Java Senior",       desc: "JVM internals, GC, memory model, concurrency advanced, performance tuning, patterns",                                              status: "SENIOR LEVEL",    color: "#e07010" },
-      { file: "senior_java_syntax.html",icon:"🪤", name: "Java Tricky Code",  desc: "Autoboxing, Integer cache, String pool, overloading vs overriding, generics erasure, concurrency pułapki, Java 17–21",           status: "INTERVIEW TRAPS", color: "#f0a500" },
+      { file: "java_complete.html",     icon: "☕", name: "Java Kompletny",    desc: "OOP, kolekcje, generyki, wyjątki, strumienie, lambdy, Optional, wielowątkowość, I/O",                                              status: "COMPLETE GUIDE",  color: "#f89820" },
+      { file: "java_senior.html",       icon: "🏆", name: "Java Senior",       desc: "JVM internals, GC, memory model, concurrency advanced, performance tuning, patterns",                                              status: "SENIOR LEVEL",    color: "#e07010" },
+      { file: "senior_java_syntax.html",icon: "🪤", name: "Java Tricky Code",  desc: "Autoboxing, Integer cache, String pool, overloading vs overriding, generics erasure, concurrency pułapki, Java 17–21",           status: "INTERVIEW TRAPS", color: "#f0a500" },
     ],
   },
   {
@@ -489,6 +489,22 @@ const SECTIONS = [
       { file: "struktury_danych.html",  icon: "🧱", name: "Struktury Danych",    desc: "Array, Linked List, Stack, Queue, BST, HashMap, Graph, Heap — złożoności i użycie",                                         status: "DATA STRUCTURES", color: "#00d4ff" },
       { file: "performance_bigo.html",  icon: "⚙️", name: "Performance & Big O", desc: "Złożoność obliczeniowa, zasady rozpoznawania, optymalizacja, SOLID, DRY/KISS/YAGNI",                                       status: "OPTIMIZATION",    color: "#00ff88" },
       { file: "komputer_od_srodka.html",icon: "🖥️", name: "Komputer od Środka",  desc: "CPU, pamięć, rejestry, cache, OS, procesy, wątki, syscalls, kompilacja, assembler",                                        status: "CS FUNDAMENTALS", color: "#9b59b6" },
+    ],
+  },
+  {
+    label: "⚛️ React & Frontend",
+    color: "#61dafb",
+    modules: [
+      { file: "react_dla_dziecka.html",   icon: "🧒", name: "React dla Dziecka",      desc: "React od absolutnego zera — komponenty, props, state, hooks wytłumaczone prosto i obrazowo",                         status: "ABSOLUTE BASICS", color: "#61dafb" },
+      { file: "react_ekosystem.html",     icon: "🌍", name: "React Ekosystem",         desc: "Router, React Query, Zustand, Axios, Zod, react-hook-form, shadcn/ui — cały ekosystem w jednym miejscu",            status: "ECOSYSTEM",       color: "#00d4ff" },
+      { file: "react_ekosystem_light.html",icon:"☀️", name: "React Ekosystem Light",   desc: "React Ekosystem w jasnym motywie — identyczna treść, czytelna wersja do druku i nauki w ciągu dnia",               status: "LIGHT MODE",      color: "#0ea5e9" },
+      { file: "react_js_senior.html",     icon: "🏆", name: "React JS Senior",         desc: "Zaawansowany React — performance, wzorce, render optimization, concurrent features, architektura",                  status: "SENIOR LEVEL",    color: "#f97316" },
+      { file: "react_js_senior_light.html",icon:"🌤️",name: "React JS Senior Light",   desc: "Senior React w jasnym motywie — identyczna treść, czytelna wersja do druku i nauki w dzień",                       status: "LIGHT MODE",      color: "#fb923c" },
+      { file: "react_projekt_setup.html", icon: "🛠️", name: "React Projekt Setup",     desc: "Vite + React + TypeScript + Tailwind + shadcn/ui + ESLint + Prettier + Husky — krok po kroku",                    status: "PROJECT SETUP",   color: "#a78bfa" },
+      { file: "typescript_react_guide.html",icon:"🔷",name: "TypeScript & React",      desc: "Typy, interfejsy, generyki, narrowing, JSX, tsx, hooki z typami, pułapki i senior patterns",                       status: "TS GUIDE",        color: "#2563eb" },
+      { file: "drzewo.html",              icon: "🌳", name: "Drzewo Technologii",       desc: "Mapa wizualna całego ekosystemu frontend i backend — technologie, zależności, ścieżki nauki",                       status: "TECH TREE",       color: "#22c55e" },
+      { file: "struktura.html",           icon: "📁", name: "Struktura Projektu",       desc: "Architektura folderu React — feature-based structure, co gdzie trzymać, wzorce organizacji kodu",                   status: "PROJECT ARCH",    color: "#e2e8f0" },
+      { file: "setup-komendy.html",       icon: "⌨️", name: "Setup & Komendy",          desc: "Wszystkie komendy do postawienia projektu React — yarn, npm, git, vite, tailwind, shadcn krok po kroku",           status: "CLI REFERENCE",   color: "#34d399" },
     ],
   },
   {
@@ -567,6 +583,7 @@ function HomePage({ onOpen }) {
             ["SECURITY","r"],["TESTING","g"],["SPRING","s"],["JAVA","o"],
             ["DESIGN PATTERNS","p"],["DEVOPS","b"],["DISTRIBUTED","c"],["DOCKER/K8S","b"],
             ["POSTGRESQL","c"],["JAVA TRAPS","o"],["OD ZERA","g"],["100 PYTAŃ","r"],
+            ["REACT","c"],["TYPESCRIPT","b"],["EKOSYSTEM","c"],["SETUP","g"],
           ].map(([label, cls]) => (
             <span key={label} className={`pill ${cls}`}>{label}</span>
           ))}
